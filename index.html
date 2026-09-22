@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Servicios en Buenos Aires y Alrededores</title>
 <link rel="preconnect" href="https://embed.waze.com" crossorigin>
 <link rel="dns-prefetch" href="https://embed.waze.com">
@@ -498,6 +498,16 @@ body.adding-mode .dev-hint{display:block}
 .qr-scan-modal input{width:100%;padding:.75rem .9rem;border:2px solid #ddd;border-radius:8px;font-size:.9rem;outline:none;font-family:inherit;margin-bottom:.6rem;box-sizing:border-box}
 footer{background:var(--primary);color:#ccc;text-align:center;padding:.8rem;font-size:.85rem}
 footer a{color:#fff;text-decoration:underline}
+.focus-banner{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(44,62,80,.96);color:#fff;padding:.55rem .55rem .55rem .9rem;border-radius:22px;font-size:.82rem;font-weight:600;z-index:1001;display:none;align-items:center;gap:.55rem;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:calc(100% - 24px);pointer-events:auto}
+.focus-banner.visible{display:flex}
+.focus-banner>i{color:#33ccff}
+.focus-banner .fb-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
+.focus-banner button{background:#e74c3c;color:#fff;border:none;padding:.35rem .75rem;border-radius:14px;font-size:.72rem;font-weight:700;cursor:pointer;flex-shrink:0;font-family:inherit;display:inline-flex;align-items:center;gap:.3rem}
+.focus-banner button:hover{background:#c0392b}
+#qrReader{width:100%!important;max-width:340px;min-height:260px;margin:0 auto .7rem;border-radius:12px;overflow:hidden;background:#000;position:relative;display:none}
+#qrReader video{width:100%!important;height:auto!important;display:block;border-radius:12px}
+#qrReader canvas{display:none!important}
+#qrReader img[alt="Info icon"]{display:none!important}
 @media(max-width:600px){
 .chat-panel{bottom:0;right:0;left:0;top:0;width:100%;height:100%;max-height:100%;border-radius:0}
 .floating-stack{bottom:14px;right:14px;gap:10px}
@@ -516,30 +526,69 @@ footer a{color:#fff;text-decoration:underline}
 #map-wrapper{height:55%}
 #sheetsPanel{width:100%;max-width:100%}
 }
+@media(max-width:900px) and (orientation:portrait){
+header{padding:.55rem .7rem;gap:.4rem;align-items:flex-start}
+header h1{font-size:1rem;flex:1 1 100%;line-height:1.2}
+.header-actions{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem}
+.header-actions button,.header-actions .dev-badge{padding:.5rem .25rem;font-size:.68rem;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;justify-content:center;gap:.25rem;min-width:0;line-height:1.1}
+.header-actions button i{font-size:.82rem}
+.header-actions .chat-badge-inline,.header-actions .inc-badge-inline{font-size:9px;padding:0 4px;margin-left:2px}
+.dev-badge{display:none!important}
+.dev-badge.visible{display:flex!important}
+.container{flex-direction:column;height:calc(100vh - 160px - 42px);height:calc(100dvh - 160px - 42px)}
+#sidebar{width:100%;height:42%;min-height:180px;max-height:46vh}
+#map-wrapper{height:58%;min-height:240px;flex:1 1 auto}
+#sidebar h2{padding:.55rem .8rem;font-size:.9rem}
+.search-box{padding:.55rem .8rem}
+.search-box input{padding:.55rem 1.8rem .55rem .7rem;font-size:.9rem}
+.filters{padding:.4rem .8rem}
+.filters label{font-size:.88rem;margin:.3rem 0}
+.distance-box{padding:.5rem .8rem}
+.place-card{padding:.65rem}
+.place-card h3{font-size:.95rem}
+.floating-stack{bottom:10px;right:10px;gap:8px}
+.floating-btn{width:48px;height:48px;font-size:18px}
+.floating-btn.police-btn{width:56px;height:56px;font-size:9px}
+.floating-btn.police-btn i{font-size:18px;margin-bottom:0}
+.chat-panel{bottom:0;right:0;left:0;top:0;width:100%;height:100%;max-height:100%;border-radius:0}
+#wazeLegend{top:6px;right:6px;left:6px;max-width:none;width:auto;max-height:62vh}
+.incident-toast-stack{top:6px;right:6px;left:6px;max-width:none;width:auto}
+.leaflet-control-reset,.leaflet-control-locate,.leaflet-control-legend{padding:8px 10px;font-size:13px}
+.nick-box,.modal-box,.login-box,.alert-box{padding:1.2rem 1rem}
+.alert-overlay{padding:.8rem}
+.gate-card{padding:1.8rem 1.3rem}
+.gate-card h1{font-size:1.3rem}
+.focus-banner{top:8px;font-size:.78rem;padding:.45rem .45rem .45rem .75rem}
+.focus-banner .fb-text{max-width:140px}
+}
+@media(max-width:380px) and (orientation:portrait){
+.header-actions button{font-size:.62rem;padding:.45rem .15rem}
+.floating-btn{width:44px;height:44px;font-size:16px}
+}
 </style>
 </head>
 <body>
 
 <div id="resolveScreen" class="resolve-screen">
 <div class="resolve-box">
-<div class="resolve-icon" id="resolveIcon">⏳</div>
+<div class="resolve-icon" id="resolveIcon">&#9203;</div>
 <h2 id="resolveTitle">Resolviendo alerta...</h2>
-<p id="resolveText">Conectando al servidor. Por favor esperá.</p>
+<p id="resolveText">Conectando al servidor. Por favor esper&aacute;.</p>
 </div>
 </div>
 
 <div id="alertOverlay" class="alert-overlay">
 <div class="alert-box">
-<h2><i class="fas fa-exclamation-triangle"></i> Tu alerta está activa</h2>
-<p class="alert-sub">Solo se puede cerrar ingresando tu contraseña o si un compañero del mismo servicio escanea el QR.</p>
+<h2><i class="fas fa-exclamation-triangle"></i> Tu alerta est&aacute; activa</h2>
+<p class="alert-sub">Solo se puede cerrar ingresando tu contrase&ntilde;a o si un compa&ntilde;ero del mismo servicio escanea el QR.</p>
 <div class="alert-details" id="alertDetails"></div>
-<div class="alert-section-title">Mostrá este código a un compañero</div>
+<div class="alert-section-title">Mostr&aacute; este c&oacute;digo a un compa&ntilde;ero</div>
 <div class="alert-qr-wrap" id="alertQrCode"></div>
-<div class="alert-hint">Pedile a alguien del mismo servicio que escanee este QR con su celular. La alerta se cerrará automáticamente y se informará que estás bajo control.</div>
+<div class="alert-hint">Pedile a alguien del mismo servicio que escanee este QR con su celular. La alerta se cerrar&aacute; autom&aacute;ticamente y se informar&aacute; que est&aacute;s bajo control.</div>
 <div class="alert-divider">o</div>
-<div class="alert-section-title">Ingresá tu contraseña <span class="alert-beta-badge">BETA</span></div>
+<div class="alert-section-title">Ingres&aacute; tu contrase&ntilde;a <span class="alert-beta-badge">BETA</span></div>
 <div class="alert-password-row">
-<input type="password" id="alertPasswordInput" placeholder="Contraseña (beta: 0000)" autocomplete="off">
+<input type="password" id="alertPasswordInput" placeholder="Contrase&ntilde;a (beta: 0000)" autocomplete="off">
 <button id="alertPasswordBtn">Verificar</button>
 </div>
 <div class="alert-error" id="alertError"></div>
@@ -551,28 +600,28 @@ footer a{color:#fff;text-decoration:underline}
 <div class="gate-logo"><i class="fas fa-motorcycle"></i></div>
 <h1>Mutual Motos</h1>
 <h2>Comunidad de motociclistas</h2>
-<p class="gate-intro">Para acceder al mapa de servicios, al chat y a la red de Motoamigos, necesitás iniciar sesión o registrarte.</p>
-<span class="gate-test-badge">VERSIÓN PROTOTIPO</span>
-<button class="gate-btn login" id="gateLoginBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</button>
+<p class="gate-intro">Para acceder al mapa de servicios, al chat y a la red de Motoamigos, necesit&aacute;s iniciar sesi&oacute;n o registrarte.</p>
+<span class="gate-test-badge">VERSI&Oacute;N PROTOTIPO</span>
+<button class="gate-btn login" id="gateLoginBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n</button>
 <a class="gate-btn register" id="gateRegisterBtn" href="#" target="_blank" rel="noopener noreferrer"><i class="fas fa-user-plus"></i> Registrarse</a>
 <div class="gate-divider">o</div>
 <button class="gate-guest-btn" id="gateGuestBtn"><i class="fas fa-user-secret"></i> Continuar como invitado (solo test)</button>
-<div class="gate-footer">El registro te lleva a un formulario externo. Esta pantalla está en estado prototipo.</div>
+<div class="gate-footer">El registro te lleva a un formulario externo. Esta pantalla est&aacute; en estado prototipo.</div>
 </div>
 </div>
 
 <header>
 <h1><i class="fas fa-map-marked-alt"></i> Servicios en Buenos Aires y Alrededores</h1>
 <div class="header-actions">
-<button class="auth-btn" id="authHeaderBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</button>
+<button class="auth-btn" id="authHeaderBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n</button>
 <button class="user-log-btn" id="userLogHeaderBtn"><i class="fas fa-users"></i> Usuarios</button>
-<button class="locate-btn" id="locateHeaderBtn"><i class="fas fa-crosshairs"></i> Mi ubicación</button>
+<button class="locate-btn" id="locateHeaderBtn"><i class="fas fa-crosshairs"></i> Mi ubicaci&oacute;n</button>
 <button class="incidents-header-btn" id="incidentsHeaderBtn"><i class="fas fa-triangle-exclamation"></i> Incidentes <span class="inc-badge-inline" id="incHeaderBadge">0</span></button>
 <button class="qr-resolve-header-btn" id="qrResolveHeaderBtn"><i class="fas fa-qrcode"></i> Escanear QR siniestro</button>
 <button class="chat-header-btn" id="chatHeaderBtn"><i class="fas fa-comments"></i> Chat <span class="chat-badge-inline" id="chatHeaderBadge">0</span></button>
 <button class="sheets-btn" id="sheetsToggleBtn"><i class="fas fa-table"></i> Ver tabla</button>
 <span class="dev-badge" id="devBadge"><i class="fas fa-code"></i> MODO DEV</span>
-<button class="dev-btn" id="devToggleBtn"><i class="fas fa-plus-circle"></i> Añadir ubicación</button>
+<button class="dev-btn" id="devToggleBtn"><i class="fas fa-plus-circle"></i> A&ntilde;adir ubicaci&oacute;n</button>
 <button class="dev-btn" id="devClearBtn" style="background:#c0392b"><i class="fas fa-trash"></i> Borrar todo</button>
 </div>
 </header>
@@ -581,14 +630,14 @@ footer a{color:#fff;text-decoration:underline}
 <aside id="sidebar">
 <h2><i class="fas fa-search"></i> Buscar</h2>
 <div class="search-box">
-<input type="text" id="searchInput" placeholder="Nombre, dirección o rubro...">
+<input type="text" id="searchInput" placeholder="Nombre, direcci&oacute;n o rubro...">
 <button class="clear-btn" id="clearBtn"><i class="fas fa-times-circle"></i></button>
 </div>
-<h2><i class="fas fa-location-arrow"></i> Cerca de mí</h2>
+<h2><i class="fas fa-location-arrow"></i> Cerca de m&iacute;</h2>
 <div class="distance-box">
-<label for="distanceFilter">Distancia máxima</label>
+<label for="distanceFilter">Distancia m&aacute;xima</label>
 <select id="distanceFilter" disabled>
-<option value="0">Sin límite</option>
+<option value="0">Sin l&iacute;mite</option>
 <option value="0.5">500 m</option>
 <option value="1">1 km</option>
 <option value="2">2 km</option>
@@ -596,7 +645,7 @@ footer a{color:#fff;text-decoration:underline}
 <option value="10">10 km</option>
 <option value="25">25 km</option>
 </select>
-<div class="geo-status" id="geoStatus">Solicitando ubicación...</div>
+<div class="geo-status" id="geoStatus">Solicitando ubicaci&oacute;n...</div>
 </div>
 <h2><i class="fas fa-triangle-exclamation"></i> Incidentes en ruta</h2>
 <div class="incidents-panel">
@@ -608,20 +657,20 @@ footer a{color:#fff;text-decoration:underline}
 <div class="inc-empty">Sin incidentes reportados</div>
 </div>
 </div>
-<h2><i class="fas fa-filter"></i> Filtrar por categoría</h2>
+<h2><i class="fas fa-filter"></i> Filtrar por categor&iacute;a</h2>
 <div class="filters" id="filters">
-<label><input type="checkbox" value="motos" checked> <i class="fas fa-motorcycle" style="color:#e67e22"></i> Insumos de motos</label>
-<label><input type="checkbox" value="talleres" checked> <i class="fas fa-tools" style="color:#8e44ad"></i> Talleres</label>
-<label><input type="checkbox" value="comida" checked> <i class="fas fa-utensils" style="color:#e74c3c"></i> Comida rápida</label>
-<label><input type="checkbox" value="gomerias" checked> <i class="fas fa-wrench" style="color:#3498db"></i> Gomerías</label>
-<label><input type="checkbox" value="combustible" checked> <i class="fas fa-gas-pump" style="color:#27ae60"></i> Estaciones de servicio</label>
+<label><input type="checkbox" value="motos"> <i class="fas fa-motorcycle" style="color:#e67e22"></i> Insumos de motos</label>
+<label><input type="checkbox" value="talleres"> <i class="fas fa-tools" style="color:#8e44ad"></i> Talleres</label>
+<label><input type="checkbox" value="comida"> <i class="fas fa-utensils" style="color:#e74c3c"></i> Comida r&aacute;pida</label>
+<label><input type="checkbox" value="gomerias"> <i class="fas fa-wrench" style="color:#3498db"></i> Gomer&iacute;as</label>
+<label><input type="checkbox" value="combustible"> <i class="fas fa-gas-pump" style="color:#27ae60"></i> Estaciones de servicio</label>
 </div>
 <h2><i class="fas fa-list"></i> Lugares (<span id="count">0</span>)</h2>
 <div id="places-list"></div>
-<div id="no-results">No se encontraron lugares.</div>
+<div id="no-results">No se encontraron lugares. Seleccion&aacute; una categor&iacute;a.</div>
 <div id="list-footer">
 <div id="list-footer-text"></div>
-<button id="loadMoreBtn">Mostrar más</button>
+<button id="loadMoreBtn">Mostrar m&aacute;s</button>
 </div>
 </aside>
 <div id="map-wrapper">
@@ -635,39 +684,39 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="waze-loading" id="wazeLoading"><i class="fas fa-spinner"></i> Centrando...</div>
 <div id="wazeLegend">
 <div class="legend-header" id="wazeLegendHeader">
-<h3><i class="fas fa-book"></i> Guía de símbolos de Waze</h3>
+<h3><i class="fas fa-book"></i> Gu&iacute;a de s&iacute;mbolos de Waze</h3>
 <button class="legend-close" id="wazeLegendClose"><i class="fas fa-times"></i></button>
 </div>
 <div class="legend-body">
 <div class="legend-section">
-<div class="legend-section-title">Símbolos de Waze (en el mapa base)</div>
-<div class="legend-row"><div class="legend-icon waze-police"><i class="fas fa-shield-halved"></i></div><div class="legend-info"><strong>Control policial</strong><span>Policía en la vía, retén o control de tránsito reportado por usuarios.</span></div></div>
-<div class="legend-row"><div class="legend-icon waze-accident"><i class="fas fa-car-crash"></i></div><div class="legend-info"><strong>Accidente</strong><span>Choque, siniestro o vehículo detenido en la calzada.</span></div></div>
-<div class="legend-row"><div class="legend-icon waze-hazard"><i class="fas fa-exclamation-triangle"></i></div><div class="legend-info"><strong>Peligro en la vía</strong><span>Objeto en el camino, bache, animal, vehículo averiado.</span></div></div>
-<div class="legend-row"><div class="legend-icon waze-jam"><i class="fas fa-traffic-light"></i></div><div class="legend-info"><strong>Embotellamiento</strong><span>Tráfico lento o detenido. Rojo más oscuro = más grave.</span></div></div>
-<div class="legend-row"><div class="legend-icon waze-closure"><i class="fas fa-road-circle-xmark"></i></div><div class="legend-info"><strong>Calle cerrada</strong><span>Corte total o parcial de la vía.</span></div></div>
-<div class="legend-row"><div class="legend-icon waze-construction"><i class="fas fa-person-digging"></i></div><div class="legend-info"><strong>Obra / construcción</strong><span>Trabajos viales, remodelaciones, arreglos.</span></div></div>
-<div class="legend-row"><div class="legend-icon waze-camera"><i class="fas fa-camera"></i></div><div class="legend-info"><strong>Cámara de velocidad</strong><span>Fotomulta fija o móvil reportada.</span></div></div>
+<div class="legend-section-title">S&iacute;mbolos de Waze (en el mapa base)</div>
+<div class="legend-row"><div class="legend-icon waze-police"><i class="fas fa-shield-halved"></i></div><div class="legend-info"><strong>Control policial</strong><span>Polic&iacute;a en la v&iacute;a, ret&eacute;n o control de tr&aacute;nsito reportado por usuarios.</span></div></div>
+<div class="legend-row"><div class="legend-icon waze-accident"><i class="fas fa-car-crash"></i></div><div class="legend-info"><strong>Accidente</strong><span>Choque, siniestro o veh&iacute;culo detenido en la calzada.</span></div></div>
+<div class="legend-row"><div class="legend-icon waze-hazard"><i class="fas fa-exclamation-triangle"></i></div><div class="legend-info"><strong>Peligro en la v&iacute;a</strong><span>Objeto en el camino, bache, animal, veh&iacute;culo averiado.</span></div></div>
+<div class="legend-row"><div class="legend-icon waze-jam"><i class="fas fa-traffic-light"></i></div><div class="legend-info"><strong>Embotellamiento</strong><span>Tr&aacute;fico lento o detenido. Rojo m&aacute;s oscuro = m&aacute;s grave.</span></div></div>
+<div class="legend-row"><div class="legend-icon waze-closure"><i class="fas fa-road-circle-xmark"></i></div><div class="legend-info"><strong>Calle cerrada</strong><span>Corte total o parcial de la v&iacute;a.</span></div></div>
+<div class="legend-row"><div class="legend-icon waze-construction"><i class="fas fa-person-digging"></i></div><div class="legend-info"><strong>Obra / construcci&oacute;n</strong><span>Trabajos viales, remodelaciones, arreglos.</span></div></div>
+<div class="legend-row"><div class="legend-icon waze-camera"><i class="fas fa-camera"></i></div><div class="legend-info"><strong>C&aacute;mara de velocidad</strong><span>Fotomulta fija o m&oacute;vil reportada.</span></div></div>
 <div class="legend-row"><div class="legend-icon waze-moto"><i class="fas fa-motorcycle"></i></div><div class="legend-info"><strong>Usuario Waze</strong><span>Otro motociclista o conductor usando Waze en vivo.</span></div></div>
 </div>
 <div class="legend-section">
-<div class="legend-section-title">Símbolos propios de este mapa</div>
-<div class="legend-row"><div class="legend-icon" style="color:#e74c3c;border-color:#e74c3c"><i class="fas fa-car-crash"></i></div><div class="legend-info"><strong>Accidente (reportado aquí)</strong><span>Incidente reportado por la comunidad de Mutual Motos.</span></div></div>
-<div class="legend-row"><div class="legend-icon" style="color:#f39c12;border-color:#f39c12"><i class="fas fa-road-circle-xmark"></i></div><div class="legend-info"><strong>Corte / Obra (reportado aquí)</strong><span>Cortes u obras reportados por la comunidad.</span></div></div>
-<div class="legend-row"><div class="legend-icon" style="color:#2980b9;border-color:#2980b9"><i class="fas fa-shield-halved"></i></div><div class="legend-info"><strong>Control policial (reportado aquí)</strong><span>Controles policiales reportados por la comunidad.</span></div></div>
+<div class="legend-section-title">S&iacute;mbolos propios de este mapa</div>
+<div class="legend-row"><div class="legend-icon" style="color:#e74c3c;border-color:#e74c3c"><i class="fas fa-car-crash"></i></div><div class="legend-info"><strong>Accidente (reportado aqu&iacute;)</strong><span>Incidente reportado por la comunidad de Mutual Motos.</span></div></div>
+<div class="legend-row"><div class="legend-icon" style="color:#f39c12;border-color:#f39c12"><i class="fas fa-road-circle-xmark"></i></div><div class="legend-info"><strong>Corte / Obra (reportado aqu&iacute;)</strong><span>Cortes u obras reportados por la comunidad.</span></div></div>
+<div class="legend-row"><div class="legend-icon" style="color:#2980b9;border-color:#2980b9"><i class="fas fa-shield-halved"></i></div><div class="legend-info"><strong>Control policial (reportado aqu&iacute;)</strong><span>Controles policiales reportados por la comunidad.</span></div></div>
 <div class="legend-row"><div class="legend-icon" style="color:#e67e22;border-color:#e67e22"><i class="fas fa-motorcycle"></i></div><div class="legend-info"><strong>Insumos de motos</strong><span>Repuestos, cascos, indumentaria.</span></div></div>
-<div class="legend-row"><div class="legend-icon" style="color:#8e44ad;border-color:#8e44ad"><i class="fas fa-tools"></i></div><div class="legend-info"><strong>Talleres</strong><span>Mecánicos, service, electricidad.</span></div></div>
-<div class="legend-row"><div class="legend-icon" style="color:#e74c3c;border-color:#e74c3c"><i class="fas fa-utensils"></i></div><div class="legend-info"><strong>Comida rápida</strong><span>Rotiserías, hamburgueserías, pizzerías.</span></div></div>
-<div class="legend-row"><div class="legend-icon" style="color:#3498db;border-color:#3498db"><i class="fas fa-wrench"></i></div><div class="legend-info"><strong>Gomerías</strong><span>Parches, neumáticos, alineación.</span></div></div>
+<div class="legend-row"><div class="legend-icon" style="color:#8e44ad;border-color:#8e44ad"><i class="fas fa-tools"></i></div><div class="legend-info"><strong>Talleres</strong><span>Mec&aacute;nicos, service, electricidad.</span></div></div>
+<div class="legend-row"><div class="legend-icon" style="color:#e74c3c;border-color:#e74c3c"><i class="fas fa-utensils"></i></div><div class="legend-info"><strong>Comida r&aacute;pida</strong><span>Rotiser&iacute;as, hamburgueser&iacute;as, pizzer&iacute;as.</span></div></div>
+<div class="legend-row"><div class="legend-icon" style="color:#3498db;border-color:#3498db"><i class="fas fa-wrench"></i></div><div class="legend-info"><strong>Gomer&iacute;as</strong><span>Parches, neum&aacute;ticos, alineaci&oacute;n.</span></div></div>
 <div class="legend-row"><div class="legend-icon" style="color:#27ae60;border-color:#27ae60"><i class="fas fa-gas-pump"></i></div><div class="legend-info"><strong>Estaciones de servicio</strong><span>Combustible, GNC, aire.</span></div></div>
 </div>
-<div class="legend-note"><i class="fas fa-info-circle"></i> Los símbolos dentro del mapa de Waze <strong>no son clicables</strong>. Esta guía te ayuda a interpretarlos.</div>
+<div class="legend-note"><i class="fas fa-info-circle"></i> Los s&iacute;mbolos dentro del mapa de Waze <strong>no son clicables</strong>. Esta gu&iacute;a te ayuda a interpretarlos.</div>
 </div>
 </div>
 </div>
 </div>
 
-<div class="dev-hint"><i class="fas fa-mouse-pointer"></i> Hacé clic en el mapa para añadir una ubicación</div>
+<div class="dev-hint"><i class="fas fa-mouse-pointer"></i> Hac&eacute; clic en el mapa para a&ntilde;adir una ubicaci&oacute;n</div>
 
 <div id="loading">
 <div id="loadingText">Cargando datos...</div>
@@ -714,7 +763,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 </div>
 <div class="chat-input-row">
 <button class="action-icon-btn location-btn" id="shareLocationBtn"><i class="fas fa-map-marker-alt"></i></button>
-<input type="text" id="chatInput" placeholder="Escribí un mensaje..." maxlength="500" disabled>
+<input type="text" id="chatInput" placeholder="Escrib&iacute; un mensaje..." maxlength="500" disabled>
 <button class="send-btn" id="chatSendBtn" disabled><i class="fas fa-paper-plane"></i></button>
 </div>
 </div>
@@ -752,8 +801,8 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="login-box">
 <div class="login-logo"><i class="fas fa-motorcycle"></i></div>
 <h3>Mutual Motos</h3>
-<p>Iniciá sesión para usar el chat, enviar solicitudes de Motoamigos y compartir ubicaciones con la comunidad.</p>
-<button class="primary-btn moto" id="loginMutualBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesión con Mutual Motos</button>
+<p>Inici&aacute; sesi&oacute;n para usar el chat, enviar solicitudes de Motoamigos y compartir ubicaciones con la comunidad.</p>
+<button class="primary-btn moto" id="loginMutualBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n con Mutual Motos</button>
 <div class="login-separator">o</div>
 <button class="primary-btn guest" id="loginGuestBtn"><i class="fas fa-user-secret"></i> Entrar como invitado</button>
 <div style="margin-top:1rem">
@@ -766,8 +815,8 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 
 <div class="nick-modal" id="nickModal">
 <div class="nick-box">
-<h3><i class="fas fa-comments"></i> Elegí tu apodo</h3>
-<p>Se va a mostrar en el chat junto a tus mensajes. Podés cambiarlo después con doble clic en el botón "Chat" del header.</p>
+<h3><i class="fas fa-comments"></i> Eleg&iacute; tu apodo</h3>
+<p>Se va a mostrar en el chat junto a tus mensajes. Pod&eacute;s cambiarlo despu&eacute;s con doble clic en el bot&oacute;n "Chat" del header.</p>
 <input type="text" id="nickInput" maxlength="20" placeholder="Ej: Motociclista42">
 <button class="primary-btn" id="nickSaveBtn">Entrar al chat</button>
 </div>
@@ -776,7 +825,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="modal-overlay request-modal" id="chatRequestModal">
 <div class="modal-box">
 <h3><i class="fas fa-motorcycle"></i> Solicitud de Motoamigo</h3>
-<p>Alguien quiere ser tu Motoamigo. Si aceptás, van a poder chatear en privado.</p>
+<p>Alguien quiere ser tu Motoamigo. Si acept&aacute;s, van a poder chatear en privado.</p>
 <div class="request-requester">
 <div class="rr-avatar" id="chatReqAvatar">?</div>
 <div class="rr-info">
@@ -797,15 +846,15 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 
 <div class="modal-overlay" id="locationModal">
 <div class="modal-box">
-<h3><i class="fas fa-map-marker-alt"></i> Compartir ubicación</h3>
-<p>¿Dónde querés compartir tu ubicación actual? Se va a reflejar en el mapa de todos.</p>
+<h3><i class="fas fa-map-marker-alt"></i> Compartir ubicaci&oacute;n</h3>
+<p>&iquest;D&oacute;nde quer&eacute;s compartir tu ubicaci&oacute;n actual? Se va a reflejar en el mapa de todos.</p>
 <button class="modal-option-btn public-opt" id="shareLocationPublic">
 <strong><i class="fas fa-users"></i> Sala general</strong>
 <span>Todos los usuarios conectados la van a ver</span>
 </button>
 <button class="modal-option-btn private-opt" id="shareLocationPrivate">
 <strong><i class="fas fa-motorcycle"></i> Chat privado (Motoamigo)</strong>
-<span>Solo el Motoamigo con el que estás hablando</span>
+<span>Solo el Motoamigo con el que est&aacute;s hablando</span>
 </button>
 <button class="modal-cancel-btn" id="cancelLocationModal">Cancelar</button>
 </div>
@@ -814,7 +863,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="modal-overlay place-share-modal" id="placeShareModal">
 <div class="modal-box">
 <h3><i class="fas fa-store"></i> Compartir local</h3>
-<p>¿Dónde querés compartir este local? Se va a marcar en el mapa.</p>
+<p>&iquest;D&oacute;nde quer&eacute;s compartir este local? Se va a marcar en el mapa.</p>
 <div class="place-share-preview" id="placeSharePreview"></div>
 <button class="modal-option-btn public-opt" id="sharePlacePublic">
 <strong><i class="fas fa-users"></i> Sala general</strong>
@@ -822,7 +871,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 </button>
 <button class="modal-option-btn private-opt" id="sharePlacePrivate">
 <strong><i class="fas fa-motorcycle"></i> Chat privado (Motoamigo)</strong>
-<span>Solo el Motoamigo con el que estás hablando</span>
+<span>Solo el Motoamigo con el que est&aacute;s hablando</span>
 </button>
 <button class="modal-cancel-btn" id="cancelPlaceShareModal">Cancelar</button>
 </div>
@@ -831,10 +880,10 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="modal-overlay emergency-modal" id="emergencyModal">
 <div class="modal-box">
 <h3><i class="fas fa-exclamation-triangle"></i> Reportar emergencia</h3>
-<p>Se va a enviar a la <strong>sala general</strong> y se va a marcar en el mapa de todos. Seleccioná la gravedad:</p>
+<p>Se va a enviar a la <strong>sala general</strong> y se va a marcar en el mapa de todos. Seleccion&aacute; la gravedad:</p>
 <button class="modal-option-btn emergency-opt leve" data-severity="leve">
 <strong><i class="fas fa-exclamation-circle"></i> Leve</strong>
-<span>Ej: llanta dañada, sin combustible, batería descargada</span>
+<span>Ej: llanta da&ntilde;ada, sin combustible, bater&iacute;a descargada</span>
 </button>
 <button class="modal-option-btn emergency-opt grave" data-severity="grave">
 <strong><i class="fas fa-exclamation-triangle"></i> Grave</strong>
@@ -842,7 +891,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 </button>
 <button class="modal-option-btn emergency-opt vida" data-severity="vida">
 <strong><i class="fas fa-ambulance"></i> Riesgo de vida</strong>
-<span>Ej: accidente grave, heridos, situación crítica</span>
+<span>Ej: accidente grave, heridos, situaci&oacute;n cr&iacute;tica</span>
 </button>
 <button class="modal-cancel-btn" id="cancelEmergencyModal">Cancelar</button>
 </div>
@@ -851,23 +900,23 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="modal-overlay incident-modal" id="incidentModal">
 <div class="modal-box">
 <h3><i class="fas fa-car-burst"></i> Reportar incidente en ruta</h3>
-<p>Se va a marcar en el mapa de todos los usuarios. Detectamos automáticamente si es <strong>CABA</strong> o <strong>Provincia</strong>.</p>
+<p>Se va a marcar en el mapa de todos los usuarios. Detectamos autom&aacute;ticamente si es <strong>CABA</strong> o <strong>Provincia</strong>.</p>
 <button class="modal-option-btn incident-opt accident" data-type="accident">
 <strong><i class="fas fa-car-crash"></i> Accidente</strong>
-<span>Choque, caída, siniestro o vehículo detenido en la vía</span>
+<span>Choque, ca&iacute;da, siniestro o veh&iacute;culo detenido en la v&iacute;a</span>
 </button>
 <button class="modal-option-btn incident-opt closure" data-type="closure">
 <strong><i class="fas fa-road-circle-xmark"></i> Ruta cerrada</strong>
-<span>Calle cortada, obra, manifestación, inundación</span>
+<span>Calle cortada, obra, manifestaci&oacute;n, inundaci&oacute;n</span>
 </button>
 <button class="modal-option-btn incident-opt police" data-type="police">
 <strong><i class="fas fa-shield-halved"></i> Control policial</strong>
-<span>Retén, control de tránsito, alcoholímetro, cámara móvil</span>
+<span>Ret&eacute;n, control de tr&aacute;nsito, alcohol&iacute;metro, c&aacute;mara m&oacute;vil</span>
 </button>
-<label>Ubicación del incidente</label>
+<label>Ubicaci&oacute;n del incidente</label>
 <div style="display:flex;gap:.4rem;margin-bottom:.6rem">
 <button type="button" class="modal-option-btn" id="incidentUseMyLocation" style="flex:1;padding:.6rem;text-align:center;margin:0">
-<strong><i class="fas fa-crosshairs"></i> Usar mi ubicación</strong>
+<strong><i class="fas fa-crosshairs"></i> Usar mi ubicaci&oacute;n</strong>
 </button>
 <button type="button" class="modal-option-btn" id="incidentPickOnMap" style="flex:1;padding:.6rem;text-align:center;margin:0">
 <strong><i class="fas fa-map-pin"></i> Elegir en el mapa</strong>
@@ -879,9 +928,9 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <option value="moderado" selected>Moderado</option>
 <option value="grave">Grave</option>
 </select>
-<label for="incidentDescription">Descripción (opcional)</label>
+<label for="incidentDescription">Descripci&oacute;n (opcional)</label>
 <textarea id="incidentDescription" maxlength="200" placeholder="Ej: choque en Av. Rivadavia al 5000..."></textarea>
-<div class="inc-loc-status" id="incidentLocStatus">Usando tu ubicación actual...</div>
+<div class="inc-loc-status" id="incidentLocStatus">Usando tu ubicaci&oacute;n actual...</div>
 <button class="primary-btn incident" id="incidentSubmitBtn"><i class="fas fa-paper-plane"></i> Reportar incidente</button>
 <button class="modal-cancel-btn" id="cancelIncidentModal">Cancelar</button>
 </div>
@@ -890,12 +939,12 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="modal-overlay qr-scan-modal" id="qrScanModal">
 <div class="modal-box">
 <h3><i class="fas fa-qrcode"></i> Resolver alerta por QR</h3>
-<p>Escaneá el QR del compañero con la cámara, o pegá el link/ID manualmente.</p>
-<div id="qrReader" style="width:100%;max-width:340px;margin:0 auto .7rem;display:none;border-radius:12px;overflow:hidden;background:#000"></div>
-<button class="primary-btn" id="qrCameraBtn" style="background:#16a085"><i class="fas fa-camera"></i> Escanear con cámara</button>
-<button class="primary-btn" id="qrStopCameraBtn" style="background:#c0392b;display:none"><i class="fas fa-stop"></i> Detener cámara</button>
+<p>Escane&aacute; el QR del compa&ntilde;ero con la c&aacute;mara, o peg&aacute; el link/ID manualmente.</p>
+<div id="qrReader"></div>
+<button class="primary-btn" id="qrCameraBtn" style="background:#16a085"><i class="fas fa-camera"></i> Escanear con c&aacute;mara</button>
+<button class="primary-btn" id="qrStopCameraBtn" style="background:#c0392b;display:none"><i class="fas fa-stop"></i> Detener c&aacute;mara</button>
 <div class="alert-divider" style="margin:.7rem 0">o</div>
-<input type="text" id="qrScanInput" placeholder="Pegá el link o el ID de la alerta...">
+<input type="text" id="qrScanInput" placeholder="Peg&aacute; el link o el ID de la alerta...">
 <button class="primary-btn" id="qrScanSubmitBtn" style="background:#8e44ad"><i class="fas fa-check"></i> Resolver alerta</button>
 <button class="modal-cancel-btn" id="qrScanCancelBtn">Cancelar</button>
 </div>
@@ -904,24 +953,24 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="modal-overlay report-modal" id="reportModal">
 <div class="modal-box">
 <h3><i class="fas fa-flag"></i> Denunciar</h3>
-<p>Vas a enviar la siguiente selección como prueba. Elegí el motivo.</p>
+<p>Vas a enviar la siguiente selecci&oacute;n como prueba. Eleg&iacute; el motivo.</p>
 <label for="reportReason">Motivo</label>
 <select id="reportReason">
-<option value="">— Elegí un motivo —</option>
+<option value="">&mdash; Eleg&iacute; un motivo &mdash;</option>
 <option value="falsa_alerta">Falsa alerta / emergencia falsa</option>
 <option value="siniestro_fuga">Siniestro y se dio a la fuga</option>
 <option value="autor_robo">Autor de un robo</option>
 <option value="spam">Spam o publicidad no deseada</option>
 <option value="acoso">Acoso, insultos o amenazas</option>
 <option value="contenido">Contenido inapropiado u ofensivo</option>
-<option value="suplantacion">Suplantación de identidad</option>
-<option value="ubicacion_falsa">Ubicación falsa o maliciosa</option>
+<option value="suplantacion">Suplantaci&oacute;n de identidad</option>
+<option value="ubicacion_falsa">Ubicaci&oacute;n falsa o maliciosa</option>
 <option value="incidente_falso">Incidente falso</option>
 <option value="usuario">Denunciar a un usuario</option>
 <option value="otro">Otro</option>
 </select>
 <label for="reportDetails">Detalles adicionales (opcional)</label>
-<textarea id="reportDetails" maxlength="300" placeholder="Contá brevemente qué pasó..."></textarea>
+<textarea id="reportDetails" maxlength="300" placeholder="Cont&aacute; brevemente qu&eacute; pas&oacute;..."></textarea>
 <label>Pruebas seleccionadas</label>
 <div class="report-preview" id="reportPreview"></div>
 <button class="primary-btn" id="reportSubmitBtn" disabled style="margin-top:.9rem"><i class="fas fa-paper-plane"></i> Enviar denuncia</button>
@@ -930,7 +979,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 </div>
 
 <footer>
-Datos: <a id="csvLink" href="data.csv" target="_blank">data.csv</a> · <span style="color:#9b59b6">?dev=1 para modo desarrollador</span>
+Datos: <a id="csvLink" href="data.csv" target="_blank">data.csv</a> &middot; <span style="color:#9b59b6">?dev=1 para modo desarrollador</span>
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1007,7 +1056,30 @@ function buildWazeNavUrl(lat,lng){let url='https://www.waze.com/ul?ll='+Number(l
 function buildGoogleMapsUrl(place){return buildWazeNavUrl(place.lat,place.lng)}
 function buildWazeUrl(center,zoom){const z=Math.max(3,Math.min(16,Math.round(zoom)));return 'https://embed.waze.com/iframe?zoom='+z+'&lat='+center.lat.toFixed(6)+'&lon='+center.lng.toFixed(6)+'&ct=livemap'}
 function buildWazeNavIframeUrl(toLat,toLng,fromLat,fromLng){const tLat=Number(toLat).toFixed(6),tLng=Number(toLng).toFixed(6);let url='https://embed.waze.com/iframe?zoom=16&lat='+tLat+'&lon='+tLng;if(fromLat!=null&&fromLng!=null){url+='&from='+Number(fromLat).toFixed(6)+','+Number(fromLng).toFixed(6);url+='&to='+tLat+','+tLng;url+='&navigate=yes'}url+='&ct=livemap';return url}
-function loadWazeRouteInIframe(toLat,toLng,fromLat,fromLng){wazeNavigationMode=true;lockMapInteractions();const url=buildWazeNavIframeUrl(toLat,toLng,fromLat,fromLng);const active=getActiveFrame();const myGen=++wazeLoadCounter;wazeLoading.classList.add('visible');wazeReloadPending=true;active.onload=function(){if(myGen!==wazeLoadCounter){unlockMapInteractions();return}wazeLoading.classList.remove('visible');active.onload=null;wazeBaseCenter={lat:Number(toLat),lng:Number(toLng)};wazeBaseZoom=Math.min(16,Math.round(map.getZoom()));active.style.transform='';wazeReloadPending=false;map.setView([Number(toLat),Number(toLng)],16,{animate:false});setTimeout(function(){wazeNavigationMode=false;unlockMapInteractions()},150)};active.src=url}
+function loadWazeRouteInIframe(toLat,toLng,fromLat,fromLng,keepNav){
+  wazeNavigationMode=true;
+  lockMapInteractions();
+  const url=buildWazeNavIframeUrl(toLat,toLng,fromLat,fromLng);
+  const active=getActiveFrame();
+  const myGen=++wazeLoadCounter;
+  wazeLoading.classList.add('visible');
+  wazeReloadPending=true;
+  active.onload=function(){
+    if(myGen!==wazeLoadCounter){unlockMapInteractions();return}
+    wazeLoading.classList.remove('visible');
+    active.onload=null;
+    wazeBaseCenter={lat:Number(toLat),lng:Number(toLng)};
+    wazeBaseZoom=Math.min(16,Math.round(map.getZoom()));
+    active.style.transform='';
+    wazeReloadPending=false;
+    map.setView([Number(toLat),Number(toLng)],16,{animate:false});
+    setTimeout(function(){
+      unlockMapInteractions();
+      if(!keepNav){wazeNavigationMode=false}
+    },150);
+  };
+  active.src=url;
+}
 function getActiveFrame(){return wazeActiveFrame==='A'?wazeIframeA:wazeIframeB}
 function getInactiveFrame(){return wazeActiveFrame==='A'?wazeIframeB:wazeIframeA}
 function applyActiveTransform(){if(!wazeBaseCenter||wazeBaseZoom===null)return null;const active=getActiveFrame();const center=map.getCenter();const zoom=map.getZoom();const basePx=map.project(wazeBaseCenter,zoom);const currPx=map.project(center,zoom);const dx=currPx.x-basePx.x;const dy=currPx.y-basePx.y;active.style.transform='translate('+(-dx)+'px,'+(-dy)+'px)';return{dx,dy}}
@@ -1104,6 +1176,7 @@ let userLog=[];
 let userLogFilter='all';
 let activeUserAlert=null;
 let alertQrInstance=null;
+let focusedPlaceId=null;
 const ALERT_KEY='servicios_ba_active_alert_v1';
 function loadActiveAlert(){try{const raw=localStorage.getItem(ALERT_KEY);if(!raw)return;const data=JSON.parse(raw);if(data&&data.id&&(Date.now()-(data.ts||0))<ALERT_TTL)activeUserAlert=data;else localStorage.removeItem(ALERT_KEY)}catch(e){activeUserAlert=null}}
 function saveActiveAlert(){try{if(activeUserAlert)localStorage.setItem(ALERT_KEY,JSON.stringify(activeUserAlert));else localStorage.removeItem(ALERT_KEY)}catch(e){}}
@@ -1126,10 +1199,125 @@ function getSelectedCategories(){return Array.from(filters).filter(cb=>cb.checke
 function buildIcon(place){const color=colors[place.category];const iconClass=icons[place.category];return L.divIcon({className:'custom-marker',html:'<div style="background:#fff;border:3px solid '+color+';border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.35);font-size:18px"><i class="fas '+iconClass+'" style="color:'+color+'"></i></div>',iconSize:[36,36],iconAnchor:[18,36],popupAnchor:[0,-36]})}
 function buildPopupHtml(place){const hasUser=!!userLocation;const buttonText=hasUser?'<i class="fas fa-route"></i> Ir con Waze':'<i class="fas fa-map-marker-alt"></i> Ver en Waze';const ratingHtml=place.rating!==null&&place.rating!==undefined?'<span class="popup-rating">★ '+place.rating.toFixed(1)+'</span>':'';const devBadge=place.isCustom?'<span class="popup-dev-badge">AÑADIDO POR DEV</span>':'';return '<div class="popup-content"><span class="popup-title"><strong>'+escapeHtml(place.name)+'</strong></span><div class="popup-line"><i class="fas fa-map-pin" style="color:'+colors[place.category]+'"></i> '+escapeHtml(place.address||'Sin dirección')+'</div><div class="popup-rubro">'+escapeHtml(place.rubro||categoryLabels[place.category])+'</div>'+ratingHtml+'<br><button class="popup-gmaps" data-waze-lat="'+place.lat+'" data-waze-lng="'+place.lng+'" data-waze-nav="1">'+buttonText+'</button><button class="popup-share" data-place-id="'+escapeHtml(place.id)+'"><i class="fas fa-share-alt"></i> Compartir</button>'+devBadge+'</div>'}
 function computeDistances(places){if(!userLocation)return;if(distanceCacheKey===userLocation.lat.toFixed(4)+','+userLocation.lng.toFixed(4))return;distanceCacheKey=userLocation.lat.toFixed(4)+','+userLocation.lng.toFixed(4);for(let i=0;i<places.length;i++){const p=places[i];p.dist=haversine(userLocation.lat,userLocation.lng,p.lat,p.lng)}}
-function renderPlaces(){const selectedCategories=getSelectedCategories();const term=currentSearch.trim();const maxDist=userLocation?parseFloat(distanceFilter.value):0;const normTerm=term?normalize(term):'';computeDistances(allPlaces);const filtered=[];for(let i=0;i<allPlaces.length;i++){const p=allPlaces[i];if(!selectedCategories.includes(p.category))continue;if(normTerm&&p.searchBlob.indexOf(normTerm)===-1)continue;if(userLocation&&maxDist>0&&p.dist>maxDist)continue;filtered.push(p)}if(userLocation){filtered.sort((a,b)=>{if(a.isCustom&&!b.isCustom)return-1;if(!a.isCustom&&b.isCustom)return 1;return a.dist-b.dist})}else{filtered.sort((a,b)=>{if(a.isCustom&&!b.isCustom)return-1;if(!a.isCustom&&b.isCustom)return 1;return 0})}currentFiltered=filtered;countSpan.textContent=filtered.length;noResults.style.display=filtered.length===0?'block':'none';ALL_CATEGORIES.forEach(cat=>clusterGroups[cat].clearLayers());markerMap.clear();const markersByCat={};ALL_CATEGORIES.forEach(cat=>markersByCat[cat]=[]);for(let i=0;i<filtered.length;i++){const place=filtered[i];const marker=L.marker([place.lat,place.lng],{icon:buildIcon(place)});marker.bindPopup(buildPopupHtml(place),{maxWidth:280});markerMap.set(place.id,marker);markersByCat[place.category].push(marker)}ALL_CATEGORIES.forEach(cat=>{if(markersByCat[cat].length>0)clusterGroups[cat].addLayers(markersByCat[cat])});placesList.innerHTML='';renderedCount=0;renderCardsChunk()}
-function renderCardsChunk(){const start=renderedCount;const end=Math.min(renderedCount+(start===0?INITIAL_CARDS:CARDS_PER_PAGE),currentFiltered.length);const term=currentSearch.trim();const fragment=document.createDocumentFragment();for(let i=start;i<end;i++){const place=currentFiltered[i];const hasAddr=place.address&&place.address.trim()!=='';const addrText=hasAddr?escapeHtml(place.address):'Sin dirección';const ratingHtml=place.rating!==null&&place.rating!==undefined?'<span class="rating"><i class="fas fa-star"></i> '+place.rating.toFixed(1)+'</span>':'';let distHtml='';if(userLocation&&place.dist!==null)distHtml='<span class="distance"><i class="fas fa-route"></i> '+formatDistance(place.dist)+'</span>';const card=document.createElement('div');card.className='place-card'+(place.isCustom?' custom':'');card.dataset.id=place.id;card.innerHTML=(place.isCustom?'<span class="custom-badge">DEV</span>':'')+'<div class="category" style="color:'+colors[place.category]+'">'+escapeHtml(place.rubro||categoryLabels[place.category])+'</div><h3>'+highlight(place.name,term)+'</h3><p class="address"><i class="fas fa-map-pin"></i> '+addrText+'</p>'+ratingHtml+distHtml+'<div class="card-actions"><button class="share-place-btn" data-place-id="'+escapeHtml(place.id)+'"><i class="fas fa-share-alt"></i></button>'+(place.isCustom?'<button class="delete-btn"><i class="fas fa-trash"></i></button>':'')+'</div>';card.addEventListener('click',(function(p){return function(ev){if(mapInteractionLocked)return;if(ev.target.closest('.delete-btn'))return;if(ev.target.closest('.share-place-btn'))return;const marker=markerMap.get(p.id);if(marker){map.setView([p.lat,p.lng],15);const cg=clusterGroups[p.category];if(cg)cg.zoomToShowLayer(marker,()=>marker.openPopup())}}})(place));if(place.isCustom){const delBtn=card.querySelector('.delete-btn');if(delBtn)delBtn.addEventListener('click',(function(id){return function(ev){ev.stopPropagation();deleteCustomPlace(id)}})(place.id))}const shareBtn=card.querySelector('.share-place-btn');if(shareBtn)shareBtn.addEventListener('click',(function(id){return function(ev){ev.stopPropagation();openPlaceShareModal(id)}})(place.id));fragment.appendChild(card)}placesList.appendChild(fragment);renderedCount=end;if(renderedCount<currentFiltered.length){listFooter.classList.add('visible');listFooterText.textContent='Mostrando '+renderedCount+' de '+currentFiltered.length;loadMoreBtn.style.display='inline-block'}else if(currentFiltered.length>INITIAL_CARDS){listFooter.classList.add('visible');listFooterText.textContent='Mostrando todos los '+currentFiltered.length;loadMoreBtn.style.display='none'}else{listFooter.classList.remove('visible')}}
+function renderPlaces(){
+  const selectedCategories=getSelectedCategories();
+  const term=currentSearch.trim();
+  const maxDist=userLocation?parseFloat(distanceFilter.value):0;
+  const normTerm=term?normalize(term):'';
+  computeDistances(allPlaces);
+  const filtered=[];
+  for(let i=0;i<allPlaces.length;i++){
+    const p=allPlaces[i];
+    if(focusedPlaceId){
+      if(p.id!==focusedPlaceId)continue;
+    }else{
+      if(!selectedCategories.includes(p.category))continue;
+      if(normTerm&&p.searchBlob.indexOf(normTerm)===-1)continue;
+      if(userLocation&&maxDist>0&&p.dist>maxDist)continue;
+    }
+    filtered.push(p);
+  }
+  if(!focusedPlaceId){
+    if(userLocation){filtered.sort((a,b)=>{if(a.isCustom&&!b.isCustom)return-1;if(!a.isCustom&&b.isCustom)return 1;return a.dist-b.dist})}
+    else{filtered.sort((a,b)=>{if(a.isCustom&&!b.isCustom)return-1;if(!a.isCustom&&b.isCustom)return 1;return 0})}
+  }
+  currentFiltered=filtered;
+  countSpan.textContent=filtered.length;
+  noResults.style.display=(filtered.length===0&&!focusedPlaceId)?'block':'none';
+  ALL_CATEGORIES.forEach(cat=>clusterGroups[cat].clearLayers());
+  markerMap.clear();
+  const markersByCat={};
+  ALL_CATEGORIES.forEach(cat=>markersByCat[cat]=[]);
+  for(let i=0;i<filtered.length;i++){
+    const place=filtered[i];
+    const marker=L.marker([place.lat,place.lng],{icon:buildIcon(place),zIndexOffset:place.id===focusedPlaceId?2000:0});
+    marker.bindPopup(buildPopupHtml(place),{maxWidth:280});
+    marker.on('click',(function(p){return function(ev){
+      if(mapInteractionLocked)return;
+      if(focusedPlaceId===p.id)return;
+      setTimeout(function(){focusPlaceOnMap(p)},20);
+    }})(place));
+    markerMap.set(place.id,marker);
+    markersByCat[place.category].push(marker)
+  }
+  ALL_CATEGORIES.forEach(cat=>{if(markersByCat[cat].length>0)clusterGroups[cat].addLayers(markersByCat[cat])});
+  placesList.innerHTML='';
+  renderedCount=0;
+  renderCardsChunk()
+}
+function renderCardsChunk(){const start=renderedCount;const end=Math.min(renderedCount+(start===0?INITIAL_CARDS:CARDS_PER_PAGE),currentFiltered.length);const term=currentSearch.trim();const fragment=document.createDocumentFragment();for(let i=start;i<end;i++){const place=currentFiltered[i];const hasAddr=place.address&&place.address.trim()!=='';const addrText=hasAddr?escapeHtml(place.address):'Sin dirección';const ratingHtml=place.rating!==null&&place.rating!==undefined?'<span class="rating"><i class="fas fa-star"></i> '+place.rating.toFixed(1)+'</span>':'';let distHtml='';if(userLocation&&place.dist!==null)distHtml='<span class="distance"><i class="fas fa-route"></i> '+formatDistance(place.dist)+'</span>';const card=document.createElement('div');card.className='place-card'+(place.isCustom?' custom':'');card.dataset.id=place.id;card.innerHTML=(place.isCustom?'<span class="custom-badge">DEV</span>':'')+'<div class="category" style="color:'+colors[place.category]+'">'+escapeHtml(place.rubro||categoryLabels[place.category])+'</div><h3>'+highlight(place.name,term)+'</h3><p class="address"><i class="fas fa-map-pin"></i> '+addrText+'</p>'+ratingHtml+distHtml+'<div class="card-actions"><button class="share-place-btn" data-place-id="'+escapeHtml(place.id)+'"><i class="fas fa-share-alt"></i></button>'+(place.isCustom?'<button class="delete-btn"><i class="fas fa-trash"></i></button>':'')+'</div>';card.addEventListener('click',(function(p){return function(ev){if(mapInteractionLocked)return;if(ev.target.closest('.delete-btn'))return;if(ev.target.closest('.share-place-btn'))return;focusPlaceOnMap(p)}})(place));if(place.isCustom){const delBtn=card.querySelector('.delete-btn');if(delBtn)delBtn.addEventListener('click',(function(id){return function(ev){ev.stopPropagation();deleteCustomPlace(id)}})(place.id))}const shareBtn=card.querySelector('.share-place-btn');if(shareBtn)shareBtn.addEventListener('click',(function(id){return function(ev){ev.stopPropagation();openPlaceShareModal(id)}})(place.id));fragment.appendChild(card)}placesList.appendChild(fragment);renderedCount=end;if(renderedCount<currentFiltered.length){listFooter.classList.add('visible');listFooterText.textContent='Mostrando '+renderedCount+' de '+currentFiltered.length;loadMoreBtn.style.display='inline-block'}else if(currentFiltered.length>INITIAL_CARDS){listFooter.classList.add('visible');listFooterText.textContent='Mostrando todos los '+currentFiltered.length;loadMoreBtn.style.display='none'}else{listFooter.classList.remove('visible')}}
 loadMoreBtn.addEventListener('click',renderCardsChunk);
 function deleteCustomPlace(id){if(!confirm('¿Eliminar esta ubicación personalizada?'))return;customPlaces=customPlaces.filter(cp=>cp.id!==id);saveCustomPlaces();allPlaces=allPlaces.filter(p=>p.id!==id);renderPlaces()}
+function focusPlaceOnMap(place){
+  if(!place)return;
+  if(focusedPlaceId===place.id)return;
+  focusedPlaceId=place.id;
+  incidentsLayer.clearLayers();
+  chatLocationsLayer.clearLayers();
+  renderPlaces();
+  map.setView([place.lat,place.lng],16,{animate:true});
+  const marker=markerMap.get(place.id);
+  if(marker){
+    setTimeout(function(){try{marker.openPopup()}catch(_){}},400);
+  }
+  showFocusBanner(place);
+  const goNav=function(fromLat,fromLng){
+    try{loadWazeRouteInIframe(place.lat,place.lng,fromLat,fromLng,true)}catch(_){}
+  };
+  if(userLocation){
+    goNav(userLocation.lat,userLocation.lng);
+  }else if(navigator.geolocation){
+    geoStatus.textContent='Obteniendo ubicación para GPS...';
+    navigator.geolocation.getCurrentPosition(function(pos){
+      userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude};
+      distanceCacheKey='';
+      createUserMarker();
+      distanceFilter.disabled=false;
+      geoStatus.textContent='Ubicación detectada';
+      goNav(userLocation.lat,userLocation.lng);
+    },function(){
+      goNav(null,null);
+    },{enableHighAccuracy:false,timeout:6000,maximumAge:60000});
+  }else{
+    goNav(null,null);
+  }
+  if(window.matchMedia('(max-width:900px) and (orientation:portrait)').matches){
+    const wrap=document.getElementById('map-wrapper');
+    if(wrap)setTimeout(function(){try{wrap.scrollIntoView({behavior:'smooth',block:'start'})}catch(_){}},120);
+  }
+}
+function showFocusBanner(place){
+  let banner=document.getElementById('focusBanner');
+  if(!banner){
+    banner=document.createElement('div');
+    banner.id='focusBanner';
+    banner.className='focus-banner';
+    const wrap=document.getElementById('map-wrapper');
+    (wrap||document.body).appendChild(banner);
+  }
+  banner.innerHTML='<i class="fas fa-route"></i><span class="fb-text">'+escapeHtml(place.name||'Ubicación')+'</span><button id="focusClearBtn"><i class="fas fa-times"></i> Ver todos</button>';
+  banner.classList.add('visible');
+  const btn=document.getElementById('focusClearBtn');
+  if(btn)btn.addEventListener('click',function(e){e.stopPropagation();clearFocusMode()});
+}
+function clearFocusMode(){
+  if(!focusedPlaceId)return;
+  focusedPlaceId=null;
+  const banner=document.getElementById('focusBanner');
+  if(banner)banner.classList.remove('visible');
+  wazeNavigationMode=false;
+  try{unlockMapInteractions()}catch(_){}
+  renderAllIncidents();
+  renderAllChatLocations();
+  renderPlaces();
+  setTimeout(function(){try{recenterImmediate()}catch(_){}},120);
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&focusedPlaceId){
+    e.preventDefault();
+    clearFocusMode();
+  }
+});
 function enableDevMode(){DEV_MODE=true;devToggleBtn.classList.add('visible');devClearBtn.classList.add('visible');devBadge.classList.add('visible');document.body.classList.add('dev-on')}
 function toggleAddingMode(){addingMode=!addingMode;document.body.classList.toggle('adding-mode',addingMode);devToggleBtn.classList.toggle('active',addingMode);devToggleBtn.innerHTML=addingMode?'<i class="fas fa-times-circle"></i> Cancelar':'<i class="fas fa-plus-circle"></i> Añadir ubicación'}
 devToggleBtn.addEventListener('click',toggleAddingMode);
@@ -1151,7 +1339,7 @@ searchInput.addEventListener('input',function(e){if(mapInteractionLocked){e.targ
 searchInput.addEventListener('keydown',function(e){if(mapInteractionLocked){e.preventDefault()}});
 searchInput.addEventListener('focus',function(e){if(mapInteractionLocked)e.target.blur()});
 clearBtn.addEventListener('click',function(){if(mapInteractionLocked)return;searchInput.value='';currentSearch='';clearBtn.style.display='none';renderPlaces();searchInput.focus()});
-filters.forEach(cb=>cb.addEventListener('change',function(e){if(mapInteractionLocked){e.preventDefault();return}renderPlaces()}));
+filters.forEach(cb=>cb.addEventListener('change',function(e){if(mapInteractionLocked){e.preventDefault();return}if(focusedPlaceId){clearFocusMode()}renderPlaces()}));
 distanceFilter.addEventListener('change',function(e){if(mapInteractionLocked){e.preventDefault();return}renderPlaces()});
 btnRetry.addEventListener('click',loadFromSources);
 if(DEV_MODE)enableDevMode();
@@ -1160,13 +1348,13 @@ function incidentColor(kind){if(kind==='closure')return '#f39c12';if(kind==='pol
 function buildIncidentIcon(incident){const isNews=!!incident.isNews||(incident.from&&incident.from.id==='news_feed');const sevClass=incident.severity==='grave'?' sev-grave':'';const pulse=incident.severity!=='leve'?' incident-marker-pulse':'';const newsClass=isNews?' news':'';return L.divIcon({className:'incident-marker '+incident.kind+newsClass,html:'<div class="incident-marker-inner'+pulse+sevClass+'"><i class="fas '+incidentIconClass(incident.kind)+'"></i><span class="inc-badge"><i class="fas '+(isNews?'fa-newspaper':'fa-triangle-exclamation')+'"></i></span></div>',iconSize:[34,34],iconAnchor:[17,17]})}
 function buildIncidentPopupHtml(incident){const typeLabel=INCIDENT_TYPE_LABELS[incident.kind]||'Incidente';const sevLabel=INCIDENT_SEVERITY_LABELS[incident.severity]||'Moderado';const nick=incident.from&&incident.from.nick?incident.from.nick:'Anónimo';const t=new Date(incident.ts);const timeStr=t.toLocaleString('es-AR',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'});const col=incidentColor(incident.kind);return '<div class="incident-popup"><div class="ip-title" style="color:'+col+'"><i class="fas '+incidentIconClass(incident.kind)+'"></i> '+typeLabel+'</div><div><span class="ip-zone">'+escapeHtml(incident.zone||'Provincia')+'</span><span class="ip-sev '+incident.severity+'">'+sevLabel+'</span></div>'+(incident.text?'<div class="ip-line" style="margin-top:.35rem">'+escapeHtml(incident.text)+'</div>':'')+'<div class="ip-line"><i class="fas fa-clock"></i> '+formatTimeAgo(incident.ts)+' · '+timeStr+'</div><div class="ip-actions"><button class="view" data-waze-lat="'+incident.lat+'" data-waze-lng="'+incident.lng+'" data-waze-nav="0"><i class="fas fa-map"></i> Ver en Waze</button><button class="route" data-waze-lat="'+incident.lat+'" data-waze-lng="'+incident.lng+'" data-waze-nav="1"><i class="fas fa-route"></i> Ir con Waze</button></div><span class="ip-author"><i class="fas fa-user"></i> Reportado por '+escapeHtml(nick)+'</span></div>'}
 function renderIncidentMarker(incident){const marker=L.marker([incident.lat,incident.lng],{icon:buildIncidentIcon(incident),zIndexOffset:incident.severity==='grave'?1500:(incident.severity==='moderado'?1200:900)});marker.bindPopup(buildIncidentPopupHtml(incident),{maxWidth:300});marker.addTo(incidentsLayer)}
-function renderAllIncidents(){incidentsLayer.clearLayers();const active=getActiveIncidents();active.forEach(inc=>renderIncidentMarker(inc));updateIncidentsPanel(active);updateIncidentBadges(active)}
+function renderAllIncidents(){if(focusedPlaceId)return;incidentsLayer.clearLayers();const active=getActiveIncidents();active.forEach(inc=>renderIncidentMarker(inc));updateIncidentsPanel(active);updateIncidentBadges(active)}
 function getActiveIncidents(){const now=Date.now();return incidents.filter(it=>(now-(it.ts||0))<INCIDENT_TTL).sort((a,b)=>b.ts-a.ts)}
-function updateIncidentsPanel(active){if(!active)active=getActiveIncidents();incPanelCount.textContent=active.length;if(active.length===0){incPanelList.innerHTML='<div class="inc-empty">Sin incidentes reportados</div>';return}incPanelList.innerHTML=active.slice(0,20).map(function(inc){const sevLabel=INCIDENT_SEVERITY_LABELS[inc.severity]||'Moderado';const nick=inc.from&&inc.from.nick?inc.from.nick:'Anónimo';const isNews=!!inc.isNews||(inc.from&&inc.from.id==='news_feed');return '<div class="inc-item '+inc.kind+'" data-inc-id="'+escapeHtml(inc.id)+'"><div class="inc-ico"><i class="fas '+incidentIconClass(inc.kind)+'"></i></div><div class="inc-info"><div class="inc-name">'+escapeHtml(INCIDENT_TYPE_LABELS[inc.kind])+' · '+sevLabel+(isNews?' 📰':'')+'</div><div class="inc-meta">'+escapeHtml(inc.zone)+' · '+formatTimeAgo(inc.ts)+' · '+escapeHtml(nick)+'</div></div></div>'}).join('');incPanelList.querySelectorAll('.inc-item').forEach(function(el){el.addEventListener('click',function(){if(mapInteractionLocked)return;const id=el.dataset.incId;const inc=incidents.find(it=>it.id===id);if(inc){map.setView([inc.lat,inc.lng],15,{animate:true});setTimeout(function(){incidentsLayer.eachLayer(function(m){if(m.getLatLng().lat===inc.lat&&m.getLatLng().lng===inc.lng)m.openPopup()})},300)}})})}
+function updateIncidentsPanel(active){if(!active)active=getActiveIncidents();incPanelCount.textContent=active.length;if(active.length===0){incPanelList.innerHTML='<div class="inc-empty">Sin incidentes reportados</div>';return}incPanelList.innerHTML=active.slice(0,20).map(function(inc){const sevLabel=INCIDENT_SEVERITY_LABELS[inc.severity]||'Moderado';const nick=inc.from&&inc.from.nick?inc.from.nick:'Anónimo';const isNews=!!inc.isNews||(inc.from&&inc.from.id==='news_feed');return '<div class="inc-item '+inc.kind+'" data-inc-id="'+escapeHtml(inc.id)+'"><div class="inc-ico"><i class="fas '+incidentIconClass(inc.kind)+'"></i></div><div class="inc-info"><div class="inc-name">'+escapeHtml(INCIDENT_TYPE_LABELS[inc.kind])+' · '+sevLabel+(isNews?' 📰':'')+'</div><div class="inc-meta">'+escapeHtml(inc.zone)+' · '+formatTimeAgo(inc.ts)+' · '+escapeHtml(nick)+'</div></div></div>'}).join('');incPanelList.querySelectorAll('.inc-item').forEach(function(el){el.addEventListener('click',function(){if(mapInteractionLocked)return;const id=el.dataset.incId;const inc=incidents.find(it=>it.id===id);if(inc){if(focusedPlaceId)clearFocusMode();map.setView([inc.lat,inc.lng],15,{animate:true});setTimeout(function(){incidentsLayer.eachLayer(function(m){if(m.getLatLng().lat===inc.lat&&m.getLatLng().lng===inc.lng)m.openPopup()})},300)}})})}
 function updateIncidentBadges(active){if(!active)active=getActiveIncidents();const count=active.length;if(count>0){incidentBadge.textContent=count>99?'99+':String(count);incidentBadge.style.display='flex';incHeaderBadge.textContent=count>99?'99+':String(count);incHeaderBadge.classList.add('visible')}else{incidentBadge.style.display='none';incHeaderBadge.classList.remove('visible')}}
-function addIncident(incident){const existing=incidents.findIndex(it=>it.id===incident.id);if(existing>=0)return;incidents.push(incident);if(incidents.length>INCIDENTS_MAX)incidents=incidents.slice(-INCIDENTS_MAX);saveIncidents();renderIncidentMarker(incident);updateIncidentsPanel();updateIncidentBadges()}
+function addIncident(incident){const existing=incidents.findIndex(it=>it.id===incident.id);if(existing>=0)return;incidents.push(incident);if(incidents.length>INCIDENTS_MAX)incidents=incidents.slice(-INCIDENTS_MAX);saveIncidents();if(!focusedPlaceId)renderIncidentMarker(incident);updateIncidentsPanel();updateIncidentBadges()}
 function registerIncomingIncident(incident,options){if(!incident||!incident.id)return;const isNews=!!incident.isNews||(incident.from&&incident.from.id==='news_feed');const isOwn=incident.from&&incident.from.id===myUserId;if(!isNews&&seenIncidentIds.has(incident.id))return;seenIncidentIds.add(incident.id);if(incident.lat==null||incident.lng==null)return;if(!isInBounds(incident.lat,incident.lng))return;if(!incident.zone)incident.zone=getZone(incident.lat,incident.lng);addIncident(incident);if(!isOwn&&!(options&&options.silent)){showIncidentToast(incident)}}
-function showIncidentToast(incident){const isNews=!!incident.isNews||(incident.from&&incident.from.id==='news_feed');const typeLabel=INCIDENT_TYPE_LABELS[incident.kind]||'Incidente';const sevLabel=INCIDENT_SEVERITY_LABELS[incident.severity]||'Moderado';const nick=incident.from&&incident.from.nick?incident.from.nick:'Anónimo';const toast=document.createElement('div');toast.className='incident-toast '+incident.kind;toast.innerHTML='<div class="it-icon"><i class="fas '+incidentIconClass(incident.kind)+'"></i></div><div class="it-body"><div class="it-title">'+escapeHtml(typeLabel)+' reportado</div><div class="it-text">'+escapeHtml(incident.text||(INCIDENT_TYPE_LABELS[incident.kind]+' en '+incident.zone))+'</div><div class="it-meta"><span class="it-zone">'+escapeHtml(incident.zone)+'</span><span class="it-sev '+incident.severity+'">'+escapeHtml(sevLabel)+'</span><span class="it-zone">'+(isNews?'📰 ':'')+escapeHtml(nick)+'</span></div></div><button class="it-close"><i class="fas fa-times"></i></button>';toast.querySelector('.it-close').addEventListener('click',()=>toast.remove());toast.addEventListener('click',function(e){if(e.target.closest('.it-close'))return;if(!mapInteractionLocked){map.setView([incident.lat,incident.lng],15,{animate:true})}toast.remove()});incidentToastStack.appendChild(toast);setTimeout(function(){if(toast.parentNode){toast.style.opacity='0';setTimeout(()=>toast.remove(),300)}},incident.severity==='grave'?14000:8000)}
+function showIncidentToast(incident){const isNews=!!incident.isNews||(incident.from&&incident.from.id==='news_feed');const typeLabel=INCIDENT_TYPE_LABELS[incident.kind]||'Incidente';const sevLabel=INCIDENT_SEVERITY_LABELS[incident.severity]||'Moderado';const nick=incident.from&&incident.from.nick?incident.from.nick:'Anónimo';const toast=document.createElement('div');toast.className='incident-toast '+incident.kind;toast.innerHTML='<div class="it-icon"><i class="fas '+incidentIconClass(incident.kind)+'"></i></div><div class="it-body"><div class="it-title">'+escapeHtml(typeLabel)+' reportado</div><div class="it-text">'+escapeHtml(incident.text||(INCIDENT_TYPE_LABELS[incident.kind]+' en '+incident.zone))+'</div><div class="it-meta"><span class="it-zone">'+escapeHtml(incident.zone)+'</span><span class="it-sev '+incident.severity+'">'+escapeHtml(sevLabel)+'</span><span class="it-zone">'+(isNews?'📰 ':'')+escapeHtml(nick)+'</span></div></div><button class="it-close"><i class="fas fa-times"></i></button>';toast.querySelector('.it-close').addEventListener('click',()=>toast.remove());toast.addEventListener('click',function(e){if(e.target.closest('.it-close'))return;if(!mapInteractionLocked){if(focusedPlaceId)clearFocusMode();map.setView([incident.lat,incident.lng],15,{animate:true})}toast.remove()});incidentToastStack.appendChild(toast);setTimeout(function(){if(toast.parentNode){toast.style.opacity='0';setTimeout(()=>toast.remove(),300)}},incident.severity==='grave'?14000:8000)}
 function openIncidentModal(){if(!isLoggedIn()){showGate();return}pendingIncidentType=null;incidentPickedLatLng=null;incidentSeverity.value='moderado';incidentDescription.value='';document.querySelectorAll('.incident-opt').forEach(b=>{b.style.background='';b.style.borderWidth='2px'});if(userLocation){incidentPickedLatLng={lat:userLocation.lat,lng:userLocation.lng};incidentLocStatus.textContent='Ubicación: '+userLocation.lat.toFixed(4)+', '+userLocation.lng.toFixed(4)+' ('+getZone(userLocation.lat,userLocation.lng)+')'}else{incidentLocStatus.textContent='Elegí una ubicación (mi ubicación o en el mapa)'}incidentModal.classList.add('visible')}
 function closeIncidentModal(){incidentModal.classList.remove('visible');pendingIncidentType=null;cancelIncidentPickMode()}
 function cancelIncidentPickMode(){incidentPickMode=false;if(incidentPickMarker){map.removeLayer(incidentPickMarker);incidentPickMarker=null}if(incidentMapClickHandler){map.off('click',incidentMapClickHandler);incidentMapClickHandler=null}document.body.classList.remove('adding-mode')}
@@ -1185,9 +1373,135 @@ function handleAlertResolveMessage(msg){if(!msg||msg.kind!=='alert-resolve'||!ms
 let html5QrScanner=null;
 let qrCameraActive=false;
 function extractAlertId(raw){let id=String(raw||'').trim();if(!id)return '';try{const u=new URL(id);const rp=u.searchParams.get('resolve');if(rp)id=rp}catch(e){}return id}
-async function startQrCamera(){if(qrCameraActive)return;if(typeof Html5Qrcode==='undefined'){alert('El escáner de cámara no está disponible.');return}const reader=document.getElementById('qrReader');if(!reader)return;reader.style.display='block';try{if(!html5QrScanner)html5QrScanner=new Html5Qrcode('qrReader',{verbose:false});await html5QrScanner.start({facingMode:{ideal:'environment'}},{fps:10,qrbox:{width:220,height:220},aspectRatio:1.0},function(decodedText){handleQrDecoded(decodedText)},function(){});qrCameraActive=true;document.getElementById('qrCameraBtn').style.display='none';document.getElementById('qrStopCameraBtn').style.display='block'}catch(e){alert('No se pudo acceder a la cámara: '+((e&&e.message)?e.message:e)+'\n\nVerificá que el sitio esté en HTTPS y que hayas dado permiso.');stopQrCamera()}}
-function stopQrCamera(){qrCameraActive=false;if(html5QrScanner){try{html5QrScanner.stop().then(function(){try{html5QrScanner.clear()}catch(_){}html5QrScanner=null}).catch(function(){html5QrScanner=null})}catch(_){html5QrScanner=null}}const reader=document.getElementById('qrReader');if(reader)reader.style.display='none';const camBtn=document.getElementById('qrCameraBtn');const stopBtn=document.getElementById('qrStopCameraBtn');if(camBtn)camBtn.style.display='block';if(stopBtn)stopBtn.style.display='none'}
-function handleQrDecoded(raw){const id=extractAlertId(raw);if(!id){return}stopQrCamera();publishResolve(id).then(function(ok){if(ok){closeQrScanModal();alert('✓ Alerta resuelta.\n\nEl compañero con la alerta activa verá el cierre automáticamente.')}else alert('No se pudo conectar al servidor. Verificá tu conexión.')})}
+function tryStartScanner(scanner,config,onSuccess,onError){
+  let settled=false;
+  const finishOk=function(){if(settled)return;settled=true;onSuccess()};
+  const finishErr=function(err){if(settled)return;settled=true;onError(err)};
+  try{
+    const p=scanner.start(
+      config,
+      {fps:10,qrbox:{width:240,height:240},aspectRatio:1.0},
+      function(decodedText){handleQrDecoded(decodedText)},
+      function(){}
+    );
+    if(p&&typeof p.then==='function'){
+      p.then(finishOk).catch(finishErr);
+    }else{
+      setTimeout(finishOk,300);
+    }
+  }catch(err){
+    finishErr(err);
+  }
+}
+async function startQrCamera(){
+  if(qrCameraActive)return;
+  if(typeof Html5Qrcode==='undefined'){
+    alert('El escáner de cámara no está disponible.\n\nRecargá la página e intentá de nuevo.');
+    return;
+  }
+  const isSecure=(location.protocol==='https:')||
+                 (location.hostname==='localhost')||
+                 (location.hostname==='127.0.0.1');
+  if(!isSecure){
+    alert('La cámara requiere HTTPS.\n\nAbrí el sitio con https:// (o localhost) para usar el escáner.\n\nMientras tanto podés pegar el link o el ID manualmente abajo.');
+    return;
+  }
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    alert('Tu navegador no soporta acceso a la cámara.\n\nProbá con Chrome, Firefox o Safari actualizados.');
+    return;
+  }
+  const reader=document.getElementById('qrReader');
+  if(!reader)return;
+  reader.style.display='block';
+  reader.style.width='100%';
+  reader.style.maxWidth='340px';
+  reader.style.minHeight='260px';
+  reader.style.margin='0 auto .7rem';
+  reader.innerHTML='<div style="color:#fff;padding:2rem 1rem;text-align:center;font-size:.85rem"><i class="fas fa-spinner fa-spin" style="font-size:1.6rem;margin-bottom:.6rem;display:block"></i>Solicitando acceso a la cámara...</div>';
+  const attempts=[
+    {facingMode:{exact:'environment'}},
+    {facingMode:'environment'},
+    {facingMode:'user'}
+  ];
+  let lastErr=null;
+  for(let i=0;i<attempts.length;i++){
+    try{
+      if(html5QrScanner){
+        try{await html5QrScanner.stop()}catch(_){}
+        try{html5QrScanner.clear()}catch(_){}
+      }
+    }catch(_){}
+    try{html5QrScanner=new Html5Qrcode('qrReader',{verbose:false})}catch(_){
+      try{html5QrScanner=new Html5Qrcode('qrReader')}catch(_){html5QrScanner=null}
+    }
+    if(!html5QrScanner)break;
+    const scanner=html5QrScanner;
+    const result=await new Promise(function(resolve){
+      tryStartScanner(scanner,attempts[i],
+        function(){resolve({ok:true})},
+        function(err){resolve({ok:false,err})}
+      );
+    });
+    if(result.ok){
+      qrCameraActive=true;
+      const camBtn=document.getElementById('qrCameraBtn');
+      const stopBtn=document.getElementById('qrStopCameraBtn');
+      if(camBtn)camBtn.style.display='none';
+      if(stopBtn)stopBtn.style.display='block';
+      return;
+    }else{
+      lastErr=result.err;
+    }
+  }
+  const msg=(lastErr&&lastErr.message)?lastErr.message:String(lastErr||'desconocido');
+  let hint='';
+  if(/permission|denied|notallowed|not allowed/i.test(msg)){
+    hint='\n\n➤ Permiso denegado. Habilitalo en la configuración del navegador (candado en la barra de direcciones → Permisos → Cámara).';
+  }else if(/notfound|no camera|devices|overconstrained|facingmode/i.test(msg)){
+    hint='\n\n➤ No se encontró ninguna cámara compatible en el dispositivo.';
+  }else if(/secure|https|insecure/i.test(msg)){
+    hint='\n\n➤ Necesitás HTTPS para acceder a la cámara.';
+  }else if(/in use|busy/i.test(msg)){
+    hint='\n\n➤ La cámara está siendo usada por otra aplicación.';
+  }
+  alert('No se pudo acceder a la cámara.\n\nDetalle: '+msg+hint+'\n\nPodés pegar el link o el ID de la alerta manualmente abajo.');
+  stopQrCamera();
+}
+function stopQrCamera(){
+  qrCameraActive=false;
+  const scanner=html5QrScanner;
+  html5QrScanner=null;
+  if(scanner){
+    try{
+      const p=scanner.stop();
+      if(p&&typeof p.then==='function'){
+        p.then(function(){try{scanner.clear()}catch(_){}})
+         .catch(function(){try{scanner.clear()}catch(_){}});
+      }else{
+        try{scanner.clear()}catch(_){}
+      }
+    }catch(_){}
+  }
+  const reader=document.getElementById('qrReader');
+  if(reader){reader.style.display='none';reader.innerHTML=''}
+  const camBtn=document.getElementById('qrCameraBtn');
+  const stopBtn=document.getElementById('qrStopCameraBtn');
+  if(camBtn)camBtn.style.display='block';
+  if(stopBtn)stopBtn.style.display='none';
+}
+function handleQrDecoded(raw){
+  const id=extractAlertId(raw);
+  if(!id)return;
+  stopQrCamera();
+  publishResolve(id).then(function(ok){
+    if(ok){
+      closeQrScanModal();
+      alert('✓ Alerta resuelta.\n\nEl compañero con la alerta activa va a ver el cierre automáticamente.');
+    }else{
+      alert('No se pudo conectar al servidor.\n\nVerificá tu conexión e intentá de nuevo.');
+    }
+  });
+}
 function openQrScanModal(){qrScanInput.value='';const camBtn=document.getElementById('qrCameraBtn');const stopBtn=document.getElementById('qrStopCameraBtn');if(camBtn)camBtn.style.display='block';if(stopBtn)stopBtn.style.display='none';qrScanModal.classList.add('visible');setTimeout(()=>qrScanInput.focus(),100)}
 function closeQrScanModal(){stopQrCamera();qrScanModal.classList.remove('visible')}
 qrScanBtn.addEventListener('click',openQrScanModal);
@@ -1197,7 +1511,7 @@ qrScanModal.addEventListener('click',function(e){if(e.target===qrScanModal)close
 document.getElementById('qrCameraBtn').addEventListener('click',startQrCamera);
 document.getElementById('qrStopCameraBtn').addEventListener('click',stopQrCamera);
 qrScanSubmitBtn.addEventListener('click',function(){const id=extractAlertId(qrScanInput.value);if(!id){alert('Pegá el link o el ID de la alerta.');return}stopQrCamera();publishResolve(id).then(ok=>{if(ok){closeQrScanModal();alert('✓ Se envió la confirmación de resolución.\n\nEl compañero con la alerta activa va a ver el cierre automáticamente.')}else alert('No se pudo conectar al servidor. Verificá tu conexión.')})});
-function submitIncident(){if(!pendingIncidentType){alert('Elegí el tipo de incidente.');return}if(!incidentPickedLatLng){alert('Elegí una ubicación.');return}const lat=incidentPickedLatLng.lat,lng=incidentPickedLatLng.lng;const zone=getZone(lat,lng);const incident={id:'inc_'+myUserId+'_'+Date.now(),kind:pendingIncidentType,severity:incidentSeverity.value,text:(incidentDescription.value||'').slice(0,200).trim(),lat,lng,zone,from:{id:myUserId,nick:myNick||'Anónimo'},ts:Date.now()};if(incident.text===''){if(incident.kind==='closure')incident.text='Ruta cerrada en '+zone+'. Precaución al circular.';else if(incident.kind==='police')incident.text='Control policial en '+zone+'.';else incident.text='Accidente reportado en '+zone+'. Reducir velocidad.'}registerIncomingIncident(incident,{silent:true});if(mqttClient&&chatReady){try{mqttClient.publish(TOPIC_INCIDENTS,JSON.stringify(incident),{qos:0})}catch(e){}}const chatMsg={kind:'incident',type:'public',incidentKind:incident.kind,severity:incident.severity,zone:incident.zone,from:{id:myUserId,nick:myNick||'Anónimo'},text:(incident.kind==='closure'?'⚠️ ALERTA DE CORTE: ':incident.kind==='police'?'🚓 CONTROL POLICIAL: ':'🚨 ALERTA DE ACCIDENTE: ')+incident.text,lat,lng,ts:Date.now()};if(mqttClient&&chatReady){try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(chatMsg),{qos:0})}catch(e){}publicMessages.push(chatMsg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();saveHistory();registerChatLocation(locationFromMessage(chatMsg));renderMessages()}closeIncidentModal();activateUserAlert({id:incident.id,kind:incident.kind,severity:incident.severity,text:incident.text,lat,lng,zone,ts:incident.ts});if(!mapInteractionLocked){map.setView([lat,lng],14,{animate:true})}}
+function submitIncident(){if(!pendingIncidentType){alert('Elegí el tipo de incidente.');return}if(!incidentPickedLatLng){alert('Elegí una ubicación.');return}const lat=incidentPickedLatLng.lat,lng=incidentPickedLatLng.lng;const zone=getZone(lat,lng);const incident={id:'inc_'+myUserId+'_'+Date.now(),kind:pendingIncidentType,severity:incidentSeverity.value,text:(incidentDescription.value||'').slice(0,200).trim(),lat,lng,zone,from:{id:myUserId,nick:myNick||'Anónimo'},ts:Date.now()};if(incident.text===''){if(incident.kind==='closure')incident.text='Ruta cerrada en '+zone+'. Precaución al circular.';else if(incident.kind==='police')incident.text='Control policial en '+zone+'.';else incident.text='Accidente reportado en '+zone+'. Reducir velocidad.'}registerIncomingIncident(incident,{silent:true});if(mqttClient&&chatReady){try{mqttClient.publish(TOPIC_INCIDENTS,JSON.stringify(incident),{qos:0})}catch(e){}}const chatMsg={kind:'incident',type:'public',incidentKind:incident.kind,severity:incident.severity,zone:incident.zone,from:{id:myUserId,nick:myNick||'Anónimo'},text:(incident.kind==='closure'?'⚠️ ALERTA DE CORTE: ':incident.kind==='police'?'🚓 CONTROL POLICIAL: ':'🚨 ALERTA DE ACCIDENTE: ')+incident.text,lat,lng,ts:Date.now()};if(mqttClient&&chatReady){try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(chatMsg),{qos:0})}catch(e){}publicMessages.push(chatMsg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();saveHistory();schedulePublishPublicHistory();registerChatLocation(locationFromMessage(chatMsg));renderMessages()}closeIncidentModal();activateUserAlert({id:incident.id,kind:incident.kind,severity:incident.severity,text:incident.text,lat,lng,zone,ts:incident.ts});if(!mapInteractionLocked){map.setView([lat,lng],14,{animate:true})}}
 incidentBtn.addEventListener('click',openIncidentModal);
 incidentsHeaderBtn.addEventListener('click',function(){const active=getActiveIncidents();if(active.length===0){alert('No hay incidentes activos en CABA ni Provincia.');return}const lines=active.slice(0,10).map((inc,i)=>(i+1)+') '+INCIDENT_TYPE_LABELS[inc.kind]+' ('+INCIDENT_SEVERITY_LABELS[inc.severity]+') en '+inc.zone+' — '+formatTimeAgo(inc.ts)).join('\n');alert('Incidentes activos ('+active.length+'):\n\n'+lines+(active.length>10?'\n\n...y '+(active.length-10)+' más':''))});
 cancelIncidentModal.addEventListener('click',closeIncidentModal);
@@ -1224,6 +1538,10 @@ const TOPIC_TYPING=CHAT_PREFIX+'/typing';
 const TOPIC_TYPING_BASE=CHAT_PREFIX+'/typing/';
 const TOPIC_READ_BASE=CHAT_PREFIX+'/read/';
 const TOPIC_ALERT_RESOLVE=CHAT_PREFIX+'/alert-resolve';
+const TOPIC_PUBLIC_HISTORY=CHAT_PREFIX+'/public-history';
+const TOPIC_USERLOG_HISTORY=CHAT_PREFIX+'/userlog-history';
+const PUBLIC_HISTORY_MAX=200;
+const USERLOG_HISTORY_MAX=500;
 const CHAT_KEY_UID='chat_user_id_v1';
 const CHAT_KEY_NICK='chat_user_nick_v1';
 const AUTH_KEY='servicios_ba_auth_v1';
@@ -1278,6 +1596,9 @@ let inactivityCheckInterval=null;
 let typingUsers=new Map();
 let lastTypingSent=0;
 let typingCleanupInterval=null;
+let historyPubTimer1=null;
+let historyPubTimer2=null;
+let chatStartupTs=0;
 const chatToggleBtn=document.getElementById('chatToggleBtn');
 const chatHeaderBtn=document.getElementById('chatHeaderBtn');
 const chatHeaderBadge=document.getElementById('chatHeaderBadge');
@@ -1345,8 +1666,54 @@ function loadMyStatus(){myStatus='conectado';manualStatus=false;saveMyStatus()}
 function saveMyStatus(){try{localStorage.setItem(MY_STATUS_KEY,myStatus)}catch(e){}}
 function loadUserLog(){try{const raw=localStorage.getItem(USER_LOG_KEY);userLog=raw?JSON.parse(raw):[];if(!Array.isArray(userLog))userLog=[]}catch(e){userLog=[]}}
 function saveUserLog(){try{localStorage.setItem(USER_LOG_KEY,JSON.stringify(userLog.slice(-USER_LOG_MAX)))}catch(e){}}
-function registerUserEntry(userId,nick,status,action){if(!userId)return;const entry={id:userId,nick:nick||'Anónimo',status:status||'conectado',ts:Date.now(),action:action||'connect'};if(action==='connect'){const recent=userLog.find(e=>e.id===userId&&(Date.now()-e.ts)<300000&&e.action==='connect');if(recent)return}userLog.push(entry);if(userLog.length>USER_LOG_MAX)userLog=userLog.slice(-USER_LOG_MAX);saveUserLog();if(mqttClient&&chatReady){try{mqttClient.publish(TOPIC_USER_LOG,JSON.stringify(entry),{qos:0})}catch(e){}}}
-function handleUserLog(msg){if(!msg||!msg.id)return;if(msg.id===myUserId)return;const exists=userLog.find(e=>e.id===msg.id&&Math.abs(e.ts-msg.ts)<10000&&e.action===msg.action);if(exists)return;userLog.push(msg);if(userLog.length>USER_LOG_MAX)userLog=userLog.slice(-USER_LOG_MAX);saveUserLog();const modal=document.getElementById('userLogModal');if(modal&&modal.classList.contains('visible'))renderUserLogContent()}
+function publishPublicHistory(){
+  if(!mqttClient||!chatReady)return;
+  const payload={kind:'public-history',messages:publicMessages.slice(-PUBLIC_HISTORY_MAX),ts:Date.now(),from:{id:myUserId,nick:myNick}};
+  try{mqttClient.publish(TOPIC_PUBLIC_HISTORY,JSON.stringify(payload),{qos:0,retain:true})}catch(e){}
+}
+function publishUserLogHistory(){
+  if(!mqttClient||!chatReady)return;
+  const payload={kind:'userlog-history',entries:userLog.slice(-USERLOG_HISTORY_MAX),ts:Date.now(),from:{id:myUserId,nick:myNick}};
+  try{mqttClient.publish(TOPIC_USERLOG_HISTORY,JSON.stringify(payload),{qos:0,retain:true})}catch(e){}
+}
+function schedulePublishPublicHistory(){
+  if(historyPubTimer1)return;
+  historyPubTimer1=setTimeout(function(){historyPubTimer1=null;publishPublicHistory()},1500);
+}
+function schedulePublishUserLogHistory(){
+  if(historyPubTimer2)return;
+  historyPubTimer2=setTimeout(function(){historyPubTimer2=null;publishUserLogHistory()},1500);
+}
+function handlePublicHistory(payload){
+  if(!payload||!Array.isArray(payload.messages))return;
+  if(payload.from&&payload.from.id===myUserId)return;
+  const key=m=>(m.from?m.from.id:'unk')+':'+(m.ts||0);
+  const mapMerge=new Map();
+  publicMessages.forEach(m=>mapMerge.set(key(m),m));
+  payload.messages.forEach(m=>{if(!mapMerge.has(key(m)))mapMerge.set(key(m),m)});
+  publicMessages=Array.from(mapMerge.values()).sort((a,b)=>(a.ts||0)-(b.ts||0));
+  if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages=publicMessages.slice(-PUBLIC_MSGS_MAX);
+  payload.messages.forEach(m=>{const loc=locationFromMessage(m);if(loc)registerChatLocation(loc)});
+  saveHistory();
+  if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom()}
+  else{updateBadges()}
+  renderUsers();
+}
+function handleUserLogHistory(payload){
+  if(!payload||!Array.isArray(payload.entries))return;
+  if(payload.from&&payload.from.id===myUserId)return;
+  const key=e=>e.id+':'+e.action+':'+e.ts;
+  const mapMerge=new Map();
+  userLog.forEach(e=>mapMerge.set(key(e),e));
+  payload.entries.forEach(e=>{if(!mapMerge.has(key(e)))mapMerge.set(key(e),e)});
+  userLog=Array.from(mapMerge.values()).sort((a,b)=>a.ts-b.ts);
+  if(userLog.length>USER_LOG_MAX)userLog=userLog.slice(-USER_LOG_MAX);
+  saveUserLog();
+  const modal=document.getElementById('userLogModal');
+  if(modal&&modal.classList.contains('visible'))renderUserLogContent();
+}
+function registerUserEntry(userId,nick,status,action){if(!userId)return;const entry={id:userId,nick:nick||'Anónimo',status:status||'conectado',ts:Date.now(),action:action||'connect'};if(action==='connect'){const recent=userLog.find(e=>e.id===userId&&(Date.now()-e.ts)<300000&&e.action==='connect');if(recent)return}userLog.push(entry);if(userLog.length>USER_LOG_MAX)userLog=userLog.slice(-USER_LOG_MAX);saveUserLog();if(mqttClient&&chatReady){try{mqttClient.publish(TOPIC_USER_LOG,JSON.stringify(entry),{qos:0})}catch(e){}schedulePublishUserLogHistory()}}
+function handleUserLog(msg){if(!msg||!msg.id)return;if(msg.id===myUserId)return;const exists=userLog.find(e=>e.id===msg.id&&Math.abs(e.ts-msg.ts)<10000&&e.action===msg.action);if(exists)return;userLog.push(msg);if(userLog.length>USER_LOG_MAX)userLog=userLog.slice(-USER_LOG_MAX);saveUserLog();schedulePublishUserLogHistory();const modal=document.getElementById('userLogModal');if(modal&&modal.classList.contains('visible'))renderUserLogContent()}
 function renderUserLogContent(){const container=document.getElementById('userLogContent');if(!container)return;const tabsEl=document.getElementById('userLogTabs');if(tabsEl){tabsEl.querySelectorAll('.user-log-tab').forEach(t=>t.classList.toggle('active',t.dataset.filter===userLogFilter))}let list=userLog.slice().reverse();if(userLogFilter==='connect')list=list.filter(e=>e.action==='connect');else if(userLogFilter==='disconnect')list=list.filter(e=>e.action==='disconnect');else if(userLogFilter==='status')list=list.filter(e=>e.action==='status');const uniqById=new Map();list.forEach(e=>{if(!uniqById.has(e.id+'_'+e.action))uniqById.set(e.id+'_'+e.action,e)});list=Array.from(uniqById.values()).slice(0,300);if(list.length===0){container.innerHTML='<div style="padding:1rem;text-align:center;color:#999;font-style:italic">Sin registros para este filtro</div>';return}container.innerHTML=list.map(e=>{const actionLabels={connect:'🟢 Conectado',disconnect:'⚫ Desconectado',status:'🔵 Cambio de estado'};const actionText=actionLabels[e.action]||(STATUS_LABELS[e.status]||e.status);const init=(e.nick||'?').charAt(0).toUpperCase();return '<div class="user-log-entry"><div class="ule-left"><div class="ule-avatar">'+escapeHtml(init)+'</div><div class="ule-info"><strong>'+escapeHtml(e.nick||'Anónimo')+'</strong><span>'+escapeHtml(actionText)+'</span></div></div><span class="ule-time">'+new Date(e.ts).toLocaleString('es-AR',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'})+'</span></div>'}).join('')}
 function openUserLogModal(){let modal=document.getElementById('userLogModal');if(!modal){modal=document.createElement('div');modal.id='userLogModal';modal.className='modal-overlay';modal.innerHTML='<div class="modal-box" style="max-width:520px"><h3><i class="fas fa-users"></i> Usuarios</h3><p style="font-size:.82rem;color:#666;margin-bottom:.8rem">Registro en tiempo real de conexiones, desconexiones y cambios de estado.</p><div class="user-log-tabs" id="userLogTabs"><button class="user-log-tab active" data-filter="all">Todos</button><button class="user-log-tab" data-filter="connect">Conexiones</button><button class="user-log-tab" data-filter="disconnect">Desconexiones</button><button class="user-log-tab" data-filter="status">Estados</button></div><div id="userLogContent" style="max-height:420px;overflow-y:auto"></div><button class="modal-cancel-btn" id="userLogCloseBtn" style="margin-top:.7rem">Cerrar</button></div>';document.body.appendChild(modal);document.getElementById('userLogCloseBtn').addEventListener('click',()=>modal.classList.remove('visible'));modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('visible')});document.getElementById('userLogTabs').addEventListener('click',e=>{const t=e.target.closest('.user-log-tab');if(!t)return;userLogFilter=t.dataset.filter;renderUserLogContent()})}renderUserLogContent();modal.classList.add('visible')}
 let presenceSaveTimer=null;
@@ -1394,22 +1761,22 @@ loginCancelBtn.addEventListener('click',function(){hideLoginModal();showGate()})
 userLogHeaderBtn.addEventListener('click',openUserLogModal);
 function buildChatMarkerIcon(entry){if(entry.kind==='place'){const color=colors[entry.category]||'#16a085';const iconClass=icons[entry.category]||'fa-store';return L.divIcon({className:'chat-marker',html:'<div class="chat-marker-inner" style="--cm-c:'+color+'"><i class="fas '+iconClass+'"></i><span class="chat-marker-badge"><i class="fas fa-comments"></i></span></div>',iconSize:[30,30],iconAnchor:[15,15]})}if(entry.kind==='emergency'){const sevColor=entry.severity==='vida'?'#c0392b':entry.severity==='grave'?'#e67e22':'#f39c12';return L.divIcon({className:'chat-marker',html:'<div class="chat-marker-inner chat-marker-emergency" style="--cm-c:'+sevColor+'"><i class="fas fa-exclamation-triangle"></i><span class="chat-marker-badge"><i class="fas fa-comments"></i></span></div>',iconSize:[32,32],iconAnchor:[16,16]})}return L.divIcon({className:'chat-marker',html:'<div class="chat-marker-inner chat-marker-location" style="--cm-c:#3498db"><i class="fas fa-user"></i><span class="chat-marker-badge"><i class="fas fa-comments"></i></span></div>',iconSize:[30,30],iconAnchor:[15,15]})}
 function buildChatMarkerPopup(entry){const nick=entry.from&&entry.from.nick?entry.from.nick:'Anónimo';const t=new Date(entry.ts);const timeStr=t.toLocaleString('es-AR',{hour:'2-digit',minute:'2-digit'});if(entry.kind==='place'){const gmapsUrl=buildWazeViewUrl(entry.lat,entry.lng);const routeUrl=buildWazeNavUrl(entry.lat,entry.lng);const catColor=colors[entry.category]||'#16a085';const catIcon=icons[entry.category]||'fa-store';return '<div class="chat-marker-popup"><span class="cmp-title"><i class="fas '+catIcon+'" style="color:'+catColor+'"></i> '+escapeHtml(entry.name||'Local')+'</span><div class="cmp-line" style="font-style:italic;color:#777">'+escapeHtml(entry.rubro||'')+'</div><div class="cmp-line"><i class="fas fa-map-pin" style="color:'+catColor+'"></i> '+escapeHtml(entry.address||'')+'</div><div class="cmp-actions"><a class="view" href="'+gmapsUrl+'" target="_blank"><i class="fas fa-map"></i> Ver en Waze</a><a class="route" href="'+routeUrl+'" target="_blank"><i class="fas fa-route"></i> Ir con Waze</a></div><span class="cmp-author"><i class="fas fa-comments"></i> Compartido por '+escapeHtml(nick)+' · '+timeStr+'</span></div>'}if(entry.kind==='emergency'){const gmapsUrl=buildWazeViewUrl(entry.lat,entry.lng);return '<div class="chat-marker-popup"><div class="cmp-line" style="font-weight:600">'+escapeHtml(entry.text||'')+'</div><div class="cmp-actions"><a class="view" href="'+gmapsUrl+'" target="_blank"><i class="fas fa-map-marker-alt"></i> Ver en Waze</a></div><span class="cmp-author"><i class="fas fa-user"></i> Reportado por '+escapeHtml(nick)+' · '+timeStr+'</span></div>'}const gmapsUrl=buildWazeViewUrl(entry.lat,entry.lng);return '<div class="chat-marker-popup"><span class="cmp-title"><i class="fas fa-user" style="color:#3498db"></i> Ubicación compartida</span><div class="cmp-line">'+entry.lat.toFixed(5)+', '+entry.lng.toFixed(5)+'</div><div class="cmp-actions"><a class="view" href="'+gmapsUrl+'" target="_blank"><i class="fas fa-map"></i> Ver en Waze</a></div><span class="cmp-author"><i class="fas fa-comments"></i> Compartido por '+escapeHtml(nick)+' · '+timeStr+'</span></div>'}
-function renderChatLocationOnMap(entry){if(!entry||typeof entry.lat!=='number'||typeof entry.lng!=='number')return;if(chatMarkerMap.has(entry.id))return;const marker=L.marker([entry.lat,entry.lng],{icon:buildChatMarkerIcon(entry),zIndexOffset:entry.kind==='emergency'?800:400});marker.bindPopup(buildChatMarkerPopup(entry),{maxWidth:300});marker.addTo(chatLocationsLayer);chatMarkerMap.set(entry.id,marker)}
-function renderAllChatLocations(){chatLocationsLayer.clearLayers();chatMarkerMap.clear();chatLocations.forEach(entry=>renderChatLocationOnMap(entry))}
+function renderChatLocationOnMap(entry){if(!entry||typeof entry.lat!=='number'||typeof entry.lng!=='number')return;if(focusedPlaceId)return;if(chatMarkerMap.has(entry.id))return;const marker=L.marker([entry.lat,entry.lng],{icon:buildChatMarkerIcon(entry),zIndexOffset:entry.kind==='emergency'?800:400});marker.bindPopup(buildChatMarkerPopup(entry),{maxWidth:300});marker.addTo(chatLocationsLayer);chatMarkerMap.set(entry.id,marker)}
+function renderAllChatLocations(){chatLocationsLayer.clearLayers();chatMarkerMap.clear();if(focusedPlaceId)return;chatLocations.forEach(entry=>renderChatLocationOnMap(entry))}
 function registerChatLocation(entry){if(!entry||typeof entry.lat!=='number'||typeof entry.lng!=='number')return;if(chatMarkerMap.has(entry.id))return;chatLocations.push(entry);if(chatLocations.length>LOCATIONS_MAX)chatLocations=chatLocations.slice(-LOCATIONS_MAX);saveChatLocations();renderChatLocationOnMap(entry)}
 function locationFromMessage(msg){if(!msg||typeof msg.lat!=='number'||typeof msg.lng!=='number')return null;if(msg.kind!=='place'&&msg.kind!=='location'&&msg.kind!=='emergency')return null;const baseId='loc_'+(msg.from?msg.from.id:'unk')+'_'+(msg.ts||Date.now());if(msg.kind==='place'){return{id:baseId,kind:'place',lat:msg.lat,lng:msg.lng,name:msg.placeName||'Local',rubro:msg.rubro||'',category:msg.category||'comida',address:msg.address||'',from:msg.from?{id:msg.from.id,nick:msg.from.nick}:null,ts:msg.ts||Date.now()}}if(msg.kind==='emergency'){return{id:baseId,kind:'emergency',lat:msg.lat,lng:msg.lng,severity:msg.severity||'leve',text:msg.text||'',from:msg.from?{id:msg.from.id,nick:msg.from.nick}:null,ts:msg.ts||Date.now()}}return{id:baseId,kind:'location',lat:msg.lat,lng:msg.lng,from:msg.from?{id:msg.from.id,nick:msg.from.nick}:null,ts:msg.ts||Date.now()}}
 function initUserId(){let id=localStorage.getItem(CHAT_KEY_UID);if(!id){id='u_'+Date.now().toString(36)+Math.random().toString(36).substr(2,8);localStorage.setItem(CHAT_KEY_UID,id)}myUserId=id;myNick=localStorage.getItem(CHAT_KEY_NICK)||''}
 function saveNick(nick){myNick=nick;localStorage.setItem(CHAT_KEY_NICK,nick)}
 function chatStatusSet(text,cls){chatStatus.textContent=text;chatStatus.className='chat-status'+(cls?' '+cls:'')}
 async function connectBroker(){return new Promise(function(resolve,reject){let idx=0;const attempt=function(){if(idx>=MQTT_BROKERS.length){reject(new Error('Sin brokers'));return}const broker=MQTT_BROKERS[idx];chatStatusSet('Conectando a '+broker.replace('wss://','').split(':')[0]+'...');const clientId='chat_'+myUserId+'_'+Math.random().toString(36).substr(2,6);let client;try{client=mqtt.connect(broker,{clientId,clean:true,connectTimeout:8000,reconnectPeriod:0,keepalive:30})}catch(e){idx++;attempt();return}let resolved=false;const onFail=function(){if(resolved)return;resolved=true;try{client.end(true)}catch(e){}idx++;attempt()};client.on('connect',function(){if(resolved)return;resolved=true;resolve(client)});client.on('error',onFail);client.on('close',function(){if(!resolved)onFail()});setTimeout(function(){if(!resolved)onFail()},9000)};attempt()})}
-async function startChat(){try{mqttClient=await connectBroker()}catch(err){chatStatusSet('No se pudo conectar al chat.','error');chatInput.disabled=true;chatSendBtn.disabled=true;return}mqttClient.subscribe(TOPIC_PUBLIC,{qos:0});mqttClient.subscribe(TOPIC_PRESENCE,{qos:0});mqttClient.subscribe(TOPIC_PRIVATE_BASE+myUserId,{qos:0});mqttClient.subscribe(TOPIC_REPORTS,{qos:0});mqttClient.subscribe(TOPIC_REQ_BASE+myUserId,{qos:0});mqttClient.subscribe(TOPIC_RESP_BASE+myUserId,{qos:0});mqttClient.subscribe(TOPIC_INCIDENTS,{qos:0});mqttClient.subscribe(TOPIC_USER_LOG,{qos:0});mqttClient.subscribe(TOPIC_TYPING,{qos:0});mqttClient.subscribe(TOPIC_TYPING_BASE+myUserId,{qos:0});mqttClient.subscribe(TOPIC_READ_BASE+myUserId,{qos:0});mqttClient.subscribe(TOPIC_ALERT_RESOLVE,{qos:0});mqttClient.on('message',handleIncomingMessage);chatReady=true;chatStatusSet('Conectado','connected');chatInput.disabled=false;chatSendBtn.disabled=false;onlineUsers.set(myUserId,{id:myUserId,nick:myNick,status:myStatus,lastSeen:Date.now()});registerUserEntry(myUserId,myNick,myStatus,'connect');announcePresence();presenceInterval=setInterval(announcePresence,PRESENCE_INTERVAL);cleanupInterval=setInterval(cleanupOfflineUsers,10000);incidentCleanupInterval=setInterval(cleanupIncidents,60000);typingCleanupInterval=setInterval(cleanupTypingUsers,2000);startInactivityDetector();renderUsers();renderMessages();updateBadges();updateChatTitle()}
+async function startChat(){try{mqttClient=await connectBroker()}catch(err){chatStatusSet('No se pudo conectar al chat.','error');chatInput.disabled=true;chatSendBtn.disabled=true;return}chatStartupTs=Date.now();mqttClient.subscribe(TOPIC_PUBLIC,{qos:0});mqttClient.subscribe(TOPIC_PRESENCE,{qos:0});mqttClient.subscribe(TOPIC_PRIVATE_BASE+myUserId,{qos:0});mqttClient.subscribe(TOPIC_REPORTS,{qos:0});mqttClient.subscribe(TOPIC_REQ_BASE+myUserId,{qos:0});mqttClient.subscribe(TOPIC_RESP_BASE+myUserId,{qos:0});mqttClient.subscribe(TOPIC_INCIDENTS,{qos:0});mqttClient.subscribe(TOPIC_USER_LOG,{qos:0});mqttClient.subscribe(TOPIC_TYPING,{qos:0});mqttClient.subscribe(TOPIC_TYPING_BASE+myUserId,{qos:0});mqttClient.subscribe(TOPIC_READ_BASE+myUserId,{qos:0});mqttClient.subscribe(TOPIC_ALERT_RESOLVE,{qos:0});mqttClient.subscribe(TOPIC_PUBLIC_HISTORY,{qos:0});mqttClient.subscribe(TOPIC_USERLOG_HISTORY,{qos:0});mqttClient.on('message',handleIncomingMessage);chatReady=true;chatStatusSet('Conectado','connected');chatInput.disabled=false;chatSendBtn.disabled=false;onlineUsers.set(myUserId,{id:myUserId,nick:myNick,status:myStatus,lastSeen:Date.now()});registerUserEntry(myUserId,myNick,myStatus,'connect');announcePresence();presenceInterval=setInterval(announcePresence,PRESENCE_INTERVAL);cleanupInterval=setInterval(cleanupOfflineUsers,10000);incidentCleanupInterval=setInterval(cleanupIncidents,60000);typingCleanupInterval=setInterval(cleanupTypingUsers,2000);startInactivityDetector();renderUsers();renderMessages();updateBadges();updateChatTitle();setTimeout(function(){publishPublicHistory();publishUserLogHistory()},3000)}
 function cleanupIncidents(){const now=Date.now();const before=incidents.length;incidents=incidents.filter(it=>(now-(it.ts||0))<INCIDENT_TTL);if(incidents.length!==before){saveIncidents();renderAllIncidents()}}
 function cleanupTypingUsers(){const now=Date.now();let changed=false;typingUsers.forEach((t,id)=>{if(now-t.ts>TYPING_SHOW_TIMEOUT){typingUsers.delete(id);changed=true}});if(changed){renderTypingIndicator();renderUsers()}}
 function announcePresence(){if(!mqttClient||!chatReady)return;const msg={type:'presence',from:{id:myUserId,nick:myNick},status:myStatus,ts:Date.now()};try{mqttClient.publish(TOPIC_PRESENCE,JSON.stringify(msg),{qos:0});onlineUsers.set(myUserId,{id:myUserId,nick:myNick,status:myStatus,lastSeen:Date.now()});savePresenceStore();renderUsers()}catch(e){}}
 function cleanupOfflineUsers(){const now=Date.now();let changed=false;onlineUsers.forEach((u,id)=>{if(id===myUserId)return;const elapsed=now-u.lastSeen;if(elapsed>PRESENCE_REMOVE_AFTER){onlineUsers.delete(id);changed=true}else if(elapsed>PRESENCE_DISCONNECT_AFTER&&u.status!=='desconectado'){u.status='desconectado';changed=true}else if(elapsed>PRESENCE_INACTIVE_AFTER&&u.status!=='desconectado'&&u.status!=='inactivo'&&u.status!=='no-molestar'){u.status='inactivo';changed=true}});if(changed){savePresenceStore();renderUsers()}}
-function handleIncomingMessage(topic,payload){let msg;try{msg=JSON.parse(payload.toString())}catch(e){return}if(!msg||!msg.from||!msg.from.id)return;if(msg.from.id===myUserId)return;if(topic===TOPIC_PUBLIC)handlePublicMessage(msg);else if(topic===TOPIC_PRESENCE)handlePresence(msg);else if(topic===TOPIC_REPORTS)handleReportMessage(msg);else if(topic===TOPIC_INCIDENTS)handleIncidentMessage(msg);else if(topic===TOPIC_USER_LOG)handleUserLog(msg);else if(topic===TOPIC_TYPING)handleTypingMessage(msg);else if(topic===TOPIC_ALERT_RESOLVE)handleAlertResolveMessage(msg);else if(topic.indexOf(TOPIC_TYPING_BASE)===0)handleTypingMessage(msg);else if(topic.indexOf(TOPIC_READ_BASE)===0)handleReadReceipt(msg);else if(topic.indexOf(TOPIC_REQ_BASE)===0)handleIncomingMotoamigoRequest(msg);else if(topic.indexOf(TOPIC_RESP_BASE)===0)handleIncomingMotoamigoResponse(msg);else if(topic.indexOf(TOPIC_PRIVATE_BASE)===0)handlePrivateMessage(msg)}
+function handleIncomingMessage(topic,payload){let msg;try{msg=JSON.parse(payload.toString())}catch(e){return}if(topic===TOPIC_PUBLIC_HISTORY){handlePublicHistory(msg);return}if(topic===TOPIC_USERLOG_HISTORY){handleUserLogHistory(msg);return}if(!msg||!msg.from||!msg.from.id)return;if(msg.from.id===myUserId)return;if(topic===TOPIC_PUBLIC)handlePublicMessage(msg);else if(topic===TOPIC_PRESENCE)handlePresence(msg);else if(topic===TOPIC_REPORTS)handleReportMessage(msg);else if(topic===TOPIC_INCIDENTS)handleIncidentMessage(msg);else if(topic===TOPIC_USER_LOG)handleUserLog(msg);else if(topic===TOPIC_TYPING)handleTypingMessage(msg);else if(topic===TOPIC_ALERT_RESOLVE)handleAlertResolveMessage(msg);else if(topic.indexOf(TOPIC_TYPING_BASE)===0)handleTypingMessage(msg);else if(topic.indexOf(TOPIC_READ_BASE)===0)handleReadReceipt(msg);else if(topic.indexOf(TOPIC_REQ_BASE)===0)handleIncomingMotoamigoRequest(msg);else if(topic.indexOf(TOPIC_RESP_BASE)===0)handleIncomingMotoamigoResponse(msg);else if(topic.indexOf(TOPIC_PRIVATE_BASE)===0)handlePrivateMessage(msg)}
 function handleIncidentMessage(msg){if(!msg||!msg.id)return;registerIncomingIncident(msg,{silent:false})}
-function handlePublicMessage(msg){publicMessages.push(msg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();const loc=locationFromMessage(msg);if(loc)registerChatLocation(loc);if(msg.kind==='incident'&&msg.lat!=null&&msg.lng!=null){const incidentLike={id:'inc_chat_'+msg.from.id+'_'+msg.ts,kind:msg.incidentKind||'accident',severity:msg.severity||'moderado',text:msg.text||'',lat:msg.lat,lng:msg.lng,zone:msg.zone||getZone(msg.lat,msg.lng),from:msg.from,ts:msg.ts};registerIncomingIncident(incidentLike,{silent:false})}if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom()}else{unreadPublic++;updateBadges()}saveHistory()}
+function handlePublicMessage(msg){publicMessages.push(msg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();const loc=locationFromMessage(msg);if(loc)registerChatLocation(loc);if(msg.kind==='incident'&&msg.lat!=null&&msg.lng!=null){const incidentLike={id:'inc_chat_'+msg.from.id+'_'+msg.ts,kind:msg.incidentKind||'accident',severity:msg.severity||'moderado',text:msg.text||'',lat:msg.lat,lng:msg.lng,zone:msg.zone||getZone(msg.lat,msg.lng),from:msg.from,ts:msg.ts};registerIncomingIncident(incidentLike,{silent:false})}if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom()}else{unreadPublic++;updateBadges()}saveHistory();schedulePublishPublicHistory()}
 function handlePresence(msg){if(!msg.from||!msg.from.id)return;let status='conectado';if(msg.status&&STATUS_LABELS[msg.status])status=msg.status;const existing=onlineUsers.get(msg.from.id);const newNick=msg.from.nick||(existing?existing.nick:'Anónimo');onlineUsers.set(msg.from.id,{id:msg.from.id,nick:newNick,status,lastSeen:Date.now()});if(privateConversations.has(msg.from.id))privateConversations.get(msg.from.id).peer.nick=newNick;if(motoamigos.has(msg.from.id))motoamigos.get(msg.from.id).peer.nick=newNick;savePresenceStore();renderUsers()}
 function handlePrivateMessage(msg){const peer={id:msg.from.id,nick:msg.from.nick||'Anónimo'};storePrivateMessage(peer,msg);const loc=locationFromMessage(msg);if(loc)registerChatLocation(loc);const isActive=isChatOpen()&&currentContext==='private'&&currentPrivatePeer&&currentPrivatePeer.id===peer.id;if(isActive){renderMessages();scrollMessagesBottom();unreadPerPeer.set(peer.id,0);recomputeUnreadPrivateTotal();sendReadReceipt(peer.id)}else{unreadPerPeer.set(peer.id,(unreadPerPeer.get(peer.id)||0)+1);recomputeUnreadPrivateTotal()}saveHistory();updateBadges();renderUsers()}
 function handleReportMessage(msg){if(msg.reporter&&msg.reporter.id===myUserId)return}
@@ -1471,7 +1838,7 @@ reportCancelBtn.addEventListener('click',exitReportMode);
 reportConfirmBtn.addEventListener('click',function(){if(selectedMessages.size===0)return;openReportModal()});
 function openReportModal(){window._reportTargetUser=null;const items=Array.from(selectedMessages.values());reportPreview.innerHTML=items.map(function(it){const m=it.msg;const nick=m.from?(m.from.nick||'Anónimo'):'Anónimo';let texto='';if(m.kind==='location')texto='📍 Mi ubicación actual';else if(m.kind==='place')texto='🏪 Local compartido: '+(m.placeName||'');else if(m.kind==='emergency')texto='[EMERGENCIA] '+(m.text||'');else if(m.kind==='incident')texto='[INCIDENTE] '+(m.text||'');else texto=m.text||'';const fecha=new Date(m.ts);const hora=fecha.getHours().toString().padStart(2,'0')+':'+fecha.getMinutes().toString().padStart(2,'0');return '<div class="item"><strong>'+escapeHtml(nick)+' · '+hora+'</strong><span class="txt">'+escapeHtml(texto.slice(0,200))+'</span></div>'}).join('');reportReason.value='';reportDetails.value='';reportSubmitBtn.disabled=true;reportModal.classList.add('visible')}
 function scrollMessagesBottom(){chatMessagesEl.scrollTop=chatMessagesEl.scrollHeight}
-function sendChatMessage(){const text=chatInput.value.trim();if(!text||!mqttClient||!chatReady)return;if(currentContext==='private'&&currentPrivatePeer){const m=motoamigos.get(currentPrivatePeer.id);if(!m||m.status!=='accepted'){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}}const baseMsg={kind:'text',type:currentContext==='public'?'public':'private',from:{id:myUserId,nick:myNick},text:text.slice(0,500),ts:Date.now()};if(currentContext==='public'){try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}catch(e){chatStatusSet('Error al enviar.','error');return}publicMessages.push(baseMsg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();saveHistory();renderMessages();scrollMessagesBottom()}else{const msg=Object.assign({},baseMsg,{to:{id:currentPrivatePeer.id}});try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}catch(e){chatStatusSet('Error al enviar privado.','error');return}storePrivateMessage(currentPrivatePeer,msg);saveHistory();renderMessages();scrollMessagesBottom()}chatInput.value='';chatInput.focus()}
+function sendChatMessage(){const text=chatInput.value.trim();if(!text||!mqttClient||!chatReady)return;if(currentContext==='private'&&currentPrivatePeer){const m=motoamigos.get(currentPrivatePeer.id);if(!m||m.status!=='accepted'){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}}const baseMsg={kind:'text',type:currentContext==='public'?'public':'private',from:{id:myUserId,nick:myNick},text:text.slice(0,500),ts:Date.now()};if(currentContext==='public'){try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}catch(e){chatStatusSet('Error al enviar.','error');return}publicMessages.push(baseMsg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();saveHistory();schedulePublishPublicHistory();renderMessages();scrollMessagesBottom()}else{const msg=Object.assign({},baseMsg,{to:{id:currentPrivatePeer.id}});try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}catch(e){chatStatusSet('Error al enviar privado.','error');return}storePrivateMessage(currentPrivatePeer,msg);saveHistory();renderMessages();scrollMessagesBottom()}chatInput.value='';chatInput.focus()}
 chatSendBtn.addEventListener('click',sendChatMessage);
 chatInput.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMessage()}});
 chatInput.addEventListener('input',function(){if(chatInput.value.length>0)sendTypingIndicator()});
@@ -1482,20 +1849,20 @@ function pedirUbicacionYPrompt(callback){if(userLocation){callback();return}if(!
 shareLocationBtn.addEventListener('click',function(){if(!chatReady){alert('El chat todavía no está conectado.');return}pedirUbicacionYPrompt(function(){locationModal.classList.add('visible')})});
 cancelLocationModal.addEventListener('click',function(){locationModal.classList.remove('visible')});
 locationModal.addEventListener('click',function(e){if(e.target===locationModal)locationModal.classList.remove('visible')});
-function enviarUbicacion(destino){locationModal.classList.remove('visible');if(!userLocation)return;if(destino==='private'){if(!currentPrivatePeer||currentContext!=='private'){alert('No estás en un chat privado activo con un Motoamigo.');return}const m=motoamigos.get(currentPrivatePeer.id);if(!m||m.status!=='accepted'){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}}const baseMsg={kind:'location',type:destino==='public'?'public':'private',from:{id:myUserId,nick:myNick},text:'Compartió su ubicación',lat:userLocation.lat,lng:userLocation.lng,ts:Date.now()};if(destino==='public'){try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}catch(e){alert('Error al enviar la ubicación.');return}publicMessages.push(baseMsg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();saveHistory();registerChatLocation(locationFromMessage(baseMsg));currentContext='public';currentPrivatePeer=null;updateChatTitle();openChat();renderMessages();scrollMessagesBottom()}else{const msg=Object.assign({},baseMsg,{to:{id:currentPrivatePeer.id}});try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}catch(e){alert('Error al enviar la ubicación.');return}storePrivateMessage(currentPrivatePeer,msg);saveHistory();registerChatLocation(locationFromMessage(msg));openChat();renderMessages();scrollMessagesBottom()}}
+function enviarUbicacion(destino){locationModal.classList.remove('visible');if(!userLocation)return;if(destino==='private'){if(!currentPrivatePeer||currentContext!=='private'){alert('No estás en un chat privado activo con un Motoamigo.');return}const m=motoamigos.get(currentPrivatePeer.id);if(!m||m.status!=='accepted'){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}}const baseMsg={kind:'location',type:destino==='public'?'public':'private',from:{id:myUserId,nick:myNick},text:'Compartió su ubicación',lat:userLocation.lat,lng:userLocation.lng,ts:Date.now()};if(destino==='public'){try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}catch(e){alert('Error al enviar la ubicación.');return}publicMessages.push(baseMsg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();saveHistory();schedulePublishPublicHistory();registerChatLocation(locationFromMessage(baseMsg));currentContext='public';currentPrivatePeer=null;updateChatTitle();openChat();renderMessages();scrollMessagesBottom()}else{const msg=Object.assign({},baseMsg,{to:{id:currentPrivatePeer.id}});try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}catch(e){alert('Error al enviar la ubicación.');return}storePrivateMessage(currentPrivatePeer,msg);saveHistory();registerChatLocation(locationFromMessage(msg));openChat();renderMessages();scrollMessagesBottom()}}
 shareLocationPublic.addEventListener('click',function(){enviarUbicacion('public')});
 shareLocationPrivate.addEventListener('click',function(){enviarUbicacion('private')});
 function openPlaceShareModal(placeId){const place=allPlaces.find(p=>p.id===placeId);if(!place){alert('No se encontró el local.');return}if(!chatReady){alert('El chat todavía no está conectado.');return}pendingPlaceToShare=place;const catColor=colors[place.category]||'#16a085';const catIcon=icons[place.category]||'fa-store';placeSharePreview.innerHTML='<strong><i class="fas '+catIcon+'" style="color:'+catColor+';margin-right:6px"></i>'+escapeHtml(place.name)+'</strong><div class="preview-cat">'+escapeHtml(place.rubro||categoryLabels[place.category])+'</div><div class="preview-addr"><i class="fas fa-map-pin"></i> '+escapeHtml(place.address||'Sin dirección')+'</div>';placeShareModal.classList.add('visible')}
 cancelPlaceShareModal.addEventListener('click',function(){placeShareModal.classList.remove('visible');pendingPlaceToShare=null});
 placeShareModal.addEventListener('click',function(e){if(e.target===placeShareModal){placeShareModal.classList.remove('visible');pendingPlaceToShare=null}});
-function enviarLocal(destino){placeShareModal.classList.remove('visible');if(!pendingPlaceToShare)return;const place=pendingPlaceToShare;pendingPlaceToShare=null;if(destino==='private'){if(!currentPrivatePeer||currentContext!=='private'){alert('No estás en un chat privado activo con un Motoamigo.');return}const m=motoamigos.get(currentPrivatePeer.id);if(!m||m.status!=='accepted'){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}}const baseMsg={kind:'place',type:destino==='public'?'public':'private',from:{id:myUserId,nick:myNick},placeName:place.name,rubro:place.rubro||categoryLabels[place.category],category:place.category,address:place.address||'',lat:place.lat,lng:place.lng,ts:Date.now()};if(destino==='public'){try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}catch(e){alert('Error al compartir el local.');return}publicMessages.push(baseMsg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();saveHistory();registerChatLocation(locationFromMessage(baseMsg));currentContext='public';currentPrivatePeer=null;updateChatTitle();openChat();renderMessages();scrollMessagesBottom()}else{const msg=Object.assign({},baseMsg,{to:{id:currentPrivatePeer.id}});try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}catch(e){alert('Error al compartir el local.');return}storePrivateMessage(currentPrivatePeer,msg);saveHistory();registerChatLocation(locationFromMessage(msg));openChat();renderMessages();scrollMessagesBottom()}}
+function enviarLocal(destino){placeShareModal.classList.remove('visible');if(!pendingPlaceToShare)return;const place=pendingPlaceToShare;pendingPlaceToShare=null;if(destino==='private'){if(!currentPrivatePeer||currentContext!=='private'){alert('No estás en un chat privado activo con un Motoamigo.');return}const m=motoamigos.get(currentPrivatePeer.id);if(!m||m.status!=='accepted'){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}}const baseMsg={kind:'place',type:destino==='public'?'public':'private',from:{id:myUserId,nick:myNick},placeName:place.name,rubro:place.rubro||categoryLabels[place.category],category:place.category,address:place.address||'',lat:place.lat,lng:place.lng,ts:Date.now()};if(destino==='public'){try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}catch(e){alert('Error al compartir el local.');return}publicMessages.push(baseMsg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();saveHistory();schedulePublishPublicHistory();registerChatLocation(locationFromMessage(baseMsg));currentContext='public';currentPrivatePeer=null;updateChatTitle();openChat();renderMessages();scrollMessagesBottom()}else{const msg=Object.assign({},baseMsg,{to:{id:currentPrivatePeer.id}});try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}catch(e){alert('Error al compartir el local.');return}storePrivateMessage(currentPrivatePeer,msg);saveHistory();registerChatLocation(locationFromMessage(msg));openChat();renderMessages();scrollMessagesBottom()}}
 sharePlacePublic.addEventListener('click',function(){enviarLocal('public')});
 sharePlacePrivate.addEventListener('click',function(){enviarLocal('private')});
 emergencyBtn.addEventListener('click',function(){if(!chatReady){alert('El chat todavía no está conectado.');return}emergencyModal.classList.add('visible')});
 cancelEmergencyModal.addEventListener('click',function(){emergencyModal.classList.remove('visible')});
 emergencyModal.addEventListener('click',function(e){if(e.target===emergencyModal)emergencyModal.classList.remove('visible')});
 emergencyOptions.forEach(btn=>btn.addEventListener('click',function(){enviarEmergencia(btn.dataset.severity)}));
-function enviarEmergencia(severity){emergencyModal.classList.remove('visible');const doSend=function(){const sevLabels={leve:'⚠️ EMERGENCIA LEVE',grave:'🚨 EMERGENCIA GRAVE',vida:'🆘 RIESGO DE VIDA'};const sevTexts={leve:'Reporto una emergencia leve. Necesito asistencia.',grave:'Reporto una emergencia GRAVE. Necesito ayuda urgente.',vida:'🆘 RIESGO DE VIDA. Necesito ayuda INMEDIATA.'};const alertId='emg_'+myUserId+'_'+Date.now();const msg={kind:'emergency',type:'public',severity,from:{id:myUserId,nick:myNick},text:sevLabels[severity]+' — '+sevTexts[severity],lat:userLocation?userLocation.lat:null,lng:userLocation?userLocation.lng:null,ts:Date.now()};try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(msg),{qos:0})}catch(e){alert('Error al enviar la emergencia.');return}publicMessages.push(msg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();saveHistory();registerChatLocation(locationFromMessage(msg));currentContext='public';currentPrivatePeer=null;unreadPublic=0;updateBadges();updateChatTitle();openChat();renderMessages();scrollMessagesBottom();const zone=(userLocation?getZone(userLocation.lat,userLocation.lng):'Provincia');activateUserAlert({id:alertId,kind:'emergency',severity,text:sevLabels[severity]+' — '+sevTexts[severity],lat:userLocation?userLocation.lat:null,lng:userLocation?userLocation.lng:null,zone,ts:Date.now()});if(severity==='vida')setTimeout(()=>alert('🆘 Emergencia enviada. Si hay riesgo de vida, llamá AHORA al 911.'),300);else if(severity==='grave')setTimeout(()=>alert('🚨 Emergencia grave enviada a la sala general.'),300);else setTimeout(()=>alert('⚠️ Emergencia leve enviada a la sala general.'),300)};if(!userLocation&&navigator.geolocation){geoStatus.textContent='Obteniendo ubicación para el reporte...';navigator.geolocation.getCurrentPosition(function(pos){userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude};distanceCacheKey='';createUserMarker();distanceFilter.disabled=false;geoStatus.textContent='Ubicación detectada';renderPlaces();doSend()},function(){doSend()},{enableHighAccuracy:true,timeout:6000,maximumAge:30000})}else doSend()}
+function enviarEmergencia(severity){emergencyModal.classList.remove('visible');const doSend=function(){const sevLabels={leve:'⚠️ EMERGENCIA LEVE',grave:'🚨 EMERGENCIA GRAVE',vida:'🆘 RIESGO DE VIDA'};const sevTexts={leve:'Reporto una emergencia leve. Necesito asistencia.',grave:'Reporto una emergencia GRAVE. Necesito ayuda urgente.',vida:'🆘 RIESGO DE VIDA. Necesito ayuda INMEDIATA.'};const alertId='emg_'+myUserId+'_'+Date.now();const msg={kind:'emergency',type:'public',severity,from:{id:myUserId,nick:myNick},text:sevLabels[severity]+' — '+sevTexts[severity],lat:userLocation?userLocation.lat:null,lng:userLocation?userLocation.lng:null,ts:Date.now()};try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(msg),{qos:0})}catch(e){alert('Error al enviar la emergencia.');return}publicMessages.push(msg);if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();saveHistory();schedulePublishPublicHistory();registerChatLocation(locationFromMessage(msg));currentContext='public';currentPrivatePeer=null;unreadPublic=0;updateBadges();updateChatTitle();openChat();renderMessages();scrollMessagesBottom();const zone=(userLocation?getZone(userLocation.lat,userLocation.lng):'Provincia');activateUserAlert({id:alertId,kind:'emergency',severity,text:sevLabels[severity]+' — '+sevTexts[severity],lat:userLocation?userLocation.lat:null,lng:userLocation?userLocation.lng:null,zone,ts:Date.now()});if(severity==='vida')setTimeout(()=>alert('🆘 Emergencia enviada. Si hay riesgo de vida, llamá AHORA al 911.'),300);else if(severity==='grave')setTimeout(()=>alert('🚨 Emergencia grave enviada a la sala general.'),300);else setTimeout(()=>alert('⚠️ Emergencia leve enviada a la sala general.'),300)};if(!userLocation&&navigator.geolocation){geoStatus.textContent='Obteniendo ubicación para el reporte...';navigator.geolocation.getCurrentPosition(function(pos){userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude};distanceCacheKey='';createUserMarker();distanceFilter.disabled=false;geoStatus.textContent='Ubicación detectada';renderPlaces();doSend()},function(){doSend()},{enableHighAccuracy:true,timeout:6000,maximumAge:30000})}else doSend()}
 function loadMapDataInBackground(){loadHistory();loadMotoamigosFromStorage();loadPresenceStore();loadMyStatus();loadUserLog();loadActiveAlert();chatLocations=loadChatLocationsFromStorage();renderAllChatLocations();renderAllIncidents();requestUserLocation();loadFromSources();startNewsFeed();if(activeUserAlert)setTimeout(showAlertOverlay,600)}
 window.addEventListener('beforeunload',function(){if(mqttClient&&chatReady){try{mqttClient.publish(TOPIC_PRESENCE,JSON.stringify({type:'presence',from:{id:myUserId,nick:myNick},status:'desconectado',ts:Date.now()}),{qos:0})}catch(e){}}flushPresenceStore();saveMyStatus()});
 function bootstrapResolveScreen(alertId){const icon=document.getElementById('resolveIcon');const title=document.getElementById('resolveTitle');const text=document.getElementById('resolveText');icon.textContent='⏳';title.textContent='Resolviendo alerta...';text.textContent='Conectando al servidor. Por favor esperá.';publishResolve(alertId).then(ok=>{if(ok){icon.textContent='✅';title.textContent='Alerta resuelta';text.textContent='Se informó al compañero que estás bajo control. Ya podés cerrar esta ventana.'}else{icon.textContent='⚠️';title.textContent='No se pudo resolver';text.textContent='No se pudo conectar al servidor. Verificá tu conexión e intentá de nuevo.'}})}
