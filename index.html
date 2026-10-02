@@ -24,6 +24,12 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 .gate-card h1{font-size:1.6rem;color:#2c3e50;margin-bottom:.4rem;font-weight:800}
 .gate-card h2{font-size:1rem;color:#7f8c8d;font-weight:500;margin-bottom:1.5rem}
 .gate-card p.gate-intro{font-size:.9rem;color:#666;line-height:1.5;margin-bottom:1.5rem}
+.gate-login-field{display:block;text-align:left;font-size:.72rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin:.75rem 0 .3rem}
+.gate-login-input{width:100%;padding:.85rem .9rem;border:1px solid #dfe6e9;border-radius:10px;font:inherit;font-size:.95rem;outline:none;transition:.2s;background:#fff}
+.gate-login-input:focus{border-color:var(--moto);box-shadow:0 0 0 3px rgba(211,84,0,.12)}
+.gate-remember{display:flex;align-items:center;gap:.55rem;text-align:left;margin:.75rem 0 1rem;font-size:.82rem;color:#666;cursor:pointer}
+.gate-remember input{width:17px;height:17px;accent-color:var(--moto);cursor:pointer}
+.gate-error{display:none;color:#c0392b;background:#fdecea;border:1px solid #f5b7b1;border-radius:9px;padding:.65rem .75rem;font-size:.8rem;line-height:1.4;text-align:left;margin:.65rem 0}
 .gate-btn{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;padding:1rem 1.2rem;border-radius:12px;border:none;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;margin-bottom:.75rem;text-decoration:none;color:#fff}
 .gate-btn:hover{transform:translateY(-2px)}
 .gate-btn.login{background:var(--moto)}
@@ -33,6 +39,21 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 .gate-divider::before,.gate-divider::after{content:'';flex:1;height:1px;background:#ecf0f1}
 .gate-guest-btn{background:#fff;color:#555;border:2px dashed #ccc;padding:.7rem 1.2rem;border-radius:10px;font-size:.85rem;font-weight:600;cursor:pointer;width:100%;font-family:inherit}
 .gate-guest-btn:hover{background:#f5f5f5;border-color:#999}
+.gate-register-btn,.profile-register-btn{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;padding:.78rem 1rem;border-radius:10px;border:1px solid #d9e2e7;background:#f8fbfc;color:var(--moto);font-size:.9rem;font-weight:700;text-decoration:none;box-sizing:border-box;margin-bottom:.75rem}
+.gate-register-btn:hover,.profile-register-btn:hover{background:#eef7f5;border-color:#9bd4c7}
+.profile-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:4500;display:none;align-items:center;justify-content:center;padding:1rem;overflow:auto}
+.profile-modal.visible{display:flex}
+.profile-box{background:#fff;border-radius:20px;padding:1.5rem;max-width:520px;width:100%;box-shadow:0 24px 70px rgba(0,0,0,.4);text-align:center}
+.profile-logo{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#3498db,#2980b9);color:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto .9rem}
+.profile-box h3{margin:.1rem 0 .15rem;color:#2c3e50;font-size:1.25rem}
+.profile-subtitle{color:#7f8c8d;font-size:.82rem;margin-bottom:1rem}
+.profile-content{display:grid;grid-template-columns:1fr 1.4fr;gap:.45rem .8rem;text-align:left;background:#f8f9fa;border:1px solid #e7eaec;border-radius:12px;padding:.9rem;margin-bottom:1rem;max-height:52vh;overflow:auto}
+.profile-row-label{font-size:.72rem;font-weight:800;color:#7f8c8d;text-transform:uppercase;letter-spacing:.4px}
+.profile-row-value{font-size:.85rem;color:#2c3e50;word-break:break-word}
+.profile-guest{padding:1.2rem;background:#f8f9fa;border:1px dashed #cfd8dc;border-radius:12px;margin-bottom:.2rem;color:#555;grid-column:1/-1}
+.profile-guest strong{display:block;color:#2c3e50;font-size:1.05rem;margin-bottom:.35rem}
+@media(max-width:600px){.profile-box{padding:1.1rem}.profile-content{grid-template-columns:1fr;gap:.2rem;padding:.8rem}.profile-row-label{margin-top:.35rem}}
+.floating-stack.guest-disabled .floating-btn:not(#authHeaderBtn),.floating-stack.guest-disabled a{opacity:.42;filter:grayscale(1);pointer-events:none;cursor:not-allowed}
 .kiosk-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0d6b58,#16a085 60%,#1abc9c);z-index:99997;display:none;align-items:center;justify-content:center;padding:1.5rem;overflow-y:auto}
 .kiosk-screen.visible{display:flex}
 .kiosk-box{background:#fff;border-radius:24px;padding:2.2rem 2rem;max-width:520px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.5);text-align:center;margin:auto}
@@ -643,6 +664,14 @@ footer a{color:#fff;text-decoration:underline}
 .ap-status.error{color:#c0392b;font-weight:600}
 .ap-status.ok{color:#27ae60;font-weight:600}
 .ap-status.working{color:#2980b9;font-weight:600}
+.ap-rating-stars{display:flex;align-items:center;gap:.15rem;margin:.2rem 0 .5rem}
+.ap-rating-stars button{background:none;border:0;padding:0 2px;cursor:pointer;color:#d5d5d5;font-size:1.8rem;line-height:1;transition:color .15s,transform .1s;font-family:inherit}
+.ap-rating-stars button:hover,.ap-rating-stars button.active{color:#f1c40f}
+.ap-rating-stars button:hover{transform:scale(1.08)}
+.ap-rating-value{font-size:.75rem;color:#888;margin-left:.35rem;font-weight:600}
+.add-form .af-rating-stars{display:flex;align-items:center;gap:1px;margin:.2rem 0 .35rem}
+.add-form .af-rating-stars button{background:none;border:none;padding:0 2px;cursor:pointer;color:#d5d5d5;font-size:1.5rem;line-height:1;font-family:inherit}
+.add-form .af-rating-stars button.active,.add-form .af-rating-stars button:hover{color:#f1c40f}
 .buzon-modal .modal-box{border-top:6px solid #8e44ad;max-width:520px}
 .buzon-modal h3{color:#8e44ad}
 .buzon-list{max-height:340px;overflow-y:auto;background:#fafafa;border-radius:8px;padding:.4rem;margin-bottom:.6rem}
@@ -675,45 +704,51 @@ footer a{color:#fff;text-decoration:underline}
 @media(max-width:768px) and (pointer:coarse){
 #sheetsPanel{width:100%;max-width:100%}
 }
+.mobile-menu-btn{display:none;position:fixed;z-index:2200;top:10px;left:10px;width:42px;height:42px;border:0;border-radius:10px;background:rgba(44,62,80,.95);color:#fff;align-items:center;justify-content:center;font-size:1.15rem;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.25);touch-action:manipulation}
+.mobile-menu-overlay{display:none;position:fixed;z-index:2050;inset:0;background:rgba(0,0,0,.42);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .28s ease,visibility .28s ease;touch-action:none}
+body.mobile-menu-open{overflow:hidden}
 @media(max-width:900px) and (orientation:portrait) and (pointer:coarse){
-header{padding:.6rem .6rem}
+header{padding:.6rem 3.8rem .6rem 3.8rem;min-height:60px;flex-shrink:0}
 header h1{font-size:.95rem;line-height:1.15}
-.container{flex-direction:row;height:calc(100vh - 60px - 38px);height:calc(100dvh - 60px - 38px)}
-#sidebar{width:min(48vw,220px);min-width:150px;height:100%;max-height:none;flex-shrink:0}
-#map-wrapper{flex:1 1 auto;height:100%;min-width:0}
-#sidebar h2{padding:.45rem .55rem;font-size:.78rem}
-.search-box{padding:.45rem .55rem}
-.search-box input{padding:.5rem 1.6rem .5rem .6rem;font-size:.82rem}
-.search-box .clear-btn{right:.9rem;font-size:.9rem}
-.filters{padding:.35rem .55rem}
-.filters label{font-size:.76rem;margin:.25rem 0}
+.container{flex:1 1 auto;flex-direction:column;height:auto;min-height:0}
+body{min-height:100dvh}
+#map-wrapper{flex:1 1 auto;width:100%;height:auto;min-height:0;touch-action:none;overscroll-behavior:contain}
+#map{touch-action:none;-webkit-user-select:none;user-select:none}
+#sidebar{position:fixed;z-index:2100;top:0;left:0;bottom:0;width:min(86vw,360px);height:100dvh;min-height:0;max-height:none;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transform:translateX(-105%);transition:transform .28s cubic-bezier(.4,0,.2,1),box-shadow .28s ease;box-shadow:8px 0 24px rgba(0,0,0,.24);background:#fff;will-change:transform;-webkit-overflow-scrolling:touch}
+#sidebar.mobile-open{transform:translateX(0);box-shadow:8px 0 28px rgba(0,0,0,.3)}
+#sidebar>*{flex:0 0 auto;width:auto!important;min-width:0!important;box-sizing:border-box}
+#sidebar h2{width:100%!important;padding:.7rem .9rem;font-size:.9rem;display:block;background:#ecf0f1;border-right:0;border-bottom:1px solid #ddd}
+.search-box{width:100%!important;padding:.7rem .9rem;border-right:0;border-bottom:1px solid #eee;display:block}
+.search-box input{padding:.6rem 2rem .6rem .8rem;font-size:.9rem}
+.search-box .clear-btn{right:1rem;font-size:1rem}
+.filters{width:100%!important;padding:.55rem .9rem;border-right:0;border-bottom:1px solid #eee;overflow:visible}
+.filters label{font-size:.82rem;margin:.35rem 0}
 .filters input[type="checkbox"]{margin-right:.35rem}
-.distance-box{padding:.4rem .55rem}
-.distance-box label{font-size:.72rem}
-.distance-box select{font-size:.78rem;padding:.4rem}
-.distance-box .geo-status{font-size:.66rem}
-.sidebar-quick-actions{padding:.35rem .55rem;gap:.3rem}
-.sidebar-action-btn{font-size:.68rem;padding:.4rem .3rem}
-.level-panel{padding:.5rem .55rem}
-.level-header{font-size:.75rem}
-.level-meta{font-size:.65rem}
-.coins-panel{padding:.45rem .55rem}
-.coins-panel .coins-label{font-size:.7rem}
-.coins-panel .coins-value{font-size:.92rem}
-.incidents-panel{padding:.35rem .55rem}
-.incidents-panel .inc-title{font-size:.72rem}
-.incidents-panel .inc-list{max-height:90px}
-.incidents-panel .inc-item{font-size:.68rem}
-.incidents-panel .inc-item .inc-name{font-size:.68rem}
-.incidents-panel .inc-item .inc-meta{font-size:.62rem}
-.place-card{padding:.55rem;margin-bottom:.45rem}
-.place-card h3{font-size:.82rem;padding-right:44px}
-.place-card .category{font-size:.66rem}
-.place-card .patron-badge{font-size:.6rem;padding:0 .25rem}
-.place-card .discount-badge-card{font-size:.62rem;padding:0 .3rem}
-.place-card p{font-size:.72rem}
-.place-card .rating,.place-card .distance{font-size:.68rem}
-.place-card .share-place-btn,.place-card .delete-btn{width:22px;height:22px;font-size:.62rem}
+.distance-box{width:100%!important;padding:.6rem .9rem;border-right:0;border-bottom:1px solid #eee}
+.distance-box label{font-size:.8rem}
+.distance-box select{font-size:.85rem;padding:.5rem}
+.distance-box .geo-status{font-size:.7rem}
+.sidebar-quick-actions{width:100%!important;padding:.6rem .9rem;gap:.4rem;border-right:0;border-bottom:1px solid #eee;align-content:center}
+.sidebar-action-btn{min-width:90px;font-size:.72rem;padding:.45rem .35rem}
+.level-panel{width:100%!important;padding:.65rem .9rem;border-right:0;border-bottom:1px solid rgba(255,255,255,.12)}
+.level-header{font-size:.82rem}
+.level-meta{font-size:.7rem}
+.coins-panel{width:100%!important;padding:.6rem .9rem;border-right:0;border-bottom:1px solid rgba(255,255,255,.12)}
+.coins-panel .coins-label{font-size:.76rem}
+.coins-panel .coins-value{font-size:1rem}
+.incidents-panel{width:100%!important;padding:.55rem .9rem;border-right:0;border-bottom:1px solid #eee}
+.incidents-panel .inc-title{font-size:.78rem}
+.incidents-panel .inc-list{max-height:none;overflow:visible}
+.incidents-panel .inc-item{font-size:.72rem}
+.incidents-panel .inc-item .inc-name{font-size:.72rem}
+.incidents-panel .inc-item .inc-meta{font-size:.65rem}
+#places-list{width:100%!important;height:auto;min-height:120px;max-height:none;flex:0 0 auto;display:block;overflow:visible;padding:.5rem .7rem}
+#places-list .place-card{display:block;width:100%;box-sizing:border-box;min-height:0;height:auto;margin:0 0 .6rem;overflow:visible}
+#no-results{width:100%;min-width:0;align-self:auto;padding:1rem .7rem}
+#list-footer{width:100%;box-sizing:border-box;padding:.4rem .7rem .8rem}
+.mobile-menu-btn{display:flex}
+.mobile-menu-overlay{display:block}
+.mobile-menu-overlay.visible{opacity:1;visibility:visible;pointer-events:auto}
 .floating-stack{bottom:8px;right:8px;gap:6px}
 .floating-btn{width:44px;height:44px;font-size:16px}
 .floating-btn.police-btn{width:52px;height:52px;font-size:8px}
@@ -729,10 +764,11 @@ header h1{font-size:.95rem;line-height:1.15}
 .focus-banner{top:6px;font-size:.7rem;padding:.4rem .4rem .4rem .65rem;gap:.3rem}
 .focus-banner .fb-text{max-width:110px}
 .focus-banner button{padding:.3rem .55rem;font-size:.65rem}
-footer{padding:.55rem;font-size:.7rem}
+footer{padding:.55rem;font-size:.7rem;flex-shrink:0;padding-bottom:calc(.55rem + env(safe-area-inset-bottom))}
 }
 @media(max-width:380px) and (orientation:portrait) and (pointer:coarse){
-#sidebar{width:52vw;min-width:140px}
+header{padding-left:3.5rem;padding-right:3.5rem}
+#sidebar{width:88vw}
 .floating-btn{width:40px;height:40px;font-size:14px}
 }
 </style>
@@ -793,19 +829,28 @@ footer{padding:.55rem;font-size:.7rem}
 <div class="gate-card">
 <div class="gate-logo"><i class="fas fa-motorcycle"></i></div>
 <h1>Mutual Motos</h1>
-<h2>Comunidad de motociclistas</h2>
-<p class="gate-intro">Para acceder al mapa de servicios, al chat y a la red de Motoamigos, necesit&aacute;s iniciar sesi&oacute;n.</p>
-<span class="gate-test-badge">VERSI&Oacute;N PROTOTIPO</span>
+<h2>Iniciar sesi&oacute;n</h2>
+<p class="gate-intro">Ingres&aacute; tu correo electr&oacute;nico o nombre de usuario y la contrase&ntilde;a de tu cuenta para acceder al mapa de servicios, al chat y a la red de Motoamigos.</p>
+<label class="gate-login-field" for="gateEmailInput">Correo electr&oacute;nico o nombre de usuario</label>
+<input class="gate-login-input" type="text" id="gateEmailInput" placeholder="correo@ejemplo.com o tu usuario" autocomplete="username" maxlength="150">
+<label class="gate-login-field" for="gatePasswordInput">Contrase&ntilde;a</label>
+<input class="gate-login-input" type="password" id="gatePasswordInput" placeholder="Contrase&ntilde;a" autocomplete="current-password" maxlength="150">
+<label class="gate-remember" for="gateRememberInput"><input type="checkbox" id="gateRememberInput"><span>Recu&eacute;rdame en este dispositivo</span></label>
+<div class="gate-error" id="gateLoginError"></div>
 <button class="gate-btn login" id="gateLoginBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n</button>
+<a class="gate-register-btn" id="gateRegisterBtn" href="https://docs.google.com/forms/d/e/1FAIpQLSfKPVPXGwORQ5tUylZ1Re47im4DdiepitvaN_OjzkqPNvhtYA/viewform?usp=sharing&ouid=109861870343853538874" target="_blank" rel="noopener noreferrer"><i class="fas fa-user-plus"></i> Registrarse</a>
 <div class="gate-divider">o</div>
-<button class="gate-guest-btn" id="gateGuestBtn"><i class="fas fa-user-secret"></i> Continuar como invitado (solo test)</button>
-<div class="gate-footer">Esta pantalla est&aacute; en estado prototipo.</div>
+<button class="gate-guest-btn" id="gateGuestBtn"><i class="fas fa-user-secret"></i> Continuar como invitado</button>
+<div class="gate-footer">Sin marcar “Recu&eacute;rdame”, la pr&oacute;xima vez se volver&aacute; a mostrar esta pantalla.</div>
 </div>
 </div>
 
 <header>
 <h1><i class="fas fa-map-marked-alt"></i> Servicios en Buenos Aires y Alrededores</h1>
 </header>
+
+<button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-label="Abrir menú" aria-expanded="false"><i class="fas fa-bars"></i></button>
+<div id="mobileMenuOverlay" class="mobile-menu-overlay" aria-hidden="true"></div>
 
 <div class="container">
 <aside id="sidebar">
@@ -1019,21 +1064,35 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="login-modal" id="loginModal">
 <div class="login-box">
 <div class="login-logo"><i class="fas fa-motorcycle"></i></div>
-<h3>Mutual Motos</h3>
-<p>Ingres&aacute; con tu ID de socio asignado por Mutual Motos. Si no lo ten&eacute;s, pedilo en la sede.</p>
-<label style="display:block;text-align:left;font-size:.72rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem">ID de socio</label>
+<h3>Iniciar sesi&oacute;n</h3>
+<p>Ingres&aacute; tu correo electr&oacute;nico o nombre de usuario y la contrase&ntilde;a de tu cuenta.</p>
+<label style="display:block;text-align:left;font-size:.72rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem">Correo electr&oacute;nico o nombre de usuario</label>
 <div class="login-id-row">
-<input type="text" id="loginMutualIdInput" placeholder="EJ: MM-0001" autocomplete="off" maxlength="20">
+<input type="text" id="loginEmailInput" placeholder="correo@ejemplo.com o tu usuario" autocomplete="username" maxlength="150">
 </div>
-<div class="login-id-hint">Formato: <strong>MM-0001</strong>, <strong>MM-0002</strong>... (o el ID que te haya dado el desarrollador)</div>
-<button class="primary-btn moto" id="loginMutualBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n con mi ID</button>
+<label style="display:block;text-align:left;font-size:.72rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin:.75rem 0 .3rem">Contrase&ntilde;a</label>
+<div class="login-id-row">
+<input type="password" id="loginPasswordInput" placeholder="Contrase&ntilde;a" autocomplete="current-password" maxlength="150">
+</div>
+<div class="login-id-hint">La cuenta se verifica con los datos publicados en la planilla de usuarios.</div>
+<label style="display:flex;align-items:center;gap:.55rem;text-align:left;margin:.75rem 0;font-size:.82rem;color:#666;cursor:pointer"><input type="checkbox" id="loginRememberInput" style="width:17px;height:17px;accent-color:var(--moto);cursor:pointer"><span>Recu&eacute;rdame en este dispositivo</span></label>
+<div class="login-error" id="loginError" style="display:none;color:#c0392b;font-size:.8rem;margin:.6rem 0;text-align:left"></div>
+<button class="primary-btn moto" id="loginMutualBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n</button>
+<a class="gate-register-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSfKPVPXGwORQ5tUylZ1Re47im4DdiepitvaN_OjzkqPNvhtYA/viewform?usp=sharing&ouid=109861870343853538874" target="_blank" rel="noopener noreferrer"><i class="fas fa-user-plus"></i> Registrarse</a>
 <div class="login-separator">o</div>
 <button class="primary-btn guest" id="loginGuestBtn"><i class="fas fa-user-secret"></i> Entrar como invitado</button>
-<div style="margin-top:1rem">
-<span class="login-badge-test" id="loginTestBadge">MODO TEST ACTIVADO</span>
-<p style="font-size:.72rem;color:#999;margin:0">El modo test permite probar las funciones del mapa sin tener cuenta real.</p>
-</div>
 <button class="modal-cancel-btn" id="loginCancelBtn" style="margin-top:.8rem">Volver</button>
+</div>
+</div>
+
+<div class="profile-modal" id="profileModal" aria-hidden="true">
+<div class="profile-box">
+<div class="profile-logo"><i class="fas fa-user"></i></div>
+<h3 id="profileTitle">Usuario</h3>
+<div class="profile-subtitle" id="profileSubtitle">Datos de la cuenta</div>
+<div class="profile-content" id="profileContent"></div>
+<button class="primary-btn danger" id="profileLogoutBtn"><i class="fas fa-right-from-bracket"></i> Cerrar sesi&oacute;n</button>
+<button class="modal-cancel-btn" id="profileCloseBtn">Cerrar</button>
 </div>
 </div>
 
@@ -1063,8 +1122,16 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <label>Direcciones</label>
 <div id="apAddressList"></div>
 <button type="button" class="ap-add-addr" id="apAddAddrBtn"><i class="fas fa-plus"></i> A&ntilde;adir otra direcci&oacute;n</button>
-<label for="apRating">Puntuaci&oacute;n (opcional)</label>
-<input type="number" id="apRating" min="0" max="5" step="0.1" placeholder="Ej: 4.2">
+<label>Puntuaci&oacute;n</label>
+<div class="ap-rating-stars" id="apRatingStars" role="radiogroup" aria-label="Puntuación de 1 a 5 estrellas">
+<button type="button" data-rating="1" aria-label="1 estrella">★</button>
+<button type="button" data-rating="2" aria-label="2 estrellas">★</button>
+<button type="button" data-rating="3" aria-label="3 estrellas">★</button>
+<button type="button" data-rating="4" aria-label="4 estrellas">★</button>
+<button type="button" data-rating="5" aria-label="5 estrellas">★</button>
+<span class="ap-rating-value" id="apRatingValue">Sin puntuación</span>
+</div>
+<input type="hidden" id="apRating" value="">
 <div class="ap-status" id="apStatus"></div>
 <button class="primary-btn" id="apSubmitBtn" style="background:#16a085"><i class="fas fa-check"></i> Guardar lugar</button>
 <button class="modal-cancel-btn" id="apCancelBtn">Cancelar</button>
@@ -1311,6 +1378,7 @@ Datos: <a id="csvLink" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTv
 
 <script>
 const AUTH_CONFIG={requireLogin:true,mutualMotosTestMode:true,showMutualMotosLogin:true};
+const AUTH_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid=554435341&single=true&output=csv';
 const GOOGLE_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid=1742683249&single=true&output=csv';
 const SHEET_EMBED_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pubhtml?gid=1742683249&single=true&widget=true&headers=false';
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyCH_SAEOSWf9FlZqn5bzn5gBMfW1amgFE-mcqNufDRqlB4JUqUagznht3v36CUpMje/exec';
@@ -1392,6 +1460,7 @@ let wazeReloadPending=false;
 let wazeLoadCounter=0;
 let wazeIsZooming=false;
 let wazeZoomStopTimer=null;
+let wazeRefreshTimer=null;
 
 /* ============================================================
    BLOQUEO DE INTERACCIÓN DURANTE "Centrando..."
@@ -1537,6 +1606,9 @@ const map=L.map('map',{
   touchZoom:true,
   boxZoom:true,
   keyboard:true,
+  zoomSnap:isMobileLayout()?0.25:1,
+  zoomDelta:isMobileLayout()?0.25:1,
+  tapTolerance:isMobileLayout()?8:15,
   zoomAnimation:true,
   markerZoomAnimation:true,
   fadeAnimation:true,
@@ -1695,10 +1767,42 @@ function commitSwap(keepLock){
   if(keepLock)unlockMapAndSidebar();
 }
 function recenterImmediate(){
-  if(wazeReloadPending)return;
+  clearTimeout(wazeRefreshTimer);
+  wazeRefreshTimer=null;
+  if(wazeReloadPending){
+    wazeLoadCounter++;
+    wazeReloadPending=false;
+    wazeNextBaseCenter=null;
+    const pending=getInactiveFrame();
+    pending.onload=null;
+    pending.onerror=null;
+  }
   wazeLoading.classList.add('visible');
   lockMapAndSidebar();
   startPreload(true);
+}
+function refreshWazeAtCurrentView(){
+  clearTimeout(wazeRefreshTimer);
+  wazeRefreshTimer=null;
+  if(!wazeBaseCenter)return;
+  if(mapInteractionLocked)return;
+  if(wazeReloadPending){
+    wazeLoadCounter++;
+    wazeReloadPending=false;
+    wazeNextBaseCenter=null;
+    const pending=getInactiveFrame();
+    pending.onload=null;
+    pending.onerror=null;
+  }
+  wazeLoading.classList.add('visible');
+  startPreload(false);
+}
+function scheduleWazeRefresh(delay){
+  clearTimeout(wazeRefreshTimer);
+  wazeRefreshTimer=setTimeout(function(){
+    wazeRefreshTimer=null;
+    refreshWazeAtCurrentView();
+  },delay||220);
 }
 function handleWazeMove(){
   if(wazeIsZooming)return;
@@ -1752,9 +1856,8 @@ map.on('zoomend',function(){
   wazeIsZooming=false;
   const active=getActiveFrame();
   active.style.transition='';
-  wazeReloadPending=false;
   clearTimeout(wazeZoomStopTimer);
-  wazeZoomStopTimer=setTimeout(function(){recenterImmediate()},250);
+  wazeZoomStopTimer=setTimeout(function(){scheduleWazeRefresh(isMobileLayout()?120:220)},120);
 });
 map.on('dblclick',function(e){
   if(addingMode)return;
@@ -1893,6 +1996,9 @@ const logBox=document.getElementById('logBox');
 const btnRetry=document.getElementById('btnRetry');
 const searchInput=document.getElementById('searchInput');
 const clearBtn=document.getElementById('clearBtn');
+const mobileMenuBtn=document.getElementById('mobileMenuBtn');
+const mobileMenuOverlay=document.getElementById('mobileMenuOverlay');
+const mobileSidebar=document.getElementById('sidebar');
 const noResults=document.getElementById('no-results');
 const distanceFilter=document.getElementById('distanceFilter');
 const geoStatus=document.getElementById('geoStatus');
@@ -1931,9 +2037,10 @@ const qrScanBtn=document.getElementById('qrScanBtn');
 const qrScanModal=document.getElementById('qrScanModal');
 const qrScanCancelBtn=document.getElementById('qrScanCancelBtn');
 const addPlaceBtn=document.getElementById('addPlaceBtn');
-const loginMutualIdInput=document.getElementById('loginMutualIdInput');
 const addPlaceModal=document.getElementById('addPlaceModal');
 const apName=document.getElementById('apName');
+const apRatingStars=document.getElementById('apRatingStars');
+const apRatingValue=document.getElementById('apRatingValue');
 const apCat=document.getElementById('apCat');
 const apAddressList=document.getElementById('apAddressList');
 const apAddAddrBtn=document.getElementById('apAddAddrBtn');
@@ -2937,9 +3044,8 @@ function renderPlaces(){
       marker.bindPopup(buildPopupHtml(place),{maxWidth:300});
       marker.on('click',(function(p){
         return function(){
-          if(focusedPlaceId===p.id)return;
           ensureUnlocked();
-          setTimeout(function(){focusPlaceOnMap(p)},20);
+          setTimeout(function(){focusPlaceOnMap(p,true)},20);
         };
       })(place));
       markerMap.set(place.id,marker);
@@ -2990,14 +3096,22 @@ function renderCardsChunk(){
       rateRow+='<button type="button" class="cr-star'+active+'" data-rate-place="'+escapeHtml(place.id)+'" data-rate-value="'+s+'">★</button>';
     }
     rateRow+='</span></div>';
-    card.innerHTML=devBadgeHtml+'<div class="category" style="color:'+colors[place.category]+'">'+escapeHtml(place.rubro||categoryLabels[place.category])+discountHtml+patronHtml+'</div><h3>'+highlight(place.name,term)+'</h3><p class="address"><i class="fas fa-map-pin"></i> '+addrText+'</p>'+ratingHtml+distHtml+rateRow+'<div class="card-actions"><button class="share-place-btn" data-place-id="'+escapeHtml(place.id)+'"><i class="fas fa-share-alt"></i></button>'+delBtnHtml+'</div>';
+    card.innerHTML=devBadgeHtml+'<div class="category" style="color:'+colors[place.category]+'">'+escapeHtml(place.rubro||categoryLabels[place.category])+discountHtml+patronHtml+'</div><h3>'+highlight(place.name,term)+'</h3><p class="address" data-place-address="'+escapeHtml(place.id)+'"><i class="fas fa-map-pin"></i> '+addrText+'</p>'+ratingHtml+distHtml+rateRow+'<div class="card-actions"><button class="share-place-btn" data-place-id="'+escapeHtml(place.id)+'"><i class="fas fa-share-alt"></i></button>'+delBtnHtml+'</div>';
     card.addEventListener('click',(function(p){
       return function(ev){
         if(ev.target.closest('.delete-btn'))return;
         if(ev.target.closest('.share-place-btn'))return;
         if(ev.target.closest('.cr-star'))return;
         ensureUnlocked();
-        focusPlaceOnMap(p);
+        focusPlaceOnMap(p,true);
+      };
+    })(place));
+    const addressBtn=card.querySelector('[data-place-address]');
+    if(addressBtn)addressBtn.addEventListener('click',(function(p){
+      return function(ev){
+        ev.stopPropagation();
+        ensureUnlocked();
+        focusPlaceOnMap(p,true);
       };
     })(place));
     if(place.isCustom){
@@ -3098,10 +3212,11 @@ function deleteCustomPlace(id){
   allPlaces=allPlaces.filter(function(p){return p.id!==id});
   renderPlaces();
 }
-function focusPlaceOnMap(place){
+function focusPlaceOnMap(place,forceRefresh){
   if(!place)return;
   ensureUnlocked();
-  if(focusedPlaceId===place.id)return;
+  const samePlace=focusedPlaceId===place.id;
+  if(samePlace&&!forceRefresh)return;
   focusedIncidentId=null;
   focusedPlaceId=place.id;
   focusedTarget={kind:'place',lat:place.lat,lng:place.lng,name:place.name};
@@ -3110,9 +3225,12 @@ function focusPlaceOnMap(place){
   chatLocationsLayer.clearLayers();
   renderPlaces();
   try{map.invalidateSize({pan:false,animate:false})}catch(_){}
-  map.setView([place.lat,place.lng],16,{animate:true});
+  clearTimeout(wazeRefreshTimer);
+  const mobile=isMobileLayout();
+  map.setView([place.lat,place.lng],16,{animate:!mobile});
   const marker=markerMap.get(place.id);
-  if(marker)setTimeout(function(){try{marker.openPopup()}catch(_){}},400);
+  if(marker)setTimeout(function(){try{marker.openPopup()}catch(_){}},mobile?120:400);
+  setTimeout(function(){refreshWazeAtCurrentView()},mobile?80:420);
   showFocusBanner({name:place.name||'Ubicación',isIncident:false});
   if(isMobileLayout()){
     const wrap=document.getElementById('map-wrapper');
@@ -3274,7 +3392,16 @@ function buildDevAddFormHtml(lat,lng){
     '<label>Nombre</label><input id="af-name" type="text" placeholder="Ej: Taller López" maxlength="80">'+
     '<label>Rubro</label><select id="af-cat">'+opts+'</select>'+
     '<label>Dirección</label><input id="af-addr" type="text" placeholder="Ej: Av. Corrientes 1234" maxlength="120">'+
-    '<label>Puntuación</label><input id="af-rating" type="number" min="0" max="5" step="0.1" placeholder="Ej: 4.2">'+
+    '<label>Puntuación</label>'+
+    '<div class="af-rating-stars" id="af-rating-stars">'+
+    '<button type="button" data-rating="1" aria-label="1 estrella">★</button>'+
+    '<button type="button" data-rating="2" aria-label="2 estrellas">★</button>'+
+    '<button type="button" data-rating="3" aria-label="3 estrellas">★</button>'+
+    '<button type="button" data-rating="4" aria-label="4 estrellas">★</button>'+
+    '<button type="button" data-rating="5" aria-label="5 estrellas">★</button>'+
+    '<span class="ap-rating-value" id="af-rating-value">Sin puntuación</span>'+
+    '</div>'+
+    '<input id="af-rating" type="hidden" value="">'+
     '<div class="af-coords">'+lat.toFixed(5)+', '+lng.toFixed(5)+'</div>'+
     '<div class="af-actions"><button class="af-save" id="af-save"><i class="fas fa-save"></i> Guardar</button>'+
     '<button class="af-cancel" id="af-cancel"><i class="fas fa-times"></i> Cancelar</button></div></div>';
@@ -3289,6 +3416,19 @@ map.on('click',function(e){
   const formHtml=buildDevAddFormHtml(lat,lng);
   const popup=L.popup({closeButton:true,autoClose:false,closeOnClick:false,className:'dev-popup'}).setLatLng(e.latlng).setContent(formHtml).openOn(map);
   setTimeout(function(){const n=document.getElementById('af-name');if(n)n.focus()},100);
+  document.querySelectorAll('#af-rating-stars button').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      const value=parseInt(btn.getAttribute('data-rating'),10);
+      const input=document.getElementById('af-rating');
+      const valueEl=document.getElementById('af-rating-value');
+      if(input)input.value=String(value);
+      document.querySelectorAll('#af-rating-stars button').forEach(function(star){
+        const starValue=parseInt(star.getAttribute('data-rating'),10);
+        star.classList.toggle('active',starValue<=value);
+      });
+      if(valueEl)valueEl.textContent=value+'/5';
+    });
+  });
   document.getElementById('af-save').addEventListener('click',function(){
     const name=document.getElementById('af-name').value.trim();
     const category=document.getElementById('af-cat').value;
@@ -3384,6 +3524,8 @@ function openAddPlaceModal(){
   apName.value='';
   apCat.value='comida';
   apRating.value='';
+  document.querySelectorAll('#apRatingStars button').forEach(function(star){star.classList.remove('active')});
+  apRatingValue.textContent='Sin puntuación';
   setApStatus('');
   renderAddressFields(['']);
   addPlaceModal.classList.add('visible');
@@ -3400,6 +3542,17 @@ addPlaceBtn.addEventListener('click',openAddPlaceModal);
 apCancelBtn.addEventListener('click',closeAddPlaceModal);
 addPlaceModal.addEventListener('click',function(e){if(e.target===addPlaceModal)closeAddPlaceModal()});
 apAddAddrBtn.addEventListener('click',function(){addAddressField('')});
+if(apRatingStars)apRatingStars.querySelectorAll('button').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    const value=parseInt(btn.getAttribute('data-rating'),10);
+    apRating.value=String(value);
+    apRatingStars.querySelectorAll('button').forEach(function(star){
+      const starValue=parseInt(star.getAttribute('data-rating'),10);
+      star.classList.toggle('active',starValue<=value);
+    });
+    apRatingValue.textContent=value+'/5';
+  });
+});
 async function submitAddPlace(){
   if(addPlaceBusy)return;
   const name=(apName.value||'').trim();
@@ -3572,6 +3725,78 @@ function requestUserLocation(){
   },{enableHighAccuracy:false,timeout:8000,maximumAge:60000});
 }
 let searchTimeout;
+function isMobileDrawer(){return window.matchMedia('(max-width:900px) and (orientation:portrait) and (pointer:coarse)').matches}
+function openMobileMenu(){
+  if(!isMobileDrawer())return;
+  mobileSidebar.classList.add('mobile-open');
+  mobileMenuOverlay.classList.add('visible');
+  mobileMenuBtn.setAttribute('aria-expanded','true');
+  mobileMenuBtn.setAttribute('aria-label','Cerrar menú');
+  mobileMenuBtn.innerHTML='<i class="fas fa-times"></i>';
+  mobileMenuOverlay.setAttribute('aria-hidden','false');
+  document.body.classList.add('mobile-menu-open');
+}
+function closeMobileMenu(){
+  mobileSidebar.classList.remove('mobile-open');
+  mobileMenuOverlay.classList.remove('visible');
+  mobileMenuBtn.setAttribute('aria-expanded','false');
+  mobileMenuBtn.setAttribute('aria-label','Abrir menú');
+  mobileMenuBtn.innerHTML='<i class="fas fa-bars"></i>';
+  mobileMenuOverlay.setAttribute('aria-hidden','true');
+  document.body.classList.remove('mobile-menu-open');
+}
+function toggleMobileMenu(){
+  if(!isMobileDrawer())return;
+  if(mobileSidebar.classList.contains('mobile-open'))closeMobileMenu();
+  else openMobileMenu();
+}
+mobileMenuBtn.addEventListener('click',toggleMobileMenu);
+mobileMenuOverlay.addEventListener('click',closeMobileMenu);
+window.addEventListener('resize',function(){
+  if(!isMobileDrawer())closeMobileMenu();
+  clearTimeout(window.__mapResizeTimer);
+  window.__mapResizeTimer=setTimeout(function(){
+    try{
+      map.invalidateSize({pan:false,animate:false});
+      applyActiveTransform();
+    }catch(_){}
+  },80);
+});
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',function(){
+    clearTimeout(window.__mapVisualResizeTimer);
+    window.__mapVisualResizeTimer=setTimeout(function(){
+      try{
+        map.invalidateSize({pan:false,animate:false});
+        applyActiveTransform();
+      }catch(_){}
+    },80);
+  });
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileMenu()});
+let mobileDrawerTouchStartX=0;
+let mobileDrawerTouchStartY=0;
+mobileSidebar.addEventListener('touchstart',function(e){
+  if(!isMobileDrawer()||!e.touches.length)return;
+  mobileDrawerTouchStartX=e.touches[0].clientX;
+  mobileDrawerTouchStartY=e.touches[0].clientY;
+},{passive:true});
+mobileSidebar.addEventListener('touchend',function(e){
+  if(!isMobileDrawer()||!e.changedTouches.length)return;
+  const dx=e.changedTouches[0].clientX-mobileDrawerTouchStartX;
+  const dy=e.changedTouches[0].clientY-mobileDrawerTouchStartY;
+  if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.25&&dx<0)closeMobileMenu();
+},{passive:true});
+mobileMenuOverlay.addEventListener('touchend',function(e){
+  if(!isMobileDrawer()||!e.changedTouches.length)return;
+  closeMobileMenu();
+},{passive:true});
+
+mobileSidebar.addEventListener('click',function(e){
+  if(!isMobileDrawer())return;
+  if(e.target.closest('.place-card'))closeMobileMenu();
+});
+
 searchInput.addEventListener('input',function(e){
   ensureUnlocked();
   clearTimeout(searchTimeout);
@@ -4378,7 +4603,21 @@ const loginModal=document.getElementById('loginModal');
 const loginMutualBtn=document.getElementById('loginMutualBtn');
 const loginGuestBtn=document.getElementById('loginGuestBtn');
 const loginCancelBtn=document.getElementById('loginCancelBtn');
-const loginTestBadge=document.getElementById('loginTestBadge');
+const loginEmailInput=document.getElementById('loginEmailInput');
+const loginPasswordInput=document.getElementById('loginPasswordInput');
+const loginRememberInput=document.getElementById('loginRememberInput');
+const loginError=document.getElementById('loginError');
+const gateEmailInput=document.getElementById('gateEmailInput');
+const gatePasswordInput=document.getElementById('gatePasswordInput');
+const gateRememberInput=document.getElementById('gateRememberInput');
+const gateLoginError=document.getElementById('gateLoginError');
+const floatingStack=document.querySelector('.floating-stack');
+const profileModal=document.getElementById('profileModal');
+const profileTitle=document.getElementById('profileTitle');
+const profileSubtitle=document.getElementById('profileSubtitle');
+const profileContent=document.getElementById('profileContent');
+const profileLogoutBtn=document.getElementById('profileLogoutBtn');
+const profileCloseBtn=document.getElementById('profileCloseBtn');
 const userMenu=document.getElementById('userMenu');
 const userMenuAvatar=document.getElementById('userMenuAvatar');
 const userMenuName=document.getElementById('userMenuName');
@@ -4788,17 +5027,44 @@ function loadMotoamigosFromStorage(){
   }catch(e){}
 }
 function saveAuth(){
-  try{localStorage.setItem(AUTH_KEY,JSON.stringify(authState))}catch(e){}
+  try{
+    const shouldRemember=!!(authState.isLoggedIn&&authState.user&&!authState.user.isGuest&&authState.user.rememberDevice);
+    if(shouldRemember)localStorage.setItem(AUTH_KEY,JSON.stringify(authState));
+    else localStorage.removeItem(AUTH_KEY);
+  }catch(e){}
 }
 function loadAuthFromStorage(){
+  authState={isLoggedIn:false,user:null};
   try{
     const raw=localStorage.getItem(AUTH_KEY);
     if(!raw)return;
     const data=JSON.parse(raw);
-    if(data)if(data.isLoggedIn)if(data.user)authState=data;
-  }catch(e){}
+    if(data&&data.isLoggedIn&&data.user&&!data.user.isGuest&&data.user.rememberDevice===true){
+      authState=data;
+    }else{
+      localStorage.removeItem(AUTH_KEY);
+    }
+  }catch(e){
+    try{localStorage.removeItem(AUTH_KEY)}catch(_){}
+  }
 }
 function isLoggedIn(){return authState.isLoggedIn}
+function updateGuestControls(){
+  const isGuest=!!(authState.isLoggedIn&&authState.user&&authState.user.isGuest);
+  if(floatingStack){
+    floatingStack.classList.toggle('guest-disabled',isGuest);
+    floatingStack.setAttribute('aria-disabled',isGuest?'true':'false');
+    floatingStack.querySelectorAll('.floating-btn, a.floating-btn').forEach(function(el){
+      const keepActive=el.id==='authHeaderBtn';
+      if(isGuest&&!keepActive)el.setAttribute('aria-disabled','true');
+      else el.removeAttribute('aria-disabled');
+    });
+  }
+  const levelPanel=document.getElementById('levelPanel');
+  const coinsPanel=document.getElementById('coinsPanel');
+  if(levelPanel)levelPanel.style.display=isGuest?'none':'';
+  if(coinsPanel)coinsPanel.style.display=isGuest?'none':'';
+}
 function updateAuthUI(){
   if(authState.isLoggedIn)if(authState.user){
     authHeaderBtn.classList.add('logged-in');
@@ -4806,11 +5072,13 @@ function updateAuthUI(){
     if(authState.user.isGuest)label='Invitado';
     authHeaderBtn.innerHTML='<i class="fas fa-user-check"></i>';
     authHeaderBtn.title=authState.user.nick||label;
+    updateGuestControls();
     return;
   }
   authHeaderBtn.classList.remove('logged-in');
   authHeaderBtn.innerHTML='<i class="fas fa-sign-in-alt"></i>';
   authHeaderBtn.title='Iniciar sesión';
+  updateGuestControls();
 }
 function showGate(){
   authGate.classList.remove('hidden');
@@ -4821,54 +5089,187 @@ function hideGate(){
   setTimeout(function(){authGate.classList.add('hidden');try{map.invalidateSize()}catch(_){}},400);
 }
 function showLoginModal(){
-  if(AUTH_CONFIG.showMutualMotosLogin)loginMutualBtn.style.display='flex';
-  else loginMutualBtn.style.display='none';
-  if(AUTH_CONFIG.mutualMotosTestMode){
-    loginGuestBtn.style.display='block';
-    loginTestBadge.style.display='inline-block';
-  }else{
-    loginGuestBtn.style.display='none';
-    loginTestBadge.style.display='none';
-  }
-  if(loginMutualIdInput)loginMutualIdInput.value='';
+  if(loginEmailInput)loginEmailInput.value='';
+  if(loginPasswordInput)loginPasswordInput.value='';
+  if(loginRememberInput)loginRememberInput.checked=false;
+  if(loginError){loginError.textContent='';loginError.style.display='none';}
   loginModal.classList.add('visible');
+  setTimeout(function(){if(loginEmailInput)loginEmailInput.focus()},100);
 }
 function hideLoginModal(){loginModal.classList.remove('visible')}
 function finalizeLogin(){
+  if(authState.user&&authState.user.id){
+    myUserId=String(authState.user.id);
+    try{localStorage.setItem(CHAT_KEY_UID,myUserId)}catch(e){}
+  }
+  if(authState.user&&authState.user.nick){
+    myNick=authState.user.nick;
+    try{localStorage.setItem(CHAT_KEY_NICK,myNick)}catch(e){}
+  }
   saveAuth();
   updateAuthUI();
   hideLoginModal();
   hideGate();
-  if(!myNick)setTimeout(askForNick,500);
+  updateGuestControls();
+  if(authState.user&&authState.user.isGuest){
+    myNick='Invitado';
+    try{localStorage.setItem(CHAT_KEY_NICK,myNick)}catch(e){}
+    continueAfterAuth();
+  }else if(!myNick)setTimeout(askForNick,500);
   else continueAfterAuth();
 }
 function loginAsGuest(){
   const guestId='guest_'+Date.now().toString(36)+Math.random().toString(36).substr(2,6);
-  authState={isLoggedIn:true,user:{id:guestId,nick:'',isGuest:true,provider:'test'}};
+  authState={isLoggedIn:true,user:{id:guestId,nick:'',isGuest:true,rememberDevice:false,provider:'guest'}};
   finalizeLogin();
 }
-function loginWithMutualMotos(){
-  const rawId=(loginMutualIdInput&&loginMutualIdInput.value?loginMutualIdInput.value:'').trim().toUpperCase();
-  if(!rawId){
-    if(!AUTH_CONFIG.mutualMotosTestMode){
-      alert('Ingresá tu ID de socio.');
+function parseCsvLine(line){
+  const out=[];let cur='';let quoted=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch==='"'){
+      if(quoted&&line[i+1]==='"'){cur+='"';i++;}
+      else quoted=!quoted;
+    }else if(ch===','&&!quoted){out.push(cur);cur='';}
+    else cur+=ch;
+  }
+  out.push(cur);
+  return out;
+}
+function normalizeAuthHeader(value){
+  return String(value||'')
+    .replace(/^\uFEFF/,'')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'');
+}
+const AUTH_COLUMN_ALIASES={
+  'marca temporal':'timestamp',
+  'ingrese su nombre completo.':'nombre',
+  'ingrese su(s) apellido(s).':'apellido',
+  'ingrese su fecha de nacimiento.':'fecha',
+  'ingrese su numero de telefono.':'telefono',
+  'ingrese el numero de telefono de un familiar.':'telefonoFamiliar',
+  'ingrese el modelo de su moto.':'moto',
+  'ingrese el numero de patente.':'patente',
+  'ingrese su correo electronico.':'correo',
+  'ingrese una contrasena.':'contraseña',
+  'ingrese su nombre de usuario.':'nickname'
+};
+function parseAuthCsv(csv){
+  const lines=csv.replace(/^\uFEFF/,'').split(/\r?\n/).filter(function(line){return line.trim()!==''});
+  if(!lines.length)return [];
+  const headers=parseCsvLine(lines[0]).map(function(h){
+    const normalized=normalizeAuthHeader(h);
+    return AUTH_COLUMN_ALIASES[normalized]||normalized;
+  });
+  return lines.slice(1).map(function(line){
+    const vals=parseCsvLine(line), row={};
+    headers.forEach(function(h,i){row[h]=String(vals[i]===undefined?'':vals[i]).trim()});
+    return row;
+  });
+}
+function getAuthIdentifier(user){
+  const explicitId=String(user.id||'').trim();
+  if(explicitId)return explicitId;
+  const nickname=String(user.nickname||'').trim();
+  if(nickname)return 'u_'+nickname.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9_-]+/g,'_').replace(/^_+|_+$/g,'').slice(0,80);
+  const correo=String(user.correo||'').trim().toLowerCase();
+  if(correo)return 'u_'+correo.replace(/[^a-z0-9._-]+/g,'_').slice(0,100);
+  const timestamp=String(user.timestamp||'').trim();
+  if(timestamp)return 'u_'+timestamp.replace(/[^a-z0-9_-]+/gi,'_').slice(0,100);
+  return 'u_'+Date.now().toString(36);
+}
+async function loginWithMutualMotos(){
+  const emailField=(gateEmailInput&&gateEmailInput.offsetParent!==null)?gateEmailInput:loginEmailInput;
+  const passwordField=(gatePasswordInput&&gatePasswordInput.offsetParent!==null)?gatePasswordInput:loginPasswordInput;
+  const rememberField=(gateRememberInput&&gateRememberInput.offsetParent!==null)?gateRememberInput:loginRememberInput;
+  const errorField=(gateLoginError&&gateLoginError.offsetParent!==null)?gateLoginError:loginError;
+  const identifier=(emailField&&emailField.value?emailField.value:'').trim();
+  const identifierNormalized=identifier.toLowerCase();
+  const password=(passwordField&&passwordField.value?passwordField.value:'');
+  if(errorField){errorField.textContent='';errorField.style.display='none';}
+  if(!identifier||!password){
+    if(errorField){errorField.textContent='Ingresá tu correo o nombre de usuario y la contraseña.';errorField.style.display='block';}
+    alert('Datos incompletos: ingresá tu correo electrónico o nombre de usuario y tu contraseña.');
+    return;
+  }
+  loginMutualBtn.disabled=true;
+  loginMutualBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Verificando...';
+  try{
+    const response=await fetch(AUTH_CSV_URL,{cache:'no-store'});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const csv=await response.text();
+    const rows=parseAuthCsv(csv);
+    const user=rows.find(function(row){
+      const correo=String(row.correo||'').trim().toLowerCase();
+      const nickname=String(row.nickname||'').trim().toLowerCase();
+      const rowPassword=String(row['contraseña']||'');
+      return (correo===identifierNormalized||nickname===identifierNormalized) && rowPassword===password;
+    });
+    if(!user){
+      if(errorField){errorField.textContent='Correo/nombre de usuario o contraseña incorrectos.';errorField.style.display='block';}
+      alert('Uno de los datos ingresados es incorrecto. Revisá tu correo electrónico o nombre de usuario y tu contraseña.');
       return;
     }
-    const email=prompt('Modo test: ingresá tu email de Mutual Motos','test@mutualmotos.com');
-    if(!email)return;
-    authState={isLoggedIn:true,user:{id:'mutual_'+email.replace(/[^a-z0-9]/gi,'').slice(0,20),socioId:'',nick:email.split('@')[0],email:email,isGuest:false,provider:'mutual-motos'}};
+    const displayName=(user.nickname||((user.nombre||'')+' '+(user.apellido||'')).trim()||user.correo||'Usuario').trim();
+    const resolvedId=getAuthIdentifier(user);
+    authState={isLoggedIn:true,user:{
+      id:resolvedId,
+      nick:displayName,
+      nombre:user.nombre||'',
+      apellido:user.apellido||'',
+      email:user.correo||'',
+      telefono:user.telefono||'',
+      telefonoFamiliar:user.telefonoFamiliar||user['telefono-familiar']||'',
+      moto:user.moto||'',
+      patente:user.patente||'',
+      sangre:user.sangre||'',
+      fecha:user.fecha||'',
+      timestamp:user.timestamp||'',
+      isGuest:false,
+      rememberDevice:!!(rememberField&&rememberField.checked),
+      provider:'google-sheet'
+    }};
+    alert('¡Inicio de sesión correcto! Bienvenido/a, '+displayName+'.');
     finalizeLogin();
-    return;
+  }catch(e){
+    console.error('Error verificando credenciales:',e);
+    if(errorField){errorField.textContent='No se pudo consultar la planilla de Usuarios. Verificá tu conexión e intentá nuevamente.';errorField.style.display='block';}
+    alert('No se pudo comprobar el inicio de sesión porque no se pudo consultar la planilla de Usuarios. Verificá tu conexión e intentá nuevamente.');
+  }finally{
+    loginMutualBtn.disabled=false;
+    loginMutualBtn.innerHTML='<i class="fas fa-sign-in-alt"></i> Iniciar sesión';
   }
-  const socio=SOCIOS.find(function(s){return s.id.toUpperCase()===rawId});
-  if(!socio){
-    alert('ID de socio no encontrado.\n\nVerificá el ID o pedilo en la sede de Mutual Motos.\n\nIDs de ejemplo:\n'+(SOCIOS.slice(0,4).map(function(s){return '• '+s.id+' — '+s.nombre}).join('\n')));
-    return;
+}
+function escapeProfileValue(value){
+  const v=(value===null||value===undefined?'':String(value)).trim();
+  return v?escapeHtml(v):'—';
+}
+function openProfileModal(){
+  if(!authState.isLoggedIn||!authState.user){showLoginModal();return}
+  const u=authState.user||{};
+  const isGuest=!!u.isGuest;
+  if(profileTitle)profileTitle.textContent=isGuest?'Invitado':(u.nick||'Mi cuenta');
+  if(profileSubtitle)profileSubtitle.textContent=isGuest?'Sesión de invitado':'Datos de tu cuenta';
+  if(profileContent){
+    if(isGuest){
+      profileContent.innerHTML='<div class="profile-guest"><strong>Invitado</strong><span>Estás usando la página como invitado.</span></div>';
+    }else{
+      const rows=[['ID',u.id],['Nombre completo',u.nombre],['Apellido(s)',u.apellido],['Fecha de nacimiento',u.fecha],['Número de teléfono',u.telefono],['Teléfono de un familiar',u.telefonoFamiliar],['Modelo de moto',u.moto],['Número de patente',u.patente],['Correo electrónico',u.email],['Nombre de usuario',u.nick]];
+      profileContent.innerHTML=rows.map(function(row){return '<div class="profile-row-label">'+escapeHtml(row[0])+'</div><div class="profile-row-value">'+escapeProfileValue(row[1])+'</div>'}).join('');
+    }
   }
-  authState={isLoggedIn:true,user:{id:'mutual_'+socio.id,socioId:socio.id,nick:socio.nick||socio.nombre,email:socio.email||'',telefono:socio.telefono||'',isGuest:false,provider:'mutual-motos'}};
-  finalizeLogin();
+  profileModal.classList.add('visible');
+  profileModal.setAttribute('aria-hidden','false');
+}
+function closeProfileModal(){
+  profileModal.classList.remove('visible');
+  profileModal.setAttribute('aria-hidden','true');
 }
 function logout(){
+  closeProfileModal();
   if(mqttClient)if(chatReady){
     try{
       mqttClient.publish(TOPIC_PRESENCE,JSON.stringify({type:'presence',from:{id:myUserId,nick:myNick},status:'desconectado',ts:Date.now()}),{qos:0});
@@ -4876,6 +5277,8 @@ function logout(){
     }catch(e){}
   }
   authState={isLoggedIn:false,user:null};
+  myNick='';
+  try{localStorage.removeItem(CHAT_KEY_NICK)}catch(e){}
   saveAuth();
   updateAuthUI();
   if(isChatOpen())closeChat();
@@ -4900,20 +5303,22 @@ function continueAfterAuth(){
     }
   }catch(e){}
 }
-gateLoginBtn.addEventListener('click',showLoginModal);
-gateGuestBtn.addEventListener('click',function(){
-  if(!AUTH_CONFIG.mutualMotosTestMode){alert('El modo test está desactivado.');return}
-  if(confirm('Vas a entrar como invitado (modo test).\n\n¿Continuar?'))loginAsGuest();
-});
+gateLoginBtn.addEventListener('click',loginWithMutualMotos);
+gateGuestBtn.addEventListener('click',function(){loginAsGuest()});
 authHeaderBtn.addEventListener('click',function(){
-  if(authState.isLoggedIn){
-    if(confirm('¿Querés cerrar sesión?'))logout();
-  }else showLoginModal();
+  if(authState.isLoggedIn)openProfileModal();
+  else showLoginModal();
 });
+profileCloseBtn.addEventListener('click',closeProfileModal);
+profileLogoutBtn.addEventListener('click',logout);
+profileModal.addEventListener('click',function(e){if(e.target===profileModal)closeProfileModal()});
 loginMutualBtn.addEventListener('click',loginWithMutualMotos);
 loginGuestBtn.addEventListener('click',loginAsGuest);
 loginCancelBtn.addEventListener('click',function(){hideLoginModal();showGate()});
-if(loginMutualIdInput)loginMutualIdInput.addEventListener('keydown',function(e){if(e.key==='Enter')loginWithMutualMotos()});
+if(loginEmailInput)loginEmailInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();if(loginPasswordInput)loginPasswordInput.focus()}});
+if(loginPasswordInput)loginPasswordInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();loginWithMutualMotos()}});
+if(gateEmailInput)gateEmailInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();if(gatePasswordInput)gatePasswordInput.focus()}});
+if(gatePasswordInput)gatePasswordInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();loginWithMutualMotos()}});
 userLogHeaderBtn.addEventListener('click',openUserLogModal);
 function loadMailbox(){
   try{
@@ -6609,12 +7014,16 @@ function loadMapDataInBackground(){
   loadUserLog();
   loadActiveAlert();
   loadMailbox();
-  loadMotoCoins();
-  renderMotoCoins();
+  if(!(authState.isLoggedIn&&authState.user&&authState.user.isGuest)){
+    loadMotoCoins();
+    renderMotoCoins();
+    loadMyLevel();
+    renderLevelPanel();
+  }else{
+    updateGuestControls();
+  }
   renderMailbox();
   updateMailboxBadge();
-  loadMyLevel();
-  renderLevelPanel();
   chatLocations=loadChatLocationsFromStorage();
   renderAllChatLocations();
   renderAllUserMotos();
@@ -6678,15 +7087,13 @@ if(kioskParam==='1'){
   window.addEventListener('resize',function(){
     setTimeout(function(){try{map.invalidateSize()}catch(_){}wazeReloadPending=false;recenterImmediate()},700);
   });
-  if(AUTH_CONFIG.requireLogin){
-    if(!authState.isLoggedIn)showGate();
-    else{
-      hideGate();
-      setTimeout(function(){if(!myNick)askForNick();else continueAfterAuth()},400);
-    }
-  }else{
+  if(authState.isLoggedIn&&authState.user&&!authState.user.isGuest&&authState.user.rememberDevice===true){
     hideGate();
     setTimeout(function(){if(!myNick)askForNick();else continueAfterAuth()},400);
+  }else{
+    authState={isLoggedIn:false,user:null};
+    showGate();
+    setTimeout(function(){if(gateEmailInput)gateEmailInput.focus()},150);
   }
 }else if(resolveParam){
   const rEl=document.getElementById('resolveScreen');
@@ -6715,15 +7122,13 @@ if(kioskParam==='1'){
   window.addEventListener('resize',function(){
     setTimeout(function(){try{map.invalidateSize()}catch(_){}wazeReloadPending=false;recenterImmediate()},700);
   });
-  if(AUTH_CONFIG.requireLogin){
-    if(!authState.isLoggedIn)showGate();
-    else{
-      hideGate();
-      setTimeout(function(){if(!myNick)askForNick();else continueAfterAuth()},400);
-    }
-  }else{
+  if(authState.isLoggedIn&&authState.user&&!authState.user.isGuest&&authState.user.rememberDevice===true){
     hideGate();
     setTimeout(function(){if(!myNick)askForNick();else continueAfterAuth()},400);
+  }else{
+    authState={isLoggedIn:false,user:null};
+    showGate();
+    setTimeout(function(){if(gateEmailInput)gateEmailInput.focus()},150);
   }
 }
 </script>
