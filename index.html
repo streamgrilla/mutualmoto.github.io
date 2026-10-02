@@ -53,7 +53,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 .profile-guest{padding:1.2rem;background:#f8f9fa;border:1px dashed #cfd8dc;border-radius:12px;margin-bottom:.2rem;color:#555;grid-column:1/-1}
 .profile-guest strong{display:block;color:#2c3e50;font-size:1.05rem;margin-bottom:.35rem}
 @media(max-width:600px){.profile-box{padding:1.1rem}.profile-content{grid-template-columns:1fr;gap:.2rem;padding:.8rem}.profile-row-label{margin-top:.35rem}}
-.floating-stack.guest-disabled .floating-btn:not(#authHeaderBtn),.floating-stack.guest-disabled a{opacity:.42;filter:grayscale(1);pointer-events:none;cursor:not-allowed}
+.floating-stack.guest-disabled .floating-items .floating-btn:not(#authHeaderBtn),.floating-stack.guest-disabled .floating-items a{display:none!important}.floating-stack.guest-disabled #floatingToggleBtn{opacity:1!important;filter:none!important;pointer-events:auto!important;cursor:pointer!important}
 .kiosk-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0d6b58,#16a085 60%,#1abc9c);z-index:99997;display:none;align-items:center;justify-content:center;padding:1.5rem;overflow-y:auto}
 .kiosk-screen.visible{display:flex}
 .kiosk-box{background:#fff;border-radius:24px;padding:2.2rem 2rem;max-width:520px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.5);text-align:center;margin:auto}
@@ -653,6 +653,16 @@ footer a{color:#fff;text-decoration:underline}
 .login-id-row input{flex:1;padding:.75rem .9rem;border:2px solid #ddd;border-radius:8px;font-size:1rem;outline:none;font-family:monospace;text-transform:uppercase}
 .login-id-row input:focus{border-color:var(--moto)}
 .login-id-hint{font-size:.72rem;color:#888;margin-bottom:.7rem;text-align:center}
+
+.password-input-row{display:flex;gap:.4rem;align-items:stretch}
+.password-input-row .gate-login-input{flex:1;min-width:0}
+.password-toggle-btn{border:1px solid #dfe6e9;background:#f8f9fa;color:#2c3e50;border-radius:10px;padding:.75rem .8rem;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s}
+.password-toggle-btn:hover{background:#eef2f4;border-color:#c8d2d8}
+.password-toggle-btn:active{transform:translateY(1px)}
+.login-password-row{display:flex;gap:.4rem;align-items:stretch}
+.login-password-row input{flex:1;min-width:0}
+.login-password-row .password-toggle-btn{border-radius:8px}
+
 .add-place-modal .modal-box{border-top:6px solid #16a085;max-width:480px}
 .add-place-modal h3{color:#16a085}
 .add-place-modal label{display:block;font-size:.75rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin:.7rem 0 .3rem}
@@ -712,13 +722,11 @@ footer a{color:#fff;text-decoration:underline}
 .mobile-menu-overlay{display:none;position:fixed;z-index:2050;inset:0;background:rgba(0,0,0,.42);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .28s ease,visibility .28s ease;touch-action:none}
 body.mobile-menu-open{overflow:hidden}
 @media(max-width:900px) and (orientation:portrait) and (pointer:coarse){
-header{padding:.6rem 3.8rem .6rem 3.8rem;min-height:60px;flex-shrink:0}
+header{padding:.6rem 3.8rem .6rem 3.8rem;min-height:60px}
 header h1{font-size:.95rem;line-height:1.15}
-.container{flex:1 1 auto;flex-direction:column;height:auto;min-height:0}
-body{min-height:100dvh}
-#map-wrapper{flex:1 1 auto;width:100%;height:auto;min-height:0;touch-action:none;overscroll-behavior:contain}
-#map{touch-action:none;-webkit-user-select:none;user-select:none}
-#sidebar{position:fixed;z-index:2100;top:0;left:0;bottom:0;width:min(86vw,360px);height:100dvh;min-height:0;max-height:none;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transform:translateX(-105%);transition:transform .28s cubic-bezier(.4,0,.2,1),box-shadow .28s ease;box-shadow:8px 0 24px rgba(0,0,0,.24);background:#fff;will-change:transform;-webkit-overflow-scrolling:touch}
+.container{flex-direction:column;height:calc(100vh - 60px - 38px);height:calc(100dvh - 60px - 38px)}
+#map-wrapper{flex:1 1 auto;width:100%;height:100%;min-height:0}
+#sidebar{position:fixed;z-index:2100;top:60px;left:0;bottom:38px;width:min(86vw,360px);height:auto;min-height:0;max-height:none;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transform:translateX(-105%);transition:transform .28s cubic-bezier(.4,0,.2,1),box-shadow .28s ease;box-shadow:8px 0 24px rgba(0,0,0,.24);background:#fff;will-change:transform;-webkit-overflow-scrolling:touch}
 #sidebar.mobile-open{transform:translateX(0);box-shadow:8px 0 28px rgba(0,0,0,.3)}
 #sidebar>*{flex:0 0 auto;width:auto!important;min-width:0!important;box-sizing:border-box}
 #sidebar h2{width:100%!important;padding:.7rem .9rem;font-size:.9rem;display:block;background:#ecf0f1;border-right:0;border-bottom:1px solid #ddd}
@@ -770,7 +778,7 @@ body{min-height:100dvh}
 .focus-banner{top:6px;font-size:.7rem;padding:.4rem .4rem .4rem .65rem;gap:.3rem}
 .focus-banner .fb-text{max-width:110px}
 .focus-banner button{padding:.3rem .55rem;font-size:.65rem}
-footer{padding:.55rem;font-size:.7rem;flex-shrink:0;padding-bottom:calc(.55rem + env(safe-area-inset-bottom))}
+footer{padding:.55rem;font-size:.7rem}
 }
 @media(max-width:380px) and (orientation:portrait) and (pointer:coarse){
 header{padding-left:3.5rem;padding-right:3.5rem}
@@ -824,7 +832,7 @@ header{padding-left:3.5rem;padding-right:3.5rem}
 <div class="alert-divider">o</div>
 <div class="alert-section-title">Ingres&aacute; tu contrase&ntilde;a <span class="alert-beta-badge">BETA</span></div>
 <div class="alert-password-row">
-<input type="password" id="alertPasswordInput" placeholder="Contrase&ntilde;a (beta: 0000)" autocomplete="off">
+<input type="password" id="alertPasswordInput" placeholder="••••••••" autocomplete="off">
 <button id="alertPasswordBtn">Verificar</button>
 </div>
 <div class="alert-error" id="alertError"></div>
@@ -840,7 +848,10 @@ header{padding-left:3.5rem;padding-right:3.5rem}
 <label class="gate-login-field" for="gateEmailInput">Correo electr&oacute;nico o nombre de usuario</label>
 <input class="gate-login-input" type="text" id="gateEmailInput" placeholder="correo@ejemplo.com o tu usuario" autocomplete="username" maxlength="150">
 <label class="gate-login-field" for="gatePasswordInput">Contrase&ntilde;a</label>
-<input class="gate-login-input" type="password" id="gatePasswordInput" placeholder="Contrase&ntilde;a" autocomplete="current-password" maxlength="150">
+<div class="password-input-row">
+<input class="gate-login-input" type="password" id="gatePasswordInput" placeholder="••••••••••••" autocomplete="current-password" maxlength="150">
+<button type="button" class="password-toggle-btn" data-password-target="gatePasswordInput"><i class="fas fa-eye"></i> Mostrar</button>
+</div>
 <label class="gate-remember" for="gateRememberInput"><input type="checkbox" id="gateRememberInput"><span>Recu&eacute;rdame en este dispositivo</span></label>
 <div class="gate-error" id="gateLoginError"></div>
 <button class="gate-btn login" id="gateLoginBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n</button>
@@ -1080,8 +1091,9 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <input type="text" id="loginEmailInput" placeholder="correo@ejemplo.com o tu usuario" autocomplete="username" maxlength="150">
 </div>
 <label style="display:block;text-align:left;font-size:.72rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin:.75rem 0 .3rem">Contrase&ntilde;a</label>
-<div class="login-id-row">
-<input type="password" id="loginPasswordInput" placeholder="Contrase&ntilde;a" autocomplete="current-password" maxlength="150">
+<div class="login-password-row">
+<input class="login-password-input" type="password" id="loginPasswordInput" placeholder="••••••••••••" autocomplete="current-password" maxlength="150">
+<button type="button" class="password-toggle-btn" data-password-target="loginPasswordInput"><i class="fas fa-eye"></i> Mostrar</button>
 </div>
 <div class="login-id-hint">La cuenta se verifica con los datos publicados en la planilla de usuarios.</div>
 <label style="display:flex;align-items:center;gap:.55rem;text-align:left;margin:.75rem 0;font-size:.82rem;color:#666;cursor:pointer"><input type="checkbox" id="loginRememberInput" style="width:17px;height:17px;accent-color:var(--moto);cursor:pointer"><span>Recu&eacute;rdame en este dispositivo</span></label>
@@ -1412,7 +1424,6 @@ const SOCIOS=[
 ];
 const REPORT_REASON_LABELS={falsa_alerta:'Falsa alerta / emergencia falsa',siniestro_fuga:'Siniestro y se dio a la fuga',autor_robo:'Autor de un robo',spam:'Spam o publicidad no deseada',acoso:'Acoso, insultos o amenazas',contenido:'Contenido inapropiado u ofensivo',suplantacion:'Suplantación de identidad',ubicacion_falsa:'Ubicación falsa o maliciosa',incidente_falso:'Siniestro falso',usuario:'Denunciar a un usuario',otro:'Otro'};
 const INCIDENT_TYPE_LABELS={accident:'Accidente',closure:'Ruta cerrada',police:'Control policial'};
-const ALERT_BETA_PASSWORD='0000';
 const ALERT_TTL=24*60*60*1000;
 const INITIAL_CARDS=80;
 const CARDS_PER_PAGE=80;
@@ -1606,14 +1617,26 @@ const map=L.map('map',{
   touchZoom:true,
   boxZoom:true,
   keyboard:true,
-  zoomSnap:isMobileLayout()?0.25:1,
-  zoomDelta:isMobileLayout()?0.25:1,
-  tapTolerance:isMobileLayout()?8:15,
+  zoomSnap:1,
+  zoomDelta:1,
+  tapTolerance:15,
   zoomAnimation:true,
   markerZoomAnimation:true,
   fadeAnimation:true,
   zoomAnimationThreshold:4
 }).setView([INITIAL_VIEW.lat,INITIAL_VIEW.lng],INITIAL_VIEW.zoom);
+
+function configureMapZoomMode(){
+  const mobile=isMobileLayout();
+  // Computadora: lógica original de zoom, por niveles enteros.
+  // Teléfono: zoom fraccionario para pinch y escala continua de Waze.
+  map.options.zoomSnap=mobile?0.25:1;
+  map.options.zoomDelta=mobile?0.25:1;
+  map.options.tapTolerance=mobile?8:15;
+}
+configureMapZoomMode();
+window.addEventListener('resize',function(){try{configureMapZoomMode()}catch(_){} });
+
 const chatLocationsLayer=L.layerGroup().addTo(map);
 const userMotosLayer=L.layerGroup().addTo(map);
 const incidentsLayer=L.layerGroup().addTo(map);
@@ -1688,18 +1711,36 @@ function openWazeNavigation(toLat,toLng){
 }
 function getActiveFrame(){return wazeActiveFrame==='A'?wazeIframeA:wazeIframeB}
 function getInactiveFrame(){return wazeActiveFrame==='A'?wazeIframeB:wazeIframeA}
-function applyActiveTransform(){
-  if(!wazeBaseCenter)return null;
-  if(wazeBaseZoom===null)return null;
-  const active=getActiveFrame();
-  const center=map.getCenter();
-  const zoom=map.getZoom();
-  const basePx=map.project(wazeBaseCenter,zoom);
+function applyWazeFrameTransformDesktop(frame,baseCenter,baseZoom,center,zoom){
+  if(!frame||!baseCenter||baseZoom===null)return null;
+  const basePx=map.project(baseCenter,zoom);
   const currPx=map.project(center,zoom);
   const dx=currPx.x-basePx.x;
   const dy=currPx.y-basePx.y;
-  active.style.transform='translate('+(-dx)+'px,'+(-dy)+'px)';
-  return{dx:dx,dy:dy};
+  frame.style.transform='translate('+(-dx)+'px,'+(-dy)+'px)';
+  return{dx:dx,dy:dy,scale:1};
+}
+function applyWazeFrameTransformMobile(frame,baseCenter,baseZoom,center,zoom){
+  if(!frame||!baseCenter||baseZoom===null)return null;
+  const basePx=map.project(baseCenter,baseZoom);
+  const currPx=map.project(center,baseZoom);
+  const scale=Math.pow(2,zoom-baseZoom);
+  const dx=(currPx.x-basePx.x)*scale;
+  const dy=(currPx.y-basePx.y)*scale;
+  frame.style.transform='translate('+(-dx)+'px,'+(-dy)+'px) scale('+scale+')';
+  return{dx:dx,dy:dy,scale:scale};
+}
+function applyWazeFrameTransform(frame,baseCenter,baseZoom,center,zoom){
+  return isMobileLayout()
+    ? applyWazeFrameTransformMobile(frame,baseCenter,baseZoom,center,zoom)
+    : applyWazeFrameTransformDesktop(frame,baseCenter,baseZoom,center,zoom);
+}
+function applyActiveTransform(){
+  if(!wazeBaseCenter)return null;
+  if(wazeBaseZoom===null)return null;
+  const center=map.getCenter();
+  const zoom=map.getZoom();
+  return applyWazeFrameTransform(getActiveFrame(),wazeBaseCenter,wazeBaseZoom,center,zoom);
 }
 function startPreload(keepLock){
   if(wazeReloadPending)return;
@@ -1749,12 +1790,8 @@ function commitSwap(keepLock){
     return;
   }
   const center=map.getCenter();
-  const basePx=map.project(wazeNextBaseCenter,zoom);
-  const currPx=map.project(center,zoom);
-  const dx=currPx.x-basePx.x;
-  const dy=currPx.y-basePx.y;
   next.style.transition='opacity 0s';
-  next.style.transform='translate('+(-dx)+'px,'+(-dy)+'px)';
+  applyWazeFrameTransform(next,wazeNextBaseCenter,wazeNextBaseZoom,center,map.getZoom());
   next.classList.add('active');
   current.classList.remove('active');
   wazeActiveFrame=wazeActiveFrame==='A'?'B':'A';
@@ -1766,42 +1803,10 @@ function commitSwap(keepLock){
   if(keepLock)unlockMapAndSidebar();
 }
 function recenterImmediate(){
-  clearTimeout(wazeRefreshTimer);
-  wazeRefreshTimer=null;
-  if(wazeReloadPending){
-    wazeLoadCounter++;
-    wazeReloadPending=false;
-    wazeNextBaseCenter=null;
-    const pending=getInactiveFrame();
-    pending.onload=null;
-    pending.onerror=null;
-  }
+  if(wazeReloadPending)return;
   wazeLoading.classList.add('visible');
   lockMapAndSidebar();
   startPreload(true);
-}
-function refreshWazeAtCurrentView(){
-  clearTimeout(wazeRefreshTimer);
-  wazeRefreshTimer=null;
-  if(!wazeBaseCenter)return;
-  if(mapInteractionLocked)return;
-  if(wazeReloadPending){
-    wazeLoadCounter++;
-    wazeReloadPending=false;
-    wazeNextBaseCenter=null;
-    const pending=getInactiveFrame();
-    pending.onload=null;
-    pending.onerror=null;
-  }
-  wazeLoading.classList.add('visible');
-  startPreload(false);
-}
-function scheduleWazeRefresh(delay){
-  clearTimeout(wazeRefreshTimer);
-  wazeRefreshTimer=setTimeout(function(){
-    wazeRefreshTimer=null;
-    refreshWazeAtCurrentView();
-  },delay||220);
 }
 function handleWazeMove(){
   if(wazeIsZooming)return;
@@ -1826,14 +1831,20 @@ map.on('zoomstart',function(){
 map.on('zoomanim',function(e){
   if(!wazeBaseCenter)return;
   if(wazeBaseZoom===null)return;
-  if(wazeReloadPending)return;
   const active=getActiveFrame();
-  const scale=Math.pow(2,e.zoom-wazeBaseZoom);
-  const basePx=map.project(wazeBaseCenter,wazeBaseZoom);
-  const currPx=map.project(e.center,wazeBaseZoom);
-  const dx=currPx.x-basePx.x;
-  const dy=currPx.y-basePx.y;
-  active.style.transform='translate('+(-dx*scale)+'px,'+(-dy*scale)+'px) scale('+scale+')';
+  if(isMobileLayout()){
+    if(wazeReloadPending)return;
+    // TELÉFONO: Waze sigue exactamente el zoom fraccionario de Leaflet.
+    applyWazeFrameTransformMobile(active,wazeBaseCenter,wazeBaseZoom,e.center,e.zoom);
+  }else{
+    if(wazeReloadPending)return;
+    const scale=Math.pow(2,e.zoom-wazeBaseZoom);
+    const basePx=map.project(wazeBaseCenter,wazeBaseZoom);
+    const currPx=map.project(e.center,wazeBaseZoom);
+    const dx=currPx.x-basePx.x;
+    const dy=currPx.y-basePx.y;
+    active.style.transform='translate('+(-dx*scale)+'px,'+(-dy*scale)+'px) scale('+scale+')';
+  }
 });
 map.on('zoom',function(){
   if(!isMobileLayout())return;
@@ -1843,19 +1854,37 @@ map.on('zoom',function(){
   if(wazeReloadPending)return;
   const active=getActiveFrame();
   const zoom=map.getZoom();
-  const scale=Math.pow(2,zoom-wazeBaseZoom);
-  const basePx=map.project(wazeBaseCenter,wazeBaseZoom);
-  const currPx=map.project(map.getCenter(),wazeBaseZoom);
-  const dx=currPx.x-basePx.x;
-  const dy=currPx.y-basePx.y;
-  active.style.transform='translate('+(-dx*scale)+'px,'+(-dy*scale)+'px) scale('+scale+')';
+  applyWazeFrameTransformMobile(active,wazeBaseCenter,wazeBaseZoom,map.getCenter(),zoom);
+  if(Math.abs(zoom-wazeBaseZoom)>=0.55 && Math.round(zoom)!==wazeBaseZoom){
+    startPreload(false);
+  }
 });
 map.on('zoomend',function(){
   wazeIsZooming=false;
   const active=getActiveFrame();
   active.style.transition='';
   clearTimeout(wazeZoomStopTimer);
-  wazeZoomStopTimer=setTimeout(function(){scheduleWazeRefresh(isMobileLayout()?120:220)},120);
+
+  if(isMobileLayout()){
+    // TELÉFONO: mantener el nivel fraccionario; sólo cambiar el iframe
+    // cuando hace falta cargar otro nivel entero de Waze.
+    if(wazeBaseCenter&&wazeBaseZoom!==null){
+      applyWazeFrameTransformMobile(active,wazeBaseCenter,wazeBaseZoom,map.getCenter(),map.getZoom());
+    }
+    wazeZoomStopTimer=setTimeout(function(){
+      if(wazeReloadPending)return;
+      if(wazeBaseCenter&&wazeBaseZoom!==null){
+        const targetZoom=Math.round(map.getZoom());
+        if(targetZoom!==wazeBaseZoom)startPreload(false);
+      }
+    },140);
+    return;
+  }
+
+  // COMPUTADORA: restaurar el flujo original: el zoom termina en nivel entero
+  // y luego se centra/carga Waze explícitamente.
+  wazeReloadPending=false;
+  wazeZoomStopTimer=setTimeout(function(){recenterImmediate()},250);
 });
 map.on('dblclick',function(e){
   if(addingMode)return;
@@ -3189,11 +3218,11 @@ function deleteCustomPlace(id){
   allPlaces=allPlaces.filter(function(p){return p.id!==id});
   renderPlaces();
 }
-function focusPlaceOnMap(place,forceRefresh){
+function focusPlaceOnMap(place){
   if(!place)return;
   ensureUnlocked();
-  const samePlace=focusedPlaceId===place.id;
-  if(samePlace&&!forceRefresh)return;
+  if(isMobileDrawer())closeMobileMenu();
+  if(focusedPlaceId===place.id)return;
   focusedIncidentId=null;
   focusedPlaceId=place.id;
   focusedTarget={kind:'place',lat:place.lat,lng:place.lng,name:place.name};
@@ -3202,21 +3231,21 @@ function focusPlaceOnMap(place,forceRefresh){
   chatLocationsLayer.clearLayers();
   renderPlaces();
   try{map.invalidateSize({pan:false,animate:false})}catch(_){}
-  clearTimeout(wazeRefreshTimer);
-  const mobile=isMobileLayout();
-  map.setView([place.lat,place.lng],16,{animate:!mobile});
+  map.setView([place.lat,place.lng],16,{animate:true});
+  setTimeout(function(){
+    if(!wazeReloadPending)recenterImmediate();
+    renderAllChatLocations();
+    renderAllUserMotos();
+    renderAllIncidents();
+  },560);
   const marker=markerMap.get(place.id);
-  if(marker)setTimeout(function(){try{marker.openPopup()}catch(_){}},mobile?120:400);
-  setTimeout(function(){refreshWazeAtCurrentView()},mobile?80:420);
+  if(marker)setTimeout(function(){try{marker.openPopup()}catch(_){}},400);
   showFocusBanner({name:place.name||'Ubicación',isIncident:false});
-  if(isMobileLayout()){
-    const wrap=document.getElementById('map-wrapper');
-    if(wrap)setTimeout(function(){try{wrap.scrollIntoView({behavior:'smooth',block:'start'})}catch(_){}},120);
-  }
 }
 function focusIncidentOnMap(incident){
   if(!incident)return;
   ensureUnlocked();
+  if(isMobileDrawer())closeMobileMenu();
   if(focusedIncidentId===incident.id)return;
   focusedPlaceId=null;
   focusedIncidentId=incident.id;
@@ -3232,18 +3261,15 @@ function focusIncidentOnMap(incident){
   try{map.invalidateSize({pan:false,animate:false})}catch(_){}
   map.setView([incident.lat,incident.lng],16,{animate:true});
   setTimeout(function(){
+    if(!wazeReloadPending)recenterImmediate();
     incidentsLayer.eachLayer(function(m){
       try{
         const ll=m.getLatLng();
-        if(ll.lat===incident.lat)if(ll.lng===incident.lng)m.openPopup();
+        if(ll.lat===incident.lat && ll.lng===incident.lng)m.openPopup();
       }catch(_){}
     });
-  },400);
+  },560);
   showFocusBanner({name:INCIDENT_TYPE_LABELS[incident.kind]||'Siniestro',isIncident:true});
-  if(isMobileLayout()){
-    const wrap=document.getElementById('map-wrapper');
-    if(wrap)setTimeout(function(){try{wrap.scrollIntoView({behavior:'smooth',block:'start'})}catch(_){}},120);
-  }
 }
 function showFocusBanner(place){
   let banner=document.getElementById('focusBanner');
@@ -3655,7 +3681,8 @@ function createUserMarker(){
   if(userMarker){map.removeLayer(userMarker);userMarker=null;}
   const now=Date.now();
   const existing=onlineUsers.get(myUserId);
-  const entry=existing?Object.assign({},existing):{id:myUserId,nick:myNick,status:myStatus,firstSeen:now};
+  const entry=existing?Object.assign({},existing):{id:myUserId,nick:myNick,status:myStatus,firstSeen:now,isGuest:isGuestAccount(authState.user)};
+  entry.isGuest=isGuestAccount(authState.user);
   entry.lastSeen=now;
   entry.status=myStatus;
   entry.nick=myNick||entry.nick||'Anónimo';
@@ -3733,27 +3760,7 @@ function toggleMobileMenu(){
 }
 mobileMenuBtn.addEventListener('click',toggleMobileMenu);
 mobileMenuOverlay.addEventListener('click',closeMobileMenu);
-window.addEventListener('resize',function(){
-  if(!isMobileDrawer())closeMobileMenu();
-  clearTimeout(window.__mapResizeTimer);
-  window.__mapResizeTimer=setTimeout(function(){
-    try{
-      map.invalidateSize({pan:false,animate:false});
-      applyActiveTransform();
-    }catch(_){}
-  },80);
-});
-if(window.visualViewport){
-  window.visualViewport.addEventListener('resize',function(){
-    clearTimeout(window.__mapVisualResizeTimer);
-    window.__mapVisualResizeTimer=setTimeout(function(){
-      try{
-        map.invalidateSize({pan:false,animate:false});
-        applyActiveTransform();
-      }catch(_){}
-    },80);
-  });
-}
+window.addEventListener('resize',function(){if(!isMobileDrawer())closeMobileMenu()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileMenu()});
 let mobileDrawerTouchStartX=0;
 let mobileDrawerTouchStartY=0;
@@ -4093,16 +4100,48 @@ function dismissUserAlert(){
   alertError.textContent='';
   alertPasswordInput.value='';
 }
-function checkAlertPassword(){
+async function checkAlertPassword(){
   const v=alertPasswordInput.value;
   if(!v){alertError.textContent='Ingresá la contraseña.';return}
-  if(v===ALERT_BETA_PASSWORD){
-    dismissUserAlert();
-    alert('✓ Alerta cerrada correctamente.');
-  }else{
-    alertError.textContent='Contraseña incorrecta.';
-    alertPasswordInput.value='';
-    alertPasswordInput.focus();
+  if(!authState.isLoggedIn||!authState.user||authState.user.isGuest){
+    alertError.textContent='Necesitás iniciar sesión como usuario para cerrar la alerta con contraseña.';
+    return;
+  }
+  alertPasswordBtn.disabled=true;
+  alertPasswordBtn.textContent='Verificando...';
+  try{
+    let valid=false;
+    const rememberedPassword=String(authState.user.password||'');
+    if(rememberedPassword&&rememberedPassword===v){
+      valid=true;
+    }else{
+      const response=await fetch(AUTH_CSV_URL,{cache:'no-store'});
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      const csv=await response.text();
+      const rows=parseAuthCsv(csv);
+      const email=String(authState.user.email||'').trim().toLowerCase();
+      const nick=String(authState.user.nick||'').trim().toLowerCase();
+      valid=rows.some(function(row){
+        const rowEmail=String(row.correo||'').trim().toLowerCase();
+        const rowNick=String(row.nickname||'').trim().toLowerCase();
+        const rowPassword=String(row['contraseña']||'');
+        return (email&&rowEmail===email||nick&&rowNick===nick)&&rowPassword===v;
+      });
+    }
+    if(valid){
+      dismissUserAlert();
+      alert('✓ Alerta cerrada correctamente.');
+    }else{
+      alertError.textContent='Contraseña incorrecta.';
+      alertPasswordInput.value='';
+      alertPasswordInput.focus();
+    }
+  }catch(e){
+    console.error('Error verificando contraseña de alerta:',e);
+    alertError.textContent='No se pudo verificar la contraseña con la planilla de Usuarios. Intentá nuevamente.';
+  }finally{
+    alertPasswordBtn.disabled=false;
+    alertPasswordBtn.textContent='Verificar';
   }
 }
 alertPasswordBtn.addEventListener('click',checkAlertPassword);
@@ -4599,6 +4638,15 @@ const profileSubtitle=document.getElementById('profileSubtitle');
 const profileContent=document.getElementById('profileContent');
 const profileLogoutBtn=document.getElementById('profileLogoutBtn');
 const profileCloseBtn=document.getElementById('profileCloseBtn');
+document.querySelectorAll('.password-toggle-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    const input=document.getElementById(btn.dataset.passwordTarget);
+    if(!input)return;
+    const show=input.type==='password';
+    input.type=show?'text':'password';
+    btn.innerHTML=show?'<i class="fas fa-eye-slash"></i> Ocultar':'<i class="fas fa-eye"></i> Mostrar';
+  });
+});
 const userMenu=document.getElementById('userMenu');
 const userMenuAvatar=document.getElementById('userMenuAvatar');
 const userMenuName=document.getElementById('userMenuName');
@@ -4825,7 +4873,7 @@ function flushPresenceStore(){
   presenceSaveTimer=null;
   try{
     const arr=[];
-    onlineUsers.forEach(function(u){arr.push({id:u.id,nick:u.nick,status:u.status,lastSeen:u.lastSeen,firstSeen:u.firstSeen||u.lastSeen,lat:u.lat,lng:u.lng})});
+    onlineUsers.forEach(function(u){arr.push({id:u.id,nick:u.nick,status:u.status,lastSeen:u.lastSeen,firstSeen:u.firstSeen||u.lastSeen,lat:u.lat,lng:u.lng,isGuest:isGuestAccount(u)})});
     localStorage.setItem(PRESENCE_STORE_KEY,JSON.stringify(arr));
   }catch(e){}
 }
@@ -4843,7 +4891,7 @@ function loadPresenceStore(){
       if(!u)return;
       if(!u.id)return;
       if(u.id===myUserId)return;
-      const entry={id:u.id,nick:u.nick||'Anónimo',status:'desconectado',lastSeen:u.lastSeen||Date.now(),firstSeen:u.firstSeen||u.lastSeen||Date.now()};
+      const entry={id:u.id,nick:u.nick||'Anónimo',status:'desconectado',lastSeen:u.lastSeen||Date.now(),firstSeen:u.firstSeen||u.lastSeen||Date.now(),isGuest:isGuestAccount(u)};
       if(typeof u.lat==='number'&&typeof u.lng==='number'){entry.lat=u.lat;entry.lng=u.lng;}
       onlineUsers.set(u.id,entry);
     });
@@ -5010,8 +5058,11 @@ function loadMotoamigosFromStorage(){
 function saveAuth(){
   try{
     const shouldRemember=!!(authState.isLoggedIn&&authState.user&&!authState.user.isGuest&&authState.user.rememberDevice);
-    if(shouldRemember)localStorage.setItem(AUTH_KEY,JSON.stringify(authState));
-    else localStorage.removeItem(AUTH_KEY);
+    if(shouldRemember){
+      const safeState={isLoggedIn:true,user:Object.assign({},authState.user)};
+      delete safeState.user.password;
+      localStorage.setItem(AUTH_KEY,JSON.stringify(safeState));
+    }else localStorage.removeItem(AUTH_KEY);
   }catch(e){}
 }
 function loadAuthFromStorage(){
@@ -5035,11 +5086,30 @@ function updateGuestControls(){
   if(floatingStack){
     floatingStack.classList.toggle('guest-disabled',isGuest);
     floatingStack.setAttribute('aria-disabled',isGuest?'true':'false');
-    floatingStack.querySelectorAll('.floating-btn, a.floating-btn').forEach(function(el){
+    floatingStack.querySelectorAll('.floating-items .floating-btn, .floating-items a.floating-btn').forEach(function(el){
       const keepActive=el.id==='authHeaderBtn';
-      if(isGuest&&!keepActive)el.setAttribute('aria-disabled','true');
-      else el.removeAttribute('aria-disabled');
+      if(isGuest){
+        if(keepActive){
+          el.style.display='';
+          el.removeAttribute('aria-disabled');
+          el.style.pointerEvents='auto';
+        }else{
+          el.style.display='none';
+          el.setAttribute('aria-disabled','true');
+          el.style.pointerEvents='none';
+        }
+      }else{
+        el.style.display='';
+        el.removeAttribute('aria-disabled');
+        el.style.pointerEvents='';
+      }
     });
+    const toggleBtn=document.getElementById('floatingToggleBtn');
+    if(toggleBtn){
+      toggleBtn.style.display='';
+      toggleBtn.style.pointerEvents='auto';
+      toggleBtn.removeAttribute('aria-disabled');
+    }
   }
   const levelPanel=document.getElementById('levelPanel');
   const coinsPanel=document.getElementById('coinsPanel');
@@ -5069,9 +5139,16 @@ function hideGate(){
   authGate.classList.add('fading');
   setTimeout(function(){authGate.classList.add('hidden');try{map.invalidateSize()}catch(_){}},400);
 }
+function resetPasswordToggle(inputId){
+  const input=document.getElementById(inputId);
+  const btn=document.querySelector('[data-password-target="'+inputId+'"]');
+  if(input)input.type='password';
+  if(btn)btn.innerHTML='<i class="fas fa-eye"></i> Mostrar';
+}
 function showLoginModal(){
   if(loginEmailInput)loginEmailInput.value='';
   if(loginPasswordInput)loginPasswordInput.value='';
+  resetPasswordToggle('loginPasswordInput');
   if(loginRememberInput)loginRememberInput.checked=false;
   if(loginError){loginError.textContent='';loginError.style.display='none';}
   loginModal.classList.add('visible');
@@ -5092,6 +5169,7 @@ function finalizeLogin(){
   hideLoginModal();
   hideGate();
   updateGuestControls();
+  setTimeout(function(){checkMembershipExpiryAlert()},350);
   if(authState.user&&authState.user.isGuest){
     myNick='Invitado';
     try{localStorage.setItem(CHAT_KEY_NICK,myNick)}catch(e){}
@@ -5125,6 +5203,8 @@ function normalizeAuthHeader(value){
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g,'');
 }
+const MEMBERSHIP_ALERT_KEY='servicios_ba_membership_alert_v1';
+const MEMBERSHIP_WARNING_MS=7*24*60*60*1000;
 const AUTH_COLUMN_ALIASES={
   'marca temporal':'timestamp',
   'ingrese su nombre completo.':'nombre',
@@ -5136,7 +5216,11 @@ const AUTH_COLUMN_ALIASES={
   'ingrese el numero de patente.':'patente',
   'ingrese su correo electronico.':'correo',
   'ingrese una contrasena.':'contraseña',
-  'ingrese su nombre de usuario.':'nickname'
+  'ingrese su nombre de usuario.':'nickname',
+  'fecha de emision':'timestamp',
+  'emision':'timestamp',
+  'fecha de alta':'timestamp',
+  'inicio de membresia':'timestamp'
 };
 function parseAuthCsv(csv){
   const lines=csv.replace(/^\uFEFF/,'').split(/\r?\n/).filter(function(line){return line.trim()!==''});
@@ -5151,6 +5235,72 @@ function parseAuthCsv(csv){
     return row;
   });
 }
+function parseMembershipIssueDate(value){
+  if(value===null||value===undefined)return null;
+  if(value instanceof Date)return isNaN(value.getTime())?null:new Date(value.getTime());
+  const raw=String(value).replace(/^\uFEFF/,'').trim();
+  if(!raw)return null;
+  const normalized=raw.replace(/\s+/g,' ')
+    .replace(/a\.\s*m\./ig,'AM')
+    .replace(/p\.\s*m\./ig,'PM');
+
+  // Google Forms/Sheets in Spanish locales normally expose dates as DD/MM/YYYY.
+  const m=normalized.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})(?:[,\s]+(\d{1,2})(?::(\d{2}))(?::(\d{2}))?\s*(AM|PM)?)?$/i);
+  if(m){
+    let a=parseInt(m[1],10),b=parseInt(m[2],10),y=parseInt(m[3],10);
+    let h=parseInt(m[4]||'0',10),min=parseInt(m[5]||'0',10),sec=parseInt(m[6]||'0',10);
+    const ampm=(m[7]||'').toUpperCase();
+    if(ampm==='PM'&&h<12)h+=12;
+    if(ampm==='AM'&&h===12)h=0;
+    let day=a,month=b;
+    if(a<=12&&b>12){month=a;day=b;}
+    if(day<1||month<1||month>12||y<2000)return null;
+    const d=new Date(y,month-1,day,h,min,sec,0);
+    if(d.getFullYear()===y&&d.getMonth()===month-1&&d.getDate()===day)return d;
+  }
+
+  // Fall back to ISO/other browser-recognized timestamp formats.
+  const parsed=Date.parse(normalized);
+  return isNaN(parsed)?null:new Date(parsed);
+}
+function addExactMembershipMonth(issueDate){
+  if(!(issueDate instanceof Date)||isNaN(issueDate.getTime()))return null;
+  const targetMonth=issueDate.getMonth()+1;
+  const lastDay=new Date(issueDate.getFullYear(),targetMonth+1,0).getDate();
+  const day=Math.min(issueDate.getDate(),lastDay);
+  return new Date(issueDate.getFullYear(),targetMonth,day,issueDate.getHours(),issueDate.getMinutes(),issueDate.getSeconds(),issueDate.getMilliseconds());
+}
+function formatMembershipDate(date){
+  if(!(date instanceof Date)||isNaN(date.getTime()))return 'fecha desconocida';
+  return date.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+function getMembershipInfo(user){
+  if(!user||user.isGuest)return null;
+  const issueValue=user.timestamp||user.emision||'';
+  const issueDate=parseMembershipIssueDate(issueValue);
+  if(!issueDate)return null;
+  const expiryDate=addExactMembershipMonth(issueDate);
+  if(!expiryDate)return null;
+  return {issueDate:issueDate,expiryDate:expiryDate,warningDate:new Date(expiryDate.getTime()-MEMBERSHIP_WARNING_MS)};
+}
+function checkMembershipExpiryAlert(){
+  if(!authState.isLoggedIn||!authState.user||authState.user.isGuest)return;
+  const info=getMembershipInfo(authState.user);
+  if(!info)return;
+  const now=Date.now();
+  const expiryTs=info.expiryDate.getTime();
+  if(now<info.warningDate.getTime()||now>=expiryTs)return;
+  const userId=String(authState.user.id||authState.user.email||authState.user.nick||'user');
+  const key=MEMBERSHIP_ALERT_KEY+'|'+userId+'|'+expiryTs;
+  let lastShown=0;
+  try{lastShown=parseInt(localStorage.getItem(key)||'0',10)||0}catch(e){}
+  if(lastShown&&now-lastShown<24*60*60*1000)return;
+  try{localStorage.setItem(key,String(now))}catch(e){}
+  const daysLeft=Math.max(0,Math.ceil((expiryTs-now)/(24*60*60*1000)));
+  alert('⚠️ Tu membresía está por expirar. La respuesta del formulario cumple un mes el '+formatMembershipDate(info.expiryDate)+'.'+
+    (daysLeft===1?' Falta 1 día.':' Faltan aproximadamente '+daysLeft+' días.')+' Renovala antes de esa fecha.');
+}
+
 function getAuthIdentifier(user){
   const explicitId=String(user.id||'').trim();
   if(explicitId)return explicitId;
@@ -5208,7 +5358,9 @@ async function loginWithMutualMotos(){
       patente:user.patente||'',
       sangre:user.sangre||'',
       fecha:user.fecha||'',
-      timestamp:user.timestamp||'',
+      timestamp:user.timestamp||user.emision||'',
+      emision:user.timestamp||user.emision||'',
+      password:user['contraseña']||'',
       isGuest:false,
       rememberDevice:!!(rememberField&&rememberField.checked),
       provider:'google-sheet'
@@ -5239,6 +5391,11 @@ function openProfileModal(){
       profileContent.innerHTML='<div class="profile-guest"><strong>Invitado</strong><span>Estás usando la página como invitado.</span></div>';
     }else{
       const rows=[['ID',u.id],['Nombre completo',u.nombre],['Apellido(s)',u.apellido],['Fecha de nacimiento',u.fecha],['Número de teléfono',u.telefono],['Teléfono de un familiar',u.telefonoFamiliar],['Modelo de moto',u.moto],['Número de patente',u.patente],['Correo electrónico',u.email],['Nombre de usuario',u.nick]];
+      const membershipInfo=getMembershipInfo(u);
+      if(membershipInfo){
+        rows.push(['Emisión del formulario',formatMembershipDate(membershipInfo.issueDate)]);
+        rows.push(['Vencimiento de membresía',formatMembershipDate(membershipInfo.expiryDate)]);
+      }
       profileContent.innerHTML=rows.map(function(row){return '<div class="profile-row-label">'+escapeHtml(row[0])+'</div><div class="profile-row-value">'+escapeProfileValue(row[1])+'</div>'}).join('');
     }
   }
@@ -5496,6 +5653,22 @@ document.getElementById('kioskSaveBtn').addEventListener('click',function(){
   if(kioskQrTimer)clearInterval(kioskQrTimer);
   kioskQrTimer=setInterval(refreshKioskQr,5*60*1000);
 });
+function isGuestAccount(userLike){
+  if(!userLike)return false;
+  if(userLike.isGuest===true)return true;
+  const id=String(userLike.id||'').trim().toLowerCase();
+  return id.indexOf('guest_')===0;
+}
+function canViewerSeeMapUser(userLike){
+  if(!authState.isLoggedIn||!authState.user)return false;
+  return isGuestAccount(userLike)===isGuestAccount(authState.user);
+}
+function canViewerSeeMapLocation(entry){
+  if(!entry)return false;
+  if(entry.kind!=='location'&&entry.kind!=='emergency')return true;
+  if(!entry.from)return false;
+  return canViewerSeeMapUser(entry.from);
+}
 function buildUserMotoIcon(user){
   const isMe=user.id===myUserId;
   const color=isMe?'#3498db':'#e67e22';
@@ -5537,6 +5710,7 @@ function buildUserMotoPopup(user){
 }
 function renderUserMotoMarker(user){
   if(!user)return;
+  if(!canViewerSeeMapUser(user))return;
   if(typeof user.lat!=='number')return;
   if(typeof user.lng!=='number')return;
   if(!isInBounds(user.lat,user.lng))return;
@@ -5595,6 +5769,7 @@ function buildChatMarkerPopup(entry){
 }
 function renderChatLocationOnMap(entry){
   if(!entry)return;
+  if(!canViewerSeeMapLocation(entry))return;
   if(typeof entry.lat!=='number')return;
   if(typeof entry.lng!=='number')return;
   if(focusedPlaceId||focusedIncidentId)return;
@@ -5631,6 +5806,7 @@ function locationFromMessage(msg){
   if(typeof msg.lat!=='number')return null;
   if(typeof msg.lng!=='number')return null;
   if(msg.kind!=='place')if(msg.kind!=='location')if(msg.kind!=='emergency')return null;
+  if(msg.kind==='location'||msg.kind==='emergency')if(!canViewerSeeMapUser(msg.from))return null;
   let uid='unk';
   if(msg.from)uid=msg.from.id;
   const baseId='loc_'+uid+'_'+(msg.ts||Date.now());
@@ -5644,7 +5820,7 @@ function locationFromMessage(msg){
       rubro:msg.rubro||'',
       category:msg.category||'comida',
       address:msg.address||'',
-      from:msg.from?{id:msg.from.id,nick:msg.from.nick}:null,
+      from:msg.from?{id:msg.from.id,nick:msg.from.nick,isGuest:isGuestAccount(msg.from)}:null,
       ts:msg.ts||Date.now()
     };
   }
@@ -5656,7 +5832,7 @@ function locationFromMessage(msg){
       lng:msg.lng,
       severity:msg.severity||'leve',
       text:msg.text||'',
-      from:msg.from?{id:msg.from.id,nick:msg.from.nick}:null,
+      from:msg.from?{id:msg.from.id,nick:msg.from.nick,isGuest:isGuestAccount(msg.from)}:null,
       ts:msg.ts||Date.now()
     };
   }
@@ -5665,7 +5841,7 @@ function locationFromMessage(msg){
     kind:'location',
     lat:msg.lat,
     lng:msg.lng,
-    from:msg.from?{id:msg.from.id,nick:msg.from.nick}:null,
+    from:msg.from?{id:msg.from.id,nick:msg.from.nick,isGuest:isGuestAccount(msg.from)}:null,
     ts:msg.ts||Date.now()
   };
 }
@@ -5754,7 +5930,7 @@ async function startChat(){
   chatInput.disabled=false;
   chatSendBtn.disabled=false;
   const now=Date.now();
-  const myEntry={id:myUserId,nick:myNick,status:myStatus,lastSeen:now,firstSeen:now};
+  const myEntry={id:myUserId,nick:myNick,status:myStatus,lastSeen:now,firstSeen:now,isGuest:isGuestAccount(authState.user)};
   if(userLocation){myEntry.lat=userLocation.lat;myEntry.lng=userLocation.lng;}
   onlineUsers.set(myUserId,myEntry);
   registerUserEntry(myUserId,myNick,myStatus,'connect');
@@ -5788,7 +5964,7 @@ function cleanupTypingUsers(){
 function announcePresence(){
   const now=Date.now();
   const existing=onlineUsers.get(myUserId);
-  const entry={id:myUserId,nick:myNick,status:myStatus,lastSeen:now,firstSeen:existing&&existing.firstSeen?existing.firstSeen:now};
+  const entry={id:myUserId,nick:myNick,status:myStatus,lastSeen:now,firstSeen:existing&&existing.firstSeen?existing.firstSeen:now,isGuest:isGuestAccount(authState.user)};
   if(userLocation){
     entry.lat=userLocation.lat;
     entry.lng=userLocation.lng;
@@ -5802,7 +5978,7 @@ function announcePresence(){
   renderUsers();
   if(!mqttClient)return;
   if(!chatReady)return;
-  const msg={type:'presence',from:{id:myUserId,nick:myNick},status:myStatus,ts:now};
+  const msg={type:'presence',from:{id:myUserId,nick:myNick,isGuest:isGuestAccount(authState.user)},status:myStatus,ts:now};
   if(userLocation){msg.lat=userLocation.lat;msg.lng=userLocation.lng;}
   try{
     mqttClient.publish(TOPIC_PRESENCE,JSON.stringify(msg),{qos:0});
@@ -5908,7 +6084,7 @@ function handlePresence(msg){
   else if(existing)newNick=existing.nick;
   const now=Date.now();
   const firstSeen=existing&&existing.firstSeen?existing.firstSeen:now;
-  const entry={id:msg.from.id,nick:newNick,status:status,lastSeen:now,firstSeen:firstSeen};
+  const entry={id:msg.from.id,nick:newNick,status:status,lastSeen:now,firstSeen:firstSeen,isGuest:isGuestAccount(msg.from)};
   if(typeof msg.lat==='number'&&typeof msg.lng==='number'){
     entry.lat=msg.lat;
     entry.lng=msg.lng;
@@ -6739,7 +6915,7 @@ nickSaveBtn.addEventListener('click',function(){
   nickModal.classList.remove('visible');
   const now=Date.now();
   const existing=onlineUsers.get(myUserId);
-  const entry={id:myUserId,nick:myNick,status:myStatus,lastSeen:now,firstSeen:existing&&existing.firstSeen?existing.firstSeen:now};
+  const entry={id:myUserId,nick:myNick,status:myStatus,lastSeen:now,firstSeen:existing&&existing.firstSeen?existing.firstSeen:now,isGuest:isGuestAccount(authState.user)};
   if(userLocation){entry.lat=userLocation.lat;entry.lng=userLocation.lng;}
   else if(existing&&typeof existing.lat==='number'){entry.lat=existing.lat;entry.lng=existing.lng;}
   onlineUsers.set(myUserId,entry);
@@ -7068,7 +7244,7 @@ if(kioskParam==='1'){
   });
   if(authState.isLoggedIn&&authState.user&&!authState.user.isGuest&&authState.user.rememberDevice===true){
     hideGate();
-    setTimeout(function(){if(!myNick)askForNick();else continueAfterAuth()},400);
+    setTimeout(function(){checkMembershipExpiryAlert();if(!myNick)askForNick();else continueAfterAuth()},400);
   }else{
     authState={isLoggedIn:false,user:null};
     showGate();
@@ -7096,6 +7272,7 @@ if(kioskParam==='1'){
   initUserId();
   loadAuthFromStorage();
   updateAuthUI();
+  setTimeout(function(){checkMembershipExpiryAlert()},450);
   loadMapDataInBackground();
   setTimeout(function(){recenterImmediate();try{map.invalidateSize()}catch(_){}},700);
   window.addEventListener('resize',function(){
