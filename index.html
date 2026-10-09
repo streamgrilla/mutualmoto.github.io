@@ -20,6 +20,18 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 #authGate.hidden{display:none}
 #authGate.fading{opacity:0;pointer-events:none}
 .gate-card{background:#fff;border-radius:20px;padding:2.5rem 2rem;max-width:460px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.5);text-align:center}
+.register-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100000;display:none;align-items:center;justify-content:center;padding:1rem}
+.register-modal.visible{display:flex}
+.register-box{background:#fff;border-radius:18px;width:min(900px,96vw);height:min(900px,92vh);box-shadow:0 30px 80px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden}
+.register-header{background:var(--moto);color:#fff;padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+.register-header h3{font-size:1rem;display:flex;align-items:center;gap:.45rem}
+.register-close{background:rgba(255,255,255,.16);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem}
+.register-iframe{width:100%;height:100%;border:0;display:block;background:#fff}
+.header-auth-actions{display:flex;align-items:center;gap:.5rem;margin-left:auto}
+.header-auth-btn{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:9px;padding:.45rem .75rem;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem}
+.header-auth-btn:hover{background:rgba(255,255,255,.16)}
+.header-auth-btn.register{background:var(--moto);border-color:var(--moto)}
+@media(max-width:600px){.register-box{height:94vh;width:98vw}.register-header{padding:.65rem .75rem}header{padding-left:1rem;padding-right:1rem}.header-auth-actions{width:100%;justify-content:center;margin-left:0}}
 .gate-logo{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#d35400,#e67e22);color:#fff;display:flex;align-items:center;justify-content:center;font-size:44px;margin:0 auto 1.2rem;box-shadow:0 8px 24px rgba(211,84,0,.45)}
 .gate-card h1{font-size:1.6rem;color:#2c3e50;margin-bottom:.4rem;font-weight:800}
 .gate-card h2{font-size:1rem;color:#7f8c8d;font-weight:500;margin-bottom:1.5rem}
@@ -221,7 +233,7 @@ body.centering-lock .leaflet-control-legend{
 .incident-toast.closure{border-left-color:#f39c12}
 .incident-toast.accident{border-left-color:#e74c3c}
 .incident-toast.police{border-left-color:#2980b9}
-.incident-toast .it-icon{width:36px;height:36px;border-radius:50%;background:#e74c3c;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.incident-toast .it-icon{width:36px;height:36px;border-radius:50%;background:#e74c3c;animation:toastRipple 1.7s infinite;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
 .incident-toast.closure .it-icon{background:#f39c12}
 .incident-toast.police .it-icon{background:#2980b9}
 .incident-toast .it-body{flex:1;min-width:0}
@@ -328,12 +340,14 @@ body.adding-mode .dev-hint{display:block}
 .floating-btn.police-btn{background:#e67e22;width:68px;height:68px;font-size:11px;font-weight:800;letter-spacing:.5px;text-decoration:none}
 .floating-btn.police-btn i{font-size:22px;margin-bottom:1px}
 .floating-btn.buzon-btn{background:#8e44ad}
+.suggestion-btn{background:#16a085}
 .floating-btn.coins-btn{background:linear-gradient(135deg,#b7950b,#f1c40f)}
 .floating-btn.auth-floating-btn{background:var(--moto)}
 .floating-btn.auth-floating-btn.logged-in{background:#27ae60}
 .floating-btn .chat-badge{position:absolute;top:-4px;right:-4px;background:#fff;color:#e74c3c;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:2px solid #e74c3c;padding:0 4px}
 .floating-btn .incident-badge{position:absolute;top:-4px;left:-4px;background:#fff;color:#e67e22;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:2px solid #e67e22;padding:0 4px}
 .floating-btn .buzon-badge{position:absolute;top:-4px;right:-4px;background:#fff;color:#8e44ad;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:2px solid #8e44ad;padding:0 4px}
+.floating-btn .suggestion-badge{position:absolute;top:-4px;right:-4px;background:#fff;color:#16a085;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:2px solid #16a085;padding:0 4px}
 .floating-btn.emergency-btn .emergency-corner,.floating-btn.incident-btn .emergency-corner{position:absolute;top:-4px;right:-4px;width:22px;height:22px;background:#fff;color:#e74c3c;border:2px solid #e74c3c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;line-height:1}
 .chat-panel{position:fixed;bottom:90px;right:20px;width:400px;height:560px;max-height:calc(100vh - 130px);background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.35);z-index:3001;display:none;flex-direction:column;overflow:hidden;border:1px solid #ddd}
 .chat-panel.visible{display:flex}
@@ -653,7 +667,6 @@ footer a{color:#fff;text-decoration:underline}
 .login-id-row input{flex:1;padding:.75rem .9rem;border:2px solid #ddd;border-radius:8px;font-size:1rem;outline:none;font-family:monospace;text-transform:uppercase}
 .login-id-row input:focus{border-color:var(--moto)}
 .login-id-hint{font-size:.72rem;color:#888;margin-bottom:.7rem;text-align:center}
-
 .password-input-row{display:flex;gap:.4rem;align-items:stretch}
 .password-input-row .gate-login-input{flex:1;min-width:0}
 .password-toggle-btn{border:1px solid #dfe6e9;background:#f8f9fa;color:#2c3e50;border-radius:10px;padding:.75rem .8rem;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s}
@@ -662,7 +675,6 @@ footer a{color:#fff;text-decoration:underline}
 .login-password-row{display:flex;gap:.4rem;align-items:stretch}
 .login-password-row input{flex:1;min-width:0}
 .login-password-row .password-toggle-btn{border-radius:8px}
-
 .add-place-modal .modal-box{border-top:6px solid #16a085;max-width:480px}
 .add-place-modal h3{color:#16a085}
 .add-place-modal label{display:block;font-size:.75rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin:.7rem 0 .3rem}
@@ -691,6 +703,12 @@ footer a{color:#fff;text-decoration:underline}
 .buzon-list{max-height:340px;overflow-y:auto;background:#fafafa;border-radius:8px;padding:.4rem;margin-bottom:.6rem}
 .buzon-item{background:#fff;border-left:4px solid #8e44ad;border-radius:8px;padding:.6rem .8rem;margin-bottom:.5rem;box-shadow:0 1px 3px rgba(0,0,0,.06)}
 .buzon-item.dev{border-left-color:#c0392b;background:linear-gradient(90deg,#fff5f5,#fff)}
+.suggestion-item{background:#fff;border-left:4px solid #16a085;border-radius:8px;padding:.6rem .8rem;margin-bottom:.5rem;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.suggestion-item-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:.25rem}
+.suggestion-item-head strong{font-size:.92rem;color:#2c3e50}
+.suggestion-item-time{font-size:.7rem;color:#999;white-space:nowrap}
+.suggestion-item-body{font-size:.85rem;color:#444;line-height:1.4;word-break:break-word}
+.suggestion-item-author{font-size:.72rem;color:#888;font-style:italic;margin-top:.35rem;border-top:1px dashed #ecf0f1;padding-top:.3rem}
 .buzon-item-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:.25rem}
 .buzon-item-head strong{font-size:.92rem;color:#2c3e50}
 .buzon-item-time{font-size:.7rem;color:#999;white-space:nowrap}
@@ -785,6 +803,156 @@ header{padding-left:3.5rem;padding-right:3.5rem}
 #sidebar{width:88vw}
 .floating-btn{width:40px;height:40px;font-size:14px}
 }
+#mapPage{height:100vh;height:100dvh;min-height:0;overflow:hidden}
+#mapPage>.container{height:100vh!important;height:100dvh!important;min-height:0!important}
+#preMapContent{background:linear-gradient(180deg,#f8f9fa 0%,#eef3f5 100%);border-bottom:1px solid #dfe6e9}
+#mapPage{display:block;min-height:100vh}
+#mapPage.hidden{display:none!important}
+.pre-map-nav{display:flex;gap:.55rem;align-items:center;justify-content:center;flex-wrap:wrap;padding:.7rem 1rem;background:#1f2d38;border-top:1px solid rgba(255,255,255,.08)}
+.pre-map-nav button{border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;border-radius:10px;padding:.55rem .85rem;font:inherit;font-size:.8rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;transition:.2s}
+.pre-map-nav button:hover,.pre-map-nav button.active{background:var(--moto);border-color:var(--moto);transform:translateY(-1px)}
+.pre-map-section{display:none;max-width:1100px;margin:0 auto;padding:2.2rem 1.2rem 2.5rem;scroll-margin-top:20px}
+.pre-map-section.active{display:block}
+.pre-map-section h2{font-size:1.65rem;color:var(--primary);margin-bottom:.35rem}
+.pre-map-section .section-kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--moto);font-weight:900;margin-bottom:.45rem}
+.pre-map-section .lead{font-size:1.05rem;color:#566;line-height:1.65;margin-bottom:1.2rem}
+.about-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:1.25rem;align-items:stretch}
+.about-card,.contact-card,.guide-card{background:#fff;border:1px solid #e1e7ea;border-radius:16px;padding:1.25rem;box-shadow:0 8px 24px rgba(44,62,80,.07)}
+.about-card p,.contact-card p,.guide-card p{font-size:.92rem;line-height:1.65;color:#4d5a61;margin:.65rem 0}
+.about-card ul,.guide-card ul{padding-left:1.25rem;color:#4d5a61;line-height:1.7}
+.about-card li,.guide-card li{margin:.25rem 0}
+.benefit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin:1rem 0}
+.benefit-item{padding:.9rem;border-radius:12px;background:#f8fbfc;border:1px solid #e3eaed}
+.benefit-item i{font-size:1.25rem;color:var(--moto);margin-bottom:.4rem}
+.benefit-item strong{display:block;color:var(--primary);font-size:.88rem;margin-bottom:.25rem}
+.benefit-item span{display:block;color:#68757c;font-size:.76rem;line-height:1.45}
+.price-box{background:linear-gradient(135deg,#2c3e50,#34495e);color:#fff;border-radius:16px;padding:1.25rem;box-shadow:0 10px 28px rgba(44,62,80,.18)}
+.price-box h3{font-size:1.05rem;margin-bottom:.7rem}
+.price-main{font-size:1.6rem;font-weight:900;margin:.35rem 0}.price-sub{font-size:.82rem;color:#d5dde1;line-height:1.5}
+.price-annual{margin-top:.9rem;padding:.8rem;border-radius:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12)}
+.price-annual strong{display:block;color:#f1c40f;font-size:1.15rem}
+.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+.contact-item{background:#fff;border:1px solid #e1e7ea;border-radius:14px;padding:1rem;text-align:center}
+.contact-item i{font-size:1.5rem;color:var(--moto);margin-bottom:.5rem}.contact-item strong{display:block;color:var(--primary);margin-bottom:.25rem}.contact-item span{font-size:.8rem;color:#68757c}
+.guide-image-wrap{background:#fff;border:1px solid #dfe6e9;border-radius:16px;padding:.75rem;text-align:center;box-shadow:0 8px 24px rgba(44,62,80,.07);margin-bottom:1rem}
+.guide-image-wrap img{display:block;width:100%;max-height:520px;object-fit:contain;border-radius:10px}
+.reward-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:1rem 0}
+.reward-card{border-radius:14px;padding:1rem;border:1px solid #e1e7ea;background:#fff;text-align:center;box-shadow:0 5px 16px rgba(44,62,80,.06)}
+.reward-card .reward-icon{font-size:1.4rem;color:var(--moto);margin-bottom:.35rem}.reward-card strong{display:block;color:var(--primary);font-size:1rem}.reward-card span{display:block;color:#68757c;font-size:.82rem;margin-top:.25rem}
+.guide-note{padding:.85rem 1rem;background:#fff8e8;border:1px solid #f4d58a;border-radius:12px;color:#765b14;font-size:.82rem;line-height:1.5}
+.association-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100001;display:none;align-items:center;justify-content:center;padding:1rem}.association-modal.visible{display:flex}
+.association-box{background:#fff;border-radius:18px;width:min(900px,96vw);height:min(900px,92vh);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.association-header{background:var(--moto);color:#fff;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center}.association-header button{border:0;background:rgba(255,255,255,.16);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer}.association-iframe{width:100%;height:100%;border:0}
+.alert-overlay .alert-box{position:relative;overflow:visible}
+.alert-overlay .alert-box::before,.alert-overlay .alert-box::after{content:'';position:absolute;inset:50%;width:18px;height:18px;border:3px solid rgba(231,76,60,.75);border-radius:50%;transform:translate(-50%,-50%) scale(.2);pointer-events:none;animation:alertRipple 2s infinite}
+.alert-overlay .alert-box::after{animation-delay:1s}
+@keyframes alertRipple{0%{opacity:.9;transform:translate(-50%,-50%) scale(.2)}75%,100%{opacity:0;transform:translate(-50%,-50%) scale(12)}}
+.incident-marker-inner,.chat-marker-emergency{animation:emergencyPulse 1.7s infinite}
+@keyframes toastRipple{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.55)}65%{box-shadow:0 0 0 14px rgba(231,76,60,0)}}
+@keyframes emergencyPulse{0%,100%{box-shadow:0 3px 12px rgba(0,0,0,.4),0 0 0 0 rgba(231,76,60,.55)}65%{box-shadow:0 3px 12px rgba(0,0,0,.4),0 0 0 18px rgba(231,76,60,0)}}
+.sponsor-marker-inner{animation:sponsorRipple 2s infinite}
+@keyframes sponsorRipple{0%,100%{box-shadow:0 3px 12px rgba(0,0,0,.35),0 0 0 0 rgba(243,156,18,.7)}70%{box-shadow:0 3px 12px rgba(0,0,0,.35),0 0 0 20px rgba(243,156,18,0)}}
+@media(max-width:700px){.about-grid,.contact-grid,.benefit-grid,.reward-grid{grid-template-columns:1fr}.pre-map-section{padding:1.5rem .9rem 2rem}.pre-map-nav{justify-content:stretch}.pre-map-nav button{flex:1 1 calc(50% - .55rem);justify-content:center;font-size:.74rem}.pre-map-section h2{font-size:1.35rem}}
+html, body { width:100%; min-width:0; }
+#mapPage:not(.hidden) {
+  position:fixed;
+  inset:0;
+  z-index:50;
+  width:100vw;
+  height:100vh;
+  height:100dvh;
+  min-height:0;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+}
+#mapPage.hidden { display:none !important; }
+#mapPage > .container {
+  position:absolute;
+  inset:0;
+  display:flex;
+  width:100%;
+  height:100% !important;
+  max-height:100%;
+  min-height:0 !important;
+  margin:0;
+  overflow:hidden;
+}
+#mapPage #sidebar {
+  flex:0 0 320px;
+  width:320px;
+  min-width:0;
+  min-height:0;
+  height:100%;
+}
+#mapPage #map-wrapper {
+  position:relative;
+  flex:1 1 0;
+  width:auto;
+  min-width:0;
+  min-height:0;
+  height:100%;
+  overflow:hidden;
+}
+#mapPage #map {
+  position:absolute;
+  inset:0;
+  width:100% !important;
+  height:100% !important;
+  min-width:0;
+  min-height:0;
+}
+#devUsersQrBtn { display:none !important; }
+body.dev-on.dev-qr-enabled #devUsersQrBtn { display:flex !important; }
+.dev-users-qr-modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:12000;
+  padding:1rem;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.68);
+  overflow:auto;
+}
+.dev-users-qr-modal.visible { display:flex; }
+.dev-users-qr-box {
+  width:min(760px,100%);
+  max-height:94vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:16px;
+  padding:1.2rem;
+  box-shadow:0 20px 70px rgba(0,0,0,.4);
+}
+.dev-users-qr-head { display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.75rem; }
+.dev-users-qr-head h3 { color:#2c3e50;font-size:1.05rem; }
+.dev-users-qr-close { border:0;border-radius:50%;width:34px;height:34px;background:#ecf0f1;cursor:pointer; }
+.dev-users-qr-controls { display:flex;gap:.5rem;flex-wrap:wrap;margin:.7rem 0; }
+.dev-users-qr-controls select { flex:1 1 240px;min-width:0;padding:.65rem;border:1px solid #ccd3d7;border-radius:8px;font:inherit; }
+.dev-users-qr-controls button,.dev-users-qr-footer button { border:0;border-radius:8px;padding:.65rem .9rem;font:inherit;font-weight:700;cursor:pointer;background:#8e44ad;color:#fff; }
+.dev-users-qr-status { color:#666;font-size:.82rem;min-height:1.4rem;margin:.4rem 0; }
+.dev-users-qr-content { display:grid;grid-template-columns:minmax(220px,280px) minmax(0,1fr);gap:1rem;align-items:start; }
+#devUsersQrCode { display:flex;align-items:center;justify-content:center;min-height:280px;padding:10px;border:1px solid #e4e8eb;border-radius:10px;background:#fff;overflow:auto; }
+#devUsersQrCode canvas,#devUsersQrCode img { max-width:100%;height:auto; }
+#devUsersQrData { max-height:340px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:#f7f8fa;border:1px solid #e4e8eb;border-radius:10px;padding:.75rem;font-size:.72rem; }
+.dev-users-qr-footer { display:flex;gap:.5rem;justify-content:flex-end;flex-wrap:wrap;margin-top:.8rem; }
+.dev-users-qr-footer .secondary { background:#7f8c8d; }
+@media (max-width:900px) and (orientation:portrait) and (pointer:coarse) {
+  #mapPage > .container { flex-direction:column; }
+  #mapPage #sidebar {
+    flex:0 0 auto;
+    width:min(86vw,360px);
+    height:auto;
+    min-height:0;
+    max-height:none;
+    top:60px;
+    bottom:38px;
+  }
+  #mapPage #map-wrapper { flex:1 1 auto;width:100%;height:100%;min-height:0; }
+  .dev-users-qr-content { grid-template-columns:1fr; }
+  #devUsersQrCode { min-height:240px; }
+}
 </style>
 </head>
 <body>
@@ -839,7 +1007,7 @@ header{padding-left:3.5rem;padding-right:3.5rem}
 </div>
 </div>
 
-<div id="authGate">
+<div id="authGate" class="hidden">
 <div class="gate-card">
 <div class="gate-logo"><i class="fas fa-motorcycle"></i></div>
 <h1>Mutual Motos</h1>
@@ -855,17 +1023,97 @@ header{padding-left:3.5rem;padding-right:3.5rem}
 <label class="gate-remember" for="gateRememberInput"><input type="checkbox" id="gateRememberInput"><span>Recu&eacute;rdame en este dispositivo</span></label>
 <div class="gate-error" id="gateLoginError"></div>
 <button class="gate-btn login" id="gateLoginBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n</button>
-<a class="gate-register-btn" id="gateRegisterBtn" href="https://docs.google.com/forms/d/e/1FAIpQLSfKPVPXGwORQ5tUylZ1Re47im4DdiepitvaN_OjzkqPNvhtYA/viewform?usp=sharing&ouid=109861870343853538874" target="_blank" rel="noopener noreferrer"><i class="fas fa-user-plus"></i> Registrarse</a>
+<button type="button" class="gate-register-btn" data-open-register><i class="fas fa-user-plus"></i> Registrarse</button>
 <div class="gate-divider">o</div>
 <button class="gate-guest-btn" id="gateGuestBtn"><i class="fas fa-user-secret"></i> Continuar como invitado</button>
 <div class="gate-footer">Sin marcar "Recu&eacute;rdame", la pr&oacute;xima vez se volver&aacute; a mostrar esta pantalla.</div>
 </div>
 </div>
 
-<header>
-<h1><i class="fas fa-map-marked-alt"></i> Servicios en Buenos Aires y Alrededores</h1>
+<div class="association-modal" id="associationModal" aria-hidden="true">
+  <div class="association-box">
+    <div class="association-header"><h3><i class="fas fa-handshake"></i> Asociarte como Motoamigazo</h3><button type="button" id="associationCloseBtn" aria-label="Cerrar"><i class="fas fa-times"></i></button></div>
+    <iframe class="association-iframe" id="associationIframe" src="about:blank" title="Formulario para asociarse como Motoamigazo"></iframe>
+  </div>
+</div>
+
+<div class="register-modal" id="registerModal" aria-hidden="true">
+<div class="register-box">
+<div class="register-header">
+<h3><i class="fas fa-user-plus"></i> Registro de Mutual Motos</h3>
+<button type="button" class="register-close" id="registerCloseBtn" aria-label="Cerrar registro"><i class="fas fa-times"></i></button>
+</div>
+<iframe class="register-iframe" src="https://docs.google.com/forms/d/e/1FAIpQLSfKPVPXGwORQ5tUylZ1Re47im4DdiepitvaN_OjzkqPNvhtYA/viewform?embedded=true" title="Formulario de inscripción" loading="lazy">Cargando…</iframe>
+</div>
+</div>
+
+<header id="siteHeader">
+<h1><i class="fas fa-motorcycle"></i> Mutual Moto</h1>
+<div class="header-auth-actions">
+<button type="button" class="header-auth-btn" data-pre-section="about"><i class="fas fa-users"></i> Sobre nosotros</button>
+<button type="button" class="header-auth-btn" data-pre-section="guide"><i class="fas fa-map-marked-alt"></i> Aprende sobre el mapa</button>
+<button type="button" class="header-auth-btn" data-pre-section="contacts"><i class="fas fa-address-book"></i> Contactos</button>
+<button type="button" class="header-auth-btn register" id="associationHeaderBtn"><i class="fas fa-handshake"></i> Asociarte como Motoamigazo</button>
+<button type="button" class="header-auth-btn" id="enterMapBtn"><i class="fas fa-map"></i> Acceder al mapa</button>
+</div>
 </header>
 
+<div id="preMapContent">
+  <section class="pre-map-section active" id="preSection-about">
+    <div class="section-kicker">Mutual Moto</div>
+    <h2>Más beneficios. Más lugares. Más comunidad.</h2>
+    <p class="lead">Ser motoquero es mucho más que andar en moto: es compartir rutas, experiencias, conocimientos y también los desafíos que aparecen todos los días. Mutual Moto nace para convertir esa comunidad en una red útil, activa y llena de oportunidades.</p>
+    <div class="about-grid">
+      <div class="about-card">
+        <p><strong>Una mutual pensada para quienes viven la moto.</strong> Nuestro objetivo es conectar a los motociclistas con lugares, servicios y personas que realmente entienden sus necesidades. Desde encontrar una gomería o un taller hasta descubrir comercios adheridos, todo empieza en un mismo lugar: el mapa interactivo de Mutual Moto.</p>
+        <div class="benefit-grid">
+          <div class="benefit-item"><i class="fas fa-percent"></i><strong>Beneficios exclusivos</strong><span>Descuentos y oportunidades especiales en comercios adheridos.</span></div>
+          <div class="benefit-item"><i class="fas fa-chart-line"></i><strong>Sistema de niveles</strong><span>Tu participación construye progreso y puede abrirte mejores beneficios.</span></div>
+          <div class="benefit-item"><i class="fas fa-map-location-dot"></i><strong>Mapa para motoqueros</strong><span>Talleres, gomerías, repuestos, combustible, comida y más.</span></div>
+        </div>
+        <p><strong>Tu experiencia también tiene valor.</strong> Podés calificar establecimientos, compartir tus experiencias y ayudar a otros motoqueros a identificar lugares confiables. Cada nuevo socio y cada nuevo comercio hacen que la red sea más útil para todos.</p>
+        <p>Además, la comunidad puede participar ayudando a un Moto Amigo cuando tiene un incidente. Esa colaboración se reconoce mediante puntos y Moto Coins, haciendo que ayudar también forme parte de la experiencia de Mutual Moto.</p>
+        <p><strong>No se trata solamente de pagar una membresía.</strong> Se trata de formar parte de una red de lugares, beneficios y personas que comparten una misma pasión.</p>
+      </div>
+      <div class="price-box">
+        <h3><i class="fas fa-id-card"></i> ¿Cuánto cuesta ser socio?</h3>
+        <div class="price-main">$20.000 <small>/ mes</small></div>
+        <div class="price-sub">Membresía mensual para formar parte de la comunidad y acceder a sus beneficios.</div>
+        <div class="price-annual"><strong>$200.000 / año</strong><span>Pagando el año completo, tenés dos meses gratis.</span></div>
+        <p style="margin-top:1rem;color:#fff;line-height:1.6;font-size:.86rem">Tu moto te lleva a cualquier lugar. Nosotros queremos ayudarte a encontrar lo que necesitás en el camino.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:1.5rem"><strong style="color:var(--moto);font-size:1.05rem">Sumate a Mutual Moto y hacé crecer la comunidad con nosotros.</strong></div>
+  </section>
+  <section class="pre-map-section" id="preSection-guide">
+    <div class="section-kicker">Conocé el mapa</div>
+    <h2>Aprende sobre el mapa</h2>
+    <p class="lead">Antes de ingresar, podés conocer cómo interpretar los botones y las herramientas principales. Después, en el mapa, vas a poder explorar lugares, usuarios, alertas e interacciones de la comunidad.</p>
+    <div class="guide-image-wrap"><img src="guiadebotones.png" alt="Guía de botones del mapa de Mutual Moto" loading="lazy"></div>
+    <div class="guide-card">
+      <h3 style="color:var(--primary);margin-bottom:.5rem"><i class="fas fa-coins" style="color:var(--coin)"></i> Puntos y Moto Coins al ayudar a un Moto Amigo</h3>
+      <p>Cuando un Moto Amigo activa una alerta, puede mostrar un QR para que otro usuario confirme que acudió a ayudarlo. Al escanear y resolver correctamente el incidente, el usuario que escanea recibe la recompensa correspondiente a la gravedad:</p>
+      <div class="reward-grid">
+        <div class="reward-card"><div class="reward-icon"><i class="fas fa-triangle-exclamation"></i></div><strong>Leve</strong><span><b>10 puntos</b> + <b>1 Moto Coin</b></span></div>
+        <div class="reward-card"><div class="reward-icon"><i class="fas fa-car-burst"></i></div><strong>Grave</strong><span><b>30 puntos</b> + <b>3 Moto Coins</b></span></div>
+        <div class="reward-card"><div class="reward-icon"><i class="fas fa-heart-pulse"></i></div><strong>Riesgo de vida</strong><span><b>50 puntos</b> + <b>5 Moto Coins</b></span></div>
+      </div>
+      <div class="guide-note"><i class="fas fa-circle-info"></i> Al resolverse el incidente, la alerta se retira de la sala grupal y del mapa. La recompensa se acredita a la persona que escaneó el QR del incidente.</div>
+    </div>
+  </section>
+  <section class="pre-map-section" id="preSection-contacts">
+    <div class="section-kicker">Estamos para ayudarte</div>
+    <h2>Contactos</h2>
+    <p class="lead">Si querés comunicarte con Mutual Moto, consultar sobre la membresía o proponer un comercio para la red, podés utilizar estos canales.</p>
+    <div class="contact-grid">
+      <div class="contact-item"><i class="fas fa-envelope"></i><strong>Atención</strong><span>Consultas generales y membresías.</span></div>
+      <div class="contact-item"><i class="fas fa-store"></i><strong>Comercios</strong><span>Propuestas para sumar nuevos establecimientos.</span></div>
+      <div class="contact-item"><i class="fas fa-headset"></i><strong>Comunidad</strong><span>Ayuda con el mapa, beneficios y Motoamigos.</span></div>
+    </div>
+  </section>
+</div>
+
+<div id="mapPage" class="map-page hidden">
 <button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-label="Abrir menú" aria-expanded="false"><i class="fas fa-bars"></i></button>
 <div id="mobileMenuOverlay" class="mobile-menu-overlay" aria-hidden="true"></div>
 
@@ -903,6 +1151,8 @@ header{padding-left:3.5rem;padding-right:3.5rem}
 <button class="sidebar-action-btn" id="userLogHeaderBtn"><i class="fas fa-users"></i> Usuarios</button>
 <button class="sidebar-action-btn dev-only" id="devToggleBtn"><i class="fas fa-plus-circle"></i> A&ntilde;adir en mapa</button>
 <button class="sidebar-action-btn dev-only" id="devClearBtn"><i class="fas fa-trash"></i> Borrar todo</button>
+<button class="sidebar-action-btn dev-only" id="devUsersQrBtn" type="button"><i class="fas fa-qrcode"></i> QR de usuarios</button>
+<button class="sidebar-action-btn dev-only" id="devClearIncidentsBtn" type="button"><i class="fas fa-broom"></i> Limpiar incidentes guardados</button>
 </div>
 <h2><i class="fas fa-triangle-exclamation"></i> Siniestros en ruta</h2>
 <div class="incidents-panel">
@@ -976,8 +1226,6 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 </div>
 </div>
 
-<div class="dev-hint"><i class="fas fa-mouse-pointer"></i> Hac&eacute; clic en el mapa para a&ntilde;adir una ubicaci&oacute;n</div>
-
 <div id="loading">
 <div id="loadingText">Cargando datos...</div>
 <div id="loadingSubtext">Leyendo Google Sheets</div>
@@ -1001,6 +1249,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="floating-items" id="floatingItems">
 <button class="floating-btn auth-floating-btn" id="authHeaderBtn" title="Iniciar sesi&oacute;n"><i class="fas fa-sign-in-alt"></i></button>
 <button class="floating-btn buzon-btn" id="buzonBtn" title="Buz&oacute;n"><i class="fas fa-envelope"></i><span class="buzon-badge" id="buzonBadge" style="display:none">0</span></button>
+<button class="floating-btn suggestion-btn" id="suggestionBtn" title="Buz&oacute;n de sugerencias"><i class="fas fa-lightbulb"></i><span class="suggestion-badge" id="suggestionBadge" style="display:none">0</span></button>
 <button class="floating-btn coins-btn" id="coinsBtn" title="Moto Coins"><i class="fas fa-coins"></i></button>
 <button class="floating-btn add-place-btn" id="addPlaceBtn" title="A&ntilde;adir lugar"><i class="fas fa-plus"></i></button>
 <a class="floating-btn police-btn" href="tel:911" title="Llamar al 911"><i class="fas fa-phone"></i><span>911</span></a>
@@ -1077,8 +1326,8 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 </div>
 
 <div class="pending-toast" id="pendingToast">
-<i class="fas fa-hourglass-half"></i>
-<span id="pendingToastText">Solicitud enviada</span>
+<i class="fas fa-bell" id="pendingToastIcon"></i>
+<span id="pendingToastText">Notificación</span>
 </div>
 
 <div class="login-modal" id="loginModal">
@@ -1099,7 +1348,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <label style="display:flex;align-items:center;gap:.55rem;text-align:left;margin:.75rem 0;font-size:.82rem;color:#666;cursor:pointer"><input type="checkbox" id="loginRememberInput" style="width:17px;height:17px;accent-color:var(--moto);cursor:pointer"><span>Recu&eacute;rdame en este dispositivo</span></label>
 <div class="login-error" id="loginError" style="display:none;color:#c0392b;font-size:.8rem;margin:.6rem 0;text-align:left"></div>
 <button class="primary-btn moto" id="loginMutualBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n</button>
-<a class="gate-register-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSfKPVPXGwORQ5tUylZ1Re47im4DdiepitvaN_OjzkqPNvhtYA/viewform?usp=sharing&ouid=109861870343853538874" target="_blank" rel="noopener noreferrer"><i class="fas fa-user-plus"></i> Registrarse</a>
+<button type="button" class="gate-register-btn" data-open-register><i class="fas fa-user-plus"></i> Registrarse</button>
 <div class="login-separator">o</div>
 <button class="primary-btn guest" id="loginGuestBtn"><i class="fas fa-user-secret"></i> Entrar como invitado</button>
 <button class="modal-cancel-btn" id="loginCancelBtn" style="margin-top:.8rem">Volver</button>
@@ -1175,8 +1424,8 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <span>Van a poder conversar en privado y donarse Moto Coins</span>
 </button>
 <button class="modal-option-btn reject" id="chatReqRejectBtn">
-<strong><i class="fas fa-times"></i> Rechazar</strong>
-<span>No quiero ser su Motoamigo</span>
+<strong><i class="fas fa-times"></i> Cancelar</strong>
+<span>No quiero aceptar esta solicitud</span>
 </button>
 </div>
 </div>
@@ -1323,6 +1572,22 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 </div>
 </div>
 
+<div class="modal-overlay" id="suggestionModal">
+<div class="modal-box" style="max-width:520px">
+<h3><i class="fas fa-lightbulb"></i> <span id="suggestionModalTitle">Buz&oacute;n de sugerencias</span></h3>
+<p id="suggestionModalSub">Envi&aacute; una sugerencia al equipo de desarrollo del servicio.</p>
+<div id="suggestionCompose">
+<label style="display:block;font-size:.75rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin:.7rem 0 .3rem">T&iacute;tulo</label>
+<input type="text" id="suggestionTitle" maxlength="80" placeholder="Ej: Mejorar el mapa" style="width:100%;padding:.6rem .7rem;border:2px solid #ddd;border-radius:8px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box">
+<label style="display:block;font-size:.75rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin:.7rem 0 .3rem">Sugerencia</label>
+<textarea id="suggestionText" maxlength="1000" placeholder="Contanos qué mejorarías del servicio..." style="width:100%;padding:.6rem .7rem;border:2px solid #ddd;border-radius:8px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box;min-height:120px;resize:vertical"></textarea>
+<button class="primary-btn" id="suggestionSendBtn" style="margin-top:.9rem;background:#16a085"><i class="fas fa-paper-plane"></i> Enviar sugerencia</button>
+</div>
+<div id="suggestionInbox" style="display:none;max-height:430px;overflow-y:auto"></div>
+<button class="modal-cancel-btn" id="suggestionCloseBtn" style="margin-top:.5rem">Cerrar</button>
+</div>
+</div>
+
 <div class="modal-overlay coins-modal" id="requestCoinsModal">
 <div class="modal-box">
 <h3><i class="fas fa-coins"></i> Pedir Moto Coins</h3>
@@ -1387,9 +1652,32 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 </div>
 </div>
 
-<footer>
-Datos: <a id="csvLink" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?output=csv" target="_blank">Google Sheets</a> &middot; <span style="color:#9b59b6">?dev=1 modo desarrollador</span>
-</footer>
+</div>
+
+<div class="dev-users-qr-modal" id="devUsersQrModal" aria-hidden="true">
+  <div class="dev-users-qr-box" role="dialog" aria-modal="true" aria-labelledby="devUsersQrTitle">
+    <div class="dev-users-qr-head">
+      <h3 id="devUsersQrTitle"><i class="fas fa-qrcode"></i> QR de usuarios de Google Sheets</h3>
+      <button class="dev-users-qr-close" id="devUsersQrClose" type="button" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+    </div>
+    <p style="font-size:.82rem;color:#666;line-height:1.45">
+      Elegí una fila de la pestaña Usuarios. El QR incluye los datos de esa fila, salvo contraseñas, tokens, claves, hashes y credenciales. Cualquier persona que escanee el QR podrá leer los datos incluidos; compartilo solo con autorización.
+    </p>
+    <div class="dev-users-qr-controls">
+      <select id="devUsersQrSelect" aria-label="Seleccionar usuario"><option value="">Cargar usuarios…</option></select>
+      <button id="devUsersQrRefresh" type="button"><i class="fas fa-sync"></i> Actualizar</button>
+    </div>
+    <div class="dev-users-qr-status" id="devUsersQrStatus" role="status"></div>
+    <div class="dev-users-qr-content">
+      <div id="devUsersQrCode"><span style="color:#888;font-size:.85rem">Seleccioná un usuario.</span></div>
+      <pre id="devUsersQrData">Los datos del usuario seleccionado aparecerán aquí.</pre>
+    </div>
+    <div class="dev-users-qr-footer">
+      <button class="secondary" id="devUsersQrDownload" type="button"><i class="fas fa-download"></i> Descargar QR PNG</button>
+      <button class="secondary" id="devUsersQrClose2" type="button">Cerrar</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
@@ -1406,6 +1694,7 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyCH_SAEOSWf9FlZq
 const NOMINATIM_URL='https://nominatim.openstreetmap.org/search';
 const GEOCODE_DELAY_MS=1200;
 const REPORT_EMAIL='cainet30de2@gmail.com';
+const REPORT_SHEET_WEBHOOK='https://script.google.com/macros/s/AKfycbyCH_SAEOSWf9FlZqn5bzn5gBMfW1amgFE-mcqNufDRqlB4JUqUagznht3v36CUpMje/exec';
 const DEV_EMAIL='cainet30de2@gmail.com';
 const COIN_EMAIL='cainet30de2@gmail.com';
 const BOUNDS={south:-34.85,west:-58.65,north:-34.40,east:-58.15};
@@ -1430,6 +1719,8 @@ const CARDS_PER_PAGE=80;
 const BASE_POINTS_PER_LEVEL=100000;
 const MAX_LEVEL=10;
 const POINTS_PURCHASE=1;
+const POINTS_QR_SCAN=5;
+const COINS_QR_SCAN=5;
 const POINTS_ASSIST_LEVE=10;
 const POINTS_ASSIST_GRAVE=30;
 const POINTS_ASSIST_VIDA=50;
@@ -1444,8 +1735,18 @@ const INCIDENT_TTL=6*60*60*1000;
 const MAILBOX_KEY='servicios_ba_mailbox_v1';
 const MAILBOX_MAX=200;
 const MAILBOX_SEEN_KEY='servicios_ba_mailbox_seen_v1';
+const SUGGESTIONS_KEY='servicios_ba_suggestions_v1';
+const SUGGESTIONS_MAX=300;
+const SUGGESTIONS_SEEN_KEY='servicios_ba_suggestions_seen_v1';
+const RESOLVED_INCIDENTS_KEY='servicios_ba_resolved_incidents_v1';
+const RESOLVED_ALERTS_KEY='servicios_ba_resolved_alerts_v1';
+const RESOLVED_MAX=500;
 let mailboxMessages=[];
 let mailboxSeenTs=0;
+let suggestionMessages=[];
+let suggestionSeenTs=0;
+let resolvedIncidentIds=[];
+let resolvedAlertIds=[];
 const LEVELS_KEY='servicios_ba_levels_v1';
 let myLevel=1;
 let myPoints=0;
@@ -1628,11 +1929,10 @@ const map=L.map('map',{
 
 function configureMapZoomMode(){
   const mobile=isMobileLayout();
-  // Computadora: lógica original de zoom, por niveles enteros.
-  // Teléfono: zoom fraccionario para pinch y escala continua de Waze.
   map.options.zoomSnap=mobile?0.25:1;
   map.options.zoomDelta=mobile?0.25:1;
   map.options.tapTolerance=mobile?8:15;
+  map.options.markerZoomAnimation=!mobile;
 }
 configureMapZoomMode();
 window.addEventListener('resize',function(){try{configureMapZoomMode()}catch(_){} });
@@ -1668,7 +1968,7 @@ ALL_CATEGORIES.forEach(function(cat){
     chunkInterval:100,
     chunkDelay:20,
     removeOutsideVisibleBounds:true,
-    animate:true,
+    animate:!isMobileLayout(),
     spiderfyOnMaxZoom:true,
     showCoverageOnHover:false,
     zoomToBoundsOnClick:true,
@@ -1727,8 +2027,13 @@ function applyWazeFrameTransformMobile(frame,baseCenter,baseZoom,center,zoom){
   const scale=Math.pow(2,zoom-baseZoom);
   const dx=(currPx.x-basePx.x)*scale;
   const dy=(currPx.y-basePx.y)*scale;
-  frame.style.transform='translate('+(-dx)+'px,'+(-dy)+'px) scale('+scale+')';
+  frame.style.transform='translate3d('+(-dx)+'px,'+(-dy)+'px,0) scale('+scale+')';
   return{dx:dx,dy:dy,scale:scale};
+}
+function scheduleMobileWazeSync(frame,baseCenter,baseZoom,center,zoom){
+  if(!isMobileLayout()||!frame||!baseCenter||baseZoom===null)return;
+  if(wazeReloadPending)return;
+  applyWazeFrameTransformMobile(frame,baseCenter,baseZoom,center,zoom);
 }
 function applyWazeFrameTransform(frame,baseCenter,baseZoom,center,zoom){
   return isMobileLayout()
@@ -1833,11 +2138,8 @@ map.on('zoomanim',function(e){
   if(wazeBaseZoom===null)return;
   const active=getActiveFrame();
   if(isMobileLayout()){
-    if(wazeReloadPending)return;
-    // TELÉFONO: Waze sigue exactamente el zoom fraccionario de Leaflet.
-    applyWazeFrameTransformMobile(active,wazeBaseCenter,wazeBaseZoom,e.center,e.zoom);
+    scheduleMobileWazeSync(active,wazeBaseCenter,wazeBaseZoom,e.center,e.zoom);
   }else{
-    if(wazeReloadPending)return;
     const scale=Math.pow(2,e.zoom-wazeBaseZoom);
     const basePx=map.project(wazeBaseCenter,wazeBaseZoom);
     const currPx=map.project(e.center,wazeBaseZoom);
@@ -1854,10 +2156,7 @@ map.on('zoom',function(){
   if(wazeReloadPending)return;
   const active=getActiveFrame();
   const zoom=map.getZoom();
-  applyWazeFrameTransformMobile(active,wazeBaseCenter,wazeBaseZoom,map.getCenter(),zoom);
-  if(Math.abs(zoom-wazeBaseZoom)>=0.55 && Math.round(zoom)!==wazeBaseZoom){
-    startPreload(false);
-  }
+  scheduleMobileWazeSync(active,wazeBaseCenter,wazeBaseZoom,map.getCenter(),zoom);
 });
 map.on('zoomend',function(){
   wazeIsZooming=false;
@@ -1866,26 +2165,56 @@ map.on('zoomend',function(){
   clearTimeout(wazeZoomStopTimer);
 
   if(isMobileLayout()){
-    // TELÉFONO: mantener el nivel fraccionario; sólo cambiar el iframe
-    // cuando hace falta cargar otro nivel entero de Waze.
     if(wazeBaseCenter&&wazeBaseZoom!==null){
       applyWazeFrameTransformMobile(active,wazeBaseCenter,wazeBaseZoom,map.getCenter(),map.getZoom());
     }
     wazeZoomStopTimer=setTimeout(function(){
-      if(wazeReloadPending)return;
       if(wazeBaseCenter&&wazeBaseZoom!==null){
         const targetZoom=Math.round(map.getZoom());
-        if(targetZoom!==wazeBaseZoom)startPreload(false);
+        if(targetZoom!==wazeBaseZoom){
+          if(wazeReloadPending){
+            queueDesktopWazeSync();
+          }else{
+            startPreload(false);
+          }
+        }
       }
     },140);
     return;
   }
 
-  // COMPUTADORA: restaurar el flujo original: el zoom termina en nivel entero
-  // y luego se centra/carga Waze explícitamente.
-  wazeReloadPending=false;
-  wazeZoomStopTimer=setTimeout(function(){recenterImmediate()},250);
+  queueDesktopWazeSync();
 });
+
+function queueDesktopWazeSync(){
+  clearTimeout(wazeZoomStopTimer);
+
+  function sync(){
+    if(isMobileLayout())return;
+    if(!wazeBaseCenter||wazeBaseZoom===null)return;
+
+    const targetZoom=Math.round(map.getZoom());
+
+    if(wazeReloadPending){
+      wazeZoomStopTimer=setTimeout(sync,80);
+      return;
+    }
+
+    if(targetZoom!==wazeBaseZoom){
+      recenterImmediate();
+    }else{
+      applyWazeFrameTransformDesktop(
+        getActiveFrame(),
+        wazeBaseCenter,
+        wazeBaseZoom,
+        map.getCenter(),
+        map.getZoom()
+      );
+    }
+  }
+
+  wazeZoomStopTimer=setTimeout(sync,60);
+}
 map.on('dblclick',function(e){
   if(addingMode)return;
   if(incidentPickMode)return;
@@ -2042,6 +2371,8 @@ const loadMoreBtn=document.getElementById('loadMoreBtn');
 const authHeaderBtn=document.getElementById('authHeaderBtn');
 const userLogHeaderBtn=document.getElementById('userLogHeaderBtn');
 const authGate=document.getElementById('authGate');
+const registerModal=document.getElementById('registerModal');
+const registerCloseBtn=document.getElementById('registerCloseBtn');
 const gateLoginBtn=document.getElementById('gateLoginBtn');
 const gateGuestBtn=document.getElementById('gateGuestBtn');
 const incidentBtn=document.getElementById('incidentBtn');
@@ -2081,6 +2412,17 @@ const buzonBtn=document.getElementById('buzonBtn');
 const buzonModal=document.getElementById('buzonModal');
 const buzonList=document.getElementById('buzonList');
 const buzonBadge=document.getElementById('buzonBadge');
+const suggestionBtn=document.getElementById('suggestionBtn');
+const suggestionBadge=document.getElementById('suggestionBadge');
+const suggestionModal=document.getElementById('suggestionModal');
+const suggestionModalTitle=document.getElementById('suggestionModalTitle');
+const suggestionModalSub=document.getElementById('suggestionModalSub');
+const suggestionCompose=document.getElementById('suggestionCompose');
+const suggestionInbox=document.getElementById('suggestionInbox');
+const suggestionTitle=document.getElementById('suggestionTitle');
+const suggestionText=document.getElementById('suggestionText');
+const suggestionSendBtn=document.getElementById('suggestionSendBtn');
+const suggestionCloseBtn=document.getElementById('suggestionCloseBtn');
 const buzonTitle=document.getElementById('buzonTitle');
 const buzonText=document.getElementById('buzonText');
 const coinsBtn=document.getElementById('coinsBtn');
@@ -2153,24 +2495,50 @@ function renderMotoCoins(){
   if(dh)dh.textContent=formatNum(myMotoCoins);
 }
 function addMotoCoins(amount,reason,meta){
-  if(!amount||amount<=0)return false;
-  myMotoCoins+=Math.floor(amount);
-  myMotoCoinsLog.push({type:'add',amount:Math.floor(amount),reason:reason||'',meta:meta||null,ts:Date.now()});
+  const delta=Math.floor(Number(amount)||0);
+  if(delta<=0)return false;
+  myMotoCoins+=delta;
+  myMotoCoinsLog.push({type:'add',amount:delta,reason:reason||'',meta:meta||null,ts:Date.now()});
   if(myMotoCoinsLog.length>200)myMotoCoinsLog=myMotoCoinsLog.slice(-200);
   saveMotoCoins();
   renderMotoCoins();
-  showCoinFloat('+'+formatNum(Math.floor(amount))+' MC');
+  postToSheets('coins_change',{
+    socioId:getSocioIdForRecord(),
+    socioNick:myNick||(authState.user&&authState.user.nick)||'Anónimo',
+    change:delta,
+    operation:'add',
+    reason:reason||'',
+    balance:myMotoCoins,
+    points:myPoints,
+    level:myLevel,
+    meta:meta||null,
+    fecha:new Date().toISOString()
+  });
+  showCoinFloat('+'+formatNum(delta)+' MC');
   return true;
 }
 function spendMotoCoins(amount,reason,meta){
-  if(!amount||amount<=0)return false;
-  if(myMotoCoins<amount)return false;
-  myMotoCoins-=Math.floor(amount);
-  myMotoCoinsLog.push({type:'spend',amount:Math.floor(amount),reason:reason||'',meta:meta||null,ts:Date.now()});
+  const delta=Math.floor(Number(amount)||0);
+  if(delta<=0)return false;
+  if(myMotoCoins<delta)return false;
+  myMotoCoins-=delta;
+  myMotoCoinsLog.push({type:'spend',amount:delta,reason:reason||'',meta:meta||null,ts:Date.now()});
   if(myMotoCoinsLog.length>200)myMotoCoinsLog=myMotoCoinsLog.slice(-200);
   saveMotoCoins();
   renderMotoCoins();
-  showCoinFloat('-'+formatNum(Math.floor(amount))+' MC');
+  postToSheets('coins_change',{
+    socioId:getSocioIdForRecord(),
+    socioNick:myNick||(authState.user&&authState.user.nick)||'Anónimo',
+    change:-delta,
+    operation:'spend',
+    reason:reason||'',
+    balance:myMotoCoins,
+    points:myPoints,
+    level:myLevel,
+    meta:meta||null,
+    fecha:new Date().toISOString()
+  });
+  showCoinFloat('-'+formatNum(delta)+' MC');
   return true;
 }
 function showCoinFloat(text){
@@ -2480,6 +2848,7 @@ document.getElementById('donateCoinsSendBtn').addEventListener('click',function(
   openPrivateChatWithMotoamigo(donateCoinsPeer);
   renderMessages();scrollMessagesBottom();
   notifyDonationByEmail(donateCoinsPeer,amount,reason);
+  showAppNotification('Donación de '+formatNum(amount)+' Moto Coins enviada a '+donateCoinsPeer.nick+'.','fa-coins');
   status.textContent='✓ Donación enviada.';status.className='ap-status ok';
   setTimeout(function(){
     donateCoinsModal.classList.remove('visible');
@@ -2514,9 +2883,6 @@ function handleCoinsDonation(msg){
   const amount=parseInt(msg.amount,10)||0;
   if(amount<=0)return;
   addMotoCoins(amount,'donación de '+(msg.from?msg.from.nick:'Motoamigo'),{fromId:msg.from?msg.from.id:null});
-  myMotoCoinsLog.push({type:'donate-received',amount:amount,fromId:msg.from?msg.from.id:null,fromNick:msg.from?msg.from.nick:'',ts:Date.now()});
-  saveMotoCoins();
-  renderMotoCoins();
   if(msg.requestId){
     if(mqttClient&&chatReady){
       try{
@@ -2593,15 +2959,30 @@ function getDiscountForLevel(level){
 function formatNum(n){
   try{return Number(n).toLocaleString('es-AR')}catch(e){return String(n)}
 }
-function addPoints(amount){
-  if(!amount||amount<=0)return false;
-  if(myLevel>=MAX_LEVEL)return false;
+function addPoints(amount,reason,meta){
+  const delta=Math.trunc(Number(amount)||0);
+  if(delta===0)return false;
   const maxPoints=totalPointsToReach(MAX_LEVEL);
   const prevLevel=myLevel;
-  myPoints=Math.min(myPoints+amount,maxPoints);
+  const prevPoints=myPoints;
+  myPoints=Math.max(0,Math.min(myPoints+delta,maxPoints));
+  if(myPoints===prevPoints)return false;
   myLevel=getLevelFromPoints(myPoints);
   saveMyLevel();
   renderLevelPanel();
+  postToSheets('points_change',{
+    socioId:getSocioIdForRecord(),
+    socioNick:myNick||(authState.user&&authState.user.nick)||'Anónimo',
+    change:myPoints-prevPoints,
+    operation:(myPoints-prevPoints)>0?'add':'subtract',
+    reason:reason||'',
+    points:myPoints,
+    level:myLevel,
+    previousPoints:prevPoints,
+    previousLevel:prevLevel,
+    meta:meta||null,
+    fecha:new Date().toISOString()
+  });
   if(myLevel>prevLevel){
     notifyLevelUp(myLevel,prevLevel);
     showLevelUpModal(myLevel);
@@ -2875,11 +3256,28 @@ function rowsToPlaces(rows){
 }
 async function tryFetch(url,label){
   log('Intentando leer '+label+'...','info');
-  const res=await fetch(url,{cache:'no-cache'});
-  if(!res.ok)throw new Error('HTTP '+res.status);
-  const text=await res.text();
-  log(label+' respondió ('+text.length+' caracteres)','ok');
-  return text;
+  var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  var timeoutId = controller ? setTimeout(function(){ controller.abort(); }, 20000) : null;
+  try {
+    var options = { cache: 'no-store' };
+    if (controller) options.signal = controller.signal;
+    var res = await fetch(url, options);
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    var text = await res.text();
+    if (!text || !text.trim()) throw new Error(label+' devolvió una respuesta vacía.');
+    if (/^\s*<!doctype html|^\s*<html/i.test(text)) {
+      throw new Error(label+' devolvió una página HTML en vez de CSV. Revisá que la hoja esté publicada como CSV y que el gid sea correcto.');
+    }
+    log(label+' respondió ('+text.length+' caracteres)','ok');
+    return text;
+  } catch (err) {
+    if (err && err.name === 'AbortError') {
+      throw new Error('Tiempo de espera agotado al leer '+label+' (20 segundos). Comprobá la conexión y que la hoja esté publicada.');
+    }
+    throw err;
+  } finally {
+    if (timeoutId !== null) clearTimeout(timeoutId);
+  }
 }
 async function loadFromSources(){
   loadingDiv.style.display='flex';
@@ -2902,7 +3300,7 @@ async function loadFromSources(){
   const basePlaces=rowsToPlaces(rows);
   const sponsors=basePlaces.filter(function(p){return p.sponsored}).length;
   const descs=basePlaces.filter(function(p){return p.descuento}).length;
-  log('Lugares válidos: '+basePlaces.length+' ('+sponsors+' patrocinados, '+descs+' con descuento)','ok');
+  log('Lugares válidos: '+basePlaces.length+' ('+sponsors+' Motoamigazos, '+descs+' con descuento)','ok');
   allPlaces=basePlaces.slice();
   mergeCustomPlaces();
   renderPlaces();
@@ -2951,7 +3349,7 @@ function buildIcon(place){
   }
   return L.divIcon({
     className:'custom-marker',
-    html:'<div style="background:#fff;border:3px solid '+color+';border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.35);font-size:18px"><i class="fas '+iconClass+'" style="color:'+color+'"></i></div>',
+    html:'<div class="'+(place.sponsored?'sponsor-marker-inner ':'')+'" style="background:#fff;border:3px solid '+color+';border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.35);font-size:18px"><i class="fas '+iconClass+'" style="color:'+color+'"></i></div>',
     iconSize:[36,36],
     iconAnchor:[18,36],
     popupAnchor:[0,-36]
@@ -2981,7 +3379,7 @@ function buildPopupHtml(place){
   let devBadge='';
   if(place.isCustom)devBadge='<span class="popup-dev-badge">AÑADIDO POR USUARIO</span>';
   let sponsorBadge='';
-  if(place.sponsored)sponsorBadge='<span class="popup-sponsor-badge">PATROCINA</span>';
+  if(place.sponsored)sponsorBadge='<span class="popup-sponsor-badge">MOTOAMIGAZO</span>';
   let discountBadge='';
   if(place.descuento)discountBadge='<span class="popup-discount-badge"><i class="fas fa-tag"></i> -'+Math.round(place.descuento)+'% DE DESCUENTO</span>';
   return '<div class="popup-content"><span class="popup-title"><strong>'+escapeHtml(place.name)+'</strong></span><div class="popup-line"><i class="fas fa-map-pin" style="color:'+colors[place.category]+'"></i> '+escapeHtml(place.address||'Sin dirección')+'</div><div class="popup-rubro">'+escapeHtml(place.rubro||categoryLabels[place.category])+'</div>'+ratingHtml+'<br><button class="popup-route" data-waze-nav-lat="'+place.lat+'" data-waze-nav-lng="'+place.lng+'"><i class="fas fa-route"></i> Ir con Waze</button><button class="popup-share" data-place-id="'+escapeHtml(place.id)+'"><i class="fas fa-share-alt"></i> Compartir</button>'+buildRatingStarsHtml(place)+discountBadge+devBadge+sponsorBadge+'</div>';
@@ -3089,7 +3487,7 @@ function renderCardsChunk(){
     let distHtml='';
     if(userLocation)if(place.dist!==null)distHtml='<span class="distance"><i class="fas fa-route"></i> '+formatDistance(place.dist)+'</span>';
     let patronHtml='';
-    if(place.sponsored)patronHtml=' <span class="patron-badge">PATROCINA</span>';
+    if(place.sponsored)patronHtml=' <span class="patron-badge">MOTOAMIGAZO</span>';
     let discountHtml='';
     if(place.descuento)discountHtml=' <span class="discount-badge-card"><i class="fas fa-tag"></i> -'+Math.round(place.descuento)+'%</span>';
     let className='place-card';
@@ -3320,9 +3718,12 @@ document.addEventListener('keydown',function(e){
 });
 function isIncidentOwner(incident){
   if(!incident)return false;
-  if(!incident.from)return false;
-  if(!incident.from.id)return false;
-  return incident.from.id===myUserId;
+  const ownerId=incident.from&&incident.from.id?String(incident.from.id):'';
+  if(ownerId&&ownerId===String(myUserId))return true;
+  const ownerSocio=String((incident.from&&incident.from.socioId)||incident.socioId||'').trim();
+  let mySocio='';
+  try{mySocio=String(getSocioIdForRecord()||'').trim()}catch(_){}
+  return !!(ownerSocio&&mySocio&&ownerSocio===mySocio);
 }
 function solveIncident(incidentId){
   if(!incidentId)return;
@@ -3354,29 +3755,76 @@ function solveIncident(incidentId){
         incidentKind:inc.kind,
         zone:inc.zone||'Provincia',
         from:{id:myUserId,nick:solverNick},
-        text:'✅ Siniestro solucionado: '+(INCIDENT_TYPE_LABELS[inc.kind]||'Siniestro')+' en '+(inc.zone||'Provincia')+'. Vía libre.',
         ts:Date.now()
       };
       mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(chatMsg),{qos:0});
-      publicMessages.push(chatMsg);
-      if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
-      saveHistory();
-      schedulePublishPublicHistory();
-      if(isChatOpen())if(currentContext==='public'){renderMessages();scrollMessagesBottom()}
     }catch(e){}
   }
+  removePublicMessagesByIncidentId(incidentId);
+  showAppNotification('Siniestro resuelto y retirado de la sala general.','fa-check-circle');
   if(wasFocused)clearFocusMode();
   else renderAllIncidents();
   updateIncidentBadges();
 }
+function isDeveloperAccount(){
+  const user=authState&&authState.user;
+  const expected=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'').trim().toLowerCase();
+  const actual=String(user&&(user.email||user.correo)||'').trim().toLowerCase();
+  return !!(authState&&authState.isLoggedIn&&user&&!user.isGuest&&expected&&actual===expected);
+}
 function enableDevMode(){
   DEV_MODE=true;
   document.body.classList.add('dev-on');
+  if(mqttClient)if(chatReady){try{mqttClient.subscribe(TOPIC_SUGGESTIONS,{qos:0})}catch(e){}}
+  loadSuggestions();
+  updateSuggestionBadge();
 }
 function toggleAddingMode(){
   addingMode=!addingMode;
   document.body.classList.toggle('adding-mode',addingMode);
   if(devToggleBtn)devToggleBtn.classList.toggle('active',addingMode);
+}
+function clearIncidentsDev(){
+  if(!DEV_MODE){alert('Esta acción solo está disponible con ?dev=1.');return;}
+  const ids=new Set();
+  incidents.forEach(function(it){if(it&&it.id)ids.add(String(it.id));});
+  publicMessages.forEach(function(m){
+    if(!m)return;
+    const isIncident=m.kind==='incident'||m.incidentRef||m.incidentId;
+    if(!isIncident)return;
+    if(m.incidentRef)ids.add(String(m.incidentRef));
+    if(m.incidentId)ids.add(String(m.incidentId));
+    if(m.from&&m.from.id&&m.ts)ids.add('inc_chat_'+m.from.id+'_'+m.ts);
+    if(m.id&&m.kind==='incident')ids.add(String(m.id));
+  });
+  if(!confirm('Se quitarán del mapa y del historial local TODOS los incidentes activos y de prueba de este navegador. También se marcarán como resueltos para que el historial compartido no los vuelva a mostrar. No se borrará el registro histórico de Google Sheets. ¿Continuar?'))return;
+  ids.forEach(function(id){markIncidentResolved(id)});
+  incidents=[];
+  publicMessages=publicMessages.filter(function(m){
+    if(!m)return false;
+    if(m.kind==='incident')return false;
+    if(m.incidentRef&&ids.has(String(m.incidentRef)))return false;
+    if(m.incidentId&&ids.has(String(m.incidentId)))return false;
+    if(m.kind==='emergency'&&m.alertId&&isAlertResolved(m.alertId))return false;
+    return true;
+  });
+  saveIncidents();
+  saveHistory();
+  if(incidentToastStack)incidentToastStack.innerHTML='';
+  if(focusedIncidentId)clearFocusMode();
+  renderAllIncidents();
+  renderAllChatLocations();
+  if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom()}
+  updateBadges();
+  if(mqttClient&&chatReady){
+    ids.forEach(function(id){
+      const msg={kind:'incident-resolve',incidentId:id,incidentRef:id,from:{id:myUserId,nick:myNick||'Desarrollador'},ts:Date.now()};
+      try{mqttClient.publish(TOPIC_INCIDENTS,JSON.stringify(msg),{qos:0})}catch(_){}
+      try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(msg),{qos:0})}catch(_){}
+    });
+    schedulePublishPublicHistory();
+  }
+  alert('Limpieza completada. Incidentes quitados: '+ids.size+'.');
 }
 devToggleBtn.addEventListener('click',toggleAddingMode);
 devClearBtn.addEventListener('click',function(){
@@ -3387,6 +3835,7 @@ devClearBtn.addEventListener('click',function(){
   allPlaces=allPlaces.filter(function(p){return !p.isCustom});
   renderPlaces();
 });
+if(document.getElementById('devClearIncidentsBtn'))document.getElementById('devClearIncidentsBtn').addEventListener('click',clearIncidentsDev);
 function buildDevAddFormHtml(lat,lng){
   const opts=ALL_CATEGORIES.map(function(c){
     return '<option value="'+c+'">'+categoryLabels[c]+'</option>';
@@ -3661,9 +4110,19 @@ async function submitAddPlace(){
 }
 apSubmitBtn.addEventListener('click',submitAddPlace);
 document.addEventListener('keydown',function(e){
-  if(e.ctrlKey)if(e.shiftKey){
-    if(e.key==='D'){e.preventDefault();if(!DEV_MODE){enableDevMode();alert('Modo desarrollador activado.')}else toggleAddingMode()}
-    else if(e.key==='d'){e.preventDefault();if(!DEV_MODE){enableDevMode();alert('Modo desarrollador activado.')}else toggleAddingMode()}
+  if(!(e.ctrlKey&&e.shiftKey&&(e.key==='D'||e.key==='d')))return;
+  e.preventDefault();
+  if(!isDeveloperAccount()){
+    alert('El modo desarrollador requiere iniciar sesión con la cuenta autorizada.');
+    if(!isLoggedIn())showGate();
+    return;
+  }
+  if(!DEV_MODE){
+    enableDevMode();
+    showMapPage();
+    alert('Modo desarrollador activado.');
+  }else{
+    toggleAddingMode();
   }
 });
 function openSheetsPanel(){
@@ -3885,7 +4344,7 @@ function renderAllIncidents(){
 }
 function getActiveIncidents(){
   const now=Date.now();
-  return incidents.filter(function(it){return (now-(it.ts||0))<INCIDENT_TTL}).sort(function(a,b){return b.ts-a.ts});
+  return incidents.filter(function(it){return !isIncidentResolved(it.id)&&(now-(it.ts||0))<INCIDENT_TTL}).sort(function(a,b){return b.ts-a.ts});
 }
 function updateIncidentsPanel(active){
   if(!active)active=getActiveIncidents();
@@ -3927,6 +4386,8 @@ function updateIncidentBadges(active){
   }
 }
 function addIncident(incident){
+  if(!incident||!incident.id)return;
+  if(isIncidentResolved(incident.id))return;
   const existing=incidents.findIndex(function(it){return it.id===incident.id});
   if(existing>=0)return;
   incidents.push(incident);
@@ -3941,6 +4402,7 @@ function addIncident(incident){
 function registerIncomingIncident(incident,options){
   if(!incident)return;
   if(!incident.id)return;
+  if(isIncidentResolved(incident.id))return;
   let isNews=false;
   if(incident.isNews)isNews=true;
   else if(incident.from)if(incident.from.id==='news_feed')isNews=true;
@@ -3953,7 +4415,10 @@ function registerIncomingIncident(incident,options){
   if(!isInBounds(incident.lat,incident.lng))return;
   if(!incident.zone)incident.zone=getZone(incident.lat,incident.lng);
   addIncident(incident);
-  if(!isOwn)if(!(options&&options.silent))showIncidentToast(incident);
+  if(!isOwn)if(!(options&&options.silent)){
+    showIncidentToast(incident);
+    showAppNotification((INCIDENT_TYPE_LABELS[incident.kind]||'Siniestro')+' reportado en '+incident.zone+'.','fa-car-burst');
+  }
 }
 function showIncidentToast(incident){
   let isNews=false;
@@ -3969,6 +4434,7 @@ function showIncidentToast(incident){
   if(!sid)if(incident.socioId)sid=incident.socioId;
   const toast=document.createElement('div');
   toast.className='incident-toast '+incident.kind;
+  toast.dataset.incidentId=String(incident.id||'');
   let newsMark='';
   if(isNews)newsMark='📰 ';
   let toastText=incident.text;
@@ -4129,7 +4595,11 @@ async function checkAlertPassword(){
       });
     }
     if(valid){
+      const resolvedAlertId=activeUserAlert?activeUserAlert.id:null;
       dismissUserAlert();
+      if(resolvedAlertId)publishResolve(resolvedAlertId);
+      if(resolvedAlertId)removePublicMessagesByAlertId(resolvedAlertId);
+      showAppNotification('Alerta resuelta y retirada de la sala general.','fa-check-circle');
       alert('✓ Alerta cerrada correctamente.');
     }else{
       alertError.textContent='Contraseña incorrecta.';
@@ -4185,10 +4655,11 @@ function handleAlertResolveMessage(msg){
   if(!msg)return;
   if(msg.kind!=='alert-resolve')return;
   if(!msg.alertId)return;
+  removePublicMessagesByAlertId(msg.alertId);
   if(!activeUserAlert)return;
   if(msg.alertId!==activeUserAlert.id)return;
   dismissUserAlert();
-  setTimeout(function(){alert('✓ Un compañero escaneó tu QR y confirmó que estás bajo control.\n\nLa alerta fue cerrada.')},150);
+  showAppNotification('Tu alerta fue cerrada por un compañero y retirada de la sala general.','fa-check-circle');
 }
 let html5QrScanner=null;
 let qrCameraActive=false;
@@ -4310,6 +4781,13 @@ function stopQrCamera(){
   if(camBtn)camBtn.style.display='block';
   if(stopBtn)stopBtn.style.display='none';
 }
+function addQrScanRewards(reason){
+  const pointsAwarded=POINTS_QR_SCAN;
+  const coinsAwarded=COINS_QR_SCAN;
+  addPoints(pointsAwarded,reason,{source:'qr_scan'});
+  addMotoCoins(coinsAwarded,reason,{source:'qr_scan'});
+  alert('✓ QR procesado.\n\nGanaste '+pointsAwarded+' puntos y '+coinsAwarded+' Moto Coins.');
+}
 function handleQrDecoded(raw){
   let url=null;
   try{url=new URL(raw)}catch(e){}
@@ -4326,19 +4804,30 @@ function handleQrDecoded(raw){
     const resolveId=url.searchParams.get('resolve');
     if(resolveId){
       const sev=url.searchParams.get('sev')||'';
+      if(isAlertResolved(resolveId)){
+        stopQrCamera();
+        closeQrScanModal();
+        alert('Este incidente ya fue resuelto y el QR ya no entrega recompensas.');
+        return;
+      }
       stopQrCamera();
       publishResolve(resolveId).then(function(ok){
         if(ok){
           let pts=0;
-          if(sev==='leve')pts=POINTS_ASSIST_LEVE;
-          else if(sev==='grave')pts=POINTS_ASSIST_GRAVE;
-          else if(sev==='vida')pts=POINTS_ASSIST_VIDA;
+          let coins=0;
+          if(sev==='leve'){pts=POINTS_ASSIST_LEVE;coins=1;}
+          else if(sev==='grave'){pts=POINTS_ASSIST_GRAVE;coins=3;}
+          else if(sev==='vida'){pts=POINTS_ASSIST_VIDA;coins=5;}
+          markAlertResolved(resolveId);
+          removePublicMessagesByAlertId(resolveId);
+          renderAllChatLocations();
           closeQrScanModal();
           if(pts>0){
-            addPoints(pts);
-            alert('✓ Alerta resuelta.\n\n¡Ganaste '+pts+' puntos por asistir al MotoAmigo!');
+            addPoints(pts,'Asistencia mediante QR',{source:'qr_resolve',severity:sev});
+            addMotoCoins(coins,'Asistencia mediante QR',{source:'qr_resolve',severity:sev});
+            alert('✓ Alerta resuelta.\n\n¡Ganaste '+pts+' puntos y '+coins+' Moto Coins por asistir al MotoAmigo!');
           }else{
-            alert('✓ Alerta resuelta.\n\nEl compañero con la alerta activa va a ver el cierre automáticamente.');
+            alert('✓ Alerta resuelta.\n\nEl incidente fue retirado del mapa y de la sala grupal.');
           }
         }else{
           alert('No se pudo conectar al servidor.\n\nVerificá tu conexión e intentá de nuevo.');
@@ -4353,7 +4842,7 @@ function handleQrDecoded(raw){
   publishResolve(id).then(function(ok){
     if(ok){
       closeQrScanModal();
-      alert('✓ Alerta resuelta.');
+      addQrScanRewards('QR de asistencia resuelto');
     }else{
       alert('No se pudo conectar al servidor.');
     }
@@ -4508,9 +4997,7 @@ function submitIncident(){
   closeIncidentModal();
   ensureUnlocked();
   map.setView([lat,lng],14,{animate:true});
-  setTimeout(function(){
-    alert('✓ Siniestro reportado.\n\nSe guardó en el mapa y en Google Sheets.\n\nRecordá que si VOS tenés una emergencia, usá el botón rojo para activar tu alerta QR.');
-  },200);
+  showAppNotification('Siniestro reportado correctamente.','fa-car-burst');
 }
 incidentBtn.addEventListener('click',openIncidentModal);
 cancelIncidentModal.addEventListener('click',closeIncidentModal);
@@ -4543,6 +5030,7 @@ const TOPIC_ALERT_RESOLVE=CHAT_PREFIX+'/alert-resolve';
 const TOPIC_PUBLIC_HISTORY=CHAT_PREFIX+'/public-history';
 const TOPIC_USERLOG_HISTORY=CHAT_PREFIX+'/userlog-history';
 const TOPIC_MAILBOX=CHAT_PREFIX+'/mailbox';
+const TOPIC_SUGGESTIONS=CHAT_PREFIX+'/suggestions';
 const TOPIC_COINS=CHAT_PREFIX+'/coins';
 const TOPIC_COINS_TRANSFER_BASE=CHAT_PREFIX+'/coins-transfer/';
 const TOPIC_COIN_FULFILL=CHAT_PREFIX+'/coins-fulfilled';
@@ -4632,6 +5120,56 @@ const gatePasswordInput=document.getElementById('gatePasswordInput');
 const gateRememberInput=document.getElementById('gateRememberInput');
 const gateLoginError=document.getElementById('gateLoginError');
 const floatingStack=document.querySelector('.floating-stack');
+const floatingToggleBtn=document.getElementById('floatingToggleBtn');
+
+function isChatOpen(){return !!(chatPanel&&chatPanel.classList.contains('visible'))}
+function openChat(){
+  if(!isLoggedIn()){showGate();return}
+  chatPanel.classList.add('visible');
+  if(currentContext==='public')unreadPublic=0;
+  else{
+    if(currentPrivatePeer){unreadPerPeer.set(currentPrivatePeer.id,0);sendReadReceipt(currentPrivatePeer.id)}
+    recomputeUnreadPrivateTotal();
+  }
+  updateBadges(); updateChatTitle(); renderMessages(); renderUsers();
+  scrollMessagesBottom(); setTimeout(function(){chatInput.focus()},100);
+}
+function closeChat(){
+  chatPanel.classList.remove('visible');
+  typingUsers.clear(); renderTypingIndicator();
+  exitReportMode(); hideUserMenu(); hideStatusMenu();
+}
+if(floatingToggleBtn&&!floatingToggleBtn.dataset.mmBound){
+  floatingToggleBtn.dataset.mmBound='1';
+  floatingToggleBtn.addEventListener('click',function(e){
+    e.preventDefault(); e.stopPropagation();
+    if(!floatingStack)return;
+    const collapsed=floatingStack.classList.toggle('collapsed');
+    floatingToggleBtn.setAttribute('aria-expanded',String(!collapsed));
+    floatingToggleBtn.title=collapsed?'Mostrar acciones':'Ocultar acciones';
+    floatingToggleBtn.innerHTML='<i class="fas '+(collapsed?'fa-bars':'fa-times')+'"></i>';
+  });
+}
+if(chatToggleBtn&&!chatToggleBtn.dataset.mmBound){
+  chatToggleBtn.dataset.mmBound='1';
+  chatToggleBtn.addEventListener('click',function(e){
+    e.preventDefault();
+    if(!isLoggedIn()){showGate();return}
+    if(isChatOpen()){closeChat();return}
+    currentContext='public'; currentPrivatePeer=null; unreadPublic=0;
+    openChat(); updateBadges();
+    if(!chatReady&&!mqttClient)continueAfterAuth();
+  });
+}
+if(chatCloseBtn&&!chatCloseBtn.dataset.mmBound){chatCloseBtn.dataset.mmBound='1';chatCloseBtn.addEventListener('click',closeChat)}
+if(chatBackBtn&&!chatBackBtn.dataset.mmBound){
+  chatBackBtn.dataset.mmBound='1';
+  chatBackBtn.addEventListener('click',function(){
+    currentContext='public'; currentPrivatePeer=null; unreadPublic=0;
+    typingUsers.clear(); renderTypingIndicator(); updateBadges();
+    updateChatTitle(); renderMessages(); renderUsers(); scrollMessagesBottom(); hideUserMenu();
+  });
+}
 const profileModal=document.getElementById('profileModal');
 const profileTitle=document.getElementById('profileTitle');
 const profileSubtitle=document.getElementById('profileSubtitle');
@@ -4666,6 +5204,7 @@ const chatReqAcceptBtn=document.getElementById('chatReqAcceptBtn');
 const chatReqRejectBtn=document.getElementById('chatReqRejectBtn');
 const pendingToast=document.getElementById('pendingToast');
 const pendingToastText=document.getElementById('pendingToastText');
+const pendingToastIcon=document.getElementById('pendingToastIcon');
 const shareLocationBtn=document.getElementById('shareLocationBtn');
 const locationModal=document.getElementById('locationModal');
 const shareLocationPublic=document.getElementById('shareLocationPublic');
@@ -4690,6 +5229,68 @@ const reportDetails=document.getElementById('reportDetails');
 const reportPreview=document.getElementById('reportPreview');
 const reportSubmitBtn=document.getElementById('reportSubmitBtn');
 const reportCancelModal=document.getElementById('reportCancelModal');
+function openEmergencyModal(){
+  if(!isLoggedIn()||!authState.user||authState.user.isGuest){showGate();return;}
+  if(activeUserAlert){showAlertOverlay();return;}
+  if(emergencyModal)emergencyModal.classList.add('visible');
+}
+function emitEmergencyAlert(severity){
+  if(['leve','grave','vida'].indexOf(severity)<0)return;
+  if(!isLoggedIn()||!authState.user||authState.user.isGuest){showGate();return;}
+  if(activeUserAlert){showAlertOverlay();return;}
+  const create=function(lat,lng){
+    const zone=getZone(lat,lng);
+    const nick=myNick||(authState.user&&authState.user.nick)||'Anónimo';
+    const id='alert_'+String(myUserId||'user')+'_'+Date.now();
+    const descriptions={
+      leve:'Necesito ayuda por un problema leve en la ruta.',
+      grave:'Necesito asistencia urgente por una emergencia grave.',
+      vida:'Necesito ayuda inmediata por una situación de riesgo de vida.'
+    };
+    const from={id:myUserId,nick:nick,socioId:getSocioIdForRecord()};
+    const data={id:id,kind:'emergency',severity:severity,text:descriptions[severity],lat:lat,lng:lng,zone:zone,from:from,ts:Date.now()};
+    if(emergencyModal)emergencyModal.classList.remove('visible');
+    activateUserAlert(data);
+    const msg={kind:'emergency',type:'public',id:id,alertId:id,severity:severity,zone:zone,text:data.text,lat:lat,lng:lng,from:from,ts:data.ts};
+    const exists=publicMessages.some(function(m){return m&&(m.alertId===id||m.id===id)});
+    if(!exists){
+      publicMessages.push(msg);
+      if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
+    }
+    saveHistory();
+    const loc=locationFromMessage(msg);
+    if(loc)registerChatLocation(loc);
+    if(mqttClient&&chatReady){
+      try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(msg),{qos:0});}catch(_){}
+      schedulePublishPublicHistory();
+      showAppNotification('Tu alerta fue enviada a la sala general.','fa-triangle-exclamation');
+    }else{
+      showAppNotification('Tu alerta quedó activa en este dispositivo, pero el chat no está conectado para notificar a otros usuarios.','fa-triangle-exclamation');
+    }
+    if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom();}
+  };
+  if(userLocation&&Number.isFinite(userLocation.lat)&&Number.isFinite(userLocation.lng)){
+    create(userLocation.lat,userLocation.lng);
+    return;
+  }
+  if(!navigator.geolocation){alert('Este dispositivo no ofrece geolocalización. Permití la ubicación o reportá un siniestro desde el botón naranja y marcá el punto en el mapa.');return;}
+  navigator.geolocation.getCurrentPosition(function(pos){
+    const lat=pos.coords.latitude,lng=pos.coords.longitude;
+    userLocation={lat:lat,lng:lng};
+    create(lat,lng);
+  },function(){alert('No se pudo obtener tu ubicación. Permití el acceso a la ubicación y volvé a intentarlo.');},{enableHighAccuracy:true,timeout:10000,maximumAge:15000});
+}
+if(emergencyBtn&&!emergencyBtn.dataset.mmBound){
+  emergencyBtn.dataset.mmBound='1';
+  emergencyBtn.addEventListener('click',openEmergencyModal);
+}
+if(cancelEmergencyModal)cancelEmergencyModal.addEventListener('click',function(){if(emergencyModal)emergencyModal.classList.remove('visible')});
+if(emergencyModal)emergencyModal.addEventListener('click',function(e){if(e.target===emergencyModal)emergencyModal.classList.remove('visible')});
+emergencyOptions.forEach(function(btn){
+  if(btn.dataset.mmBound)return;
+  btn.dataset.mmBound='1';
+  btn.addEventListener('click',function(){emitEmergencyAlert(btn.dataset.severity||'leve')});
+});
 function loadMyStatus(){
   myStatus='conectado';
   manualStatus=false;
@@ -4709,7 +5310,7 @@ function saveUserLog(){
 function publishPublicHistory(){
   if(!mqttClient)return;
   if(!chatReady)return;
-  const payload={kind:'public-history',messages:publicMessages.slice(-PUBLIC_HISTORY_MAX),ts:Date.now(),from:{id:myUserId,nick:myNick}};
+  const payload={kind:'public-history',messages:publicMessages.slice(-PUBLIC_HISTORY_MAX),resolvedIncidentIds:resolvedIncidentIds.slice(-RESOLVED_MAX),resolvedAlertIds:resolvedAlertIds.slice(-RESOLVED_MAX),ts:Date.now(),from:{id:myUserId,nick:myNick}};
   try{mqttClient.publish(TOPIC_PUBLIC_HISTORY,JSON.stringify(payload),{qos:0,retain:true})}catch(e){}
 }
 function publishUserLogHistory(){
@@ -4726,10 +5327,66 @@ function schedulePublishUserLogHistory(){
   if(historyPubTimer2)return;
   historyPubTimer2=setTimeout(function(){historyPubTimer2=null;publishUserLogHistory()},1500);
 }
+function loadResolvedState(){
+  try{
+    const raw=localStorage.getItem(RESOLVED_INCIDENTS_KEY);
+    resolvedIncidentIds=raw?JSON.parse(raw):[];
+    if(!Array.isArray(resolvedIncidentIds))resolvedIncidentIds=[];
+  }catch(e){resolvedIncidentIds=[]}
+  try{
+    const raw=localStorage.getItem(RESOLVED_ALERTS_KEY);
+    resolvedAlertIds=raw?JSON.parse(raw):[];
+    if(!Array.isArray(resolvedAlertIds))resolvedAlertIds=[];
+  }catch(e){resolvedAlertIds=[]}
+  incidents=incidents.filter(function(it){return it&&!isIncidentResolved(it.id)});
+  saveIncidents();
+  publicMessages=publicMessages.filter(function(m){
+    if(m&&m.incidentRef)if(isIncidentResolved(m.incidentRef))return false;
+    if(m&&m.incidentId)if(isIncidentResolved(m.incidentId))return false;
+    if(m&&m.alertId)if(isAlertResolved(m.alertId))return false;
+    return true;
+  });
+  saveHistory();
+  renderAllIncidents();
+}
+function saveResolvedState(){
+  try{localStorage.setItem(RESOLVED_INCIDENTS_KEY,JSON.stringify(resolvedIncidentIds.slice(-RESOLVED_MAX)))}catch(e){}
+  try{localStorage.setItem(RESOLVED_ALERTS_KEY,JSON.stringify(resolvedAlertIds.slice(-RESOLVED_MAX)))}catch(e){}
+}
+function markIncidentResolved(id){
+  if(!id)return;
+  id=String(id);
+  if(resolvedIncidentIds.indexOf(id)<0)resolvedIncidentIds.push(id);
+  if(resolvedIncidentIds.length>RESOLVED_MAX)resolvedIncidentIds=resolvedIncidentIds.slice(-RESOLVED_MAX);
+  const before=incidents.length;
+  incidents=incidents.filter(function(it){return !it||String(it.id||'')!==id});
+  if(incidents.length!==before)saveIncidents();
+  if(incidentToastStack){
+    incidentToastStack.querySelectorAll('.incident-toast').forEach(function(toast){
+      if(String(toast.dataset.incidentId||'')===id)toast.remove();
+    });
+  }
+  saveResolvedState();
+  if(typeof incidentsLayer!=='undefined')renderAllIncidents();
+}
+function markAlertResolved(id){
+  if(!id)return;
+  if(resolvedAlertIds.indexOf(id)<0)resolvedAlertIds.push(id);
+  if(resolvedAlertIds.length>RESOLVED_MAX)resolvedAlertIds=resolvedAlertIds.slice(-RESOLVED_MAX);
+  saveResolvedState();
+}
+function isIncidentResolved(id){return !!id&&resolvedIncidentIds.indexOf(id)>=0}
+function isAlertResolved(id){return !!id&&resolvedAlertIds.indexOf(id)>=0}
 function handlePublicHistory(payload){
   if(!payload)return;
   if(!Array.isArray(payload.messages))return;
   if(payload.from)if(payload.from.id===myUserId)return;
+  if(Array.isArray(payload.resolvedIncidentIds)){
+    payload.resolvedIncidentIds.forEach(function(id){markIncidentResolved(id)});
+  }
+  if(Array.isArray(payload.resolvedAlertIds)){
+    payload.resolvedAlertIds.forEach(function(id){markAlertResolved(id)});
+  }
   const key=function(m){
     let u='unk';
     if(m.from)u=m.from.id;
@@ -4739,6 +5396,12 @@ function handlePublicHistory(payload){
   publicMessages.forEach(function(m){mapMerge.set(key(m),m)});
   payload.messages.forEach(function(m){if(!mapMerge.has(key(m)))mapMerge.set(key(m),m)});
   publicMessages=Array.from(mapMerge.values()).sort(function(a,b){return (a.ts||0)-(b.ts||0)});
+  publicMessages=publicMessages.filter(function(m){
+    if(m&&m.incidentRef)if(isIncidentResolved(m.incidentRef))return false;
+    if(m&&m.incidentId)if(isIncidentResolved(m.incidentId))return false;
+    if(m&&m.alertId)if(isAlertResolved(m.alertId))return false;
+    return true;
+  });
   if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages=publicMessages.slice(-PUBLIC_MSGS_MAX);
   payload.messages.forEach(function(m){const loc=locationFromMessage(m);if(loc)registerChatLocation(loc)});
   saveHistory();
@@ -5135,9 +5798,30 @@ function showGate(){
   authGate.classList.remove('hidden');
   authGate.classList.remove('fading');
 }
+function showMapPage(){
+  const mapPage=document.getElementById('mapPage');
+  const publicHeader=document.getElementById('siteHeader');
+  const publicHome=document.getElementById('preMapContent');
+  if(publicHeader)publicHeader.style.display='none';
+  if(publicHome)publicHome.style.display='none';
+  if(mapPage)mapPage.classList.remove('hidden');
+  try{ sessionStorage.setItem('mm_wasOnMap','1'); }catch(_){}
+  setTimeout(function(){
+    try{map.invalidateSize()}catch(_){}
+    const mapWrapper=document.getElementById('map-wrapper');
+    if(mapWrapper)mapWrapper.scrollIntoView({behavior:'smooth',block:'start'});
+  },80);
+}
 function hideGate(){
   authGate.classList.add('fading');
-  setTimeout(function(){authGate.classList.add('hidden');try{map.invalidateSize()}catch(_){}},400);
+  setTimeout(function(){
+    authGate.classList.add('hidden');
+    try{map.invalidateSize()}catch(_){}
+    if(pendingEnterMap){
+      pendingEnterMap=false;
+      showMapPage();
+    }
+  },400);
 }
 function resetPasswordToggle(inputId){
   const input=document.getElementById(inputId);
@@ -5155,6 +5839,18 @@ function showLoginModal(){
   setTimeout(function(){if(loginEmailInput)loginEmailInput.focus()},100);
 }
 function hideLoginModal(){loginModal.classList.remove('visible')}
+const BETA_TEST_NOTICE_KEY='servicios_ba_beta_test_notice_v1_';
+function showBetaTestNoticeIfFirstLogin(user){
+  if(!user)return;
+  if(!user.betaTest)return;
+  if(!user.id)return;
+  const key=BETA_TEST_NOTICE_KEY+String(user.id);
+  let alreadyShown=false;
+  try{alreadyShown=localStorage.getItem(key)==='1'}catch(e){}
+  if(alreadyShown)return;
+  try{localStorage.setItem(key,'1')}catch(e){}
+  alert('PRUEBA DE 10 DÍAS, TUS DATOS SERÁN BORRADOS PASADO EL LAPSO LÍMITE');
+}
 function finalizeLogin(){
   if(authState.user&&authState.user.id){
     myUserId=String(authState.user.id);
@@ -5206,6 +5902,9 @@ function normalizeAuthHeader(value){
 const MEMBERSHIP_ALERT_KEY='servicios_ba_membership_alert_v1';
 const MEMBERSHIP_WARNING_MS=7*24*60*60*1000;
 const AUTH_COLUMN_ALIASES={
+  'beta-test':'betaTest',
+  'beta_test':'betaTest',
+  'marcatemporal':'timestamp',
   'marca temporal':'timestamp',
   'ingrese su nombre completo.':'nombre',
   'ingrese su(s) apellido(s).':'apellido',
@@ -5244,7 +5943,6 @@ function parseMembershipIssueDate(value){
     .replace(/a\.\s*m\./ig,'AM')
     .replace(/p\.\s*m\./ig,'PM');
 
-  // Google Forms/Sheets in Spanish locales normally expose dates as DD/MM/YYYY.
   const m=normalized.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})(?:[,\s]+(\d{1,2})(?::(\d{2}))(?::(\d{2}))?\s*(AM|PM)?)?$/i);
   if(m){
     let a=parseInt(m[1],10),b=parseInt(m[2],10),y=parseInt(m[3],10);
@@ -5259,7 +5957,6 @@ function parseMembershipIssueDate(value){
     if(d.getFullYear()===y&&d.getMonth()===month-1&&d.getDate()===day)return d;
   }
 
-  // Fall back to ISO/other browser-recognized timestamp formats.
   const parsed=Date.parse(normalized);
   return isNaN(parsed)?null:new Date(parsed);
 }
@@ -5360,11 +6057,13 @@ async function loginWithMutualMotos(){
       fecha:user.fecha||'',
       timestamp:user.timestamp||user.emision||'',
       emision:user.timestamp||user.emision||'',
+      betaTest:String(user.betaTest||'').trim().toLowerCase()==='true',
       password:user['contraseña']||'',
       isGuest:false,
       rememberDevice:!!(rememberField&&rememberField.checked),
       provider:'google-sheet'
     }};
+    showBetaTestNoticeIfFirstLogin(authState.user);
     alert('¡Inicio de sesión correcto! Bienvenido/a, '+displayName+'.');
     finalizeLogin();
   }catch(e){
@@ -5408,6 +6107,7 @@ function closeProfileModal(){
 }
 function logout(){
   closeProfileModal();
+  try{ sessionStorage.removeItem('mm_wasOnMap'); }catch(_){}
   if(mqttClient)if(chatReady){
     try{
       mqttClient.publish(TOPIC_PRESENCE,JSON.stringify({type:'presence',from:{id:myUserId,nick:myNick},status:'desconectado',ts:Date.now()}),{qos:0});
@@ -5441,6 +6141,66 @@ function continueAfterAuth(){
     }
   }catch(e){}
 }
+const associationModal=document.getElementById('associationModal');
+const associationCloseBtn=document.getElementById('associationCloseBtn');
+function showPreSection(section){
+  document.querySelectorAll('.pre-map-section').forEach(function(el){el.classList.toggle('active',el.id==='preSection-'+section)});
+  document.querySelectorAll('[data-pre-section]').forEach(function(btn){btn.classList.toggle('active',btn.getAttribute('data-pre-section')===section)});
+  const target=document.getElementById('preSection-'+section);
+  if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.querySelectorAll('[data-pre-section]').forEach(function(btn){btn.addEventListener('click',function(){showPreSection(btn.getAttribute('data-pre-section'))})});
+let pendingEnterMap=false;
+const enterMapBtn=document.getElementById('enterMapBtn');
+if(enterMapBtn)enterMapBtn.addEventListener('click',function(){
+  pendingEnterMap=true;
+  if(!isLoggedIn()){
+    showGate();
+    setTimeout(function(){if(gateEmailInput)gateEmailInput.focus()},120);
+    return;
+  }
+  pendingEnterMap=false;
+  showMapPage();
+});
+function showAssociationModal(){
+  if(associationModal){associationModal.classList.add('visible');associationModal.setAttribute('aria-hidden','false')}
+}
+function hideAssociationModal(){
+  if(associationModal){associationModal.classList.remove('visible');associationModal.setAttribute('aria-hidden','true')}
+}
+const associationHeaderBtn=document.getElementById('associationHeaderBtn');
+if(associationHeaderBtn)associationHeaderBtn.addEventListener('click',showAssociationModal);
+if(associationCloseBtn)associationCloseBtn.addEventListener('click',hideAssociationModal);
+if(associationModal)associationModal.addEventListener('click',function(e){if(e.target===associationModal)hideAssociationModal()});
+
+function showRegisterModal(){
+  if(!registerModal)return;
+  registerModal.classList.add('visible');
+  registerModal.setAttribute('aria-hidden','false');
+}
+function hideRegisterModal(){
+  if(!registerModal)return;
+  registerModal.classList.remove('visible');
+  registerModal.setAttribute('aria-hidden','true');
+}
+document.querySelectorAll('[data-open-register]').forEach(function(btn){
+  btn.addEventListener('click',function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    showRegisterModal();
+  });
+});
+document.querySelectorAll('[data-open-login]').forEach(function(btn){
+  btn.addEventListener('click',function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    showLoginModal();
+  });
+});
+if(registerCloseBtn)registerCloseBtn.addEventListener('click',hideRegisterModal);
+if(registerModal)registerModal.addEventListener('click',function(e){
+  if(e.target===registerModal)hideRegisterModal();
+});
 gateLoginBtn.addEventListener('click',loginWithMutualMotos);
 gateGuestBtn.addEventListener('click',function(){loginAsGuest()});
 authHeaderBtn.addEventListener('click',function(){
@@ -5467,6 +6227,16 @@ function loadMailbox(){
     mailboxSeenTs=seenRaw?parseInt(seenRaw,10):0;
     if(isNaN(mailboxSeenTs))mailboxSeenTs=0;
   }catch(e){mailboxMessages=[];mailboxSeenTs=0}
+}
+function loadSuggestions(){
+  try{
+    const raw=localStorage.getItem(SUGGESTIONS_KEY);
+    suggestionMessages=raw?JSON.parse(raw):[];
+    if(!Array.isArray(suggestionMessages))suggestionMessages=[];
+    const seenRaw=localStorage.getItem(SUGGESTIONS_SEEN_KEY);
+    suggestionSeenTs=seenRaw?parseInt(seenRaw,10):0;
+    if(isNaN(suggestionSeenTs))suggestionSeenTs=0;
+  }catch(e){suggestionMessages=[];suggestionSeenTs=0}
 }
 function saveMailbox(){
   try{localStorage.setItem(MAILBOX_KEY,JSON.stringify(mailboxMessages.slice(-MAILBOX_MAX)))}catch(e){}
@@ -5533,6 +6303,7 @@ function handleMailboxMessage(msg){
   if(mailboxMessages.length>MAILBOX_MAX)mailboxMessages=mailboxMessages.slice(-MAILBOX_MAX);
   saveMailbox();
   updateMailboxBadge();
+  showAppNotification('Nuevo mensaje en el buzón de '+((msg.from&&msg.from.nick)||'Desarrollador')+'.','fa-inbox');
   if(buzonModal.classList.contains('visible'))renderMailbox();
 }
 function openBuzonModal(){
@@ -5553,6 +6324,96 @@ document.getElementById('buzonComposeToggle').addEventListener('click',function(
   c.style.display=c.style.display==='none'?'block':'none';
 });
 document.getElementById('buzonSendBtn').addEventListener('click',sendMailboxMessage);
+function saveSuggestions(){
+  if(!DEV_MODE)return;
+  try{localStorage.setItem(SUGGESTIONS_KEY,JSON.stringify(suggestionMessages.slice(-SUGGESTIONS_MAX)))}catch(e){}
+}
+function saveSuggestionsSeen(){
+  if(!DEV_MODE)return;
+  try{localStorage.setItem(SUGGESTIONS_SEEN_KEY,String(suggestionSeenTs))}catch(e){}
+}
+function updateSuggestionBadge(){
+  if(!suggestionBadge)return;
+  if(!DEV_MODE){suggestionBadge.style.display='none';return}
+  const unread=suggestionMessages.filter(function(m){return m.ts>suggestionSeenTs}).length;
+  if(unread>0){
+    suggestionBadge.textContent=unread>99?'99+':String(unread);
+    suggestionBadge.style.display='flex';
+  }else suggestionBadge.style.display='none';
+}
+function renderSuggestions(){
+  if(!suggestionInbox)return;
+  if(!DEV_MODE){suggestionInbox.innerHTML='';return}
+  if(!suggestionMessages.length){
+    suggestionInbox.innerHTML='<div style="padding:1rem;text-align:center;color:#999;font-style:italic">Todav&iacute;a no hay sugerencias.</div>';
+    return;
+  }
+  suggestionInbox.innerHTML=suggestionMessages.slice().reverse().map(function(m){
+    const t=new Date(m.ts);
+    const timeStr=t.toLocaleString('es-AR',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'});
+    return '<div class="suggestion-item"><div class="suggestion-item-head"><strong>'+escapeHtml(m.title||'Sugerencia')+'</strong><span class="suggestion-item-time">'+timeStr+'</span></div><div class="suggestion-item-body">'+escapeHtml(m.text||'').replace(/\n/g,'<br>')+'</div><div class="suggestion-item-author"><i class="fas fa-user"></i> '+escapeHtml(m.from&&m.from.nick?m.from.nick:'An&oacute;nimo')+'</div></div>';
+  }).join('');
+}
+function openSuggestionModal(){
+  if(!isLoggedIn()){showGate();return}
+  if(DEV_MODE){
+    suggestionModalTitle.textContent='Buz&oacute;n de sugerencias';
+    suggestionModalSub.textContent='Sugerencias recibidas de los usuarios del servicio.';
+    suggestionCompose.style.display='none';
+    suggestionInbox.style.display='block';
+    suggestionSeenTs=Date.now();
+    saveSuggestionsSeen();
+    updateSuggestionBadge();
+    renderSuggestions();
+  }else{
+    suggestionModalTitle.textContent='Buz&oacute;n de sugerencias';
+    suggestionModalSub.textContent='Envi&aacute; una sugerencia al equipo de desarrollo del servicio.';
+    suggestionCompose.style.display='block';
+    suggestionInbox.style.display='none';
+    suggestionTitle.value='';
+    suggestionText.value='';
+  }
+  suggestionModal.classList.add('visible');
+  if(!DEV_MODE)setTimeout(function(){suggestionTitle.focus()},100);
+}
+function closeSuggestionModal(){suggestionModal.classList.remove('visible')}
+function sendSuggestion(){
+  if(DEV_MODE)return;
+  if(!isLoggedIn()){showGate();return}
+  const title=(suggestionTitle.value||'').trim();
+  const body=(suggestionText.value||'').trim();
+  if(!title){showAppNotification('Ingres&aacute; un t&iacute;tulo para la sugerencia.','fa-exclamation-circle');suggestionTitle.focus();return}
+  if(!body){showAppNotification('Ingres&aacute; tu sugerencia.','fa-exclamation-circle');suggestionText.focus();return}
+  if(!mqttClient||!chatReady){showAppNotification('El servicio de sugerencias no est&aacute; conectado.','fa-exclamation-circle');return}
+  const msg={
+    id:'sug_'+myUserId+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,8),
+    kind:'suggestion',
+    title:title.slice(0,80),
+    text:body.slice(0,1000),
+    from:{id:myUserId,nick:myNick||'An&oacute;nimo'},
+    ts:Date.now()
+  };
+  try{mqttClient.publish(TOPIC_SUGGESTIONS,JSON.stringify(msg),{qos:0})}
+  catch(e){showAppNotification('No se pudo enviar la sugerencia.','fa-exclamation-circle');return}
+  suggestionModal.classList.remove('visible');
+  showAppNotification('Sugerencia enviada al equipo de desarrollo.','fa-lightbulb');
+}
+function handleSuggestionMessage(msg){
+  if(!DEV_MODE)return;
+  if(!msg||!msg.id)return;
+  if(suggestionMessages.find(function(m){return m.id===msg.id}))return;
+  suggestionMessages.push(msg);
+  if(suggestionMessages.length>SUGGESTIONS_MAX)suggestionMessages=suggestionMessages.slice(-SUGGESTIONS_MAX);
+  saveSuggestions();
+  updateSuggestionBadge();
+  showAppNotification('Nueva sugerencia de '+((msg.from&&msg.from.nick)||'un usuario')+'.','fa-lightbulb');
+  if(suggestionModal.classList.contains('visible'))renderSuggestions();
+}
+suggestionBtn.addEventListener('click',function(){openSuggestionModal()});
+suggestionCloseBtn.addEventListener('click',closeSuggestionModal);
+suggestionModal.addEventListener('click',function(e){if(e.target===suggestionModal)closeSuggestionModal()});
+suggestionSendBtn.addEventListener('click',sendSuggestion);
+suggestionText.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.ctrlKey)sendSuggestion()});
 function loadMyLevel(){
   try{
     const raw=localStorage.getItem(LEVELS_KEY);
@@ -5921,6 +6782,7 @@ async function startChat(){
   mqttClient.subscribe(TOPIC_PUBLIC_HISTORY,{qos:0});
   mqttClient.subscribe(TOPIC_USERLOG_HISTORY,{qos:0});
   mqttClient.subscribe(TOPIC_MAILBOX,{qos:0});
+  if(DEV_MODE)mqttClient.subscribe(TOPIC_SUGGESTIONS,{qos:0});
   mqttClient.subscribe(TOPIC_COINS,{qos:0});
   mqttClient.subscribe(TOPIC_COINS_TRANSFER_BASE+myUserId,{qos:0});
   mqttClient.subscribe(TOPIC_COIN_FULFILL,{qos:0});
@@ -5950,7 +6812,11 @@ async function startChat(){
 function cleanupIncidents(){
   const now=Date.now();
   const before=incidents.length;
-  incidents=incidents.filter(function(it){return (now-(it.ts||0))<INCIDENT_TTL});
+  incidents=incidents.filter(function(it){
+    if(!it||!it.id||isIncidentResolved(it.id))return false;
+    const ts=Number(it.ts||0);
+    return Number.isFinite(ts)&&ts>0&&(now-ts)<INCIDENT_TTL;
+  });
   if(incidents.length!==before){saveIncidents();renderAllIncidents()}
 }
 function cleanupTypingUsers(){
@@ -6004,6 +6870,7 @@ function handleIncomingMessage(topic,payload){
   if(topic===TOPIC_PUBLIC_HISTORY){handlePublicHistory(msg);return}
   if(topic===TOPIC_USERLOG_HISTORY){handleUserLogHistory(msg);return}
   if(topic===TOPIC_MAILBOX){handleMailboxMessage(msg);return}
+  if(topic===TOPIC_SUGGESTIONS){handleSuggestionMessage(msg);return}
   if(topic===TOPIC_COIN_FULFILL){handleCoinsFulfilled(msg);return}
   if(!msg)return;
   if(!msg.from)return;
@@ -6029,25 +6896,85 @@ function handleCoinsPublic(msg){
 function handleCoinsTransfer(msg){
   if(msg.kind==='coins-donate')handleCoinsDonation(msg);
 }
+function removePublicMessagesByIncidentId(incidentId){
+  if(!incidentId)return;
+  const rootId=String(incidentId);
+  const ids=new Set([rootId]);
+  publicMessages.forEach(function(m){
+    if(!m)return;
+    if(String(m.incidentRef||'')===rootId||String(m.incidentId||'')===rootId){
+      if(m.from&&m.from.id&&m.ts)ids.add('inc_chat_'+m.from.id+'_'+m.ts);
+      if(m.incidentRef)ids.add(String(m.incidentRef));
+      if(m.incidentId)ids.add(String(m.incidentId));
+    }
+  });
+  incidents.forEach(function(it){
+    if(it&&String(it.incidentRef||'')===rootId&&it.id)ids.add(String(it.id));
+  });
+  ids.forEach(function(id){markIncidentResolved(id)});
+  const before=publicMessages.length;
+  publicMessages=publicMessages.filter(function(m){
+    if(!m)return false;
+    if(m.incidentRef&&ids.has(String(m.incidentRef)))return false;
+    if(m.incidentId&&ids.has(String(m.incidentId)))return false;
+    if(m.kind==='incident'&&m.id&&ids.has(String(m.id)))return false;
+    return true;
+  });
+  incidents=incidents.filter(function(it){return it&&!ids.has(String(it.id||''))&&!ids.has(String(it.incidentRef||''))});
+  saveIncidents();
+  if(incidentToastStack){
+    incidentToastStack.querySelectorAll('.incident-toast').forEach(function(toast){
+      if(ids.has(String(toast.dataset.incidentId||'')))toast.remove();
+    });
+  }
+  if(focusedIncidentId&&ids.has(String(focusedIncidentId)))clearFocusMode();
+  else renderAllIncidents();
+  renderAllChatLocations();
+  saveHistory();
+  schedulePublishPublicHistory();
+  if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom()}
+  updateBadges();
+}
+function removePublicMessagesByAlertId(alertId){
+  if(!alertId)return;
+  markAlertResolved(alertId);
+  const before=publicMessages.length;
+  publicMessages=publicMessages.filter(function(m){
+    if(!m)return false;
+    if(m.alertId===alertId)return false;
+    if(m.kind==='emergency'&&m.id===alertId)return false;
+    return true;
+  });
+  if(publicMessages.length===before){
+    renderAllChatLocations();
+    schedulePublishPublicHistory();
+    return;
+  }
+  saveHistory();
+  schedulePublishPublicHistory();
+  renderAllChatLocations();
+  if(isChatOpen())if(currentContext==='public'){renderMessages();scrollMessagesBottom()}
+  updateBadges();
+}
 function handleIncidentMessage(msg){
   if(!msg)return;
   if(msg.kind==='incident-resolve'){
-    if(msg.incidentId){
-      const idx=incidents.findIndex(function(it){return it.id===msg.incidentId});
-      if(idx>=0){
-        incidents.splice(idx,1);
-        saveIncidents();
-        if(focusedIncidentId===msg.incidentId)clearFocusMode();
-        else renderAllIncidents();
-        updateIncidentBadges();
-      }
-    }
+    const resolvedId=msg.incidentId||msg.incidentRef;
+    if(resolvedId)removePublicMessagesByIncidentId(resolvedId);
     return;
   }
   if(!msg.id)return;
   registerIncomingIncident(msg,{silent:false});
 }
 function handlePublicMessage(msg){
+  if(msg.kind==='incident-resolve'){
+    removePublicMessagesByIncidentId(msg.incidentRef||msg.incidentId);
+    return;
+  }
+  if(msg.kind==='alert-resolve'){
+    removePublicMessagesByAlertId(msg.alertId);
+    return;
+  }
   publicMessages.push(msg);
   if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
   const loc=locationFromMessage(msg);
@@ -6055,7 +6982,8 @@ function handlePublicMessage(msg){
   if(msg.kind==='incident'){
     if(msg.lat!=null)if(msg.lng!=null){
       const incidentLike={
-        id:'inc_chat_'+msg.from.id+'_'+msg.ts,
+        id:msg.incidentRef||msg.incidentId||('inc_chat_'+msg.from.id+'_'+msg.ts),
+        incidentRef:msg.incidentRef||msg.incidentId||'',
         kind:msg.incidentKind||'accident',
         text:msg.text||'',
         lat:msg.lat,
@@ -6072,6 +7000,8 @@ function handlePublicMessage(msg){
   else{unreadPublic++;updateBadges()}
   saveHistory();
   schedulePublishPublicHistory();
+  if(msg.kind==='emergency')showAppNotification('Alerta en vía pública de '+(msg.from.nick||'un usuario')+'.','fa-exclamation-triangle');
+  else if(msg.kind!=='incident')showAppNotification('Nuevo mensaje en la sala general de '+(msg.from.nick||'un usuario')+'.','fa-comments');
 }
 function handlePresence(msg){
   if(!msg.from)return;
@@ -6122,6 +7052,8 @@ function handlePrivateMessage(msg){
   saveHistory();
   updateBadges();
   renderUsers();
+  if(msg.kind==='coins-donate')showAppNotification('Recibiste Moto Coins de '+peer.nick+'.','fa-coins');
+  else showAppNotification('Nuevo mensaje de '+peer.nick+'.','fa-comment');
 }
 function handleReportMessage(msg){
   if(!msg.reporter)return;
@@ -6194,8 +7126,7 @@ function sendReadReceipt(peerId){
   }catch(e){}
 }
 function handleReadReceipt(msg){
-  if(!msg.from)return;
-  if(!msg.from.id)return;
+  if(!msg.from)return; if(!msg.from.id)return;
   const peerId=msg.from.id;
   const conv=privateConversations.get(peerId);
   if(!conv)return;
@@ -6216,39 +7147,29 @@ function sendMotoamigoRequest(peer){
   try{mqttClient.publish(TOPIC_REQ_BASE+peer.id,JSON.stringify(msg),{qos:0})}
   catch(e){alert('Error al enviar la solicitud.');return}
   motoamigos.set(peer.id,{status:'outgoing-pending',peer:peer,ts:Date.now()});
-  saveMotoamigos();
-  renderUsers();
-  renderAllUserMotos();
-  showPendingToast('Solicitud de Motoamigo enviada a '+peer.nick+'.');
+  saveMotoamigos(); renderUsers(); renderAllUserMotos();
+  showAppNotification('Solicitud de Motoamigo enviada a '+peer.nick+'.','fa-user-plus');
 }
 function sendMotoamigoResponse(peer,accepted){
-  if(!mqttClient)return;
-  if(!chatReady)return;
-  try{
-    mqttClient.publish(TOPIC_RESP_BASE+peer.id,JSON.stringify({kind:'motoamigo-response',from:{id:myUserId,nick:myNick},to:{id:peer.id},accepted:!!accepted,ts:Date.now()}),{qos:0});
-  }catch(e){}
+  if(!mqttClient)return; if(!chatReady)return;
+  try{mqttClient.publish(TOPIC_RESP_BASE+peer.id,JSON.stringify({kind:'motoamigo-response',from:{id:myUserId,nick:myNick},to:{id:peer.id},accepted:!!accepted,ts:Date.now()}),{qos:0});}catch(e){}
 }
 function handleIncomingMotoamigoRequest(msg){
   const peer={id:msg.from.id,nick:msg.from.nick||'Anónimo'};
   const existing=motoamigos.get(peer.id);
   if(existing){
     if(existing.status==='accepted'){sendMotoamigoResponse(peer,true);return}
-    if(existing.status==='rejected'){sendMotoamigoResponse(peer,false);return}
     if(existing.status==='outgoing-pending'){
-      existing.status='accepted';
-      existing.ts=Date.now();
-      motoamigos.set(peer.id,existing);
-      sendMotoamigoResponse(peer,true);
-      saveMotoamigos();
-      renderUsers();
-      renderAllUserMotos();
-      openPrivateChatWithMotoamigo(existing.peer);
-      return;
+      existing.status='accepted'; existing.ts=Date.now();
+      motoamigos.set(peer.id,existing); sendMotoamigoResponse(peer,true);
+      saveMotoamigos(); renderUsers(); renderAllUserMotos();
+      openPrivateChatWithMotoamigo(existing.peer); return;
     }
     if(existing.status==='incoming-pending'){showMotoamigoRequestModal(peer);return}
   }
   motoamigos.set(peer.id,{status:'incoming-pending',peer:peer,ts:Date.now()});
   renderUsers();
+  showAppNotification('Solicitud de Motoamigo de '+peer.nick+'.','fa-user-plus');
   showMotoamigoRequestModal(peer);
 }
 function handleIncomingMotoamigoResponse(msg){
@@ -6256,21 +7177,15 @@ function handleIncomingMotoamigoResponse(msg){
   const existing=motoamigos.get(peer.id);
   if(!existing)return;
   if(msg.accepted){
-    existing.status='accepted';
-    existing.ts=Date.now();
-    motoamigos.set(peer.id,existing);
-    saveMotoamigos();
-    renderUsers();
-    renderAllUserMotos();
-    hidePendingToast();
+    existing.status='accepted'; existing.ts=Date.now();
+    motoamigos.set(peer.id,existing); saveMotoamigos();
+    renderUsers(); renderAllUserMotos(); hidePendingToast();
+    showAppNotification(peer.nick+' aceptó tu solicitud de Motoamigo.','fa-user-check');
     setTimeout(function(){openPrivateChatWithMotoamigo(existing.peer)},200);
   }else{
-    existing.status='rejected';
-    motoamigos.set(peer.id,existing);
-    saveMotoamigos();
-    renderUsers();
-    hidePendingToast();
-    setTimeout(function(){alert(peer.nick+' rechazó tu solicitud de Motoamigo.')},200);
+    motoamigos.delete(peer.id); saveMotoamigos();
+    renderUsers(); renderAllUserMotos(); hidePendingToast();
+    showAppNotification(peer.nick+' canceló tu solicitud de Motoamigo. Podés volver a enviarla.','fa-user-times');
   }
 }
 function showMotoamigoRequestModal(peer){
@@ -6280,319 +7195,200 @@ function showMotoamigoRequestModal(peer){
   chatRequestModal.classList.add('visible');
 }
 function hideMotoamigoRequestModal(){
-  chatRequestModal.classList.remove('visible');
-  pendingIncomingPeerId=null;
+  chatRequestModal.classList.remove('visible'); pendingIncomingPeerId=null;
 }
 chatReqAcceptBtn.addEventListener('click',function(){
   const peerId=pendingIncomingPeerId;
   if(!peerId){hideMotoamigoRequestModal();return}
   const m=motoamigos.get(peerId);
-  let peer={id:peerId,nick:'Usuario'};
-  if(m)peer=m.peer;
+  let peer={id:peerId,nick:'Usuario'}; if(m)peer=m.peer;
   motoamigos.set(peerId,{status:'accepted',peer:peer,ts:Date.now()});
-  saveMotoamigos();
-  sendMotoamigoResponse(peer,true);
-  hideMotoamigoRequestModal();
-  renderUsers();
-  renderAllUserMotos();
+  saveMotoamigos(); sendMotoamigoResponse(peer,true); hideMotoamigoRequestModal();
+  renderUsers(); renderAllUserMotos();
+  showAppNotification('Ahora sos Motoamigo de '+peer.nick+'.','fa-user-check');
   openPrivateChatWithMotoamigo(peer);
 });
 chatReqRejectBtn.addEventListener('click',function(){
   const peerId=pendingIncomingPeerId;
   if(!peerId){hideMotoamigoRequestModal();return}
   const m=motoamigos.get(peerId);
-  let peer={id:peerId,nick:'Usuario'};
-  if(m)peer=m.peer;
-  motoamigos.set(peerId,{status:'rejected',peer:peer,ts:Date.now()});
-  saveMotoamigos();
-  sendMotoamigoResponse(peer,false);
-  hideMotoamigoRequestModal();
-  renderUsers();
+  let peer={id:peerId,nick:'Usuario'}; if(m)peer=m.peer;
+  motoamigos.delete(peerId); saveMotoamigos();
+  sendMotoamigoResponse(peer,false); hideMotoamigoRequestModal();
+  renderUsers(); renderAllUserMotos();
+  showAppNotification('Solicitud de '+peer.nick+' cancelada.','fa-user-times');
 });
 let toastTimeout=null;
-function showPendingToast(text){
-  pendingToastText.textContent=text;
+function showAppNotification(text,icon){
+  if(!pendingToast||!pendingToastText)return;
+  pendingToastText.textContent=text||'Notificación';
+  if(pendingToastIcon)pendingToastIcon.className='fas '+(icon||'fa-bell');
   pendingToast.classList.add('visible');
-  clearTimeout(toastTimeout);
-  toastTimeout=setTimeout(hidePendingToast,5000);
+  clearTimeout(toastTimeout); toastTimeout=setTimeout(hidePendingToast,5000);
 }
-function hidePendingToast(){
-  pendingToast.classList.remove('visible');
-  clearTimeout(toastTimeout);
-}
+function showPendingToast(text){showAppNotification(text,'fa-bell')}
+function hidePendingToast(){if(!pendingToast)return;pendingToast.classList.remove('visible');clearTimeout(toastTimeout)}
 function showUserMenu(peer,anchorEl){
   userMenuPeer=peer;
   userMenuAvatar.textContent=(peer.nick||'?').charAt(0).toUpperCase();
   userMenuName.textContent=peer.nick||'Usuario';
   const m=motoamigos.get(peer.id);
-  if(m)if(m.status==='rejected')userMenuAskLabel.textContent='Reintentar solicitud de Motoamigo';
-  else userMenuAskLabel.textContent='Enviar solicitud de Motoamigo';
-  else userMenuAskLabel.textContent='Enviar solicitud de Motoamigo';
   const isFriend=m&&m.status==='accepted';
+  if(isFriend)userMenuAskBtn.style.display='none';
+  else{
+    userMenuAskBtn.style.display='flex';
+    if(m&&m.status==='outgoing-pending')userMenuAskLabel.textContent='Solicitud pendiente';
+    else if(m&&m.status==='rejected')userMenuAskLabel.textContent='Reintentar solicitud de Motoamigo';
+    else userMenuAskLabel.textContent='Enviar solicitud de Motoamigo';
+  }
   userMenuDonateCoinsBtn.style.display=isFriend?'flex':'none';
   userMenuRequestExactCoinsBtn.style.display=isFriend?'flex':'none';
   userMenu.classList.add('visible');
   const rect=anchorEl.getBoundingClientRect();
   const menuRect=userMenu.getBoundingClientRect();
-  let top=rect.bottom+6;
-  let left=rect.left;
+  let top=rect.bottom+6, left=rect.left;
   if(top+menuRect.height>window.innerHeight-10)top=rect.top-menuRect.height-6;
   if(left+menuRect.width>window.innerWidth-10)left=window.innerWidth-menuRect.width-10;
-  if(left<10)left=10;
-  if(top<10)top=10;
-  userMenu.style.top=top+'px';
-  userMenu.style.left=left+'px';
+  if(left<10)left=10; if(top<10)top=10;
+  userMenu.style.top=top+'px'; userMenu.style.left=left+'px';
 }
 function hideUserMenu(){userMenu.classList.remove('visible');userMenuPeer=null}
 document.addEventListener('click',function(e){
   if(userMenu.classList.contains('visible')){
-    if(!userMenu.contains(e.target)){
-      if(!e.target.closest('.chat-user'))hideUserMenu();
-    }
+    if(!userMenu.contains(e.target)){ if(!e.target.closest('.chat-user'))hideUserMenu(); }
   }
 });
 window.addEventListener('scroll',hideUserMenu,{capture:true,passive:true});
 window.addEventListener('resize',hideUserMenu);
-userMenuAskBtn.addEventListener('click',function(){
-  const peer=userMenuPeer;
-  hideUserMenu();
-  if(peer)sendMotoamigoRequest(peer);
-});
+userMenuAskBtn.addEventListener('click',function(){const p=userMenuPeer;hideUserMenu();if(p)sendMotoamigoRequest(p)});
 userMenuDonateCoinsBtn.addEventListener('click',function(){
-  const peer=userMenuPeer;
-  hideUserMenu();
-  if(!peer)return;
-  if(!isMotoamigo(peer.id)){
-    alert('Solo podés donar Moto Coins a tus Motoamigos.');
-    return;
-  }
-  openDonateCoinsModal(peer);
+  const p=userMenuPeer;hideUserMenu();if(!p)return;
+  if(!isMotoamigo(p.id)){alert('Solo podés donar Moto Coins a tus Motoamigos.');return}
+  openDonateCoinsModal(p);
 });
 userMenuRequestExactCoinsBtn.addEventListener('click',function(){
-  const peer=userMenuPeer;
-  hideUserMenu();
-  if(!peer)return;
-  if(!isMotoamigo(peer.id)){
-    alert('Solo podés pedir Moto Coins exactos a tus Motoamigos.');
-    return;
-  }
-  pendingRequestCoinsContext={type:'private',peer:peer};
-  showRequestCoinsAmountModal();
+  const p=userMenuPeer;hideUserMenu();if(!p)return;
+  if(!isMotoamigo(p.id)){alert('Solo podés pedir Moto Coins exactos a tus Motoamigos.');return}
+  pendingRequestCoinsContext={type:'private',peer:p}; showRequestCoinsAmountModal();
 });
-userMenuFakeAlertBtn.addEventListener('click',function(){
-  const peer=userMenuPeer;
-  hideUserMenu();
-  if(peer)openUserReportModalWithReason(peer,'falsa_alerta');
-});
-userMenuHitRunBtn.addEventListener('click',function(){
-  const peer=userMenuPeer;
-  hideUserMenu();
-  if(peer)openUserReportModalWithReason(peer,'siniestro_fuga');
-});
-userMenuTheftBtn.addEventListener('click',function(){
-  const peer=userMenuPeer;
-  hideUserMenu();
-  if(peer)openUserReportModalWithReason(peer,'autor_robo');
-});
-userMenuReportBtn.addEventListener('click',function(){
-  const peer=userMenuPeer;
-  hideUserMenu();
-  if(peer)openUserReportModalWithReason(peer,'');
-});
+userMenuFakeAlertBtn.addEventListener('click',function(){const p=userMenuPeer;hideUserMenu();if(p)openUserReportModalWithReason(p,'falsa_alerta')});
+userMenuHitRunBtn.addEventListener('click',function(){const p=userMenuPeer;hideUserMenu();if(p)openUserReportModalWithReason(p,'siniestro_fuga')});
+userMenuTheftBtn.addEventListener('click',function(){const p=userMenuPeer;hideUserMenu();if(p)openUserReportModalWithReason(p,'autor_robo')});
+userMenuReportBtn.addEventListener('click',function(){const p=userMenuPeer;hideUserMenu();if(p)openUserReportModalWithReason(p,'')});
 function openUserReportModalWithReason(peer,reason){
-  window._reportTargetUser=peer;
-  selectedMessages.clear();
+  window._reportTargetUser=peer; selectedMessages.clear();
   let reasonLabel='Elegí el motivo';
   if(reason)if(REPORT_REASON_LABELS[reason])reasonLabel=REPORT_REASON_LABELS[reason];
   reportPreview.innerHTML='<div class="item"><strong>Usuario: '+escapeHtml(peer.nick)+'</strong><span class="txt">Reportar a este usuario · '+escapeHtml(reasonLabel)+'</span></div>';
-  reportReason.value=reason||'';
-  reportDetails.value='';
-  reportSubmitBtn.disabled=!reason;
+  reportReason.value=reason||''; reportDetails.value=''; reportSubmitBtn.disabled=!reason;
   reportModal.classList.add('visible');
 }
 reportReason.addEventListener('change',function(){reportSubmitBtn.disabled=!reportReason.value});
 reportCancelModal.addEventListener('click',function(){reportModal.classList.remove('visible');window._reportTargetUser=null});
-reportModal.addEventListener('click',function(e){
-  if(e.target===reportModal){reportModal.classList.remove('visible');window._reportTargetUser=null}
-});
+reportModal.addEventListener('click',function(e){if(e.target===reportModal){reportModal.classList.remove('visible');window._reportTargetUser=null}});
+async function sendReportToSheet(report){
+  if(!REPORT_SHEET_WEBHOOK)return false;
+  try{
+    const evidenceText=(report.evidence||[]).map(function(e,i){
+      const p=[]; p.push('['+(i+1)+']'); p.push('Tipo: '+(e.kind||'text'));
+      if(e.from)p.push('Autor: '+(e.from.nick||'Anónimo')+' ('+e.from.id+')');
+      if(e.text)p.push('Texto: '+e.text);
+      if(e.placeName)p.push('Local: '+e.placeName);
+      if(e.address)p.push('Dirección: '+e.address);
+      if(e.lat!=null&&e.lng!=null)p.push('Coords: '+e.lat+', '+e.lng);
+      if(e.ts)p.push('Fecha: '+new Date(e.ts).toLocaleString('es-AR'));
+      return p.join(' | ');
+    }).join('\n');
+    const reasonLabel=REPORT_REASON_LABELS[report.reason]||report.reason;
+    const payload={action:'register_denuncia_servicios_ba',fecha:new Date(report.ts).toLocaleString('es-AR'),id_reporte:String(report.ts),motivo:reasonLabel,detalles:report.details||'(sin detalles)',canal:report.channel||'',denunciante:report.reporter?(report.reporter.nick||'Anónimo')+' ('+(report.reporter.id||'')+')':'Anónimo',denunciado:report.peer?(report.peer.nick||'Anónimo')+' ('+(report.peer.id||'')+')':'N/A',cantidad_pruebas:String((report.evidence||[]).length),pruebas:evidenceText||'(sin pruebas)'};
+    await fetch(REPORT_SHEET_WEBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),keepalive:true});
+    return true;
+  }catch(err){return false}
+}
 async function sendReportByEmail(report){
   try{
     const evidenceText=(report.evidence||[]).map(function(e,i){
-      const parts=[];
-      parts.push('['+(i+1)+']');
-      parts.push('Tipo: '+(e.kind||'text'));
-      if(e.from)parts.push('Autor: '+(e.from.nick||'Anónimo')+' ('+e.from.id+')');
-      if(e.text)parts.push('Texto: '+e.text);
-      if(e.placeName)parts.push('Local: '+e.placeName);
-      if(e.address)parts.push('Dirección: '+e.address);
-      if(e.lat)if(e.lng)parts.push('Coords: '+e.lat+', '+e.lng);
-      if(e.ts)parts.push('Fecha: '+new Date(e.ts).toLocaleString('es-AR'));
-      return parts.join(' | ');
+      const p=[]; p.push('['+(i+1)+']'); p.push('Tipo: '+(e.kind||'text'));
+      if(e.from)p.push('Autor: '+(e.from.nick||'Anónimo')+' ('+e.from.id+')');
+      if(e.text)p.push('Texto: '+e.text);
+      if(e.placeName)p.push('Local: '+e.placeName);
+      if(e.address)p.push('Dirección: '+e.address);
+      if(e.lat)if(e.lng)p.push('Coords: '+e.lat+', '+e.lng);
+      if(e.ts)p.push('Fecha: '+new Date(e.ts).toLocaleString('es-AR'));
+      return p.join(' | ');
     }).join('\n');
-    let reasonLabel=report.reason;
-    if(REPORT_REASON_LABELS[report.reason])reasonLabel=REPORT_REASON_LABELS[report.reason];
-    const payload={
-      _subject:'🚨 Denuncia - Servicios BA - '+reasonLabel,
-      _template:'table',
-      _captcha:'false',
-      'Fecha':new Date(report.ts).toLocaleString('es-AR'),
-      'ID reporte':String(report.ts),
-      'Motivo':reasonLabel,
-      'Detalles':report.details||'(sin detalles)',
-      'Canal':report.channel,
-      'Denunciante':(report.reporter?report.reporter.nick:'Anónimo')+' ('+(report.reporter?report.reporter.id:'')+')',
-      'Denunciado':report.peer?(report.peer.nick||'Anónimo')+' ('+report.peer.id+')':'N/A',
-      'Cantidad de pruebas':String((report.evidence||[]).length),
-      'Pruebas':evidenceText||'(sin pruebas)'
-    };
+    let reasonLabel=report.reason; if(REPORT_REASON_LABELS[report.reason])reasonLabel=REPORT_REASON_LABELS[report.reason];
+    const payload={_subject:'🚨 Denuncia - Servicios BA - '+reasonLabel,_template:'table',_captcha:'false','Fecha':new Date(report.ts).toLocaleString('es-AR'),'ID reporte':String(report.ts),'Motivo':reasonLabel,'Detalles':report.details||'(sin detalles)','Canal':report.channel,'Denunciante':(report.reporter?report.reporter.nick:'Anónimo')+' ('+(report.reporter?report.reporter.id:'')+')','Denunciado':report.peer?(report.peer.nick||'Anónimo')+' ('+report.peer.id+')':'N/A','Cantidad de pruebas':String((report.evidence||[]).length),'Pruebas':evidenceText||'(sin pruebas)'};
     const res=await fetch('https://formsubmit.co/ajax/'+REPORT_EMAIL,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});
     return res.ok;
   }catch(err){return false}
 }
 reportSubmitBtn.addEventListener('click',function(){
-  const reason=reportReason.value;
-  if(!reason)return;
-  let pruebas=[];
-  let peer=window._reportTargetUser;
-  if(peer){
-    pruebas=[{kind:'user',from:{id:peer.id,nick:peer.nick},text:null,ts:Date.now(),context:'user'}];
-  }else{
+  const reason=reportReason.value; if(!reason)return;
+  let pruebas=[]; let peer=window._reportTargetUser;
+  if(peer){pruebas=[{kind:'user',from:{id:peer.id,nick:peer.nick},text:null,ts:Date.now(),context:'user'}]}
+  else{
     const items=Array.from(selectedMessages.values());
     pruebas=items.map(function(it){
-      const m=it.msg;
-      let from=null;
-      if(m.from)from={id:m.from.id,nick:m.from.nick};
+      const m=it.msg; let from=null; if(m.from)from={id:m.from.id,nick:m.from.nick};
       return {kind:m.kind||'text',from:from,text:m.text||null,placeName:m.placeName||null,rubro:m.rubro||null,address:m.address||null,lat:m.lat||null,lng:m.lng||null,ts:m.ts,context:it.context};
     });
   }
   let peerObj=null;
-  if(peer)peerObj=peer;
-  else if(currentContext==='private')if(currentPrivatePeer)peerObj={id:currentPrivatePeer.id,nick:currentPrivatePeer.nick};
-  const report={
-    kind:'report',
-    from:{id:myUserId,nick:myNick},
-    reporter:{id:myUserId,nick:myNick},
-    reason:reason,
-    details:(reportDetails.value||'').slice(0,300),
-    channel:peer?'user':(currentContext==='public'?'public':'private'),
-    peer:peerObj,
-    evidence:pruebas,
-    ts:Date.now()
-  };
-  try{
-    if(mqttClient)if(chatReady)mqttClient.publish(TOPIC_REPORTS,JSON.stringify(report),{qos:0});
-  }catch(e){}
-  sendReportByEmail(report);
-  reportModal.classList.remove('visible');
-  window._reportTargetUser=null;
-  exitReportMode();
-  let msg='✓ Denuncia enviada.\n\nMotivo: '+(REPORT_REASON_LABELS[reason]||reason);
-  if(peer)msg+='\nUsuario: '+peer.nick;
-  else msg+='\nPruebas: '+pruebas.length+' mensaje(s)';
-  setTimeout(function(){alert(msg)},100);
+  if(peer)peerObj=peer; else if(currentContext==='private')if(currentPrivatePeer)peerObj={id:currentPrivatePeer.id,nick:currentPrivatePeer.nick};
+  const report={kind:'report',from:{id:myUserId,nick:myNick},reporter:{id:myUserId,nick:myNick},reason:reason,details:(reportDetails.value||'').slice(0,300),channel:peer?'user':(currentContext==='public'?'public':'private'),peer:peerObj,evidence:pruebas,ts:Date.now()};
+  try{if(mqttClient)if(chatReady)mqttClient.publish(TOPIC_REPORTS,JSON.stringify(report),{qos:0});}catch(e){}
+  reportSubmitBtn.disabled=true; reportSubmitBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Enviando...';
+  Promise.allSettled([sendReportToSheet(report),sendReportByEmail(report)]).then(function(results){
+    const sheetOk=results[0].status==='fulfilled'&&results[0].value===true;
+    const emailOk=results[1].status==='fulfilled'&&results[1].value===true;
+    reportModal.classList.remove('visible'); window._reportTargetUser=null; exitReportMode();
+    reportSubmitBtn.disabled=false; reportSubmitBtn.innerHTML='<i class="fas fa-paper-plane"></i> Enviar denuncia';
+    let msg;
+    if(sheetOk)msg='✓ Denuncia guardada en la hoja.';
+    else if(emailOk)msg='✓ Denuncia enviada por el canal de respaldo.';
+    else msg='No se pudo enviar la denuncia.';
+    if(peer)msg+='\nUsuario: '+peer.nick; else msg+='\nPruebas: '+pruebas.length+' mensaje(s)';
+    showAppNotification(sheetOk?'Denuncia guardada.':'Denuncia enviada.','fa-flag');
+    setTimeout(function(){alert(msg)},100);
+  });
 });
 function updateChatTitle(){
-  if(currentContext==='public'){
-    chatTitle.innerHTML='<i class="fas fa-users"></i> Sala general';
-    chatBackBtn.classList.remove('visible');
-  }else{
-    let nick='Usuario';
-    if(currentPrivatePeer)nick=currentPrivatePeer.nick;
+  if(currentContext==='public'){chatTitle.innerHTML='<i class="fas fa-users"></i> Sala general';chatBackBtn.classList.remove('visible')}
+  else{
+    let nick='Usuario'; if(currentPrivatePeer)nick=currentPrivatePeer.nick;
     chatTitle.innerHTML='<i class="fas fa-motorcycle"></i> '+escapeHtml(nick)+' <span class="chat-title-sub">· Motoamigo</span>';
     chatBackBtn.classList.add('visible');
   }
 }
-function isChatOpen(){return chatPanel.classList.contains('visible')}
-function openChat(){
-  if(!isLoggedIn()){showGate();return}
-  chatPanel.classList.add('visible');
-  if(currentContext==='public')unreadPublic=0;
-  else{
-    if(currentPrivatePeer){
-      unreadPerPeer.set(currentPrivatePeer.id,0);
-      sendReadReceipt(currentPrivatePeer.id);
-    }
-    recomputeUnreadPrivateTotal();
-  }
-  updateBadges();
-  updateChatTitle();
-  renderMessages();
-  renderUsers();
-  scrollMessagesBottom();
-  setTimeout(function(){chatInput.focus()},100);
-}
-function closeChat(){
-  chatPanel.classList.remove('visible');
-  typingUsers.clear();
-  renderTypingIndicator();
-  exitReportMode();
-  hideUserMenu();
-  hideStatusMenu();
-}
-chatToggleBtn.addEventListener('click',function(){if(isChatOpen())closeChat();else openChat()});
-chatCloseBtn.addEventListener('click',closeChat);
-chatBackBtn.addEventListener('click',function(){
-  currentContext='public';
-  currentPrivatePeer=null;
-  unreadPublic=0;
-  typingUsers.clear();
-  renderTypingIndicator();
-  updateBadges();
-  updateChatTitle();
-  renderMessages();
-  renderUsers();
-  scrollMessagesBottom();
-  hideUserMenu();
-});
 function openPrivateChatWithMotoamigo(peer){
   const m=motoamigos.get(peer.id);
   if(!m){alert('Necesitás ser MotoAmigo de '+peer.nick+' para chatear en privado.');return}
   if(m.status!=='accepted'){alert('Necesitás ser MotoAmigo de '+peer.nick+' para chatear en privado.');return}
-  currentContext='private';
-  currentPrivatePeer=peer;
-  unreadPerPeer.set(peer.id,0);
-  recomputeUnreadPrivateTotal();
-  updateBadges();
-  updateChatTitle();
-  typingUsers.clear();
-  renderTypingIndicator();
-  openChat();
-  renderMessages();
-  renderUsers();
-  scrollMessagesBottom();
-  sendReadReceipt(peer.id);
+  currentContext='private'; currentPrivatePeer=peer;
+  unreadPerPeer.set(peer.id,0); recomputeUnreadPrivateTotal(); updateBadges();
+  updateChatTitle(); typingUsers.clear(); renderTypingIndicator();
+  openChat(); renderMessages(); renderUsers(); scrollMessagesBottom(); sendReadReceipt(peer.id);
 }
 function updateBadges(){
   const total=unreadPublic+unreadPrivateTotal;
-  if(total>0){
-    let txt=String(total);
-    if(total>99)txt='99+';
-    chatBadge.textContent=txt;
-    chatBadge.style.display='flex';
-  }else{
-    chatBadge.style.display='none';
-  }
+  if(total>0){let txt=String(total);if(total>99)txt='99+';chatBadge.textContent=txt;chatBadge.style.display='flex'}
+  else chatBadge.style.display='none';
 }
 function renderUsers(){
   const usersArr=Array.from(onlineUsers.values());
   let conectados=0;
-  usersArr.forEach(function(u){
-    let st=u.status||'desconectado';
-    if(u.id===myUserId)st=myStatus;
-    if(st==='conectado')conectados++;
-  });
+  usersArr.forEach(function(u){let st=u.status||'desconectado';if(u.id===myUserId)st=myStatus;if(st==='conectado')conectados++});
   const total=usersArr.length;
   let html='<div class="chat-users-header"><span class="chat-users-title">En línea ('+conectados+'/'+total+')</span><button class="my-status-btn" id="myStatusBtn"><span class="status-dot '+myStatus+'"></span><span class="status-label">'+STATUS_LABELS[myStatus]+'</span></button></div>';
   usersArr.sort(function(a,b){
     const sa=a.id===myUserId?myStatus:(a.status||'desconectado');
     const sb=b.id===myUserId?myStatus:(b.status||'desconectado');
-    let oa=4;
-    let ob=4;
+    let oa=4,ob=4;
     if(STATUS_ORDER[sa]!==undefined)oa=STATUS_ORDER[sa];
     if(STATUS_ORDER[sb]!==undefined)ob=STATUS_ORDER[sb];
     if(oa!==ob)return oa-ob;
-    if(a.id===myUserId)return -1;
-    if(b.id===myUserId)return 1;
+    if(a.id===myUserId)return -1; if(b.id===myUserId)return 1;
     return (a.nick||'').localeCompare(b.nick||'');
   });
   const now=Date.now();
@@ -6601,13 +7397,9 @@ function renderUsers(){
     const isSelected=(currentContext==='private')&&(currentPrivatePeer)&&(currentPrivatePeer.id===u.id);
     const unread=unreadPerPeer.get(u.id)||0;
     const m=motoamigos.get(u.id);
-    let userStatus=u.status||'desconectado';
-    if(isMe)userStatus=myStatus;
+    let userStatus=u.status||'desconectado'; if(isMe)userStatus=myStatus;
     const isTyping=typingUsers.has(u.id)&&((now-typingUsers.get(u.id).ts)<TYPING_SHOW_TIMEOUT);
-    let cls='chat-user';
-    if(isMe)cls+=' me';
-    if(isSelected)cls+=' selected';
-    if(userStatus==='desconectado')cls+=' disconnected';
+    let cls='chat-user'; if(isMe)cls+=' me'; if(isSelected)cls+=' selected'; if(userStatus==='desconectado')cls+=' disconnected';
     let amigoBadge='';
     if(!isMe)if(m){
       if(m.status==='accepted')amigoBadge='<i class="fas fa-motorcycle amigo-badge accepted"></i>';
@@ -6615,45 +7407,31 @@ function renderUsers(){
       else if(m.status==='incoming-pending')amigoBadge='<i class="fas fa-bell amigo-badge incoming-pending"></i>';
       else if(m.status==='rejected')amigoBadge='<i class="fas fa-ban amigo-badge rejected"></i>';
     }
-    let label=u.nick||'Anónimo';
-    if(isMe)label=myNick+' (vos)';
+    let label=u.nick||'Anónimo'; if(isMe)label=myNick+' (vos)';
     const lvl=isMe?myLevel:getUserLevel(u.id);
     const safeLabel=escapeHtml(label).slice(0,18);
     const levelBadge=lvl>=MAX_LEVEL?'<span class="user-level-badge max">MAX</span>':'<span class="user-level-badge">N'+lvl+'</span>';
-    let typingHtml='';
-    if(isTyping)typingHtml='<span class="typing-dot"><i></i><i></i><i></i></span>';
-    let unreadHtml='';
-    if(unread>0)if(!isMe)unreadHtml='<span class="conv-badge">'+unread+'</span>';
+    let typingHtml=''; if(isTyping)typingHtml='<span class="typing-dot"><i></i><i></i><i></i></span>';
+    let unreadHtml=''; if(unread>0)if(!isMe)unreadHtml='<span class="conv-badge">'+unread+'</span>';
     html+='<div class="'+cls+'" data-user-id="'+escapeHtml(u.id)+'" data-nick="'+escapeHtml(u.nick||'Anónimo')+'"><span class="status-dot '+userStatus+'"></span><span class="nick">'+safeLabel+'</span>'+levelBadge+typingHtml+amigoBadge+unreadHtml+'</div>';
   });
   chatUsersEl.innerHTML=html;
   const myStatusBtn=document.getElementById('myStatusBtn');
-  if(myStatusBtn)myStatusBtn.addEventListener('click',function(e){
-    e.stopPropagation();
-    if(statusMenu.classList.contains('visible'))hideStatusMenu();
-    else showStatusMenu(myStatusBtn);
-  });
+  if(myStatusBtn)myStatusBtn.addEventListener('click',function(e){e.stopPropagation();if(statusMenu.classList.contains('visible'))hideStatusMenu();else showStatusMenu(myStatusBtn)});
   chatUsersEl.querySelectorAll('.chat-user').forEach(function(el){
     el.addEventListener('click',function(){
-      const uid=el.dataset.userId;
-      const nick=el.dataset.nick;
-      if(!uid)return;
-      if(uid===myUserId)return;
+      const uid=el.dataset.userId; const nick=el.dataset.nick;
+      if(!uid)return; if(uid===myUserId)return;
       if(reportMode)exitReportMode();
       const peer={id:uid,nick:nick};
       const m=motoamigos.get(uid);
-      if(m)if(m.status==='accepted'){openPrivateChatWithMotoamigo(peer);return}
-      if(m)if(m.status==='outgoing-pending'){showPendingToast('Ya enviaste solicitud a '+nick+'. Esperando respuesta...');return}
       if(m)if(m.status==='incoming-pending'){showMotoamigoRequestModal(peer);return}
+      if(m)if(m.status==='outgoing-pending')showAppNotification('Solicitud pendiente de '+nick+'.','fa-hourglass-half');
       showUserMenu(peer,el);
     });
   });
 }
-function recomputeUnreadPrivateTotal(){
-  let sum=0;
-  unreadPerPeer.forEach(function(v){sum+=v});
-  unreadPrivateTotal=sum;
-}
+function recomputeUnreadPrivateTotal(){let sum=0;unreadPerPeer.forEach(function(v){sum+=v});unreadPrivateTotal=sum}
 function storePrivateMessage(peer,msg){
   if(!privateConversations.has(peer.id))privateConversations.set(peer.id,{peer:peer,messages:[]});
   const conv=privateConversations.get(peer.id);
@@ -6672,8 +7450,7 @@ function renderMessages(){
     list=conv.messages;
   }
   if(list.length===0){chatMessagesEl.innerHTML='<div class="chat-empty">Todavía no hay mensajes. ¡Sé el primero en escribir!</div>';return}
-  let ctx='public';
-  if(currentContext!=='public')ctx='private:'+currentPrivatePeer.id;
+  let ctx='public'; if(currentContext!=='public')ctx='private:'+currentPrivatePeer.id;
   chatMessagesEl.innerHTML=list.map(function(m){return renderMsgHtml(m,m.from.id===myUserId,ctx)}).join('');
   if(reportMode){
     chatMessagesEl.querySelectorAll('.chat-msg').forEach(function(el){
@@ -6682,39 +7459,23 @@ function renderMessages(){
     });
   }
 }
-function buildMsgId(msg,ctx){
-  let base=ctx||'public';
-  let uid='unk';
-  if(msg.from)uid=msg.from.id;
-  return base+':'+uid+':'+(msg.ts||0);
-}
+function buildMsgId(msg,ctx){let base=ctx||'public';let uid='unk';if(msg.from)uid=msg.from.id;return base+':'+uid+':'+(msg.ts||0)}
 function renderMsgHtml(msg,isMine,ctx){
   const time=new Date(msg.ts);
   const hh=time.getHours().toString().padStart(2,'0');
   const mm=time.getMinutes().toString().padStart(2,'0');
   const timeStr=hh+':'+mm;
-  let author='';
-  if(!isMine)author='<span class="msg-author">'+escapeHtml(msg.from.nick||'Anónimo')+'</span>';
+  let author=''; if(!isMine)author='<span class="msg-author">'+escapeHtml(msg.from.nick||'Anónimo')+'</span>';
   const msgId=buildMsgId(msg,ctx);
-  let reportBtn='';
-  if(!isMine)reportBtn='<button class="msg-report-btn" data-msg-id="'+escapeHtml(msgId)+'"><i class="fas fa-flag"></i></button>';
-  let isPrivate=false;
-  if(ctx)if(ctx.indexOf('private:')===0)isPrivate=true;
+  let reportBtn=''; if(!isMine)reportBtn='<button class="msg-report-btn" data-msg-id="'+escapeHtml(msgId)+'"><i class="fas fa-flag"></i></button>';
+  let isPrivate=false; if(ctx)if(ctx.indexOf('private:')===0)isPrivate=true;
   let statusHtml='';
-  if(isMine)if(isPrivate){
-    if(msg.readAt)statusHtml='<span class="msg-status read">✓✓</span>';
-    else statusHtml='<span class="msg-status">✓</span>';
-  }
-  if(msg.kind==='coins-request'||msg.kind==='coins-donate'||msg.kind==='coins-purchase'){
-    return buildCoinMessageHtml(msg,isMine,msgId,timeStr,statusHtml,reportBtn,author);
-  }
+  if(isMine)if(isPrivate){if(msg.readAt)statusHtml='<span class="msg-status read">✓✓</span>';else statusHtml='<span class="msg-status">✓</span>'}
+  if(msg.kind==='coins-request'||msg.kind==='coins-donate'||msg.kind==='coins-purchase')return buildCoinMessageHtml(msg,isMine,msgId,timeStr,statusHtml,reportBtn,author);
   let body='';
   if(msg.kind==='emergency'){
-    let sevClass='sev-leve';
-    if(msg.severity==='vida')sevClass='sev-vida';
-    else if(msg.severity==='grave')sevClass='sev-grave';
-    let wazeUrl='';
-    if(msg.lat)if(msg.lng)wazeUrl='<a href="'+buildWazeNavUrl(msg.lat,msg.lng)+'" target="_blank" class="emergency-loc">🚗 Ir con Waze</a>';
+    let sevClass='sev-leve'; if(msg.severity==='vida')sevClass='sev-vida'; else if(msg.severity==='grave')sevClass='sev-grave';
+    let wazeUrl=''; if(msg.lat)if(msg.lng)wazeUrl='<a href="'+buildWazeNavUrl(msg.lat,msg.lng)+'" target="_blank" class="emergency-loc">🚗 Ir con Waze</a>';
     body='<div class="chat-msg '+(isMine?'mine':'other')+' chat-msg-emergency '+sevClass+'" data-msg-id="'+escapeHtml(msgId)+'">'+reportBtn+author+'<div>'+escapeHtml(msg.text||'')+'</div>'+wazeUrl+'<span class="msg-time">'+timeStr+statusHtml+'</span></div>';
   }else if(msg.kind==='location'){
     const wazeUrl=buildWazeNavUrl(msg.lat,msg.lng);
@@ -6725,27 +7486,15 @@ function renderMsgHtml(msg,isMine,ctx){
     const catIcon=icons[msg.category]||'fa-store';
     body='<div class="chat-msg '+(isMine?'mine':'other')+' chat-msg-place" data-msg-id="'+escapeHtml(msgId)+'">'+reportBtn+author+'<div class="place-title"><i class="fas '+catIcon+'" style="color:'+catColor+'"></i> '+escapeHtml(msg.placeName||'Local')+'</div><div class="place-cat">'+escapeHtml(msg.rubro||'')+'</div><div class="place-addr"><i class="fas fa-map-pin"></i> '+escapeHtml(msg.address||'')+'</div><div class="place-actions"><a href="'+navUrl+'" target="_blank" class="place-link"><i class="fas fa-route"></i> Ir con Waze</a></div><span class="msg-time">'+timeStr+statusHtml+'</span></div>';
   }else if(msg.kind==='incident'){
-    const isClosure=msg.incidentKind==='closure';
-    const isPolice=msg.incidentKind==='police';
-    let zone=msg.zone;
-    if(!zone)if(msg.lat)if(msg.lng)zone=getZone(msg.lat,msg.lng);
-    if(!zone)zone='Provincia';
-    let navUrl='#';
-    if(msg.lat)if(msg.lng){
-      navUrl=buildWazeNavUrl(msg.lat,msg.lng);
-    }
-    let incidentClass='';
-    if(isClosure)incidentClass=' closure';
-    else if(isPolice)incidentClass=' police';
-    let navBtn='';
-    if(navUrl!=='#')navBtn='<a href="'+navUrl+'" target="_blank"><i class="fas fa-route"></i> Ir con Waze</a>';
+    const isClosure=msg.incidentKind==='closure'; const isPolice=msg.incidentKind==='police';
+    let zone=msg.zone; if(!zone)if(msg.lat)if(msg.lng)zone=getZone(msg.lat,msg.lng); if(!zone)zone='Provincia';
+    let navUrl='#'; if(msg.lat)if(msg.lng){navUrl=buildWazeNavUrl(msg.lat,msg.lng);}
+    let incidentClass=''; if(isClosure)incidentClass=' closure'; else if(isPolice)incidentClass=' police';
+    let navBtn=''; if(navUrl!=='#')navBtn='<a href="'+navUrl+'" target="_blank"><i class="fas fa-route"></i> Ir con Waze</a>';
     body='<div class="chat-msg '+(isMine?'mine':'other')+' chat-msg-incident'+incidentClass+'" data-msg-id="'+escapeHtml(msgId)+'">'+reportBtn+author+'<div class="inc-title"><i class="fas '+incidentIconClass(msg.incidentKind)+'"></i> '+escapeHtml(INCIDENT_TYPE_LABELS[msg.incidentKind]||'Siniestro')+'</div><div><span class="inc-zone">'+escapeHtml(zone)+'</span></div><div class="inc-text">'+escapeHtml(msg.text||'')+'</div><div class="inc-actions">'+navBtn+'</div><span class="msg-time">'+timeStr+statusHtml+'</span></div>';
   }else if(msg.kind==='incident-resolve'){
-    const isClosure=msg.incidentKind==='closure';
-    const isPolice=msg.incidentKind==='police';
-    let incidentClass='';
-    if(isClosure)incidentClass=' closure';
-    else if(isPolice)incidentClass=' police';
+    const isClosure=msg.incidentKind==='closure'; const isPolice=msg.incidentKind==='police';
+    let incidentClass=''; if(isClosure)incidentClass=' closure'; else if(isPolice)incidentClass=' police';
     body='<div class="chat-msg '+(isMine?'mine':'other')+' chat-msg-incident resolved'+incidentClass+'" data-msg-id="'+escapeHtml(msgId)+'">'+reportBtn+author+'<div class="inc-title"><i class="fas fa-check-circle"></i> '+escapeHtml(INCIDENT_TYPE_LABELS[msg.incidentKind]||'Siniestro')+'</div><div><span class="inc-zone">'+escapeHtml(msg.zone||'Provincia')+'</span></div><div class="inc-text">'+escapeHtml(msg.text||'Siniestro solucionado.')+'</div><span class="msg-time">'+timeStr+statusHtml+'</span></div>';
   }else{
     const text=escapeHtml(msg.text||'').replace(/\n/g,'<br>');
@@ -6755,70 +7504,41 @@ function renderMsgHtml(msg,isMine,ctx){
 }
 chatMessagesEl.addEventListener('click',function(e){
   const repBtn=e.target.closest('.msg-report-btn');
-  if(repBtn){
-    e.stopPropagation();
-    enterReportMode();
-    const msgEl=repBtn.closest('.chat-msg');
-    if(msgEl)toggleMsgSelection(msgEl);
-    return;
-  }
+  if(repBtn){e.stopPropagation();enterReportMode();const msgEl=repBtn.closest('.chat-msg');if(msgEl)toggleMsgSelection(msgEl);return}
   if(reportMode){
     const msgEl=e.target.closest('.chat-msg');
     if(msgEl)if(!e.target.closest('a'))if(!e.target.closest('.coin-donate-action')){e.preventDefault();toggleMsgSelection(msgEl)}
   }
 });
-function enterReportMode(){
-  if(reportMode)return;
-  reportMode=true;
-  selectedMessages.clear();
-  chatMessagesEl.classList.add('report-mode');
-  reportBar.classList.add('visible');
-  updateReportBar();
-}
+function enterReportMode(){if(reportMode)return;reportMode=true;selectedMessages.clear();chatMessagesEl.classList.add('report-mode');reportBar.classList.add('visible');updateReportBar()}
 function exitReportMode(){
-  if(!reportMode)return;
-  reportMode=false;
-  selectedMessages.clear();
-  chatMessagesEl.classList.remove('report-mode');
-  reportBar.classList.remove('visible');
+  if(!reportMode)return; reportMode=false; selectedMessages.clear();
+  chatMessagesEl.classList.remove('report-mode'); reportBar.classList.remove('visible');
   chatMessagesEl.querySelectorAll('.chat-msg.selected').forEach(function(el){el.classList.remove('selected')});
   updateReportBar();
 }
 function toggleMsgSelection(msgEl){
-  const id=msgEl.dataset.msgId;
-  if(!id)return;
-  if(selectedMessages.has(id)){
-    selectedMessages.delete(id);
-    msgEl.classList.remove('selected');
-  }else{
+  const id=msgEl.dataset.msgId; if(!id)return;
+  if(selectedMessages.has(id)){selectedMessages.delete(id);msgEl.classList.remove('selected')}
+  else{
     const msg=findMessageById(id);
     if(msg){
-      let ctx='public';
-      if(currentContext!=='public')ctx='private:'+currentPrivatePeer.id;
-      selectedMessages.set(id,{msg:msg,context:ctx});
-      msgEl.classList.add('selected');
+      let ctx='public'; if(currentContext!=='public')ctx='private:'+currentPrivatePeer.id;
+      selectedMessages.set(id,{msg:msg,context:ctx}); msgEl.classList.add('selected');
     }
   }
   updateReportBar();
 }
 function findMessageById(id){
-  const parts=id.split(':');
-  if(parts.length<3)return null;
+  const parts=id.split(':'); if(parts.length<3)return null;
   const ts=parseInt(parts[parts.length-1],10);
   const ctx=parts.slice(0,parts.length-2).join(':');
   const userId=parts[parts.length-2];
   let list;
   if(ctx==='public')list=publicMessages;
-  else if(ctx.indexOf('private:')===0){
-    const peerId=ctx.substring('private:'.length);
-    const conv=privateConversations.get(peerId);
-    if(conv)list=conv.messages;
-    else list=[];
-  }else return null;
-  for(let i=0;i<list.length;i++){
-    const m=list[i];
-    if(m.from)if(m.from.id===userId)if(m.ts===ts)return m;
-  }
+  else if(ctx.indexOf('private:')===0){const peerId=ctx.substring('private:'.length);const conv=privateConversations.get(peerId);if(conv)list=conv.messages;else list=[]}
+  else return null;
+  for(let i=0;i<list.length;i++){const m=list[i];if(m.from)if(m.from.id===userId)if(m.ts===ts)return m}
   return null;
 }
 function updateReportBar(){
@@ -6827,21 +7547,16 @@ function updateReportBar(){
   if(n===0)txt='Seleccioná mensajes para denunciar';
   else if(n===1)txt='1 mensaje seleccionado';
   else txt=n+' mensajes seleccionados';
-  reportCount.textContent=txt;
-  reportConfirmBtn.disabled=n===0;
+  reportCount.textContent=txt; reportConfirmBtn.disabled=n===0;
 }
 reportCancelBtn.addEventListener('click',exitReportMode);
-reportConfirmBtn.addEventListener('click',function(){
-  if(selectedMessages.size===0)return;
-  openReportModal();
-});
+reportConfirmBtn.addEventListener('click',function(){if(selectedMessages.size===0)return;openReportModal()});
 function openReportModal(){
   window._reportTargetUser=null;
   const items=Array.from(selectedMessages.values());
   reportPreview.innerHTML=items.map(function(it){
     const m=it.msg;
-    let nick='Anónimo';
-    if(m.from)if(m.from.nick)nick=m.from.nick;
+    let nick='Anónimo'; if(m.from)if(m.from.nick)nick=m.from.nick;
     let texto='';
     if(m.kind==='location')texto='📍 Mi ubicación actual';
     else if(m.kind==='place')texto='🏪 Local compartido: '+(m.placeName||'');
@@ -6854,70 +7569,47 @@ function openReportModal(){
     const fecha=new Date(m.ts);
     const hh=fecha.getHours().toString().padStart(2,'0');
     const mm=fecha.getMinutes().toString().padStart(2,'0');
-    const hora=hh+':'+mm;
-    return '<div class="item"><strong>'+escapeHtml(nick)+' · '+hora+'</strong><span class="txt">'+escapeHtml(texto.slice(0,200))+'</span></div>';
+    return '<div class="item"><strong>'+escapeHtml(nick)+' · '+hh+':'+mm+'</strong><span class="txt">'+escapeHtml(texto.slice(0,200))+'</span></div>';
   }).join('');
-  reportReason.value='';
-  reportDetails.value='';
-  reportSubmitBtn.disabled=true;
+  reportReason.value=''; reportDetails.value=''; reportSubmitBtn.disabled=true;
   reportModal.classList.add('visible');
 }
 function scrollMessagesBottom(){chatMessagesEl.scrollTop=chatMessagesEl.scrollHeight}
 function sendChatMessage(){
-  const text=chatInput.value.trim();
-  if(!text)return;
-  if(!mqttClient)return;
-  if(!chatReady)return;
+  const text=chatInput.value.trim(); if(!text)return;
+  if(!mqttClient)return; if(!chatReady)return;
   if(currentContext==='private'){
     if(currentPrivatePeer){
       const m=motoamigos.get(currentPrivatePeer.id);
-      if(!m){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}
-      if(m.status!=='accepted'){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}
+      if(!m){alert('Necesitás ser MotoAmigo de este usuario para escribirle.');return}
+      if(m.status!=='accepted'){alert('Necesitás ser MotoAmigo de este usuario para escribirle.');return}
     }
   }
-  const baseMsg={
-    kind:'text',
-    type:currentContext==='public'?'public':'private',
-    from:{id:myUserId,nick:myNick},
-    text:text.slice(0,500),
-    ts:Date.now()
-  };
+  const baseMsg={kind:'text',type:currentContext==='public'?'public':'private',from:{id:myUserId,nick:myNick},text:text.slice(0,500),ts:Date.now()};
   if(currentContext==='public'){
-    try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}
-    catch(e){chatStatusSet('Error al enviar.','error');return}
-    publicMessages.push(baseMsg);
-    if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
-    saveHistory();
-    schedulePublishPublicHistory();
-    renderMessages();
-    scrollMessagesBottom();
+    try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}catch(e){chatStatusSet('Error al enviar.','error');return}
+    publicMessages.push(baseMsg); if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
+    saveHistory(); schedulePublishPublicHistory(); renderMessages(); scrollMessagesBottom();
+    showAppNotification('Mensaje enviado a la sala general.','fa-paper-plane');
   }else{
     const msg=Object.assign({},baseMsg,{to:{id:currentPrivatePeer.id}});
-    try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}
-    catch(e){chatStatusSet('Error al enviar privado.','error');return}
-    storePrivateMessage(currentPrivatePeer,msg);
-    saveHistory();
-    renderMessages();
-    scrollMessagesBottom();
+    try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}catch(e){chatStatusSet('Error al enviar privado.','error');return}
+    storePrivateMessage(currentPrivatePeer,msg); saveHistory(); renderMessages(); scrollMessagesBottom();
+    showAppNotification('Mensaje enviado a '+currentPrivatePeer.nick+'.','fa-paper-plane');
   }
-  chatInput.value='';
-  chatInput.focus();
+  chatInput.value=''; chatInput.focus();
 }
 chatSendBtn.addEventListener('click',sendChatMessage);
-chatInput.addEventListener('keydown',function(e){
-  if(e.key==='Enter')if(!e.shiftKey){e.preventDefault();sendChatMessage()}
-});
+chatInput.addEventListener('keydown',function(e){if(e.key==='Enter')if(!e.shiftKey){e.preventDefault();sendChatMessage()}});
 chatInput.addEventListener('input',function(){if(chatInput.value.length>0)sendTypingIndicator()});
 nickSaveBtn.addEventListener('click',function(){
   const nick=nickInput.value.trim();
   if(nick.length<2){alert('El apodo debe tener al menos 2 caracteres.');return}
-  saveNick(nick.slice(0,20));
-  nickModal.classList.remove('visible');
-  const now=Date.now();
-  const existing=onlineUsers.get(myUserId);
+  saveNick(nick.slice(0,20)); nickModal.classList.remove('visible');
+  const now=Date.now(); const existing=onlineUsers.get(myUserId);
   const entry={id:myUserId,nick:myNick,status:myStatus,lastSeen:now,firstSeen:existing&&existing.firstSeen?existing.firstSeen:now,isGuest:isGuestAccount(authState.user)};
-  if(userLocation){entry.lat=userLocation.lat;entry.lng=userLocation.lng;}
-  else if(existing&&typeof existing.lat==='number'){entry.lat=existing.lat;entry.lng=existing.lng;}
+  if(userLocation){entry.lat=userLocation.lat;entry.lng=userLocation.lng}
+  else if(existing&&typeof existing.lat==='number'){entry.lat=existing.lat;entry.lng=existing.lng}
   onlineUsers.set(myUserId,entry);
   if(mqttClient)if(chatReady){registerUserEntry(myUserId,myNick,myStatus,'connect');announcePresence()}
   continueAfterAuth();
@@ -6929,17 +7621,10 @@ function pedirUbicacionYPrompt(callback){
   geoStatus.textContent='Solicitando ubicación...';
   navigator.geolocation.getCurrentPosition(function(pos){
     userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude};
-    distanceCacheKey='';
-    createUserMarker();
-    distanceFilter.disabled=false;
-    geoStatus.textContent='Ubicación detectada';
-    renderPlaces();
-    if(mqttClient&&chatReady)announcePresence();
-    callback();
-  },function(){
-    alert('No pudimos obtener tu ubicación.');
-    geoStatus.textContent='Ubicación no autorizada';
-  },{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
+    distanceCacheKey=''; createUserMarker(); distanceFilter.disabled=false;
+    geoStatus.textContent='Ubicación detectada'; renderPlaces();
+    if(mqttClient&&chatReady)announcePresence(); callback();
+  },function(){alert('No pudimos obtener tu ubicación.');geoStatus.textContent='Ubicación no autorizada'},{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
 }
 shareLocationBtn.addEventListener('click',function(){
   if(!chatReady){alert('El chat todavía no está conectado.');return}
@@ -6948,48 +7633,26 @@ shareLocationBtn.addEventListener('click',function(){
 cancelLocationModal.addEventListener('click',function(){locationModal.classList.remove('visible')});
 locationModal.addEventListener('click',function(e){if(e.target===locationModal)locationModal.classList.remove('visible')});
 function enviarUbicacion(destino){
-  locationModal.classList.remove('visible');
-  if(!userLocation)return;
+  locationModal.classList.remove('visible'); if(!userLocation)return;
   if(destino==='private'){
     if(!currentPrivatePeer){alert('No estás en un chat privado activo con un Motoamigo.');return}
     if(currentContext!=='private'){alert('No estás en un chat privado activo con un Motoamigo.');return}
     const m=motoamigos.get(currentPrivatePeer.id);
-    if(!m){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}
-    if(m.status!=='accepted'){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}
+    if(!m){alert('Necesitás ser MotoAmigo de este usuario.');return}
+    if(m.status!=='accepted'){alert('Necesitás ser MotoAmigo de este usuario.');return}
   }
-  const baseMsg={
-    kind:'location',
-    type:destino==='public'?'public':'private',
-    from:{id:myUserId,nick:myNick},
-    text:'Compartió su ubicación',
-    lat:userLocation.lat,
-    lng:userLocation.lng,
-    ts:Date.now()
-  };
+  const baseMsg={kind:'location',type:destino==='public'?'public':'private',from:{id:myUserId,nick:myNick},text:'Compartió su ubicación',lat:userLocation.lat,lng:userLocation.lng,ts:Date.now()};
   if(destino==='public'){
-    try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}
-    catch(e){alert('Error al enviar la ubicación.');return}
-    publicMessages.push(baseMsg);
-    if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
-    saveHistory();
-    schedulePublishPublicHistory();
-    registerChatLocation(locationFromMessage(baseMsg));
-    currentContext='public';
-    currentPrivatePeer=null;
-    updateChatTitle();
-    openChat();
-    renderMessages();
-    scrollMessagesBottom();
+    try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}catch(e){alert('Error al enviar la ubicación.');return}
+    publicMessages.push(baseMsg); if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
+    saveHistory(); schedulePublishPublicHistory(); registerChatLocation(locationFromMessage(baseMsg));
+    currentContext='public'; currentPrivatePeer=null; updateChatTitle();
+    openChat(); renderMessages(); scrollMessagesBottom();
   }else{
     const msg=Object.assign({},baseMsg,{to:{id:currentPrivatePeer.id}});
-    try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}
-    catch(e){alert('Error al enviar la ubicación.');return}
-    storePrivateMessage(currentPrivatePeer,msg);
-    saveHistory();
-    registerChatLocation(locationFromMessage(msg));
-    openChat();
-    renderMessages();
-    scrollMessagesBottom();
+    try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}catch(e){alert('Error al enviar la ubicación.');return}
+    storePrivateMessage(currentPrivatePeer,msg); saveHistory(); registerChatLocation(locationFromMessage(msg));
+    openChat(); renderMessages(); scrollMessagesBottom();
   }
 }
 shareLocationPublic.addEventListener('click',function(){enviarUbicacion('public')});
@@ -7001,64 +7664,34 @@ function openPlaceShareModal(placeId){
   pendingPlaceToShare=place;
   const catColor=colors[place.category]||'#16a085';
   const catIcon=icons[place.category]||'fa-store';
-  let discLine='';
-  if(place.descuento)discLine='<div class="preview-cat" style="color:#f39c12;font-weight:800"><i class="fas fa-tag"></i> -'+Math.round(place.descuento)+'% de descuento</div>';
+  let discLine=''; if(place.descuento)discLine='<div class="preview-cat" style="color:#f39c12;font-weight:800"><i class="fas fa-tag"></i> -'+Math.round(place.descuento)+'% de descuento</div>';
   placeSharePreview.innerHTML='<strong><i class="fas '+catIcon+'" style="color:'+catColor+';margin-right:6px"></i>'+escapeHtml(place.name)+'</strong><div class="preview-cat">'+escapeHtml(place.rubro||categoryLabels[place.category])+'</div>'+discLine+'<div class="preview-addr"><i class="fas fa-map-pin"></i> '+escapeHtml(place.address||'Sin dirección')+'</div>';
   placeShareModal.classList.add('visible');
 }
 cancelPlaceShareModal.addEventListener('click',function(){placeShareModal.classList.remove('visible');pendingPlaceToShare=null});
-placeShareModal.addEventListener('click',function(e){
-  if(e.target===placeShareModal){placeShareModal.classList.remove('visible');pendingPlaceToShare=null}
-});
+placeShareModal.addEventListener('click',function(e){if(e.target===placeShareModal){placeShareModal.classList.remove('visible');pendingPlaceToShare=null}});
 function enviarLocal(destino){
-  placeShareModal.classList.remove('visible');
-  if(!pendingPlaceToShare)return;
-  const place=pendingPlaceToShare;
-  pendingPlaceToShare=null;
+  placeShareModal.classList.remove('visible'); if(!pendingPlaceToShare)return;
+  const place=pendingPlaceToShare; pendingPlaceToShare=null;
   if(destino==='private'){
     if(!currentPrivatePeer){alert('No estás en un chat privado activo con un Motoamigo.');return}
     if(currentContext!=='private'){alert('No estás en un chat privado activo con un Motoamigo.');return}
     const m=motoamigos.get(currentPrivatePeer.id);
-    if(!m){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}
-    if(m.status!=='accepted'){alert('Necesitás ser Motoamigo de este usuario para escribirle.');return}
+    if(!m){alert('Necesitás ser MotoAmigo de este usuario.');return}
+    if(m.status!=='accepted'){alert('Necesitás ser MotoAmigo de este usuario.');return}
   }
-  const baseMsg={
-    kind:'place',
-    type:destino==='public'?'public':'private',
-    from:{id:myUserId,nick:myNick},
-    placeName:place.name,
-    rubro:place.rubro||categoryLabels[place.category],
-    category:place.category,
-    address:place.address||'',
-    lat:place.lat,
-    lng:place.lng,
-    descuento:place.descuento||null,
-    ts:Date.now()
-  };
+  const baseMsg={kind:'place',type:destino==='public'?'public':'private',from:{id:myUserId,nick:myNick},placeName:place.name,rubro:place.rubro||categoryLabels[place.category],category:place.category,address:place.address||'',lat:place.lat,lng:place.lng,descuento:place.descuento||null,ts:Date.now()};
   if(destino==='public'){
-    try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}
-    catch(e){alert('Error al compartir el local.');return}
-    publicMessages.push(baseMsg);
-    if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
-    saveHistory();
-    schedulePublishPublicHistory();
-    registerChatLocation(locationFromMessage(baseMsg));
-    currentContext='public';
-    currentPrivatePeer=null;
-    updateChatTitle();
-    openChat();
-    renderMessages();
-    scrollMessagesBottom();
+    try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(baseMsg),{qos:0})}catch(e){alert('Error al compartir el local.');return}
+    publicMessages.push(baseMsg); if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
+    saveHistory(); schedulePublishPublicHistory(); registerChatLocation(locationFromMessage(baseMsg));
+    currentContext='public'; currentPrivatePeer=null; updateChatTitle();
+    openChat(); renderMessages(); scrollMessagesBottom();
   }else{
     const msg=Object.assign({},baseMsg,{to:{id:currentPrivatePeer.id}});
-    try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}
-    catch(e){alert('Error al compartir el local.');return}
-    storePrivateMessage(currentPrivatePeer,msg);
-    saveHistory();
-    registerChatLocation(locationFromMessage(msg));
-    openChat();
-    renderMessages();
-    scrollMessagesBottom();
+    try{mqttClient.publish(TOPIC_PRIVATE_BASE+currentPrivatePeer.id,JSON.stringify(msg),{qos:0})}catch(e){alert('Error al compartir el local.');return}
+    storePrivateMessage(currentPrivatePeer,msg); saveHistory(); registerChatLocation(locationFromMessage(msg));
+    openChat(); renderMessages(); scrollMessagesBottom();
   }
 }
 sharePlacePublic.addEventListener('click',function(){enviarLocal('public')});
@@ -7081,8 +7714,10 @@ function enviarEmergencia(severity){
     const socioId=getSocioIdForRecord();
     const nick=myNick||(authState.user&&authState.user.nick)||'Anónimo';
     const msg={
+      id:alertId,
       kind:'emergency',
       type:'public',
+      alertId:alertId,
       severity:severity,
       socioId:socioId,
       from:{id:myUserId,nick:nick,socioId:socioId},
@@ -7142,7 +7777,7 @@ function enviarEmergencia(severity){
     if(severity==='vida')alertText='🆘 Emergencia enviada. Si hay riesgo de vida, llamá AHORA al 911.';
     else if(severity==='grave')alertText='🚨 Emergencia grave enviada a la sala general.';
     else alertText='⚠️ Emergencia leve enviada a la sala general.';
-    setTimeout(function(){alert(alertText)},300);
+    showAppNotification(alertText,'fa-exclamation-triangle');
   };
   if(!userLocation)if(navigator.geolocation){
     geoStatus.textContent='Obteniendo ubicación para el reporte...';
@@ -7168,7 +7803,9 @@ function loadMapDataInBackground(){
   loadInactivitySetting();
   loadUserLog();
   loadActiveAlert();
+  loadResolvedState();
   loadMailbox();
+  loadSuggestions();
   if(!(authState.isLoggedIn&&authState.user&&authState.user.isGuest)){
     loadMotoCoins();
     renderMotoCoins();
@@ -7179,6 +7816,8 @@ function loadMapDataInBackground(){
   }
   renderMailbox();
   updateMailboxBadge();
+  renderSuggestions();
+  updateSuggestionBadge();
   chatLocations=loadChatLocationsFromStorage();
   renderAllChatLocations();
   renderAllUserMotos();
@@ -7214,79 +7853,505 @@ function bootstrapResolveScreen(alertId){
     }
   });
 }
+function MM_scheduleMapResize(){
+  [0,80,220,500].forEach(function(delay){
+    setTimeout(function(){
+      try{
+        var wrapper=document.getElementById('map-wrapper');
+        if(!wrapper||wrapper.clientWidth<=0||wrapper.clientHeight<=0)return;
+        map.invalidateSize({pan:false,animate:false});
+      }catch(_){}
+    },delay);
+  });
+}
+(function MM_installMapSizeObserver(){
+  var wrapper=document.getElementById('map-wrapper');
+  if(wrapper&&'ResizeObserver' in window){
+    var observer=new ResizeObserver(function(){MM_scheduleMapResize();});
+    observer.observe(wrapper);
+  }
+  window.addEventListener('resize',MM_scheduleMapResize,{passive:true});
+  window.addEventListener('orientationchange',MM_scheduleMapResize,{passive:true});
+})();
+function MM_userScope(){
+  var u=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:null;
+  return String((u&&(u.id||u.email||u.correo))||(typeof myUserId!=='undefined'&&myUserId)||'anonymous');
+}
+function MM_scopedKey(base){
+  return base+'::'+encodeURIComponent(MM_userScope());
+}
+(function MM_installScopedStorage(){
+  var origSaveLevel=saveMyLevel;
+  var origLoadLevel=loadMyLevel;
+  var origSaveCoins=saveMotoCoins;
+  var origLoadCoins=loadMotoCoins;
+  saveMyLevel=function(){
+    try{localStorage.setItem(MM_scopedKey(LEVELS_KEY),JSON.stringify({level:myLevel,points:myPoints}));}catch(_){}
+  };
+  loadMyLevel=function(){
+    myPoints=0;myLevel=1;
+    try{
+      var raw=localStorage.getItem(MM_scopedKey(LEVELS_KEY));
+      if(raw){
+        var d=JSON.parse(raw);
+        if(d&&isFinite(Number(d.points)))myPoints=Math.max(0,Math.trunc(Number(d.points)));
+        if(d&&isFinite(Number(d.level)))myLevel=Math.max(1,Math.trunc(Number(d.level)));
+      }
+    }catch(_){}
+    myLevel=getLevelFromPoints(myPoints);
+  };
+  saveMotoCoins=function(){
+    try{localStorage.setItem(MM_scopedKey(MOTO_COINS_KEY),String(Math.max(0,Math.trunc(Number(myMotoCoins)||0))));}catch(_){}
+    try{localStorage.setItem(MM_scopedKey(MOTO_COINS_LOG_KEY),JSON.stringify((myMotoCoinsLog||[]).slice(-200)));}catch(_){}
+    try{localStorage.setItem(MM_scopedKey(MOTO_COINS_PENDING_KEY),JSON.stringify(myCoinsPendingRequests||{}));}catch(_){}
+  };
+  loadMotoCoins=function(){
+    myMotoCoins=0;myMotoCoinsLog=[];myCoinsPendingRequests={};
+    try{
+      var rawCoins=localStorage.getItem(MM_scopedKey(MOTO_COINS_KEY));
+      if(rawCoins!==null)myMotoCoins=Math.max(0,parseInt(rawCoins,10)||0);
+    }catch(_){}
+    try{
+      var rawLog=localStorage.getItem(MM_scopedKey(MOTO_COINS_LOG_KEY));
+      if(rawLog)myMotoCoinsLog=JSON.parse(rawLog)||[];
+      if(!Array.isArray(myMotoCoinsLog))myMotoCoinsLog=[];
+    }catch(_){myMotoCoinsLog=[]}
+    try{
+      var rawPending=localStorage.getItem(MM_scopedKey(MOTO_COINS_PENDING_KEY));
+      if(rawPending)myCoinsPendingRequests=JSON.parse(rawPending)||{};
+      if(!myCoinsPendingRequests||typeof myCoinsPendingRequests!=='object')myCoinsPendingRequests={};
+    }catch(_){myCoinsPendingRequests={}}
+    var now=Date.now();
+    Object.keys(myCoinsPendingRequests).forEach(function(k){
+      var req=myCoinsPendingRequests[k];
+      if(!req||(req.expiresAt&&now>req.expiresAt))delete myCoinsPendingRequests[k];
+    });
+  };
+})();
+(function MM_wrapSheetsPost(){
+  var originalPost=postToSheets;
+  postToSheets=async function(action,data){
+    var nextData=Object.assign({},data||{});
+    if(action==='points_change'||action==='coins_change'){
+      var u=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:{};
+      nextData.socioId=nextData.socioId||u.socioId||u.id||(typeof myUserId!=='undefined'?myUserId:'')||'';
+      nextData.socioNick=nextData.socioNick||u.nick||(typeof myNick!=='undefined'?myNick:'')||'';
+      nextData.email=nextData.email||u.email||u.correo||'';
+      nextData.correo=nextData.correo||nextData.email;
+      nextData.userId=nextData.userId||u.id||'';
+    }
+    return originalPost(action,nextData);
+  };
+})();
+function MM_normField(s){
+  return String(s==null?'':s).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+}
+function MM_field(row,candidates){
+  var wanted=candidates.map(MM_normField);
+  var keys=Object.keys(row||{});
+  for(var i=0;i<keys.length;i++){
+    if(wanted.indexOf(MM_normField(keys[i]))!==-1)return {found:true,value:row[keys[i]]};
+  }
+  return {found:false,value:''};
+}
+function MM_parseNumber(value){
+  var s=String(value==null?'':value).trim();
+  if(!s)return 0;
+  s=s.replace(/[^0-9-]/g,'');
+  var n=parseInt(s,10);
+  return isNaN(n)?0:n;
+}
+async function MM_refreshStatsFromUsersSheet(){
+  var u=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:null;
+  if(!u||u.isGuest)return;
+  try{
+    var url=AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_statsTs='+Date.now();
+    var response=await fetch(url,{cache:'no-store'});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    var rows=parseAuthCsv(await response.text());
+    var userEmail=String(u.email||u.correo||'').trim().toLowerCase();
+    var userNick=String(u.nick||u.nickname||'').trim().toLowerCase();
+    var userId=String(u.socioId||u.id||'').trim();
+    var row=rows.find(function(r){
+      var rid=String(r.id||r.user_id||r.userid||r.socioid||'').trim();
+      var email=String(r.correo||r.email||'').trim().toLowerCase();
+      var nick=String(r.nickname||r.nick||r.usuario||'').trim().toLowerCase();
+      return (userId&&rid&&userId===rid)||(userEmail&&email===userEmail)||(userNick&&nick===userNick);
+    });
+    if(!row)return;
+    var pointsField=MM_field(row,['puntos','points','puntos totales','total puntos','puntos acumulados']);
+    var coinsField=MM_field(row,['moto coins','motocoins','coins','saldo mc','saldo moto coins','monedas']);
+    if(pointsField.found&&String(pointsField.value).trim()!=='')myPoints=Math.max(0,MM_parseNumber(pointsField.value));
+    if(coinsField.found&&String(coinsField.value).trim()!=='')myMotoCoins=Math.max(0,MM_parseNumber(coinsField.value));
+    myLevel=getLevelFromPoints(myPoints);
+    saveMyLevel();
+    saveMotoCoins();
+    renderLevelPanel();
+    renderMotoCoins();
+  }catch(err){
+    console.warn('No se pudieron refrescar puntos/Moto Coins desde Usuarios:',err);
+  }
+}
+(function MM_installStatsRefresh(){
+  var originalFinalizeLogin=finalizeLogin;
+  finalizeLogin=function(){
+    originalFinalizeLogin.apply(this,arguments);
+    loadMyLevel();
+    loadMotoCoins();
+    renderLevelPanel();
+    renderMotoCoins();
+    MM_refreshStatsFromUsersSheet();
+  };
+  loadMyLevel();
+  loadMotoCoins();
+  renderLevelPanel();
+  renderMotoCoins();
+  setInterval(function(){
+    if(document.visibilityState==='visible')MM_refreshStatsFromUsersSheet();
+  },90000);
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible')MM_refreshStatsFromUsersSheet();
+  });
+})();
+(function MM_installUsersQr(){
+  var exactDevUrl=new URLSearchParams(window.location.search).get('dev')==='1';
+  var button=document.getElementById('devUsersQrBtn');
+  var modal=document.getElementById('devUsersQrModal');
+  var closeA=document.getElementById('devUsersQrClose');
+  var closeB=document.getElementById('devUsersQrClose2');
+  var select=document.getElementById('devUsersQrSelect');
+  var refresh=document.getElementById('devUsersQrRefresh');
+  var download=document.getElementById('devUsersQrDownload');
+  var qrWrap=document.getElementById('devUsersQrCode');
+  var dataBox=document.getElementById('devUsersQrData');
+  var status=document.getElementById('devUsersQrStatus');
+  var users=[];
+  var currentQrText='';
+  if(!exactDevUrl||!button||!modal)return;
+
+  function isAuthorizedDev(){
+    var u=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:null;
+    var expected=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'').trim().toLowerCase();
+    var actual=String(u&&(u.email||u.correo)||'').trim().toLowerCase();
+    return !!(u&&!u.isGuest&&expected&&actual===expected);
+  }
+  function syncVisibility(){
+    var enabled=isAuthorizedDev();
+    document.body.classList.toggle('dev-qr-enabled',enabled);
+    if(!enabled&&modal.classList.contains('visible'))closeModal();
+  }
+  function closeModal(){
+    modal.classList.remove('visible');
+    modal.setAttribute('aria-hidden','true');
+  }
+  function safeUserData(row){
+    var result={};
+    Object.keys(row||{}).forEach(function(key){
+      var k=MM_normField(key);
+      if(/password|contrasena|clave|token|secret|hash|credential|credencial|recovery|recuperacion|resetcode|securityanswer/.test(k))return;
+      result[String(key)]=row[key]==null?'':String(row[key]);
+    });
+    return result;
+  }
+  function renderSelectedUser(){
+    if(!select||select.selectedIndex<0||!users.length)return;
+    var record=users[parseInt(select.value,10)];
+    if(!record)return;
+    var qrPayload={tipo:'mutual-moto-usuario',fechaGeneracion:new Date().toISOString(),datos:safeUserData(record)};
+    currentQrText=JSON.stringify(qrPayload);
+    dataBox.textContent=JSON.stringify(qrPayload,null,2);
+    qrWrap.innerHTML='';
+    if(typeof QRCode==='undefined'){
+      status.textContent='No está disponible la biblioteca QRCode. Verificá que qrcode.min.js cargue correctamente.';
+      qrWrap.textContent=currentQrText;
+      return;
+    }
+    try{
+      new QRCode(qrWrap,{text:currentQrText,width:260,height:260,colorDark:'#243746',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+      var label=record.nickname||record.nick||record.nombre||record.correo||record.email||('usuario '+(Number(select.value)+1));
+      status.textContent='QR generado para '+label+'. El QR contiene los campos visibles en el JSON de la derecha, excepto credenciales.';
+    }catch(err){
+      status.textContent='No se pudo generar el QR. La fila puede contener demasiados datos para un único código.';
+      qrWrap.textContent=String(err.message||err);
+    }
+  }
+  async function loadUsers(){
+    if(!isAuthorizedDev()){
+      status.textContent='Iniciá sesión con la cuenta de desarrollador para consultar usuarios.';
+      syncVisibility();
+      return;
+    }
+    status.textContent='Leyendo la sección Usuarios de Google Sheets…';
+    if(refresh)refresh.disabled=true;
+    try{
+      var csvUrl=AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_qrts='+Date.now();
+      var response=await fetch(csvUrl,{cache:'no-store'});
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      var parsed=parseAuthCsv(await response.text());
+      users=parsed.filter(function(row){
+        return Object.keys(row||{}).some(function(k){return String(row[k]==null?'':row[k]).trim()!=='';});
+      });
+      select.innerHTML='';
+      if(!users.length){
+        select.add(new Option('No hay usuarios',''));
+        status.textContent='La sección Usuarios no devolvió filas.';
+        dataBox.textContent='';
+        qrWrap.innerHTML='';
+        return;
+      }
+      users.forEach(function(row,i){
+        var name=String(row.nickname||row.nick||((row.nombre||'')+' '+(row.apellido||'')).trim()||row.correo||row.email||('Usuario '+(i+1)));
+        var identifier=String(row.id||row.socioid||row.correo||row.email||'');
+        select.add(new Option(name+(identifier?' · '+identifier:''),String(i)));
+      });
+      status.textContent=users.length+' usuario(s) disponibles. Elegí uno para generar su QR.';
+      select.value='0';
+      renderSelectedUser();
+    }catch(err){
+      status.textContent='No se pudo leer la hoja Usuarios: '+String(err.message||err);
+    }finally{
+      if(refresh)refresh.disabled=false;
+    }
+  }
+
+  button.addEventListener('click',function(){
+    if(!isAuthorizedDev()){
+      alert('El generador QR está disponible solo para la cuenta de desarrollador.');
+      syncVisibility();
+      return;
+    }
+    modal.classList.add('visible');
+    modal.setAttribute('aria-hidden','false');
+    if(!users.length)loadUsers();
+  });
+  if(closeA)closeA.addEventListener('click',closeModal);
+  if(closeB)closeB.addEventListener('click',closeModal);
+  modal.addEventListener('click',function(e){if(e.target===modal)closeModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+  if(select)select.addEventListener('change',renderSelectedUser);
+  if(refresh)refresh.addEventListener('click',loadUsers);
+  if(download)download.addEventListener('click',function(){
+    var image=qrWrap.querySelector('img');
+    var canvas=qrWrap.querySelector('canvas');
+    var imageUrl=image&&image.src?image.src:(canvas?canvas.toDataURL('image/png'):'');
+    if(!imageUrl){status.textContent='Primero generá un QR válido.';return;}
+    var link=document.createElement('a');
+    var current=users[parseInt(select.value,10)]||{};
+    var name=String(current.nickname||current.nick||current.correo||current.email||'usuario').replace(/[^a-z0-9_-]+/gi,'_').slice(0,50);
+    link.href=imageUrl;
+    link.download='qr-usuario-'+name+'.png';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  });
+
+  syncVisibility();
+  var originalFinalizeLoginForQr=finalizeLogin;
+  finalizeLogin=function(){
+    originalFinalizeLoginForQr.apply(this,arguments);
+    syncVisibility();
+  };
+})();
+(function MM_resumeDevAfterLogin(){
+  var originalFinalizeLoginForDev=finalizeLogin;
+  finalizeLogin=function(){
+    originalFinalizeLoginForDev.apply(this,arguments);
+    if(urlParams.get('dev')==='1'&&isDeveloperAccount()){
+      DEV_MODE=true;
+      enableDevMode();
+      document.body.classList.add('dev-qr-enabled');
+      try{updateAuthUI();}catch(_){}
+      showMapPage();
+      setTimeout(function(){
+        try{map.invalidateSize();}catch(_){}
+        try{recenterImmediate();}catch(_){}
+      },300);
+    }
+  };
+})();
 const kioskParam=urlParams.get('kiosk');
 const purchaseParam=urlParams.get('purchase');
 const resolveParam=urlParams.get('resolve');
-if(kioskParam==='1'){
-  initUserId();
-  loadAuthFromStorage();
-  loadMyLevel();
-  loadMotoCoins();
-  startKioskMode();
-}else if(purchaseParam){
-  initUserId();
-  loadAuthFromStorage();
-  loadMyLevel();
-  loadMotoCoins();
-  const placeName=urlParams.get('name')||'Local';
-  const coinsPrice=parseInt(urlParams.get('price')||'0',10);
-  pendingPurchase={placeId:purchaseParam,placeName:placeName,coinsPrice:coinsPrice};
-  try{
-    sessionStorage.setItem('pending_purchase',JSON.stringify(pendingPurchase));
-    const clean=window.location.pathname+(kioskParam?'?kiosk=1':'');
-    window.history.replaceState({},'',clean);
-  }catch(e){}
-  updateAuthUI();
-  loadMapDataInBackground();
-  setTimeout(function(){recenterImmediate();try{map.invalidateSize()}catch(_){}},700);
-  window.addEventListener('resize',function(){
-    setTimeout(function(){try{map.invalidateSize()}catch(_){}wazeReloadPending=false;recenterImmediate()},700);
-  });
-  if(authState.isLoggedIn&&authState.user&&!authState.user.isGuest&&authState.user.rememberDevice===true){
-    hideGate();
-    setTimeout(function(){checkMembershipExpiryAlert();if(!myNick)askForNick();else continueAfterAuth()},400);
-  }else{
-    authState={isLoggedIn:false,user:null};
-    showGate();
-    setTimeout(function(){if(gateEmailInput)gateEmailInput.focus()},150);
+(function MM_bootFinal(){
+  if(window.__MM_MAP_DATA_BOOTSTRAPPED__)return;
+  window.__MM_MAP_DATA_BOOTSTRAPPED__=true;
+
+  function purgeAuthGate(){
+    var gate=document.getElementById('authGate');
+    if(!gate)return;
+    gate.classList.add('hidden');
+    gate.style.display='none';
+    gate.style.visibility='hidden';
+    gate.style.pointerEvents='none';
+    gate.setAttribute('aria-hidden','true');
+    try{ if(gate.parentNode) gate.parentNode.removeChild(gate); }catch(_){}
   }
-}else if(resolveParam){
-  const rEl=document.getElementById('resolveScreen');
-  rEl.classList.add('visible');
-  const ag=document.getElementById('authGate');
-  if(ag)ag.classList.add('hidden');
-  const hd=document.querySelector('header');
-  if(hd)hd.style.display='none';
-  const ct=document.querySelector('.container');
-  if(ct)ct.style.display='none';
-  const ft=document.querySelector('footer');
-  if(ft)ft.style.display='none';
-  const ld=document.getElementById('loading');
-  if(ld)ld.style.display='none';
-  const fs=document.querySelector('.floating-stack');
-  if(fs)fs.style.display='none';
-  const kioskEl=document.getElementById('kioskScreen');
-  if(kioskEl)kioskEl.style.display='none';
-  bootstrapResolveScreen(resolveParam);
-}else{
-  initUserId();
-  loadAuthFromStorage();
-  updateAuthUI();
-  setTimeout(function(){checkMembershipExpiryAlert()},450);
-  loadMapDataInBackground();
-  setTimeout(function(){recenterImmediate();try{map.invalidateSize()}catch(_){}},700);
-  window.addEventListener('resize',function(){
-    setTimeout(function(){try{map.invalidateSize()}catch(_){}wazeReloadPending=false;recenterImmediate()},700);
-  });
-  if(authState.isLoggedIn&&authState.user&&!authState.user.isGuest&&authState.user.rememberDevice===true){
-    hideGate();
-    setTimeout(function(){if(!myNick)askForNick();else continueAfterAuth()},400);
-  }else{
-    authState={isLoggedIn:false,user:null};
-    showGate();
-    setTimeout(function(){if(gateEmailInput)gateEmailInput.focus()},150);
+
+  function restoreLocalState(){
+    try{
+      if(typeof loadAuthFromStorage==='function')loadAuthFromStorage();
+      if(typeof loadHistory==='function')loadHistory();
+      if(typeof loadResolvedState==='function')loadResolvedState();
+      if(typeof loadUserLog==='function')loadUserLog();
+      if(typeof loadActiveAlert==='function')loadActiveAlert();
+      if(typeof loadInactivitySetting==='function')loadInactivitySetting();
+      if(typeof loadPresenceStore==='function')loadPresenceStore();
+      if(typeof loadMotoamigosFromStorage==='function')loadMotoamigosFromStorage();
+      if(typeof loadMotoCoins==='function')loadMotoCoins();
+      if(typeof loadMyLevel==='function')loadMyLevel();
+      if(typeof renderLevelPanel==='function')renderLevelPanel();
+      if(typeof renderMotoCoins==='function')renderMotoCoins();
+      if(typeof loadMailbox==='function')loadMailbox();
+      if(typeof loadSuggestions==='function')loadSuggestions();
+      if(typeof loadChatLocationsFromStorage==='function')chatLocations=loadChatLocationsFromStorage();
+      if(activeUserAlert&&typeof isAlertResolved==='function'&&!isAlertResolved(activeUserAlert.id)){
+        showAlertOverlay();
+      }
+    }catch(err){
+      try{log('No se pudo restaurar estado local: '+(err&&err.message||err),'warn');}catch(_){}
+    }
   }
-}
+
+  function enterMapDirectly(){
+    var publicHeader=document.getElementById('siteHeader');
+    var publicHome=document.getElementById('preMapContent');
+    var mapPage=document.getElementById('mapPage');
+    if(publicHeader)publicHeader.style.display='none';
+    if(publicHome)publicHome.style.display='none';
+    if(mapPage)mapPage.classList.remove('hidden');
+    try{sessionStorage.setItem('mm_wasOnMap','1');}catch(_){}
+    setTimeout(function(){
+      try{map.invalidateSize();}catch(_){}
+      try{recenterImmediate();}catch(_){}
+      if(typeof MM_scheduleMapResize==='function')MM_scheduleMapResize();
+    },300);
+  }
+
+  var start=function(){
+    /* El kiosco es una ruta pública independiente: no debe quedar detrás del login. */
+    if(kioskParam==='1'){
+      try{startKioskMode();}catch(err){
+        try{log('No se pudo iniciar el modo kiosco: '+(err&&err.message||err),'err');}catch(_){}
+      }
+      return;
+    }
+
+    restoreLocalState();
+
+    /* Abrir un QR de compra directamente desde la cámara del teléfono debe preparar
+       la misma compra que el lector QR interno y conservarla hasta iniciar sesión. */
+    if(purchaseParam){
+      var directPurchase={
+        placeId:purchaseParam,
+        placeName:urlParams.get('name')||'Local',
+        coinsPrice:parseInt(urlParams.get('price')||'0',10)||0
+      };
+      try{sessionStorage.setItem('pending_purchase',JSON.stringify(directPurchase));}catch(_){}
+      /* Evita que una recarga vuelva a encolar automáticamente el mismo pago. */
+      try{
+        var cleanUrl=new URL(window.location.href);
+        ['purchase','name','price','t'].forEach(function(key){cleanUrl.searchParams.delete(key);});
+        window.history.replaceState({},'',cleanUrl.pathname+cleanUrl.search+cleanUrl.hash);
+      }catch(_){}
+    }
+
+    Promise.resolve().then(function(){return loadFromSources();})
+      .catch(function(err){
+        try{log('Error inesperado al cargar datos: '+(err&&err.message||err),'err');}catch(_){}
+        try{showError();}catch(_){}
+      });
+
+    /* ============ MODO DESARROLLADOR ============ */
+    if(DEV_MODE===true){
+      /* En ?dev=1 se entra directamente al mapa, sin la portada ni el gate.
+         La identidad es temporal para habilitar la interfaz de desarrollo en esta
+         pestaña; no se guarda como sesión persistente. */
+      if(!isDeveloperAccount()){
+        var devEmail=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'developer@local.invalid').trim().toLowerCase();
+        var devId='dev_'+(devEmail.replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'local');
+        authState={isLoggedIn:true,user:{
+          id:devId,
+          nick:'Desarrollador',
+          email:devEmail,
+          isGuest:false,
+          rememberDevice:false,
+          provider:'dev'
+        }};
+        try{myUserId=devId;}catch(_){}
+        try{myNick='Desarrollador';}catch(_){}
+      }
+
+      /* 1. Eliminar el gate y neutralizar las funciones que podrían volver a mostrarlo. */
+      purgeAuthGate();
+      try{ window.showGate=function(){}; }catch(_){}
+      try{ showGate=function(){}; }catch(_){}
+
+      /* 2. Activar todas las herramientas de desarrollo y refrescar permisos de UI. */
+      try{ enableDevMode(); }catch(_){}
+      try{ updateAuthUI&&updateAuthUI(); }catch(_){}
+      try{ updateGuestControls&&updateGuestControls(); }catch(_){}
+      document.body.classList.add('dev-on','dev-qr-enabled');
+
+      /* 3. Saltar la pantalla de presentación y abrir el mapa inmediatamente. */
+      enterMapDirectly();
+      var publicHeader=document.getElementById('siteHeader');
+      var publicHome=document.getElementById('preMapContent');
+      var mapPage=document.getElementById('mapPage');
+      if(publicHeader)publicHeader.style.display='none';
+      if(publicHome)publicHome.style.display='none';
+      if(mapPage)mapPage.classList.remove('hidden');
+
+      /* Mantener el gate oculto aunque otro componente intente mostrarlo. */
+      try{
+        var devGateObserver=new MutationObserver(function(){purgeAuthGate();});
+        devGateObserver.observe(document.body,{childList:true,subtree:true});
+      }catch(_){}
+
+      setTimeout(function(){
+        try{map.invalidateSize();}catch(_){}
+        try{recenterImmediate();}catch(_){}
+        if(typeof MM_scheduleMapResize==='function')MM_scheduleMapResize();
+      },300);
+      return;
+    }
+    /* ============================================ */
+
+    /* Modo normal (sin cambios) */
+    var wasOnMap=false;
+    try{wasOnMap=sessionStorage.getItem('mm_wasOnMap')==='1';}catch(_){}
+
+    var hasRememberedSession=!!(authState&&authState.isLoggedIn&&authState.user&&!authState.user.isGuest&&authState.user.rememberDevice===true);
+
+    if(hasRememberedSession){
+      try{authGate.classList.add('hidden');}catch(_){}
+      updateAuthUI&&updateAuthUI();
+      updateGuestControls&&updateGuestControls();
+      if(wasOnMap){enterMapDirectly();}
+      setTimeout(function(){
+        if(typeof checkMembershipExpiryAlert==='function')checkMembershipExpiryAlert();
+        if(!myNick){if(typeof askForNick==='function')askForNick();}
+        else if(typeof continueAfterAuth==='function')continueAfterAuth();
+      },400);
+    }else{
+      /* En modo normal se conserva la portada pública. El gate de acceso
+         solo se abre cuando el usuario pulsa "Acceder al mapa". */
+      try{
+        if(authGate){
+          authGate.classList.add('hidden');
+          authGate.classList.remove('fading');
+          authGate.removeAttribute('style');
+        }
+      }catch(_){}
+      authState={isLoggedIn:false,user:null};
+    }
+  };
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',start,{once:true});
+  }else{
+    start();
+  }
+})();
 (function initFloatingStack(){
   const stack=document.getElementById('floatingStack');
   const toggleBtn=document.getElementById('floatingToggleBtn');
@@ -7312,12 +8377,101 @@ if(kioskParam==='1'){
       const anyModalOpen=document.querySelector(
         '.modal-overlay.visible, .chat-panel.visible, .kiosk-screen.visible, .alert-overlay.visible, .nick-modal.visible, .login-modal.visible'
       );
-      if(!anyModalOpen && !stack.classList.contains('collapsed'))setCollapsed(true);
+      if(!anyModalOpen&&!stack.classList.contains('collapsed'))setCollapsed(true);
     },450);
   });
   window.addEventListener('resize',function(){
     if(!isMobileLayout())setCollapsed(false);
   });
+})();
+
+/* Refuerzo final del enrutamiento de entrada.
+   Se ejecuta después de los inicializadores anteriores para evitar que un
+   arranque previo vuelva a mostrar el gate o deje visible la portada en ?dev=1. */
+(function MM_enforceLaunchMode(){
+  function applyLaunchMode(){
+    var params;
+    try{params=new URLSearchParams(window.location.search);}catch(_){params={get:function(){return null;}};}
+    var kiosk=params.get('kiosk')==='1';
+    var dev=params.get('dev')==='1';
+    var gate=document.getElementById('authGate');
+
+    if(kiosk){
+      try{if(typeof startKioskMode==='function')startKioskMode();}catch(err){
+        try{log('No se pudo iniciar el modo kiosco: '+(err&&err.message||err),'err');}catch(_){}
+      }
+      return;
+    }
+
+    if(dev){
+      DEV_MODE=true;
+      /* Perfil temporal de desarrollo, no persistido en localStorage. */
+      var expectedEmail=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'developer@local.invalid').trim().toLowerCase();
+      var currentUser=authState&&authState.user;
+      var currentEmail=String(currentUser&&(currentUser.email||currentUser.correo)||'').trim().toLowerCase();
+      if(!(authState&&authState.isLoggedIn&&currentUser&&!currentUser.isGuest&&currentEmail===expectedEmail)){
+        var devId='dev_'+(expectedEmail.replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'local');
+        authState={isLoggedIn:true,user:{id:devId,nick:'Desarrollador',email:expectedEmail,isGuest:false,rememberDevice:false,provider:'dev'}};
+        try{myUserId=devId;}catch(_){}
+        try{myNick='Desarrollador';}catch(_){}
+      }
+      if(gate){
+        gate.classList.add('hidden');
+        gate.classList.remove('fading');
+        gate.style.setProperty('display','none','important');
+        gate.style.setProperty('visibility','hidden','important');
+        gate.style.setProperty('pointer-events','none','important');
+        gate.setAttribute('aria-hidden','true');
+      }
+      try{window.showGate=function(){};}catch(_){}
+      try{showGate=function(){};}catch(_){}
+      try{if(typeof enableDevMode==='function')enableDevMode();}catch(_){}
+      try{if(typeof updateAuthUI==='function')updateAuthUI();}catch(_){}
+      try{if(typeof updateGuestControls==='function')updateGuestControls();}catch(_){}
+      document.body.classList.add('dev-on','dev-qr-enabled');
+
+      var header=document.getElementById('siteHeader');
+      var publicContent=document.getElementById('preMapContent');
+      var mapPage=document.getElementById('mapPage');
+      if(header)header.style.setProperty('display','none','important');
+      if(publicContent)publicContent.style.setProperty('display','none','important');
+      if(mapPage){mapPage.classList.remove('hidden');mapPage.style.setProperty('display','block','important');}
+      try{sessionStorage.setItem('mm_wasOnMap','1');}catch(_){}
+      function refreshMapLayout(){
+        try{if(map&&typeof map.invalidateSize==='function')map.invalidateSize(true);}catch(_){}
+        try{if(typeof recenterImmediate==='function')recenterImmediate();}catch(_){}
+        try{if(typeof MM_scheduleMapResize==='function')MM_scheduleMapResize();}catch(_){}
+      }
+      refreshMapLayout();
+      setTimeout(refreshMapLayout,250);
+      setTimeout(refreshMapLayout,900);
+      return;
+    }
+
+    /* Modo normal: siempre mostrar la portada al abrir/recargar la página.
+       El gate solo se abre desde el botón "Acceder al mapa". */
+    if(gate){
+      gate.classList.add('hidden');
+      gate.classList.remove('fading');
+      gate.style.removeProperty('display');
+      gate.style.removeProperty('visibility');
+      gate.style.removeProperty('pointer-events');
+      gate.removeAttribute('aria-hidden');
+    }
+    var normalHeader=document.getElementById('siteHeader');
+    var normalHome=document.getElementById('preMapContent');
+    var normalMap=document.getElementById('mapPage');
+    if(normalHeader)normalHeader.style.removeProperty('display');
+    if(normalHome)normalHome.style.removeProperty('display');
+    if(normalMap){normalMap.classList.add('hidden');normalMap.style.removeProperty('display');}
+    try{sessionStorage.removeItem('mm_wasOnMap');}catch(_){}
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',applyLaunchMode,{once:true});
+  }else{
+    applyLaunchMode();
+  }
 })();
 </script>
 </body>
