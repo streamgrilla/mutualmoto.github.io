@@ -16,7 +16,7 @@
 :root{--primary:#2c3e50;--accent:#e74c3c;--dev:#9b59b6;--sheets:#0f9d58;--chat:#16a085;--moto:#d35400;--incident:#e67e22;--sponsor:#f39c12;--coin:#f1c40f;--coin-dark:#d4ac0d}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
-#authGate{position:fixed;inset:0;background:linear-gradient(135deg,#1a252f,#2c3e50 60%,#34495e);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1.5rem;transition:opacity .4s}
+#authGate{position:fixed;inset:0;background:linear-gradient(135deg,#1a252f,#2c3e50 60%,#34495e);z-index:99999;display:flex;align-items:center;justify-content:center;padding:max(1rem,env(safe-area-inset-top)) max(1rem,env(safe-area-inset-right)) max(1rem,env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-left));overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;transition:opacity .4s}
 #authGate.hidden{display:none}
 #authGate.fading{opacity:0;pointer-events:none}
 .gate-card{background:#fff;border-radius:20px;padding:2.5rem 2rem;max-width:460px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.5);text-align:center}
@@ -26,12 +26,20 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 .register-header{background:var(--moto);color:#fff;padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem}
 .register-header h3{font-size:1rem;display:flex;align-items:center;gap:.45rem}
 .register-close{background:rgba(255,255,255,.16);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem}
-.register-iframe{width:100%;height:100%;border:0;display:block;background:#fff}
+.register-iframe{flex:1 1 auto;min-height:0;width:100%;height:auto;border:0;display:block;background:#fff}
+.form-context-note{flex:0 0 auto;max-height:25vh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:.7rem .9rem;background:#fff8ee;border-bottom:1px solid #f0d7bd;color:#46515a;font-size:.77rem;line-height:1.45;text-align:left}
+.form-context-note p+p{margin-top:.45rem}
+.form-context-title{display:block;color:#8f3c0c;font-size:.82rem;font-weight:800;margin-bottom:.35rem}
+.association-iframe{flex:1 1 auto;min-height:0;width:100%;height:auto;border:0;display:block;background:#fff}
+.association-form-unavailable{flex:1 1 auto;min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.65rem;padding:1.5rem;text-align:center;background:#f8f9fa;color:#59636b;font-size:.88rem;line-height:1.5}
+.association-form-unavailable i{font-size:1.7rem;color:var(--moto)}
+.association-form-unavailable strong{color:#2c3e50;max-width:520px}
+.association-form-unavailable span{max-width:520px}
 .header-auth-actions{display:flex;align-items:center;gap:.5rem;margin-left:auto}
 .header-auth-btn{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:9px;padding:.45rem .75rem;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem}
 .header-auth-btn:hover{background:rgba(255,255,255,.16)}
 .header-auth-btn.register{background:var(--moto);border-color:var(--moto)}
-@media(max-width:600px){.register-box{height:94vh;width:98vw}.register-header{padding:.65rem .75rem}header{padding-left:1rem;padding-right:1rem}.header-auth-actions{width:100%;justify-content:center;margin-left:0}}
+@media(max-width:600px){.register-box{height:94vh;height:94dvh;width:98vw}.register-header{padding:.65rem .75rem}header{padding-left:1rem;padding-right:1rem}.header-auth-actions{width:100%;justify-content:center;margin-left:0}.form-context-note{max-height:28vh;padding:.6rem .7rem;font-size:.72rem;line-height:1.4}.form-context-title{font-size:.78rem}.association-box{height:94vh;height:94dvh;width:98vw}.association-header{gap:.6rem;padding:.65rem .75rem}.association-header h3{font-size:.9rem}.association-form-unavailable{padding:1rem;font-size:.82rem}}
 .gate-logo{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#d35400,#e67e22);color:#fff;display:flex;align-items:center;justify-content:center;font-size:44px;margin:0 auto 1.2rem;box-shadow:0 8px 24px rgba(211,84,0,.45)}
 .gate-card h1{font-size:1.6rem;color:#2c3e50;margin-bottom:.4rem;font-weight:800}
 .gate-card h2{font-size:1rem;color:#7f8c8d;font-weight:500;margin-bottom:1.5rem}
@@ -53,6 +61,28 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 .gate-guest-btn:hover{background:#f5f5f5;border-color:#999}
 .gate-register-btn,.profile-register-btn{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;padding:.78rem 1rem;border-radius:10px;border:1px solid #d9e2e7;background:#f8fbfc;color:var(--moto);font-size:.9rem;font-weight:700;text-decoration:none;box-sizing:border-box;margin-bottom:.75rem}
 .gate-register-btn:hover,.profile-register-btn:hover{background:#eef7f5;border-color:#9bd4c7}
+@media(max-width:600px), (max-height:620px) and (pointer:coarse){
+  #authGate{align-items:flex-start;justify-content:center;padding: max(.65rem,env(safe-area-inset-top)) max(.65rem,env(safe-area-inset-right)) max(.65rem,env(safe-area-inset-bottom)) max(.65rem,env(safe-area-inset-left));}
+  #authGate .gate-card{margin:auto;padding:1.15rem 1rem;border-radius:16px;max-width:440px;box-shadow:0 16px 42px rgba(0,0,0,.35)}
+  .gate-logo{width:62px;height:62px;font-size:30px;margin:0 auto .7rem;}
+  .gate-card h1{font-size:1.25rem;margin-bottom:.2rem;}
+  .gate-card h2{font-size:.92rem;margin-bottom:.75rem;}
+  .gate-card p.gate-intro{font-size:.82rem;line-height:1.42;margin-bottom:.85rem;}
+  .gate-login-field{font-size:.68rem;margin:.55rem 0 .25rem;}
+  .gate-login-input{font-size:16px;padding:.75rem .75rem;min-height:46px;}
+  .password-toggle-btn{padding:.6rem .55rem;font-size:.72rem;}
+  .gate-remember{margin:.65rem 0 .8rem;font-size:.8rem;}
+  .gate-btn{min-height:48px;padding:.8rem .8rem;font-size:.92rem;margin-bottom:.55rem;}
+  .gate-register-btn,.gate-guest-btn{min-height:46px;padding:.68rem .75rem;font-size:.82rem;margin-bottom:.55rem;}
+  .gate-divider{margin:.35rem 0 .65rem;}
+  .gate-footer{font-size:.7rem;line-height:1.4;margin-top:.8rem;padding-top:.7rem;}
+}
+@media(max-width:360px) and (pointer:coarse){
+  #authGate .gate-card{padding:1rem .8rem;}
+  .gate-card p.gate-intro{font-size:.78rem;}
+  .password-input-row{gap:.3rem;}
+  .password-toggle-btn{font-size:.68rem;padding:.55rem .4rem;}
+}
 .profile-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:4500;display:none;align-items:center;justify-content:center;padding:1rem;overflow:auto}
 .profile-modal.visible{display:flex}
 .profile-box{background:#fff;border-radius:20px;padding:1.5rem;max-width:520px;width:100%;box-shadow:0 24px 70px rgba(0,0,0,.4);text-align:center}
@@ -79,7 +109,23 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 .kiosk-actions button{padding:.7rem 1.2rem;border-radius:10px;border:none;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;color:#fff}
 .kiosk-actions #kioskRefreshBtn{background:#16a085}
 .kiosk-actions #kioskExitBtn{background:#95a5a6}
-.kiosk-footer{font-size:.72rem;color:#999;font-style:italic}
+ .kiosk-footer{font-size:.72rem;color:#999;font-style:italic}
+.kiosk-auth-gate{position:fixed;inset:0;z-index:100005;display:none;align-items:center;justify-content:center;padding:max(1rem,env(safe-area-inset-top)) max(1rem,env(safe-area-inset-right)) max(1rem,env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-left));background:linear-gradient(135deg,#102b26,#0d6b58 60%,#16a085);overflow-y:auto;overscroll-behavior:contain}
+.kiosk-auth-gate.visible{display:flex}
+.kiosk-auth-card{width:min(460px,100%);margin:auto;background:#fff;border-radius:20px;padding:clamp(1rem,4vw,2rem);box-shadow:0 24px 70px rgba(0,0,0,.4);text-align:center}
+.kiosk-auth-card .kiosk-logo{width:70px;height:70px;font-size:34px;margin-bottom:.7rem}
+.kiosk-auth-card h2{font-size:clamp(1.15rem,4vw,1.5rem);margin-bottom:.4rem;color:#2c3e50}
+.kiosk-auth-card p{font-size:.88rem;line-height:1.45;color:#687477;margin-bottom:1rem}
+.kiosk-auth-card label{display:block;text-align:left;font-size:.75rem;font-weight:800;color:#566;margin:.7rem 0 .3rem;text-transform:uppercase;letter-spacing:.35px}
+.kiosk-auth-card input{width:100%;min-width:0;padding:.85rem .9rem;border:1px solid #d5dfdf;border-radius:10px;font:inherit;font-size:16px;background:#fff;color:#253238;outline:none}
+.kiosk-auth-card input:focus{border-color:#16a085;box-shadow:0 0 0 3px rgba(22,160,133,.15)}
+.kiosk-auth-submit,.kiosk-auth-exit{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;min-height:48px;padding:.8rem 1rem;border:0;border-radius:11px;font:inherit;font-weight:800;cursor:pointer;margin-top:.65rem;touch-action:manipulation}
+.kiosk-auth-submit{background:#16a085;color:#fff}
+.kiosk-auth-exit{background:#eef2f2;color:#526060}
+.kiosk-auth-submit:disabled{opacity:.6;cursor:wait}
+.kiosk-auth-error{display:none;text-align:left;margin:.7rem 0;padding:.7rem .8rem;border-radius:9px;color:#922b21;background:#fdecea;border:1px solid #f5b7b1;font-size:.82rem;line-height:1.4;overflow-wrap:anywhere}
+.kiosk-auth-error.visible{display:block}
+@media(max-width:380px){.kiosk-auth-card{border-radius:15px;padding:1rem}.kiosk-auth-card .kiosk-logo{width:58px;height:58px;font-size:28px}.kiosk-auth-submit,.kiosk-auth-exit{min-height:46px}}
 .kiosk-form{display:none;margin-bottom:1rem;text-align:left}
 .kiosk-form.visible{display:block}
 .kiosk-form label{display:block;font-size:.75rem;font-weight:700;color:#666;text-transform:uppercase;margin:.6rem 0 .3rem}
@@ -174,17 +220,19 @@ body.dev-on .place-card.custom .delete-btn{display:flex}
 .leaflet-container{background:transparent!important}
 .leaflet-tile-pane{display:none!important}
 .leaflet-marker-pane,.leaflet-popup-pane,.leaflet-overlay-pane{will-change:transform}
-.waze-loading{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(44,62,80,.92);color:#fff;padding:.4rem 1rem;border-radius:20px;font-size:.72rem;font-weight:600;z-index:3;opacity:0;transition:opacity .15s;pointer-events:none;display:flex;align-items:center;gap:.5rem;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.waze-loading{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(44,62,80,.92);color:#fff;padding:.35rem .8rem;border-radius:20px;font-size:.7rem;font-weight:600;z-index:3;opacity:0;transition:opacity .15s;pointer-events:none;display:flex;align-items:center;gap:.45rem;box-shadow:0 3px 10px rgba(0,0,0,.25);white-space:nowrap;max-width:calc(100% - 24px)}
 .waze-loading.visible{opacity:1}
 .waze-loading i{animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-body.adding-mode #map{cursor:crosshair!important}
+body.adding-mode #map,body.incident-pick-mode #map{cursor:crosshair!important}
 body.centering-lock #map-wrapper,
 body.centering-lock #places-list{
   pointer-events:none!important;
   user-select:none;
   -webkit-user-select:none;
 }
+body.centering-lock #map-wrapper{cursor:progress!important;}
+body.centering-lock #places-list{cursor:progress!important;}
 body.centering-lock #places-list{
   opacity:.78;
   transition:opacity .18s ease-out;
@@ -714,6 +762,21 @@ footer a{color:#fff;text-decoration:underline}
 .buzon-item-time{font-size:.7rem;color:#999;white-space:nowrap}
 .buzon-item-body{font-size:.85rem;color:#444;line-height:1.4;word-break:break-word}
 .buzon-item-author{font-size:.72rem;color:#888;font-style:italic;margin-top:.35rem;border-top:1px dashed #ecf0f1;padding-top:.3rem}
+
+.mailbox-tabs{display:flex;gap:.4rem;margin:.4rem 0 .7rem;flex-wrap:wrap}
+.mailbox-tab{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;flex:1 1 150px;min-height:40px;padding:.55rem .7rem;border:1px solid #d7dce1;border-radius:8px;background:#f5f6f7;color:#45515c;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;touch-action:manipulation}
+.mailbox-tab.active{background:#8e44ad;border-color:#8e44ad;color:#fff}
+.mailbox-tab-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:10px;background:#e74c3c;color:#fff;font-size:.68rem;font-weight:800}
+.dev-inbox-attachment{display:inline-flex;align-items:center;gap:.4rem;margin-top:.5rem;padding:.45rem .65rem;border-radius:7px;background:#eaf5f5;color:#11645e;text-decoration:none;font-size:.78rem;font-weight:700;overflow-wrap:anywhere;max-width:100%}
+.dev-inbox-item{background:#fff;border:1px solid #e1e6e9;border-left:4px solid #16a085;border-radius:8px;padding:.65rem .75rem;margin-bottom:.55rem;overflow-wrap:anywhere}
+.dev-inbox-item.outgoing{border-left-color:#8e44ad;background:#fcf8ff}
+.dev-inbox-item .buzon-item-body{white-space:normal}
+#devInboxCompose textarea:focus,#devInboxAttachment:focus,#devMessageDelivery:focus,#devMessageRecipient:focus{outline:2px solid rgba(142,68,173,.2);outline-offset:1px}
+html.mm-dev-requested #mapPage #sidebar{position:relative!important;z-index:300!important;pointer-events:auto!important}
+html.mm-dev-requested #mapPage .sidebar-quick-actions,html.mm-dev-requested #mapPage .sidebar-action-btn{position:relative;z-index:301;pointer-events:auto!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+html.mm-dev-requested #mobileMenuOverlay{display:none!important;pointer-events:none!important}
+@media(max-width:900px) and (orientation:portrait) and (pointer:coarse){html.mm-dev-requested #mapPage #sidebar{position:fixed!important;z-index:2100!important}}
+
 .coins-modal .modal-box{max-width:440px}
 .coins-modal .coins-recipient{display:flex;align-items:center;gap:.65rem;padding:.7rem;background:#fef9e7;border-left:4px solid var(--coin);border-radius:8px;margin-bottom:.9rem}
 .coins-modal .coins-recipient .cr-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#b7950b,#f1c40f);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0}
@@ -904,6 +967,53 @@ html, body { width:100%; min-width:0; }
 }
 #devUsersQrBtn { display:none !important; }
 body.dev-on.dev-qr-enabled #devUsersQrBtn { display:flex !important; }
+html.mm-dev-requested #siteHeader,
+html.mm-dev-requested #preMapContent,
+html.mm-dev-requested #authGate,
+html.mm-dev-requested #loading { display:none !important; }
+html.mm-dev-requested #mapPage,
+html.mm-dev-requested #mapPage.hidden {
+  display:block !important; visibility:visible !important; opacity:1 !important;
+  position:fixed !important; inset:0 !important; z-index:50 !important;
+  width:100vw !important; height:100vh !important; height:100dvh !important;
+  min-height:0 !important; margin:0 !important; padding:0 !important; overflow:hidden !important;
+}
+html.mm-dev-requested #mapPage > .container {
+  position:absolute !important; inset:0 !important; display:flex !important;
+  width:100% !important; height:100% !important; min-height:0 !important; overflow:hidden !important;
+}
+html.mm-dev-requested #mapPage #map-wrapper {
+  position:relative !important; flex:1 1 0 !important; width:auto !important;
+  min-width:0 !important; min-height:0 !important; height:100% !important; overflow:hidden !important;
+}
+html.mm-dev-requested #mapPage #map {
+  display:block !important; visibility:visible !important; opacity:1 !important;
+  position:absolute !important; inset:0 !important; width:100% !important; height:100% !important;
+}
+html.mm-dev-requested .dev-only { display:flex !important; }
+html.mm-dev-requested #devUsersQrBtn { display:flex !important; }
+
+.dev-message-modal{position:fixed;inset:0;z-index:13000;display:none;align-items:center;justify-content:center;padding:1rem;background:rgba(15,10,22,.72);overflow:auto}
+.dev-message-modal.visible{display:flex}
+.dev-message-box{width:min(560px,96vw);max-height:92vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.42)}
+.dev-message-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.9rem 1rem;background:linear-gradient(135deg,#512e5f,#8e44ad);color:#fff}
+.dev-message-head h3{font-size:1rem;line-height:1.3}
+.dev-message-close{width:34px;height:34px;flex:0 0 auto;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;cursor:pointer}
+.dev-message-body{padding:1rem}
+.dev-message-body p{margin-bottom:.75rem;color:#666;font-size:.84rem;line-height:1.45}
+#devMessageText{display:block;width:100%;min-height:150px;resize:vertical;padding:.8rem;border:1px solid #d7c3e2;border-radius:9px;font:inherit;line-height:1.45;outline:none}
+#devMessageText:focus{border-color:#8e44ad;box-shadow:0 0 0 3px rgba(142,68,173,.15)}
+.dev-message-status{min-height:1.3rem;margin:.6rem 0;font-size:.8rem;color:#7d3c98}
+.dev-message-actions{display:flex;justify-content:flex-end;gap:.5rem;flex-wrap:wrap}
+.dev-message-actions button{border:0;border-radius:8px;padding:.65rem .9rem;font:inherit;font-size:.86rem;font-weight:700;cursor:pointer}
+#devMessageCancel{background:#ecf0f1;color:#444}
+#devMessageSend{background:#8e44ad;color:#fff}
+#devMessageSend:disabled{opacity:.55;cursor:not-allowed}
+
+.chat-msg-incident.chat-msg-developer{background:linear-gradient(135deg,#fbf5ff,#f3e5f5)!important;border:2px solid #8e44ad!important;color:#432451!important;max-width:95%!important}
+.chat-msg-incident.chat-msg-developer .inc-title{color:#7d3c98!important;font-size:.88rem;font-weight:800;letter-spacing:.25px}
+.chat-msg-incident.chat-msg-developer .inc-text{color:#432451!important;font-size:.86rem;line-height:1.4;white-space:normal;overflow-wrap:anywhere}
+.chat-msg-incident.chat-msg-developer .msg-time{color:#7d3c98!important}
 .dev-users-qr-modal {
   display:none;
   position:fixed;
@@ -953,7 +1063,155 @@ body.dev-on.dev-qr-enabled #devUsersQrBtn { display:flex !important; }
   .dev-users-qr-content { grid-template-columns:1fr; }
   #devUsersQrCode { min-height:240px; }
 }
+@media (max-width:900px) and (orientation:portrait) and (pointer:coarse), (max-width:600px), (max-height:620px) and (pointer:coarse) {
+  #authGate{align-items:flex-start;justify-content:center;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:max(.65rem,env(safe-area-inset-top)) max(.65rem,env(safe-area-inset-right)) max(.65rem,env(safe-area-inset-bottom)) max(.65rem,env(safe-area-inset-left));}
+  #authGate .gate-card{margin:auto;padding:1.15rem 1rem;border-radius:16px;max-width:440px;box-shadow:0 16px 42px rgba(0,0,0,.35);}
+  #authGate .gate-logo{width:62px;height:62px;font-size:30px;margin:0 auto .7rem;}
+  #authGate .gate-card h1{font-size:1.25rem;margin-bottom:.2rem;}
+  #authGate .gate-card h2{font-size:.92rem;margin-bottom:.75rem;}
+  #authGate .gate-card p.gate-intro{font-size:.82rem;line-height:1.42;margin-bottom:.85rem;}
+  #authGate .gate-login-field{font-size:.68rem;margin:.55rem 0 .25rem;}
+  #authGate .gate-login-input{font-size:16px;padding:.75rem .75rem;min-height:46px;}
+  #authGate .password-toggle-btn{padding:.6rem .55rem;font-size:.72rem;}
+  #authGate .gate-remember{margin:.65rem 0 .8rem;font-size:.8rem;}
+  #authGate .gate-btn{min-height:48px;padding:.8rem .8rem;font-size:.92rem;margin-bottom:.55rem;}
+  #authGate .gate-register-btn,#authGate .gate-guest-btn{min-height:46px;padding:.68rem .75rem;font-size:.82rem;margin-bottom:.55rem;}
+  #authGate .gate-divider{margin:.35rem 0 .65rem;}
+  #authGate .gate-footer{font-size:.7rem;line-height:1.4;margin-top:.8rem;padding-top:.7rem;}
+}
+@media(max-width:360px) and (pointer:coarse){
+  #authGate .gate-card{padding:1rem .8rem;}
+  #authGate .gate-card p.gate-intro{font-size:.78rem;}
+  #authGate .password-input-row{gap:.3rem;}
+  #authGate .password-toggle-btn{font-size:.68rem;padding:.55rem .4rem;}
+}
+
+@media (max-width:900px) and (orientation:portrait) and (pointer:coarse), (max-width:600px), (max-height:620px) and (pointer:coarse) {
+  #authGate .gate-card { width:100%; max-width:440px; }
+  #authGate .gate-btn,
+  #authGate .gate-register-btn,
+  #authGate .gate-guest-btn {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:.55rem;
+    width:100%;
+    min-width:0;
+    min-height:50px;
+    padding:.78rem .8rem;
+    border-radius:12px;
+    font-size:.9rem;
+    line-height:1.25;
+    text-align:center;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #authGate .gate-btn i,
+  #authGate .gate-register-btn i,
+  #authGate .gate-guest-btn i { flex:0 0 auto; }
+  #authGate .gate-btn:hover,
+  #authGate .gate-register-btn:hover,
+  #authGate .gate-guest-btn:hover { transform:none; }
+  #authGate .gate-btn:active,
+  #authGate .gate-register-btn:active,
+  #authGate .gate-guest-btn:active { transform:scale(.985); filter:brightness(.97); }
+  #authGate .password-input-row { display:flex; align-items:stretch; gap:.4rem; width:100%; }
+  #authGate .password-input-row .gate-login-input { flex:1 1 0; width:1%; min-width:0; }
+  #authGate .password-toggle-btn {
+    flex:0 0 auto;
+    max-width:40%;
+    min-height:46px;
+    padding:.6rem .55rem;
+    font-size:.78rem;
+    line-height:1.2;
+    white-space:normal;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+}
+@media (max-width:380px) and (pointer:coarse) {
+  #authGate .gate-card { padding:1rem .75rem; }
+  #authGate .gate-btn,
+  #authGate .gate-register-btn,
+  #authGate .gate-guest-btn { font-size:.86rem; padding:.72rem .65rem; }
+  #authGate .password-input-row { flex-direction:column; gap:.35rem; }
+  #authGate .password-input-row .gate-login-input { width:100%; flex:1 1 auto; }
+  #authGate .password-toggle-btn { width:100%; max-width:none; min-height:44px; }
+}
+
+@media (max-width:900px) and (orientation:portrait) and (pointer:coarse), (max-width:600px), (max-height:620px) and (pointer:coarse) {
+  #siteHeader {
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    justify-content:center;
+    gap:.65rem;
+    padding:calc(.75rem + env(safe-area-inset-top)) max(.65rem,env(safe-area-inset-right)) .85rem max(.65rem,env(safe-area-inset-left));
+    text-align:center;
+  }
+  #siteHeader h1 {
+    width:100%;
+    font-size:1.12rem;
+    line-height:1.2;
+    margin:0;
+  }
+  #siteHeader .header-auth-actions {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    align-items:stretch;
+    gap:.42rem;
+    width:100%;
+    margin:0;
+  }
+  #siteHeader .header-auth-btn {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:.38rem;
+    width:100%;
+    min-width:0;
+    min-height:46px;
+    padding:.55rem .42rem;
+    border-radius:10px;
+    font-size:.74rem;
+    font-weight:700;
+    line-height:1.2;
+    text-align:center;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #siteHeader .header-auth-btn i { flex:0 0 auto; }
+  #siteHeader #enterMapBtn { grid-column:1/-1; }
+  #siteHeader .header-auth-btn:hover { transform:none; }
+  #siteHeader .header-auth-btn:active { transform:scale(.985); filter:brightness(.97); }
+}
+@media (max-width:380px) {
+  #siteHeader { gap:.5rem; }
+  #siteHeader .header-auth-actions { gap:.35rem; }
+  #siteHeader .header-auth-btn { min-height:44px; padding:.5rem .3rem; font-size:.69rem; gap:.3rem; }
+  #siteHeader .header-auth-btn.register { font-size:.66rem; }
+}
+body.centering-lock #mapPage #map-wrapper,
+body.centering-lock #mapPage #places-list {
+  pointer-events:none!important;
+  user-select:none!important;
+  -webkit-user-select:none!important;
+}
+
 </style>
+<script>
+(function(){
+  var removeLanding=false;
+  try{removeLanding=new URLSearchParams(window.location.search).get('dev')==='1';}catch(_){}
+  window.MM_REMOVE_LANDING_IN_DEV=removeLanding;
+  window.MM_DEV_ROUTE=removeLanding;
+  if(removeLanding)document.documentElement.classList.add('mm-dev-requested');
+})();
+</script>
 </head>
 <body>
 
@@ -979,6 +1237,21 @@ body.dev-on.dev-qr-enabled #devUsersQrBtn { display:flex !important; }
 </div>
 <div class="kiosk-footer">El QR se renueva autom&aacute;ticamente cada 5 minutos.</div>
 </div>
+</div>
+
+<div id="kioskAuthGate" class="kiosk-auth-gate" aria-hidden="true">
+  <form class="kiosk-auth-card" id="kioskAuthForm" novalidate>
+    <div class="kiosk-logo"><i class="fas fa-store"></i></div>
+    <h2>Iniciar sesión de comercio</h2>
+    <p>Para abrir el modo kiosco, ingresá las credenciales que figuran en la pestaña <strong>Comercios</strong>. Las cuentas de Motoamigos no pueden iniciar el kiosco.</p>
+    <label for="kioskAuthIdentifier">Correo, usuario o identificador del comercio</label>
+    <input id="kioskAuthIdentifier" type="text" autocomplete="username" maxlength="180" required placeholder="Correo o usuario del local">
+    <label for="kioskAuthPassword">Contraseña</label>
+    <input id="kioskAuthPassword" type="password" autocomplete="current-password" maxlength="180" required placeholder="Contraseña del comercio">
+    <div class="kiosk-auth-error" id="kioskAuthError" role="alert" aria-live="polite"></div>
+    <button type="submit" class="kiosk-auth-submit" id="kioskAuthSubmit"><i class="fas fa-store"></i> Verificar e iniciar kiosco</button>
+    <button type="button" class="kiosk-auth-exit" id="kioskAuthExit"><i class="fas fa-arrow-left"></i> Salir</button>
+  </form>
 </div>
 
 <div id="resolveScreen" class="resolve-screen">
@@ -1033,7 +1306,17 @@ body.dev-on.dev-qr-enabled #devUsersQrBtn { display:flex !important; }
 <div class="association-modal" id="associationModal" aria-hidden="true">
   <div class="association-box">
     <div class="association-header"><h3><i class="fas fa-handshake"></i> Asociarte como Motoamigazo</h3><button type="button" id="associationCloseBtn" aria-label="Cerrar"><i class="fas fa-times"></i></button></div>
-    <iframe class="association-iframe" id="associationIframe" src="about:blank" title="Formulario para asociarse como Motoamigazo"></iframe>
+    <div class="form-context-note association-form-intro">
+      <strong class="form-context-title">Información para comercios Motoamigazos</strong>
+      <p>Los comercios que ofrecen servicios exclusivos a Moto Amigos se llaman Motoamigazos, los Motoamigazos, con respecto a otros comercios que figuran en el mapa, contarán con una etiqueta destacada, y encabezarán la lista de los diferentes servicios. En adición a esto, podrán publicitar una vez a la semana en nuestro buzón o en nuestra mensajería grupal.</p>
+      <p>Los Motoamigazos son los únicos usuarios que pueden canjear Moto Coins por dinero real, Los Motoamigazos efectúan un canje de un producto por Moto Coins y Mutual Moto se compromete a abonar el mismo valor en dinero real.</p>
+    </div>
+    <div class="association-form-unavailable" id="associationFormNotice" role="status">
+      <i class="fas fa-link-slash" aria-hidden="true"></i>
+      <strong>El formulario de Google Forms para Motoamigazos todavía no está vinculado en esta página.</strong>
+      <span>El texto informativo está listo, pero hace falta configurar el enlace del formulario para mostrarlo aquí.</span>
+    </div>
+    <iframe class="association-iframe" id="associationIframe" src="about:blank" title="Formulario para asociarse como Motoamigazo" style="display:none"></iframe>
   </div>
 </div>
 
@@ -1042,6 +1325,12 @@ body.dev-on.dev-qr-enabled #devUsersQrBtn { display:flex !important; }
 <div class="register-header">
 <h3><i class="fas fa-user-plus"></i> Registro de Mutual Motos</h3>
 <button type="button" class="register-close" id="registerCloseBtn" aria-label="Cerrar registro"><i class="fas fa-times"></i></button>
+</div>
+<div class="form-context-note user-registration-intro">
+  <strong class="form-context-title">Información para Motoamigos</strong>
+  <p>Toda persona que llene el formulario de ingreso, leído las bases y condiciones, y abonado el mes o la promo anual, serán considerados 'Motoamigos', cuando se acerque el momento de abonar la mensualidad, se le avisará con un anticipo de una semana, en caso de no abonar la cuota mensual, la cuenta será desactivada, no obstante, no se modificaran los valores de los puntos ni los Moto Coins, para poder gozar de los puntos, los Moto Coins y todos los servicios exclusivos, deberá abonar el mes y adjuntar el comprobante cuando la página lo solicite.</p>
+  <p>Los datos personales que se ingresan aquí se encuentran respaldados por la ley 28.255 y únicamente pueden ser utilizados por el usuario que llena el formulario. Los datos de salud ingresados por el usuario serán adjuntados a un código QR que sólo se puede mostrar a otro Motoamigo en caso de una emergencia de clase 'Riesgo de vida'.</p>
+  <p>Con el pago de la primera cuota, o la promoción anual, el Motoamigo tendrá la posibilidad de obtener una chapa colgante con el QR de sus datos y una remera personalizada en agradecimiento por la inscripción al servicio.</p>
 </div>
 <iframe class="register-iframe" src="https://docs.google.com/forms/d/e/1FAIpQLSfKPVPXGwORQ5tUylZ1Re47im4DdiepitvaN_OjzkqPNvhtYA/viewform?embedded=true" title="Formulario de inscripción" loading="lazy">Cargando…</iframe>
 </div>
@@ -1098,7 +1387,14 @@ body.dev-on.dev-qr-enabled #devUsersQrBtn { display:flex !important; }
         <div class="reward-card"><div class="reward-icon"><i class="fas fa-car-burst"></i></div><strong>Grave</strong><span><b>30 puntos</b> + <b>3 Moto Coins</b></span></div>
         <div class="reward-card"><div class="reward-icon"><i class="fas fa-heart-pulse"></i></div><strong>Riesgo de vida</strong><span><b>50 puntos</b> + <b>5 Moto Coins</b></span></div>
       </div>
-      <div class="guide-note"><i class="fas fa-circle-info"></i> Al resolverse el incidente, la alerta se retira de la sala grupal y del mapa. La recompensa se acredita a la persona que escaneó el QR del incidente.</div>
+      <div class="guide-note guide-note-rewards">
+        <i class="fas fa-circle-info" aria-hidden="true"></i>
+        <div class="guide-note-content">
+          <p>Al resolverse el incidente, la alerta se retira de la sala grupal y del mapa. La recompensa se acredita a la persona que escaneó el QR del incidente.</p>
+          <p>Cada Moto Coin equivale a $1 ARS, no existe posibilidad de canjear esta moneda virtual por dinero real para los Motoamigos. Por cada 10.000 puntos que se acumulen, un Motoamigo sube de nivel, en esta subida de nivel, Mutual Moto ofrecerá un producto de temporada a seleccionar y retirar por algún local Motoamigazo aderido a Mutual Moto.</p>
+          <p>Estos puntos y Moto Coins son otorgados a aquellos usuarios que efectúen una acción solidaria para con otro Motoamigo.</p>
+        </div>
+      </div>
     </div>
   </section>
   <section class="pre-map-section" id="preSection-contacts">
@@ -1113,10 +1409,30 @@ body.dev-on.dev-qr-enabled #devUsersQrBtn { display:flex !important; }
   </section>
 </div>
 
+<script>
+(function(){
+  if(window.MM_REMOVE_LANDING_IN_DEV!==true)return;
+  var header=document.getElementById('siteHeader');
+  var landing=document.getElementById('preMapContent');
+  if(header&&header.parentNode)header.parentNode.removeChild(header);
+  if(landing&&landing.parentNode)landing.parentNode.removeChild(landing);
+})();
+</script>
+
 <div id="mapPage" class="map-page hidden">
+<script>
+(function(){
+  if(window.MM_REMOVE_LANDING_IN_DEV!==true)return;
+  var root=document.getElementById('mapPage');
+  if(!root)return;
+  root.classList.remove('hidden');
+  root.style.setProperty('display','block','important');
+  root.style.setProperty('visibility','visible','important');
+  root.style.setProperty('opacity','1','important');
+})();
+</script>
 <button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-label="Abrir menú" aria-expanded="false"><i class="fas fa-bars"></i></button>
 <div id="mobileMenuOverlay" class="mobile-menu-overlay" aria-hidden="true"></div>
-
 <div class="container">
 <aside id="sidebar">
 <div class="level-panel" id="levelPanel">
@@ -1153,6 +1469,7 @@ body.dev-on.dev-qr-enabled #devUsersQrBtn { display:flex !important; }
 <button class="sidebar-action-btn dev-only" id="devClearBtn"><i class="fas fa-trash"></i> Borrar todo</button>
 <button class="sidebar-action-btn dev-only" id="devUsersQrBtn" type="button"><i class="fas fa-qrcode"></i> QR de usuarios</button>
 <button class="sidebar-action-btn dev-only" id="devClearIncidentsBtn" type="button"><i class="fas fa-broom"></i> Limpiar incidentes guardados</button>
+<button class="sidebar-action-btn dev-only" id="devMessageOpenBtn" type="button" data-open-dev-message><i class="fas fa-bullhorn"></i> Mensaje del desarrollador</button>
 </div>
 <h2><i class="fas fa-triangle-exclamation"></i> Siniestros en ruta</h2>
 <div class="incidents-panel">
@@ -1344,7 +1661,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <input class="login-password-input" type="password" id="loginPasswordInput" placeholder="••••••••••••" autocomplete="current-password" maxlength="150">
 <button type="button" class="password-toggle-btn" data-password-target="loginPasswordInput"><i class="fas fa-eye"></i> Mostrar</button>
 </div>
-<div class="login-id-hint">La cuenta se verifica con los datos publicados en la planilla de usuarios.</div>
+<div class="login-id-hint">La cuenta se verifica con la pestaña Usuarios de Google Sheets.</div>
 <label style="display:flex;align-items:center;gap:.55rem;text-align:left;margin:.75rem 0;font-size:.82rem;color:#666;cursor:pointer"><input type="checkbox" id="loginRememberInput" style="width:17px;height:17px;accent-color:var(--moto);cursor:pointer"><span>Recu&eacute;rdame en este dispositivo</span></label>
 <div class="login-error" id="loginError" style="display:none;color:#c0392b;font-size:.8rem;margin:.6rem 0;text-align:left"></div>
 <button class="primary-btn moto" id="loginMutualBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n</button>
@@ -1558,7 +1875,12 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="modal-overlay buzon-modal" id="buzonModal">
 <div class="modal-box">
 <h3><i class="fas fa-envelope"></i> Buz&oacute;n</h3>
-<p>Mensajes del equipo de desarrollo: eventos, mejoras del servicio, novedades.</p>
+<p>Consult&aacute; anuncios p&uacute;blicos y mensajes privados del desarrollador. Tambi&eacute;n pod&eacute;s enviarle consultas o comprobantes adjuntos.</p>
+<div class="mailbox-tabs" role="tablist" aria-label="Secciones del buz&oacute;n">
+<button type="button" class="mailbox-tab active" id="buzonTabPublic" role="tab" aria-selected="true"><i class="fas fa-bullhorn"></i> Buz&oacute;n p&uacute;blico</button>
+<button type="button" class="mailbox-tab" id="buzonTabPrivate" role="tab" aria-selected="false"><i class="fas fa-lock"></i> Mensajes privados <span id="devInboxTabBadge" class="mailbox-tab-badge" style="display:none">0</span></button>
+</div>
+<div id="buzonPublicPanel" role="tabpanel">
 <div class="buzon-list" id="buzonList"></div>
 <div id="buzonCompose" style="display:none">
 <label style="display:block;font-size:.75rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin:.7rem 0 .3rem">T&iacute;tulo</label>
@@ -1568,6 +1890,20 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <button class="primary-btn" id="buzonSendBtn" style="margin-top:.9rem;background:#c0392b"><i class="fas fa-paper-plane"></i> Enviar al buz&oacute;n</button>
 </div>
 <button class="primary-btn" id="buzonComposeToggle" style="display:none;margin-top:.6rem;background:var(--dev)"><i class="fas fa-pen"></i> Redactar mensaje (dev)</button>
+</div>
+<div id="buzonPrivatePanel" role="tabpanel" style="display:none">
+<p style="font-size:.8rem;color:#687477">Los mensajes dirigidos a tu cuenta aparecen aqu&iacute;. Pod&eacute;s responder al desarrollador y adjuntar una captura o archivo de comprobante.</p>
+<div class="buzon-list" id="devInboxList" aria-live="polite"></div>
+<div id="devInboxCompose" style="display:none;border-top:1px solid #e5e7eb;padding-top:.7rem">
+<label for="devInboxReplyText" style="display:block;font-size:.75rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin:.5rem 0 .3rem">Mensaje privado para el desarrollador</label>
+<textarea id="devInboxReplyText" maxlength="1200" placeholder="Escrib&iacute; tu consulta o aclaraci&oacute;n..." style="width:100%;padding:.6rem .7rem;border:2px solid #ddd;border-radius:8px;font-size:.9rem;font-family:inherit;outline:none;box-sizing:border-box;min-height:90px;resize:vertical"></textarea>
+<label for="devInboxAttachment" style="display:block;font-size:.75rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin:.7rem 0 .3rem">Adjuntar comprobante de Mercado Pago o archivo</label>
+<input id="devInboxAttachment" type="file" accept="image/png,image/jpeg,image/webp,application/pdf,text/plain,.eml" style="display:block;width:100%;font-size:.82rem;margin:.3rem 0 .4rem">
+<small style="display:block;color:#888;line-height:1.4">Formatos permitidos: imagen, PDF, TXT o EML. Tama&ntilde;o m&aacute;ximo: 120 KB por archivo. El sistema actual usa un broker MQTT compartido; ocult&aacute; datos bancarios sensibles antes de adjuntar comprobantes.</small>
+<div id="devInboxSendStatus" class="dev-message-status" role="status" aria-live="polite"></div>
+<button type="button" class="primary-btn" id="devInboxSendBtn" style="margin-top:.6rem;background:#16a085"><i class="fas fa-paper-plane"></i> Enviar mensaje privado</button>
+</div>
+</div>
 <button class="modal-cancel-btn" id="buzonCloseBtn" style="margin-top:.5rem">Cerrar</button>
 </div>
 </div>
@@ -1679,6 +2015,40 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
   </div>
 </div>
 
+<div class="dev-message-modal" id="devMessageModal" aria-hidden="true">
+  <div class="dev-message-box" role="dialog" aria-modal="true" aria-labelledby="devMessageTitle">
+    <div class="dev-message-head">
+      <h3 id="devMessageTitle"><i class="fas fa-bullhorn"></i> MENSAJE DEL DESARROLLADOR</h3>
+      <button class="dev-message-close" id="devMessageClose" type="button" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="dev-message-body">
+      <p>Eleg&iacute; si quer&eacute;s publicar un anuncio en el buz&oacute;n p&uacute;blico, en la mensajer&iacute;a grupal o enviar un mensaje privado a un usuario registrado en la pesta&ntilde;a Usuarios.</p>
+      <label for="devMessageDelivery" style="display:block;font-size:.75rem;font-weight:800;color:#566;margin:.2rem 0 .3rem;text-transform:uppercase">Destino del mensaje</label>
+      <select id="devMessageDelivery" style="display:block;width:100%;padding:.7rem;border:1px solid #d7c3e2;border-radius:9px;font:inherit;margin-bottom:.8rem">
+        <option value="">Seleccion&aacute; una opci&oacute;n…</option>
+        <option value="mailbox">P&uacute;blico en el buz&oacute;n</option>
+        <option value="group">P&uacute;blico en la mensajer&iacute;a grupal</option>
+        <option value="private">Privado a un Motoamigo registrado</option>
+      </select>
+      <div id="devMessageTitleWrap" style="display:none;margin-bottom:.7rem">
+        <label for="devMessageTitleInput" style="display:block;font-size:.75rem;font-weight:800;color:#566;margin:.2rem 0 .3rem;text-transform:uppercase">T&iacute;tulo del mensaje</label>
+        <input id="devMessageTitleInput" type="text" maxlength="80" placeholder="Ej: Aviso importante" style="display:block;width:100%;padding:.7rem;border:1px solid #d7c3e2;border-radius:9px;font:inherit">
+      </div>
+      <div id="devMessageRecipientWrap" style="display:none;margin-bottom:.8rem">
+        <label for="devMessageRecipient" style="display:block;font-size:.75rem;font-weight:800;color:#566;margin:.2rem 0 .3rem;text-transform:uppercase">Usuario registrado</label>
+        <select id="devMessageRecipient" style="display:block;width:100%;padding:.7rem;border:1px solid #d7c3e2;border-radius:9px;font:inherit"><option value="">Cargando usuarios…</option></select>
+        <button id="devMessageRefreshRecipients" type="button" style="margin-top:.4rem;border:0;border-radius:7px;padding:.45rem .7rem;background:#ecf0f1;color:#444;font:inherit;font-size:.78rem;cursor:pointer"><i class="fas fa-sync"></i> Actualizar usuarios</button>
+      </div>
+      <textarea id="devMessageText" maxlength="1200" placeholder="Escrib&iacute; el mensaje…"></textarea>
+      <div class="dev-message-status" id="devMessageStatus" role="status" aria-live="polite"></div>
+      <div class="dev-message-actions">
+        <button id="devMessageCancel" type="button">Cancelar</button>
+        <button id="devMessageSend" type="button"><i class="fas fa-paper-plane"></i> Enviar mensaje</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
@@ -1690,6 +2060,8 @@ const AUTH_CONFIG={requireLogin:true,mutualMotosTestMode:true,showMutualMotosLog
 const AUTH_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid=554435341&single=true&output=csv';
 const GOOGLE_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid=1742683249&single=true&output=csv';
 const SHEET_EMBED_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pubhtml?gid=1742683249&single=true&widget=true&headers=false';
+const PUBLISHED_WORKBOOK_HTML_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pubhtml';
+const COMERCIOS_CSV_URL='';
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyCH_SAEOSWf9FlZqn5bzn5gBMfW1amgFE-mcqNufDRqlB4JUqUagznht3v36CUpMje/exec';
 const NOMINATIM_URL='https://nominatim.openstreetmap.org/search';
 const GEOCODE_DELAY_MS=1200;
@@ -1743,6 +2115,11 @@ const RESOLVED_ALERTS_KEY='servicios_ba_resolved_alerts_v1';
 const RESOLVED_MAX=500;
 let mailboxMessages=[];
 let mailboxSeenTs=0;
+const MM_DEV_INBOX_KEY='servicios_ba_dev_inbox_v1_';
+const MM_DEV_INBOX_SEEN_KEY='servicios_ba_dev_inbox_seen_v1_';
+let MM_devInboxMessages=[];
+let MM_devInboxSeenTs=0;
+let MM_devInboxLoadedFor='';
 let suggestionMessages=[];
 let suggestionSeenTs=0;
 let resolvedIncidentIds=[];
@@ -1769,6 +2146,7 @@ function isMobileLayout(){
 const wazeIframeA=document.getElementById('wazeIframeA');
 const wazeIframeB=document.getElementById('wazeIframeB');
 const wazeLoading=document.getElementById('wazeLoading');
+const mapCenteringOverlay=document.getElementById('mapCenteringOverlay');
 let wazeActiveFrame='A';
 let wazeBaseCenter={lat:INITIAL_VIEW.lat,lng:INITIAL_VIEW.lng};
 let wazeBaseZoom=INITIAL_VIEW.zoom;
@@ -1779,26 +2157,48 @@ let wazeLoadCounter=0;
 let wazeIsZooming=false;
 let wazeZoomStopTimer=null;
 let wazeRefreshTimer=null;
+let mobileGestureNeedsCenter=false;
+let mobileGestureSyncTimer=null;
+const MOBILE_GESTURE_SETTLE_MS=180;
 
 let mapInteractionLocked=false;
 let mapLockSafetyTimer=null;
 const MAP_LOCK_SAFETY_MS=12000;
 
 function lockMapAndSidebar(){
-  if(mapInteractionLocked)return;
+  const wasLocked=mapInteractionLocked;
   mapInteractionLocked=true;
   document.body.classList.add('centering-lock');
-  try{
-    map.dragging.disable();
-    map.touchZoom.disable();
-    map.scrollWheelZoom.disable();
-    map.boxZoom.disable();
-    map.keyboard.disable();
-    if(map.zoomControl)map.zoomControl.disable();
-  }catch(_){}
+
+  if(wazeLoading)wazeLoading.classList.add('visible');
+  if(mapCenteringOverlay&&isMobileLayout()){
+    mapCenteringOverlay.classList.add('visible');
+    mapCenteringOverlay.setAttribute('aria-hidden','false');
+  }
+
+  if(!wasLocked){
+    try{
+      map.dragging.disable();
+      map.touchZoom.disable();
+      map.scrollWheelZoom.disable();
+      map.boxZoom.disable();
+      map.keyboard.disable();
+      if(map.zoomControl)map.zoomControl.disable();
+    }catch(_){}
+  }
+
   clearTimeout(mapLockSafetyTimer);
   mapLockSafetyTimer=setTimeout(function(){
-    if(mapInteractionLocked)unlockMapAndSidebar();
+    if(!mapInteractionLocked)return;
+    if(wazeReloadPending){
+      wazeLoadCounter++;
+      const pendingFrame=getInactiveFrame();
+      if(pendingFrame){pendingFrame.onload=null;pendingFrame.onerror=null;}
+      wazeReloadPending=false;
+      wazeNextBaseCenter=null;
+      wazeNextBaseZoom=null;
+    }
+    unlockMapAndSidebar();
   },MAP_LOCK_SAFETY_MS);
 }
 
@@ -1807,6 +2207,11 @@ function unlockMapAndSidebar(){
   mapLockSafetyTimer=null;
   document.body.classList.remove('centering-lock');
   mapInteractionLocked=false;
+  if(wazeLoading)wazeLoading.classList.remove('visible');
+  if(mapCenteringOverlay){
+    mapCenteringOverlay.classList.remove('visible');
+    mapCenteringOverlay.setAttribute('aria-hidden','true');
+  }
   try{
     map.dragging.enable();
     map.touchZoom.enable();
@@ -1816,7 +2221,6 @@ function unlockMapAndSidebar(){
     if(map.zoomControl)map.zoomControl.enable();
   }catch(_){}
 }
-
 function ensureUnlocked(){
   if(mapInteractionLocked)return;
   try{
@@ -2051,6 +2455,8 @@ function startPreload(keepLock){
   if(wazeReloadPending)return;
   if(!wazeBaseCenter)return;
   if(wazeBaseZoom===null)return;
+  const lockForRefresh=!!keepLock;
+  if(lockForRefresh)lockMapAndSidebar();
   const next=getInactiveFrame();
   const center=map.getCenter();
   const zoom=Math.round(map.getZoom());
@@ -2061,30 +2467,33 @@ function startPreload(keepLock){
   wazeNextBaseZoom=zoom;
   next.onload=function(){
     if(myGen!==wazeLoadCounter){
-      if(keepLock)unlockMapAndSidebar();
+      if(lockForRefresh&&!wazeReloadPending)unlockMapAndSidebar();
       return;
     }
     wazeReloadPending=false;
     next.onload=null;
     next.onerror=null;
-    commitSwap(keepLock);
+    commitSwap(lockForRefresh);
   };
   next.onerror=function(){
     if(myGen!==wazeLoadCounter){
-      if(keepLock)unlockMapAndSidebar();
+      if(lockForRefresh&&!wazeReloadPending)unlockMapAndSidebar();
       return;
     }
     wazeReloadPending=false;
     next.onload=null;
     next.onerror=null;
     wazeLoading.classList.remove('visible');
-    if(keepLock)unlockMapAndSidebar();
+    if(lockForRefresh&&!wazeReloadPending)unlockMapAndSidebar();
   };
   next.src=url;
 }
 function commitSwap(keepLock){
-  if(!wazeNextBaseCenter)return;
-  if(wazeNextBaseZoom===null)return;
+  if(!wazeNextBaseCenter||wazeNextBaseZoom===null){
+    wazeReloadPending=false;
+    if(keepLock)unlockMapAndSidebar();
+    return;
+  }
   const current=getActiveFrame();
   const next=getInactiveFrame();
   const zoom=Math.round(map.getZoom());
@@ -2109,9 +2518,30 @@ function commitSwap(keepLock){
 }
 function recenterImmediate(){
   if(wazeReloadPending)return;
+  if(!wazeBaseCenter||wazeBaseZoom===null)return;
   wazeLoading.classList.add('visible');
   lockMapAndSidebar();
   startPreload(true);
+}
+function markMobileMapInteraction(){
+  if(!isMobileLayout()||mapInteractionLocked)return;
+  mobileGestureNeedsCenter=true;
+  clearTimeout(mobileGestureSyncTimer);
+  mobileGestureSyncTimer=null;
+}
+function queueMobileWazeSyncAfterGesture(){
+  if(!isMobileLayout()||!mobileGestureNeedsCenter||mapInteractionLocked)return;
+  clearTimeout(mobileGestureSyncTimer);
+  mobileGestureSyncTimer=setTimeout(function(){
+    mobileGestureSyncTimer=null;
+    if(!isMobileLayout()||!mobileGestureNeedsCenter||mapInteractionLocked)return;
+    if(wazeReloadPending){
+      mobileGestureSyncTimer=setTimeout(queueMobileWazeSyncAfterGesture,140);
+      return;
+    }
+    mobileGestureNeedsCenter=false;
+    startPreload(true);
+  },MOBILE_GESTURE_SETTLE_MS);
 }
 function handleWazeMove(){
   if(wazeIsZooming)return;
@@ -2119,6 +2549,7 @@ function handleWazeMove(){
   const res=applyActiveTransform();
   if(!res)return;
   if(wazeReloadPending)return;
+  if(isMobileLayout())return;
   const wrap=document.getElementById('map-wrapper');
   const trigX=wrap.clientWidth*0.12;
   const trigY=wrap.clientHeight*0.12;
@@ -2126,8 +2557,14 @@ function handleWazeMove(){
   else if(Math.abs(res.dy)>trigY)startPreload(false);
 }
 map.on('move',handleWazeMove);
+map.on('dragstart',markMobileMapInteraction);
+map.on('dragend',queueMobileWazeSyncAfterGesture);
+map.on('moveend',function(){
+  if(mobileGestureNeedsCenter)queueMobileWazeSyncAfterGesture();
+});
 map.on('zoomstart',function(){
   wazeIsZooming=true;
+  if(isMobileLayout())markMobileMapInteraction();
   clearTimeout(wazeZoomStopTimer);
   const active=getActiveFrame();
   if(isMobileLayout())active.style.transition='transform 0s';
@@ -2168,18 +2605,7 @@ map.on('zoomend',function(){
     if(wazeBaseCenter&&wazeBaseZoom!==null){
       applyWazeFrameTransformMobile(active,wazeBaseCenter,wazeBaseZoom,map.getCenter(),map.getZoom());
     }
-    wazeZoomStopTimer=setTimeout(function(){
-      if(wazeBaseCenter&&wazeBaseZoom!==null){
-        const targetZoom=Math.round(map.getZoom());
-        if(targetZoom!==wazeBaseZoom){
-          if(wazeReloadPending){
-            queueDesktopWazeSync();
-          }else{
-            startPreload(false);
-          }
-        }
-      }
-    },140);
+    if(mobileGestureNeedsCenter)queueMobileWazeSyncAfterGesture();
     return;
   }
 
@@ -3780,9 +4206,13 @@ function enableDevMode(){
   updateSuggestionBadge();
 }
 function toggleAddingMode(){
+  if(!DEV_MODE){alert('Esta acción solo está disponible con ?dev=1.');return}
   addingMode=!addingMode;
   document.body.classList.toggle('adding-mode',addingMode);
-  if(devToggleBtn)devToggleBtn.classList.toggle('active',addingMode);
+  if(devToggleBtn){
+    devToggleBtn.classList.toggle('active',addingMode);
+    devToggleBtn.setAttribute('aria-pressed',String(addingMode));
+  }
 }
 function clearIncidentsDev(){
   if(!DEV_MODE){alert('Esta acción solo está disponible con ?dev=1.');return;}
@@ -3826,15 +4256,26 @@ function clearIncidentsDev(){
   }
   alert('Limpieza completada. Incidentes quitados: '+ids.size+'.');
 }
-devToggleBtn.addEventListener('click',toggleAddingMode);
-devClearBtn.addEventListener('click',function(){
-  if(customPlaces.length===0){alert('No hay ubicaciones personalizadas para borrar.');return}
-  if(!confirm('¿Borrar TODAS las '+customPlaces.length+' ubicaciones personalizadas?'))return;
-  customPlaces=[];
-  saveCustomPlaces();
-  allPlaces=allPlaces.filter(function(p){return !p.isCustom});
-  renderPlaces();
-});
+addingMode=false;
+document.body.classList.remove('adding-mode','incident-pick-mode');
+if(devToggleBtn){
+  devToggleBtn.type='button';
+  devToggleBtn.classList.remove('active');
+  devToggleBtn.setAttribute('aria-pressed','false');
+  devToggleBtn.addEventListener('click',function(e){e.preventDefault();toggleAddingMode()});
+}
+if(devClearBtn){
+  devClearBtn.type='button';
+  devClearBtn.addEventListener('click',function(e){
+    e.preventDefault();
+    if(customPlaces.length===0){alert('No hay ubicaciones personalizadas para borrar.');return}
+    if(!confirm('¿Borrar TODAS las '+customPlaces.length+' ubicaciones personalizadas?'))return;
+    customPlaces=[];
+    saveCustomPlaces();
+    allPlaces=allPlaces.filter(function(p){return !p.isCustom});
+    renderPlaces();
+  });
+}
 if(document.getElementById('devClearIncidentsBtn'))document.getElementById('devClearIncidentsBtn').addEventListener('click',clearIncidentsDev);
 function buildDevAddFormHtml(lat,lng){
   const opts=ALL_CATEGORIES.map(function(c){
@@ -4480,12 +4921,12 @@ function cancelIncidentPickMode(){
   incidentPickMode=false;
   if(incidentPickMarker){map.removeLayer(incidentPickMarker);incidentPickMarker=null}
   if(incidentMapClickHandler){map.off('click',incidentMapClickHandler);incidentMapClickHandler=null}
-  document.body.classList.remove('adding-mode');
+  document.body.classList.remove('incident-pick-mode');
 }
 function startIncidentPickMode(){
   incidentModal.classList.remove('visible');
   incidentPickMode=true;
-  document.body.classList.add('adding-mode');
+  document.body.classList.add('incident-pick-mode');
   incidentLocStatus.textContent='Hacé clic en el mapa para marcar el siniestro';
   incidentMapClickHandler=function(e){
     const lat=e.latlng.lat;
@@ -5030,6 +5471,7 @@ const TOPIC_ALERT_RESOLVE=CHAT_PREFIX+'/alert-resolve';
 const TOPIC_PUBLIC_HISTORY=CHAT_PREFIX+'/public-history';
 const TOPIC_USERLOG_HISTORY=CHAT_PREFIX+'/userlog-history';
 const TOPIC_MAILBOX=CHAT_PREFIX+'/mailbox';
+const TOPIC_DEV_INBOX_BASE=CHAT_PREFIX+'/developer-inbox/';
 const TOPIC_SUGGESTIONS=CHAT_PREFIX+'/suggestions';
 const TOPIC_COINS=CHAT_PREFIX+'/coins';
 const TOPIC_COINS_TRANSFER_BASE=CHAT_PREFIX+'/coins-transfer/';
@@ -5120,7 +5562,6 @@ const gatePasswordInput=document.getElementById('gatePasswordInput');
 const gateRememberInput=document.getElementById('gateRememberInput');
 const gateLoginError=document.getElementById('gateLoginError');
 const floatingStack=document.querySelector('.floating-stack');
-const floatingToggleBtn=document.getElementById('floatingToggleBtn');
 
 function isChatOpen(){return !!(chatPanel&&chatPanel.classList.contains('visible'))}
 function openChat(){
@@ -5138,17 +5579,6 @@ function closeChat(){
   chatPanel.classList.remove('visible');
   typingUsers.clear(); renderTypingIndicator();
   exitReportMode(); hideUserMenu(); hideStatusMenu();
-}
-if(floatingToggleBtn&&!floatingToggleBtn.dataset.mmBound){
-  floatingToggleBtn.dataset.mmBound='1';
-  floatingToggleBtn.addEventListener('click',function(e){
-    e.preventDefault(); e.stopPropagation();
-    if(!floatingStack)return;
-    const collapsed=floatingStack.classList.toggle('collapsed');
-    floatingToggleBtn.setAttribute('aria-expanded',String(!collapsed));
-    floatingToggleBtn.title=collapsed?'Mostrar acciones':'Ocultar acciones';
-    floatingToggleBtn.innerHTML='<i class="fas '+(collapsed?'fa-bars':'fa-times')+'"></i>';
-  });
 }
 if(chatToggleBtn&&!chatToggleBtn.dataset.mmBound){
   chatToggleBtn.dataset.mmBound='1';
@@ -5919,7 +6349,14 @@ const AUTH_COLUMN_ALIASES={
   'fecha de emision':'timestamp',
   'emision':'timestamp',
   'fecha de alta':'timestamp',
-  'inicio de membresia':'timestamp'
+  'inicio de membresia':'timestamp',
+  'promo codes':'promocodes',
+  'promo code':'promocodes',
+  'promocode':'promocodes',
+  'codigo promocional':'promocodes',
+  'codigo de promocion':'promocodes',
+  'codigos de promocion':'promocodes',
+  'codigo exclusivo':'promocodes'
 };
 function parseAuthCsv(csv){
   const lines=csv.replace(/^\uFEFF/,'').split(/\r?\n/).filter(function(line){return line.trim()!==''});
@@ -6009,6 +6446,35 @@ function getAuthIdentifier(user){
   if(timestamp)return 'u_'+timestamp.replace(/[^a-z0-9_-]+/gi,'_').slice(0,100);
   return 'u_'+Date.now().toString(36);
 }
+function mmRowField(row, candidates){
+  if(!row)return '';
+  const normalizedCandidates=candidates.map(function(x){return normalizeAuthHeader(x).replace(/[^a-z0-9]/g,'')});
+  const keys=Object.keys(row);
+  for(let i=0;i<keys.length;i++){
+    const key=normalizeAuthHeader(keys[i]).replace(/[^a-z0-9]/g,'');
+    if(normalizedCandidates.indexOf(key)>=0){
+      const value=String(row[keys[i]]==null?'':row[keys[i]]).trim();
+      if(value)return value;
+    }
+  }
+  return '';
+}
+function mmRowPassword(row){
+  return mmRowField(row,['contraseña','contrasena','password','clave','clave de acceso','clave comercio','contraseña comercio']);
+}
+function mmRowIdentifiers(row){
+  return [
+    mmRowField(row,['correo','correo electronico','email','e-mail','mail']),
+    mmRowField(row,['nickname','nick','usuario','nombre de usuario','username','login','id usuario','id comercio','codigo de comercio','cuit']),
+    mmRowField(row,['comercio','nombre comercio','nombre del comercio','nombre del negocio','local'])
+  ].map(function(v){return String(v||'').trim().toLowerCase()}).filter(Boolean);
+}
+function mmFindCredentialRow(rows, identifier, password){
+  const wanted=String(identifier||'').trim().toLowerCase();
+  return (rows||[]).find(function(row){
+    return mmRowIdentifiers(row).indexOf(wanted)>=0 && mmRowPassword(row)===String(password||'');
+  })||null;
+}
 async function loginWithMutualMotos(){
   const emailField=(gateEmailInput&&gateEmailInput.offsetParent!==null)?gateEmailInput:loginEmailInput;
   const passwordField=(gatePasswordInput&&gatePasswordInput.offsetParent!==null)?gatePasswordInput:loginPasswordInput;
@@ -6033,7 +6499,7 @@ async function loginWithMutualMotos(){
     const user=rows.find(function(row){
       const correo=String(row.correo||'').trim().toLowerCase();
       const nickname=String(row.nickname||'').trim().toLowerCase();
-      const rowPassword=String(row['contraseña']||'');
+      const rowPassword=mmRowPassword(row);
       return (correo===identifierNormalized||nickname===identifierNormalized) && rowPassword===password;
     });
     if(!user){
@@ -6058,7 +6524,7 @@ async function loginWithMutualMotos(){
       timestamp:user.timestamp||user.emision||'',
       emision:user.timestamp||user.emision||'',
       betaTest:String(user.betaTest||'').trim().toLowerCase()==='true',
-      password:user['contraseña']||'',
+      password:mmRowPassword(user),
       isGuest:false,
       rememberDevice:!!(rememberField&&rememberField.checked),
       provider:'google-sheet'
@@ -6163,6 +6629,12 @@ if(enterMapBtn)enterMapBtn.addEventListener('click',function(){
   showMapPage();
 });
 function showAssociationModal(){
+  const associationIframe=document.getElementById('associationIframe');
+  const associationNotice=document.getElementById('associationFormNotice');
+  const formSrc=associationIframe?String(associationIframe.getAttribute('src')||'').trim():'';
+  const formConfigured=!!formSrc&&formSrc!=='about:blank';
+  if(associationIframe)associationIframe.style.display=formConfigured?'block':'none';
+  if(associationNotice)associationNotice.style.display=formConfigured?'none':'flex';
   if(associationModal){associationModal.classList.add('visible');associationModal.setAttribute('aria-hidden','false')}
 }
 function hideAssociationModal(){
@@ -6245,12 +6717,172 @@ function saveMailboxSeen(){
   try{localStorage.setItem(MAILBOX_SEEN_KEY,String(mailboxSeenTs))}catch(e){}
 }
 function updateMailboxBadge(){
-  if(!mailboxMessages.length){buzonBadge.style.display='none';return}
-  const unread=mailboxMessages.filter(function(m){return m.ts>mailboxSeenTs}).length;
-  if(unread>0){
-    buzonBadge.textContent=unread>99?'99+':String(unread);
-    buzonBadge.style.display='flex';
-  }else buzonBadge.style.display='none';
+  const publicUnread=mailboxMessages.filter(function(m){return Number(m.ts||0)>mailboxSeenTs}).length;
+  const privateUnread=MM_devInboxMessages.filter(function(m){return Number(m.ts||0)>MM_devInboxSeenTs}).length;
+  const unread=publicUnread+privateUnread;
+  if(unread>0){buzonBadge.textContent=unread>99?'99+':String(unread);buzonBadge.style.display='flex'}
+  else buzonBadge.style.display='none';
+  const privateBadge=document.getElementById('devInboxTabBadge');
+  if(privateBadge){if(privateUnread>0){privateBadge.textContent=privateUnread>99?'99+':String(privateUnread);privateBadge.style.display='inline-flex'}else privateBadge.style.display='none'}
+}
+function MM_getStableDevInboxId(){
+  const email=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'developer@local.invalid').trim().toLowerCase();
+  return 'dev_'+(email.replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'local');
+}
+function MM_getDevInboxOwnerId(){
+  let developer=false;
+  try{developer=DEV_MODE===true||isDeveloperAccount()}catch(e){}
+  if(developer)return MM_getStableDevInboxId();
+  let cachedId='';try{cachedId=localStorage.getItem(CHAT_KEY_UID)||''}catch(e){}
+  return String(myUserId||cachedId||'anon');
+}
+function MM_loadDevInbox(force){
+  const owner=MM_getDevInboxOwnerId();
+  if(!force&&MM_devInboxLoadedFor===owner)return;
+  MM_devInboxLoadedFor=owner;
+  try{
+    const raw=localStorage.getItem(MM_DEV_INBOX_KEY+owner);
+    const loaded=raw?JSON.parse(raw):[];
+    MM_devInboxMessages=Array.isArray(loaded)?loaded.slice(-24):[];
+    const seen=localStorage.getItem(MM_DEV_INBOX_SEEN_KEY+owner);
+    MM_devInboxSeenTs=seen?parseInt(seen,10):0;
+    if(!Number.isFinite(MM_devInboxSeenTs))MM_devInboxSeenTs=0;
+  }catch(e){MM_devInboxMessages=[];MM_devInboxSeenTs=0}
+  updateMailboxBadge();
+}
+function MM_saveDevInbox(){
+  const owner=MM_getDevInboxOwnerId();
+  try{localStorage.setItem(MM_DEV_INBOX_KEY+owner,JSON.stringify(MM_devInboxMessages.slice(-24)))}catch(e){}
+}
+function MM_storeDevInboxMessage(msg,notify){
+  if(!msg||!msg.id)return;
+  MM_loadDevInbox(false);
+  if(MM_devInboxMessages.some(function(item){return item.id===msg.id}))return;
+  MM_devInboxMessages.push(msg);
+  if(MM_devInboxMessages.length>24)MM_devInboxMessages=MM_devInboxMessages.slice(-24);
+  MM_saveDevInbox();
+  updateMailboxBadge();
+  if(notify){
+    const who=msg.from&&msg.from.nick?msg.from.nick:'Usuario';
+    try{showAppNotification('Nuevo mensaje privado de '+who+'.','fa-envelope')}catch(e){}
+  }
+  if(buzonModal.classList.contains('visible'))MM_renderDevInbox();
+}
+function handleDevInboxMessage(msg){
+  if(!msg||!msg.id)return;
+  const address=String(myUserId||'');
+  const stable=MM_getStableDevInboxId();
+  const developer=DEV_MODE===true||isDeveloperAccount();
+  if(!developer&&msg.to&&msg.to.id&&String(msg.to.id)!==address)return;
+  MM_storeDevInboxMessage(msg,!!(msg.from&&String(msg.from.id)!==String(myUserId||'')));
+}
+function MM_renderDevInbox(){
+  const list=document.getElementById('devInboxList');
+  if(!list)return;
+  MM_loadDevInbox(false);
+  if(!MM_devInboxMessages.length){
+    list.innerHTML='<div style="padding:1rem;text-align:center;color:#999;font-style:italic">Todav&iacute;a no hay mensajes privados.</div>';
+    return;
+  }
+  list.innerHTML=MM_devInboxMessages.slice().reverse().map(function(m){
+    const mine=String(m.from&&m.from.id||'')===String(myUserId||'');
+    const t=new Date(Number(m.ts)||Date.now());
+    const time=t.toLocaleString('es-AR',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit',year:'numeric'});
+    const author=m.from&&m.from.nick?m.from.nick:'Usuario';
+    const title=String(m.title||((mine?'Mensaje enviado':'Mensaje privado')));
+    let attachment='';
+    if(m.attachment&&m.attachment.dataUrl&&m.attachment.name){
+      attachment='<a class="dev-inbox-attachment" href="'+escapeHtml(m.attachment.dataUrl)+'" download="'+escapeHtml(m.attachment.name)+'" target="_blank" rel="noopener noreferrer"><i class="fas fa-paperclip"></i> Ver/descargar '+escapeHtml(m.attachment.name)+'</a>';
+    }
+    return '<div class="dev-inbox-item'+(mine?' outgoing':'')+'"><div class="buzon-item-head"><strong>'+escapeHtml(title)+'</strong><span class="buzon-item-time">'+escapeHtml(time)+'</span></div><div class="buzon-item-body">'+escapeHtml(m.text||'').replace(/\n/g,'<br>')+'</div>'+attachment+'<div class="buzon-item-author"><i class="fas fa-user"></i> '+escapeHtml(author)+(m.to&&m.to.nick?' · Para: '+escapeHtml(m.to.nick):'')+'</div></div>';
+  }).join('');
+}
+function MM_markDevInboxSeen(){
+  MM_loadDevInbox(false);
+  MM_devInboxSeenTs=Date.now();
+  try{localStorage.setItem(MM_DEV_INBOX_SEEN_KEY+MM_getDevInboxOwnerId(),String(MM_devInboxSeenTs))}catch(e){}
+  updateMailboxBadge();
+}
+function MM_setMailboxTab(tab){
+  const publicTab=document.getElementById('buzonTabPublic');
+  const privateTab=document.getElementById('buzonTabPrivate');
+  const publicPanel=document.getElementById('buzonPublicPanel');
+  const privatePanel=document.getElementById('buzonPrivatePanel');
+  const showPrivate=tab==='private';
+  if(publicTab){publicTab.classList.toggle('active',!showPrivate);publicTab.setAttribute('aria-selected',String(!showPrivate))}
+  if(privateTab){privateTab.classList.toggle('active',showPrivate);privateTab.setAttribute('aria-selected',String(showPrivate))}
+  if(publicPanel)publicPanel.style.display=showPrivate?'none':'block';
+  if(privatePanel)privatePanel.style.display=showPrivate?'block':'none';
+  if(showPrivate){
+    MM_loadDevInbox(true);
+    MM_renderDevInbox();
+    MM_markDevInboxSeen();
+  }
+}
+function MM_setupDevInboxUi(){
+  const publicTab=document.getElementById('buzonTabPublic');
+  const privateTab=document.getElementById('buzonTabPrivate');
+  const compose=document.getElementById('devInboxCompose');
+  const send=document.getElementById('devInboxSendBtn');
+  const reply=document.getElementById('devInboxReplyText');
+  const attachment=document.getElementById('devInboxAttachment');
+  if(publicTab)publicTab.addEventListener('click',function(){MM_setMailboxTab('public')});
+  if(privateTab)privateTab.addEventListener('click',function(){MM_setMailboxTab('private')});
+  if(compose)compose.style.display=(DEV_MODE||isDeveloperAccount())?'none':'block';
+  if(send)send.addEventListener('click',MM_sendDevInboxMessage);
+  if(reply)reply.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();MM_sendDevInboxMessage()}});
+  if(attachment)attachment.addEventListener('change',function(){
+    const status=document.getElementById('devInboxSendStatus');
+    const file=attachment.files&&attachment.files[0];
+    if(!status)return;
+    if(file&&file.size>120*1024){status.textContent='El archivo supera el l&iacute;mite de 120 KB. Reduc&iacute; el tama&ntilde;o y volv&eacute; a intentarlo.';attachment.value=''}
+    else status.textContent=file?'Archivo listo para adjuntar: '+file.name:'';
+  });
+  MM_loadDevInbox(true);
+}
+async function MM_sendDevInboxMessage(){
+  const status=document.getElementById('devInboxSendStatus');
+  const input=document.getElementById('devInboxReplyText');
+  const fileInput=document.getElementById('devInboxAttachment');
+  const send=document.getElementById('devInboxSendBtn');
+  const text=String(input&&input.value||'').trim();
+  const file=fileInput&&fileInput.files?fileInput.files[0]:null;
+  const developer=DEV_MODE===true||isDeveloperAccount();
+  if(developer){if(status)status.textContent='La cuenta de desarrollador recibe los mensajes aqu&iacute;; para responder us&aacute; Mensaje del desarrollador.';return}
+  if(!text&&!file){if(status)status.textContent='Escrib&iacute; un mensaje o adjunt&aacute; un archivo.';return}
+  if(!myUserId){if(status)status.textContent='No se pudo identificar tu cuenta. Volv&eacute; a iniciar sesi&oacute;n.';return}
+  if(!mqttClient||!chatReady){if(status)status.textContent='El chat no est&aacute; conectado. Reconect&aacute; e intent&aacute; de nuevo.';try{if(typeof startChat==='function')startChat()}catch(e){}return}
+  let attachmentData=null;
+  if(file){
+    const allowedExt=/\.(png|jpe?g|webp|pdf|txt|eml)$/i;
+    if(!allowedExt.test(file.name)){if(status)status.textContent='Tipo de archivo no permitido. Us&aacute; PNG, JPG, WEBP, PDF, TXT o EML.';return}
+    if(file.size>120*1024){if(status)status.textContent='El archivo supera el l&iacute;mite de 120 KB.';return}
+    const ext=(file.name.match(/\.([^.]+)$/)||[])[1].toLowerCase();
+    const mimeByExt={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp',pdf:'application/pdf',txt:'text/plain',eml:'message/rfc822'};
+    try{
+      const dataUrl=await new Promise(function(resolve,reject){
+        const reader=new FileReader();
+        reader.onload=function(){const raw=String(reader.result||'');const comma=raw.indexOf(',');if(comma<0){reject(new Error('No se pudo leer el archivo'));return}resolve('data:'+mimeByExt[ext]+';base64,'+raw.slice(comma+1))};
+        reader.onerror=function(){reject(new Error('No se pudo leer el archivo'))};
+        reader.readAsDataURL(file);
+      });
+      attachmentData={name:file.name.slice(0,140),type:mimeByExt[ext],size:file.size,dataUrl:dataUrl};
+    }catch(err){if(status)status.textContent='No se pudo leer el archivo adjunto.';return}
+  }
+  const devId=MM_getStableDevInboxId();
+  const ts=Date.now();
+  const msg={id:'devin_'+String(myUserId)+'_'+ts+'_'+Math.random().toString(36).slice(2,7),kind:'developer-inbox',type:'private',from:{id:String(myUserId),nick:String(myNick||'Motoamigo')},to:{id:devId,nick:'Desarrollador'},title:file&& !text?'Archivo adjunto: '+file.name.slice(0,80):'Mensaje de '+String(myNick||'Motoamigo'),text:text.slice(0,1200),attachment:attachmentData,ts:ts};
+  if(send)send.disabled=true;
+  if(status)status.textContent='Enviando mensaje privado…';
+  try{
+    mqttClient.publish(TOPIC_DEV_INBOX_BASE+devId,JSON.stringify(msg),{qos:0});
+    MM_storeDevInboxMessage(msg,false);
+    if(input)input.value='';
+    if(fileInput)fileInput.value='';
+    if(status)status.textContent='Mensaje privado enviado al desarrollador.';
+    MM_renderDevInbox();
+  }catch(err){if(status)status.textContent='No se pudo enviar el mensaje. Prob&aacute; con un archivo m&aacute;s peque&ntilde;o.'}
+  finally{if(send)send.disabled=false}
 }
 function renderMailbox(){
   if(!mailboxMessages.length){
@@ -6308,15 +6940,21 @@ function handleMailboxMessage(msg){
 }
 function openBuzonModal(){
   buzonModal.classList.add('visible');
+  MM_loadDevInbox(true);
   renderMailbox();
+  MM_renderDevInbox();
   document.getElementById('buzonComposeToggle').style.display=DEV_MODE?'block':'none';
   document.getElementById('buzonCompose').style.display='none';
+  const reply=document.getElementById('devInboxCompose');
+  if(reply)reply.style.display=(DEV_MODE||isDeveloperAccount())?'none':'block';
   mailboxSeenTs=Date.now();
   saveMailboxSeen();
   updateMailboxBadge();
+  MM_setMailboxTab('public');
 }
 function closeBuzonModal(){buzonModal.classList.remove('visible')}
 buzonBtn.addEventListener('click',openBuzonModal);
+MM_setupDevInboxUi();
 document.getElementById('buzonCloseBtn').addEventListener('click',closeBuzonModal);
 buzonModal.addEventListener('click',function(e){if(e.target===buzonModal)closeBuzonModal()});
 document.getElementById('buzonComposeToggle').addEventListener('click',function(){
@@ -6482,7 +7120,144 @@ function startKioskMode(){
     document.getElementById('kioskForm').classList.add('visible');
     document.getElementById('kioskQr').innerHTML='<div style="padding:2rem 1rem;color:#999;font-style:italic;font-size:.85rem">Ingresá los datos del negocio y el precio en Moto Coins para generar el QR.</div>';
   }
+ }
+
+var MM_KIOSK_AUTHORIZED=false;
+var MM_KIOSK_MERCHANT_SESSION=null;
+var MM_KIOSK_ORIGINAL_START=startKioskMode;
+var MM_KIOSK_COMERCIOS_ROWS_PROMISE=null;
+function mmShowKioskLogin(message){
+  var gate=document.getElementById('kioskAuthGate');
+  var kiosk=document.getElementById('kioskScreen');
+  var error=document.getElementById('kioskAuthError');
+  if(kiosk)kiosk.classList.remove('visible');
+  if(error){
+    error.textContent=message||'';
+    error.classList.toggle('visible',!!message);
+  }
+  if(gate){gate.classList.add('visible');gate.setAttribute('aria-hidden','false');}
+  var hd=document.getElementById('siteHeader');if(hd)hd.style.display='none';
+  var home=document.getElementById('preMapContent');if(home)home.style.display='none';
+  var mapPage=document.getElementById('mapPage');if(mapPage)mapPage.classList.add('hidden');
+  setTimeout(function(){var input=document.getElementById('kioskAuthIdentifier');if(input)input.focus();},80);
 }
+function mmCloseKioskLogin(){
+  var gate=document.getElementById('kioskAuthGate');
+  if(gate){gate.classList.remove('visible');gate.setAttribute('aria-hidden','true');}
+}
+function mmMerchantSheetCsvUrl(gid){
+  return 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid='+encodeURIComponent(gid)+'&single=true&output=csv';
+}
+async function mmDiscoverComerciosCsvUrl(){
+  if(String(COMERCIOS_CSV_URL||'').trim())return String(COMERCIOS_CSV_URL).trim();
+  var response=await fetch(PUBLISHED_WORKBOOK_HTML_URL,{cache:'no-store'});
+  if(!response.ok)throw new Error('No se pudo consultar la publicación de Google Sheets para localizar la pestaña Comercios.');
+  var html=await response.text();
+  var doc=new DOMParser().parseFromString(html,'text/html');
+  var candidates=[];
+  Array.prototype.forEach.call(doc.querySelectorAll('a[href]'),function(a){
+    var label=normalizeAuthHeader(a.textContent||'');
+    if(label.indexOf('comercio')<0)return;
+    var href=a.getAttribute('href')||'';
+    var match=href.match(/[?&#]gid=(\d+)/i);
+    if(match)candidates.push(match[1]);
+  });
+  if(!candidates.length){
+    var lower=normalizeAuthHeader(html);
+    var pos=lower.indexOf('comercios');
+    if(pos>=0){
+      var context=html.slice(Math.max(0,pos-2400),Math.min(html.length,pos+2400));
+      var ids=context.match(/[?&#]gid=(\d+)/ig)||[];
+      ids.forEach(function(found){var m=found.match(/gid=(\d+)/i);if(m)candidates.push(m[1]);});
+    }
+  }
+  candidates=Array.from(new Set(candidates)).filter(function(gid){return gid&&gid!=='554435341'&&gid!=='1742683249'});
+  for(var i=0;i<candidates.length;i++){
+    var url=mmMerchantSheetCsvUrl(candidates[i]);
+    try{
+      var test=await fetch(url+'&_probe='+Date.now(),{cache:'no-store'});
+      if(!test.ok)continue;
+      var csv=await test.text();
+      var rows=parseAuthCsv(csv);
+      if(rows.length&&rows.some(function(row){return mmRowPassword(row)&&mmRowIdentifiers(row).length>0;}))return url;
+    }catch(_){ }
+  }
+  throw new Error('No se encontró una publicación CSV legible para la pestaña Comercios. Publicá esa pestaña en Google Sheets y configurá COMERCIOS_CSV_URL con su enlace CSV (gid real).');
+}
+async function mmLoadComerciosRows(){
+  if(!MM_KIOSK_COMERCIOS_ROWS_PROMISE){
+    MM_KIOSK_COMERCIOS_ROWS_PROMISE=(async function(){
+      var url=await mmDiscoverComerciosCsvUrl();
+      var response=await fetch(url+(url.indexOf('?')>=0?'&':'?')+'_authTs='+Date.now(),{cache:'no-store'});
+      if(!response.ok)throw new Error('No se pudo leer la pestaña Comercios (HTTP '+response.status+').');
+      return parseAuthCsv(await response.text());
+    })().catch(function(err){MM_KIOSK_COMERCIOS_ROWS_PROMISE=null;throw err;});
+  }
+  return MM_KIOSK_COMERCIOS_ROWS_PROMISE;
+}
+function mmMerchantIdentity(row, typedIdentifier){
+  var name=mmRowField(row,['nombre comercio','nombre del comercio','nombre del negocio','razon social','razon_social','comercio','negocio','local','nombre'])||typedIdentifier||'Comercio';
+  var id=mmRowField(row,['id comercio','idcomercio','id local','idlocal','codigo comercio','codigo','cuit','id','identificador'])||mmRowField(row,['correo','email','usuario','username'])||('comercio_'+String(name).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9_-]+/g,'_').replace(/^_+|_+$/g,'').slice(0,50));
+  var priceRaw=mmRowField(row,['precio moto coins','preciomotocoins','precio','price','precio base']);
+  var price=parseInt(priceRaw||urlParams.get('price')||'50',10);
+  if(!Number.isFinite(price)||price<1)price=50;
+  return {id:String(id),name:String(name),price:price,email:mmRowField(row,['correo','email','mail']),username:mmRowField(row,['usuario','username','nickname','nick'])};
+}
+async function mmSubmitKioskLogin(event){
+  if(event){event.preventDefault();event.stopPropagation();}
+  var identifierInput=document.getElementById('kioskAuthIdentifier');
+  var passwordInput=document.getElementById('kioskAuthPassword');
+  var submit=document.getElementById('kioskAuthSubmit');
+  var identifier=String(identifierInput&&identifierInput.value||'').trim();
+  var password=String(passwordInput&&passwordInput.value||'');
+  var error=document.getElementById('kioskAuthError');
+  if(error){error.textContent='';error.classList.remove('visible');}
+  if(!identifier||!password){mmShowKioskLogin('Ingresá el usuario/correo y la contraseña del comercio.');return;}
+  if(submit){submit.disabled=true;submit.innerHTML='<i class="fas fa-spinner fa-spin"></i> Verificando credenciales…';}
+  try{
+    var usersResponse=await fetch(AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_kioskAuthTs='+Date.now(),{cache:'no-store'});
+    if(!usersResponse.ok)throw new Error('No se pudo verificar Usuarios (HTTP '+usersResponse.status+'). Por seguridad no se iniciará el kiosco.');
+    var userRows=parseAuthCsv(await usersResponse.text());
+    var normalUser=mmFindCredentialRow(userRows,identifier,password);
+    if(normalUser){
+      mmShowKioskLogin('Estas credenciales pertenecen a una cuenta de Motoamigo en la pestaña Usuarios. El modo kiosco solo acepta credenciales registradas en Comercios.');
+      return;
+    }
+    var merchantRows=await mmLoadComerciosRows();
+    var merchant=mmFindCredentialRow(merchantRows,identifier,password);
+    if(!merchant){
+      mmShowKioskLogin('Credenciales incorrectas o comercio no registrado en la pestaña Comercios.');
+      return;
+    }
+    MM_KIOSK_MERCHANT_SESSION=mmMerchantIdentity(merchant,identifier);
+    MM_KIOSK_AUTHORIZED=true;
+    urlParams.set('place',MM_KIOSK_MERCHANT_SESSION.id);
+    urlParams.set('placeName',MM_KIOSK_MERCHANT_SESSION.name);
+    urlParams.set('name',MM_KIOSK_MERCHANT_SESSION.name);
+    urlParams.set('price',String(MM_KIOSK_MERCHANT_SESSION.price));
+    mmCloseKioskLogin();
+    startKioskMode();
+  }catch(err){
+    console.error('Error de autenticación del kiosco:',err);
+    mmShowKioskLogin(String(err&&err.message||'No se pudieron verificar las credenciales.'));
+  }finally{
+    if(submit){submit.disabled=false;submit.innerHTML='<i class="fas fa-store"></i> Verificar e iniciar kiosco';}
+  }
+}
+var kioskAuthForm=document.getElementById('kioskAuthForm');
+if(kioskAuthForm&&!kioskAuthForm.dataset.mmBound){kioskAuthForm.dataset.mmBound='1';kioskAuthForm.addEventListener('submit',mmSubmitKioskLogin);}
+var kioskAuthExit=document.getElementById('kioskAuthExit');
+if(kioskAuthExit&&!kioskAuthExit.dataset.mmBound){kioskAuthExit.dataset.mmBound='1';kioskAuthExit.addEventListener('click',function(){window.location.href=window.location.pathname;});}
+startKioskMode=function(){
+  if(urlParams.get('kiosk')==='1'&&!MM_KIOSK_AUTHORIZED){mmShowKioskLogin();return;}
+  if(MM_KIOSK_AUTHORIZED&&MM_KIOSK_MERCHANT_SESSION){
+    urlParams.set('place',MM_KIOSK_MERCHANT_SESSION.id);
+    urlParams.set('placeName',MM_KIOSK_MERCHANT_SESSION.name);
+    urlParams.set('name',MM_KIOSK_MERCHANT_SESSION.name);
+    urlParams.set('price',String(MM_KIOSK_MERCHANT_SESSION.price));
+  }
+  return MM_KIOSK_ORIGINAL_START.apply(this,arguments);
+};
 function refreshKioskQr(){
   if(!kioskCurrentPlace)return;
   const wrap=document.getElementById('kioskQr');
@@ -6759,6 +7534,7 @@ async function connectBroker(){
   });
 }
 async function startChat(){
+  try{MM_loadDevInbox(true)}catch(e){}
   try{mqttClient=await connectBroker()}
   catch(err){
     chatStatusSet('No se pudo conectar al chat.','error');
@@ -6770,6 +7546,11 @@ async function startChat(){
   mqttClient.subscribe(TOPIC_PUBLIC,{qos:0});
   mqttClient.subscribe(TOPIC_PRESENCE,{qos:0});
   mqttClient.subscribe(TOPIC_PRIVATE_BASE+myUserId,{qos:0});
+  mqttClient.subscribe(TOPIC_DEV_INBOX_BASE+myUserId,{qos:0});
+  if(DEV_MODE||isDeveloperAccount()){
+    const stableDevInboxId=MM_getStableDevInboxId();
+    if(stableDevInboxId!==String(myUserId))mqttClient.subscribe(TOPIC_DEV_INBOX_BASE+stableDevInboxId,{qos:0});
+  }
   mqttClient.subscribe(TOPIC_REPORTS,{qos:0});
   mqttClient.subscribe(TOPIC_REQ_BASE+myUserId,{qos:0});
   mqttClient.subscribe(TOPIC_RESP_BASE+myUserId,{qos:0});
@@ -6870,6 +7651,8 @@ function handleIncomingMessage(topic,payload){
   if(topic===TOPIC_PUBLIC_HISTORY){handlePublicHistory(msg);return}
   if(topic===TOPIC_USERLOG_HISTORY){handleUserLogHistory(msg);return}
   if(topic===TOPIC_MAILBOX){handleMailboxMessage(msg);return}
+  if(topic===TOPIC_DEV_INBOX_BASE+String(myUserId||'')){handleDevInboxMessage(msg);return}
+  if((DEV_MODE||isDeveloperAccount())&&topic===TOPIC_DEV_INBOX_BASE+MM_getStableDevInboxId()){handleDevInboxMessage(msg);return}
   if(topic===TOPIC_SUGGESTIONS){handleSuggestionMessage(msg);return}
   if(topic===TOPIC_COIN_FULFILL){handleCoinsFulfilled(msg);return}
   if(!msg)return;
@@ -7485,6 +8268,9 @@ function renderMsgHtml(msg,isMine,ctx){
     const catColor=colors[msg.category]||'#16a085';
     const catIcon=icons[msg.category]||'fa-store';
     body='<div class="chat-msg '+(isMine?'mine':'other')+' chat-msg-place" data-msg-id="'+escapeHtml(msgId)+'">'+reportBtn+author+'<div class="place-title"><i class="fas '+catIcon+'" style="color:'+catColor+'"></i> '+escapeHtml(msg.placeName||'Local')+'</div><div class="place-cat">'+escapeHtml(msg.rubro||'')+'</div><div class="place-addr"><i class="fas fa-map-pin"></i> '+escapeHtml(msg.address||'')+'</div><div class="place-actions"><a href="'+navUrl+'" target="_blank" class="place-link"><i class="fas fa-route"></i> Ir con Waze</a></div><span class="msg-time">'+timeStr+statusHtml+'</span></div>';
+  }else if(msg.kind==='developer-message'){
+    const announcement=escapeHtml(msg.text||'').replace(/\n/g,'<br>');
+    body='<div class="chat-msg '+(isMine?'mine':'other')+' chat-msg-incident chat-msg-developer" data-msg-id="'+escapeHtml(msgId)+'">'+reportBtn+'<div class="inc-title"><i class="fas fa-bullhorn"></i> MENSAJE DEL DESARROLLADOR</div><div class="inc-text">'+announcement+'</div><span class="msg-time">'+timeStr+statusHtml+'</span></div>';
   }else if(msg.kind==='incident'){
     const isClosure=msg.incidentKind==='closure'; const isPolice=msg.incidentKind==='police';
     let zone=msg.zone; if(!zone)if(msg.lat)if(msg.lng)zone=getZone(msg.lat,msg.lng); if(!zone)zone='Provincia';
@@ -7562,6 +8348,7 @@ function openReportModal(){
     else if(m.kind==='place')texto='🏪 Local compartido: '+(m.placeName||'');
     else if(m.kind==='emergency')texto='[EMERGENCIA] '+(m.text||'');
     else if(m.kind==='incident')texto='[SINIESTRO] '+(m.text||'');
+    else if(m.kind==='developer-message')texto='[MENSAJE DEL DESARROLLADOR] '+(m.text||'');
     else if(m.kind==='coins-request')texto='[MOTO COINS] Pedido de '+(m.amount||0)+' MC';
     else if(m.kind==='coins-donate')texto='[MOTO COINS] Donación de '+(m.amount||0)+' MC';
     else if(m.kind==='coins-purchase')texto='[MOTO COINS] Pago en '+(m.placeName||'local');
@@ -8033,7 +8820,9 @@ async function MM_refreshStatsFromUsersSheet(){
     var u=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:null;
     var expected=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'').trim().toLowerCase();
     var actual=String(u&&(u.email||u.correo)||'').trim().toLowerCase();
-    return !!(u&&!u.isGuest&&expected&&actual===expected);
+    var route=false;
+    try{route=new URLSearchParams(window.location.search).get('dev')==='1'}catch(e){}
+    return !!(route&&DEV_MODE)||!!(u&&!u.isGuest&&expected&&actual===expected);
   }
   function syncVisibility(){
     var enabled=isAuthorizedDev();
@@ -8114,7 +8903,7 @@ async function MM_refreshStatsFromUsersSheet(){
     }
   }
 
-  button.addEventListener('click',function(){
+  function openQrModal(){
     if(!isAuthorizedDev()){
       alert('El generador QR está disponible solo para la cuenta de desarrollador.');
       syncVisibility();
@@ -8123,7 +8912,9 @@ async function MM_refreshStatsFromUsersSheet(){
     modal.classList.add('visible');
     modal.setAttribute('aria-hidden','false');
     if(!users.length)loadUsers();
-  });
+  }
+  window.MM_openDevUsersQr=openQrModal;
+  button.addEventListener('click',openQrModal);
   if(closeA)closeA.addEventListener('click',closeModal);
   if(closeB)closeB.addEventListener('click',closeModal);
   modal.addEventListener('click',function(e){if(e.target===modal)closeModal();});
@@ -8202,6 +8993,7 @@ const resolveParam=urlParams.get('resolve');
       if(typeof renderLevelPanel==='function')renderLevelPanel();
       if(typeof renderMotoCoins==='function')renderMotoCoins();
       if(typeof loadMailbox==='function')loadMailbox();
+      if(typeof MM_loadDevInbox==='function')MM_loadDevInbox(true);
       if(typeof loadSuggestions==='function')loadSuggestions();
       if(typeof loadChatLocationsFromStorage==='function')chatLocations=loadChatLocationsFromStorage();
       if(activeUserAlert&&typeof isAlertResolved==='function'&&!isAlertResolved(activeUserAlert.id)){
@@ -8228,7 +9020,6 @@ const resolveParam=urlParams.get('resolve');
   }
 
   var start=function(){
-    /* El kiosco es una ruta pública independiente: no debe quedar detrás del login. */
     if(kioskParam==='1'){
       try{startKioskMode();}catch(err){
         try{log('No se pudo iniciar el modo kiosco: '+(err&&err.message||err),'err');}catch(_){}
@@ -8238,8 +9029,6 @@ const resolveParam=urlParams.get('resolve');
 
     restoreLocalState();
 
-    /* Abrir un QR de compra directamente desde la cámara del teléfono debe preparar
-       la misma compra que el lector QR interno y conservarla hasta iniciar sesión. */
     if(purchaseParam){
       var directPurchase={
         placeId:purchaseParam,
@@ -8247,7 +9036,6 @@ const resolveParam=urlParams.get('resolve');
         coinsPrice:parseInt(urlParams.get('price')||'0',10)||0
       };
       try{sessionStorage.setItem('pending_purchase',JSON.stringify(directPurchase));}catch(_){}
-      /* Evita que una recarga vuelva a encolar automáticamente el mismo pago. */
       try{
         var cleanUrl=new URL(window.location.href);
         ['purchase','name','price','t'].forEach(function(key){cleanUrl.searchParams.delete(key);});
@@ -8261,11 +9049,7 @@ const resolveParam=urlParams.get('resolve');
         try{showError();}catch(_){}
       });
 
-    /* ============ MODO DESARROLLADOR ============ */
     if(DEV_MODE===true){
-      /* En ?dev=1 se entra directamente al mapa, sin la portada ni el gate.
-         La identidad es temporal para habilitar la interfaz de desarrollo en esta
-         pestaña; no se guarda como sesión persistente. */
       if(!isDeveloperAccount()){
         var devEmail=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'developer@local.invalid').trim().toLowerCase();
         var devId='dev_'+(devEmail.replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'local');
@@ -8281,19 +9065,17 @@ const resolveParam=urlParams.get('resolve');
         try{myNick='Desarrollador';}catch(_){}
       }
 
-      /* 1. Eliminar el gate y neutralizar las funciones que podrían volver a mostrarlo. */
       purgeAuthGate();
       try{ window.showGate=function(){}; }catch(_){}
       try{ showGate=function(){}; }catch(_){}
 
-      /* 2. Activar todas las herramientas de desarrollo y refrescar permisos de UI. */
       try{ enableDevMode(); }catch(_){}
       try{ updateAuthUI&&updateAuthUI(); }catch(_){}
       try{ updateGuestControls&&updateGuestControls(); }catch(_){}
       document.body.classList.add('dev-on','dev-qr-enabled');
 
-      /* 3. Saltar la pantalla de presentación y abrir el mapa inmediatamente. */
       enterMapDirectly();
+      try{if(typeof continueAfterAuth==='function')continueAfterAuth();else if(typeof startChat==='function'&&!chatReady&&!mqttClient)startChat();}catch(devInitError){try{console.warn('No se pudo inicializar el chat de desarrollador:',devInitError);}catch(_){}}
       var publicHeader=document.getElementById('siteHeader');
       var publicHome=document.getElementById('preMapContent');
       var mapPage=document.getElementById('mapPage');
@@ -8301,7 +9083,6 @@ const resolveParam=urlParams.get('resolve');
       if(publicHome)publicHome.style.display='none';
       if(mapPage)mapPage.classList.remove('hidden');
 
-      /* Mantener el gate oculto aunque otro componente intente mostrarlo. */
       try{
         var devGateObserver=new MutationObserver(function(){purgeAuthGate();});
         devGateObserver.observe(document.body,{childList:true,subtree:true});
@@ -8314,9 +9095,7 @@ const resolveParam=urlParams.get('resolve');
       },300);
       return;
     }
-    /* ============================================ */
 
-    /* Modo normal (sin cambios) */
     var wasOnMap=false;
     try{wasOnMap=sessionStorage.getItem('mm_wasOnMap')==='1';}catch(_){}
 
@@ -8333,8 +9112,6 @@ const resolveParam=urlParams.get('resolve');
         else if(typeof continueAfterAuth==='function')continueAfterAuth();
       },400);
     }else{
-      /* En modo normal se conserva la portada pública. El gate de acceso
-         solo se abre cuando el usuario pulsa "Acceder al mapa". */
       try{
         if(authGate){
           authGate.classList.add('hidden');
@@ -8364,7 +9141,9 @@ const resolveParam=urlParams.get('resolve');
     toggleBtn.setAttribute('aria-expanded',String(!collapsed));
   }
   setCollapsed(isMobileLayout());
+  toggleBtn.type='button';
   toggleBtn.addEventListener('click',function(e){
+    e.preventDefault();
     e.stopPropagation();
     const collapsed=!stack.classList.contains('collapsed');
     setCollapsed(collapsed);
@@ -8385,9 +9164,6 @@ const resolveParam=urlParams.get('resolve');
   });
 })();
 
-/* Refuerzo final del enrutamiento de entrada.
-   Se ejecuta después de los inicializadores anteriores para evitar que un
-   arranque previo vuelva a mostrar el gate o deje visible la portada en ?dev=1. */
 (function MM_enforceLaunchMode(){
   function applyLaunchMode(){
     var params;
@@ -8398,14 +9174,13 @@ const resolveParam=urlParams.get('resolve');
 
     if(kiosk){
       try{if(typeof startKioskMode==='function')startKioskMode();}catch(err){
-        try{log('No se pudo iniciar el modo kiosco: '+(err&&err.message||err),'err');}catch(_){}
+        try{log('No se pudo preparar el modo kiosco: '+(err&&err.message||err),'err');}catch(_){}
       }
       return;
     }
 
     if(dev){
       DEV_MODE=true;
-      /* Perfil temporal de desarrollo, no persistido en localStorage. */
       var expectedEmail=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'developer@local.invalid').trim().toLowerCase();
       var currentUser=authState&&authState.user;
       var currentEmail=String(currentUser&&(currentUser.email||currentUser.correo)||'').trim().toLowerCase();
@@ -8428,28 +9203,52 @@ const resolveParam=urlParams.get('resolve');
       try{if(typeof enableDevMode==='function')enableDevMode();}catch(_){}
       try{if(typeof updateAuthUI==='function')updateAuthUI();}catch(_){}
       try{if(typeof updateGuestControls==='function')updateGuestControls();}catch(_){}
+      document.documentElement.classList.add('mm-dev-requested');
       document.body.classList.add('dev-on','dev-qr-enabled');
+      try{
+        if(!chatReady&&!mqttClient&&typeof startChat==='function'){
+          var chatStartPromise=startChat();
+          if(chatStartPromise&&typeof chatStartPromise.catch==='function')chatStartPromise.catch(function(err){try{chatStatusSet('No se pudo iniciar el chat de desarrollador.','error');}catch(_){}});
+        }
+      }catch(_){}
 
       var header=document.getElementById('siteHeader');
       var publicContent=document.getElementById('preMapContent');
       var mapPage=document.getElementById('mapPage');
-      if(header)header.style.setProperty('display','none','important');
-      if(publicContent)publicContent.style.setProperty('display','none','important');
-      if(mapPage){mapPage.classList.remove('hidden');mapPage.style.setProperty('display','block','important');}
+      if(window.MM_REMOVE_LANDING_IN_DEV===true){
+        if(header&&header.parentNode)header.parentNode.removeChild(header);
+        if(publicContent&&publicContent.parentNode)publicContent.parentNode.removeChild(publicContent);
+      }else{
+        if(header)header.style.setProperty('display','none','important');
+        if(publicContent)publicContent.style.setProperty('display','none','important');
+      }
+      if(mapPage){
+        mapPage.classList.remove('hidden');
+        mapPage.style.setProperty('display','block','important');
+        mapPage.style.setProperty('visibility','visible','important');
+        mapPage.style.setProperty('opacity','1','important');
+      }
       try{sessionStorage.setItem('mm_wasOnMap','1');}catch(_){}
       function refreshMapLayout(){
+        var root=document.getElementById('mapPage');
+        if(root){
+          root.classList.remove('hidden');
+          root.style.setProperty('display','block','important');
+          root.style.setProperty('visibility','visible','important');
+          root.style.setProperty('opacity','1','important');
+        }
         try{if(map&&typeof map.invalidateSize==='function')map.invalidateSize(true);}catch(_){}
         try{if(typeof recenterImmediate==='function')recenterImmediate();}catch(_){}
         try{if(typeof MM_scheduleMapResize==='function')MM_scheduleMapResize();}catch(_){}
       }
       refreshMapLayout();
+      requestAnimationFrame(refreshMapLayout);
       setTimeout(refreshMapLayout,250);
       setTimeout(refreshMapLayout,900);
+      setTimeout(refreshMapLayout,1800);
       return;
     }
 
-    /* Modo normal: siempre mostrar la portada al abrir/recargar la página.
-       El gate solo se abre desde el botón "Acceder al mapa". */
     if(gate){
       gate.classList.add('hidden');
       gate.classList.remove('fading');
@@ -8472,6 +9271,211 @@ const resolveParam=urlParams.get('resolve');
   }else{
     applyLaunchMode();
   }
+})();
+
+(function MM_initDevMessageComposer(){
+  var modal=document.getElementById('devMessageModal');
+  var input=document.getElementById('devMessageText');
+  var status=document.getElementById('devMessageStatus');
+  var sendBtn=document.getElementById('devMessageSend');
+  var closeBtn=document.getElementById('devMessageClose');
+  var cancelBtn=document.getElementById('devMessageCancel');
+  var delivery=document.getElementById('devMessageDelivery');
+  var titleInput=document.getElementById('devMessageTitleInput');
+  var titleWrap=document.getElementById('devMessageTitleWrap');
+  var recipientWrap=document.getElementById('devMessageRecipientWrap');
+  var recipientSelect=document.getElementById('devMessageRecipient');
+  var recipientRefresh=document.getElementById('devMessageRefreshRecipients');
+  var openBtns=document.querySelectorAll('[data-open-dev-message]');
+  var recipients=[];
+  var recipientsLoading=false;
+  var recipientsLoaded=false;
+  if(!modal||!input||!sendBtn)return;
+
+  function isDevRoute(){
+    try{return DEV_MODE===true||new URLSearchParams(window.location.search).get('dev')==='1'}
+    catch(e){return DEV_MODE===true}
+  }
+  function closeModal(){modal.classList.remove('visible');modal.setAttribute('aria-hidden','true')}
+  function selectedRecipient(){
+    var id=String(recipientSelect&&recipientSelect.value||'');
+    return recipients.find(function(row){return String(row.id)===id})||null;
+  }
+  function normalizeRecipient(row){
+    var id=String(getAuthIdentifier(row)||'').trim();
+    var email=String(row.correo||row.email||row.mail||'').trim().toLowerCase();
+    var nick=String(row.nickname||row.nick||row.usuario||((row.nombre||'')+' '+(row.apellido||'')).trim()||email||id).trim();
+    return {id:id,email:email,nick:nick,row:row};
+  }
+  async function loadRecipients(){
+    if(recipientsLoading)return;
+    recipientsLoading=true;
+    if(recipientRefresh)recipientRefresh.disabled=true;
+    if(recipientSelect)recipientSelect.innerHTML='<option value="">Leyendo la pesta&ntilde;a Usuarios…</option>';
+    if(status)status.textContent='Cargando usuarios registrados…';
+    try{
+      var response=await fetch(AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_devrecipients='+Date.now(),{cache:'no-store'});
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      var rows=parseAuthCsv(await response.text());
+      var expected=String(DEV_EMAIL||'').trim().toLowerCase();
+      recipients=rows.map(normalizeRecipient).filter(function(item){
+        return !!item.id&&!!item.nick&&item.email!==expected;
+      });
+      var used=new Set();
+      recipients=recipients.filter(function(item){if(used.has(item.id))return false;used.add(item.id);return true});
+      recipientsLoaded=true;
+      if(recipientSelect){
+        recipientSelect.innerHTML='';
+        recipientSelect.add(new Option(recipients.length?'Seleccion&aacute; un usuario…':'No hay usuarios registrados',''));
+        recipients.forEach(function(item){recipientSelect.add(new Option(item.nick+(item.email?' · '+item.email:'')+' · '+item.id,item.id))});
+      }
+      if(status)status.textContent=recipients.length+' usuario(s) cargados desde la pesta&ntilde;a Usuarios.';
+    }catch(err){
+      recipientsLoaded=false;
+      if(recipientSelect)recipientSelect.innerHTML='<option value="">No se pudieron cargar los usuarios</option>';
+      if(status)status.textContent='No se pudo leer la pesta&ntilde;a Usuarios: '+String(err.message||err);
+    }finally{recipientsLoading=false;if(recipientRefresh)recipientRefresh.disabled=false}
+  }
+  function updateDeliveryUi(){
+    var value=String(delivery&&delivery.value||'');
+    if(titleWrap)titleWrap.style.display=value==='mailbox'?'block':'none';
+    if(recipientWrap)recipientWrap.style.display=value==='private'?'block':'none';
+    if(sendBtn){
+      if(value==='mailbox')sendBtn.innerHTML='<i class="fas fa-paper-plane"></i> Enviar al buz&oacute;n';
+      else if(value==='group')sendBtn.innerHTML='<i class="fas fa-paper-plane"></i> Publicar en la sala general';
+      else if(value==='private')sendBtn.innerHTML='<i class="fas fa-lock"></i> Enviar mensaje privado';
+      else sendBtn.innerHTML='<i class="fas fa-paper-plane"></i> Enviar mensaje';
+    }
+    if(value==='private'&&!recipientsLoaded)loadRecipients();
+    if(status&&value==='mailbox')status.textContent='El mensaje ser&aacute; visible para todos en el buz&oacute;n.';
+    else if(status&&value==='group')status.textContent='El mensaje aparecer&aacute; en la mensajer&iacute;a grupal (sala general).';
+    else if(status&&value==='private')status.textContent='Eleg&iacute; un usuario de la pesta&ntilde;a Usuarios para enviarle un mensaje directo.';
+    else if(status)status.textContent='Seleccion&aacute; el destino del mensaje.';
+  }
+  function openModal(){
+    if(!isDevRoute()){alert('Esta funci&oacute;n solo est&aacute; disponible en modo Dev (?dev=1).');return}
+    DEV_MODE=true;
+    document.body.classList.add('dev-on','dev-qr-enabled');
+    modal.classList.add('visible');
+    modal.setAttribute('aria-hidden','false');
+    if(delivery)delivery.value='';
+    if(titleInput)titleInput.value='';
+    if(input)input.value='';
+    if(recipientWrap)recipientWrap.style.display='none';
+    if(titleWrap)titleWrap.style.display='none';
+    updateDeliveryUi();
+    if(!chatReady&&!mqttClient&&typeof startChat==='function'){
+      try{var pending=startChat();if(pending&&typeof pending.catch==='function')pending.catch(function(){status.textContent='No se pudo conectar con el sistema de mensajer&iacute;a.'})}catch(e){status.textContent='No se pudo iniciar la conexi&oacute;n del chat.'}
+    }
+    setTimeout(function(){if(delivery)delivery.focus();},30);
+  }
+  async function publishMessage(){
+    var messageText=String(input.value||'').trim();
+    var destination=String(delivery&&delivery.value||'');
+    if(!isDevRoute()){status.textContent='El modo Dev no est&aacute; activo.';return}
+    if(!destination){status.textContent='Eleg&iacute; si el mensaje va al buz&oacute;n p&uacute;blico, a la sala general o a un usuario privado.';delivery.focus();return}
+    if(!messageText){status.textContent='Escrib&iacute; un mensaje antes de enviarlo.';input.focus();return}
+    if(destination==='mailbox'){
+      if(!mqttClient||!chatReady){status.textContent='La mensajer&iacute;a no est&aacute; conectada. Esper&aacute; a que conecte e intent&aacute; de nuevo.';try{if(typeof startChat==='function')startChat()}catch(e){}return}
+      var title=String(titleInput&&titleInput.value||'').trim();
+      if(!title){status.textContent='Ingresá un título para el mensaje del buzón.';titleInput.focus();return}
+      var mailboxMsg={id:'mbox_dev_'+Date.now()+'_'+Math.random().toString(36).slice(2,8),title:title.slice(0,80),text:messageText.slice(0,1200),from:{id:'__dev__',nick:'Desarrollador'},type:'public',ts:Date.now()};
+      try{mqttClient.publish(TOPIC_MAILBOX,JSON.stringify(mailboxMsg),{qos:0})}catch(err){status.textContent='No se pudo publicar en el buzón. Volvé a intentar.';return}
+      mailboxMessages.push(mailboxMsg);
+      if(mailboxMessages.length>MAILBOX_MAX)mailboxMessages=mailboxMessages.slice(-MAILBOX_MAX);
+      saveMailbox();
+      renderMailbox();updateMailboxBadge();
+      input.value='';titleInput.value='';closeModal();
+      try{showAppNotification('Mensaje enviado al buzón público.','fa-inbox')}catch(e){}
+      return;
+    }
+    if(!mqttClient||!chatReady){status.textContent='La mensajer&iacute;a no est&aacute; conectada. Esper&aacute; a que conecte e intent&aacute; de nuevo.';try{if(typeof startChat==='function')startChat()}catch(e){}return}
+    if(!myUserId){status.textContent='No se pudo inicializar el identificador del desarrollador. Recarg&aacute; con ?dev=1.';return}
+    var ts=Date.now();
+    if(destination==='group'){
+      var groupMsg={id:'devmsg_'+String(myUserId)+'_'+ts,kind:'developer-message',type:'public',from:{id:String(myUserId),nick:'Desarrollador'},text:messageText.slice(0,1200),ts:ts};
+      try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(groupMsg),{qos:0})}catch(err){status.textContent='No se pudo publicar en la sala general. Volv&eacute; a intentar.';return}
+      publicMessages.push(groupMsg);
+      if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
+      try{saveHistory()}catch(e){}
+      try{schedulePublishPublicHistory()}catch(e){}
+      try{if(typeof renderMessages==='function'&&isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom()}}catch(e){}
+      input.value='';closeModal();
+      try{showAppNotification('Mensaje publicado en la sala general.','fa-bullhorn')}catch(e){}
+      return;
+    }
+    if(destination==='private'){
+      if(!recipientsLoaded){await loadRecipients()}
+      var chosen=selectedRecipient();
+      if(!chosen){status.textContent='Seleccion&aacute; un usuario registrado en Usuarios.';recipientSelect.focus();return}
+      var privateMsg={id:'devprivate_'+String(myUserId)+'_'+ts,kind:'developer-inbox',type:'private',from:{id:String(myUserId),nick:'Desarrollador'},to:{id:chosen.id,nick:chosen.nick},title:'Mensaje privado del desarrollador',text:messageText.slice(0,1200),ts:ts};
+      try{mqttClient.publish(TOPIC_DEV_INBOX_BASE+chosen.id,JSON.stringify(privateMsg),{qos:0})}catch(err){status.textContent='No se pudo enviar el mensaje privado. Volv&eacute; a intentar.';return}
+      MM_storeDevInboxMessage(privateMsg,false);
+      input.value='';closeModal();
+      try{showAppNotification('Mensaje privado enviado a '+chosen.nick+'.','fa-envelope')}catch(e){}
+      return;
+    }
+    status.textContent='El destino elegido no es v&aacute;lido.';
+  }
+  if(delivery)delivery.addEventListener('change',updateDeliveryUi);
+  if(recipientRefresh)recipientRefresh.addEventListener('click',loadRecipients);
+  if(recipientSelect)recipientSelect.addEventListener('change',function(){if(status&&recipientSelect.value)status.textContent='El mensaje se enviar&aacute; a '+(selectedRecipient()||{}).nick+'.'});
+  openBtns.forEach(function(btn){btn.addEventListener('click',openModal)});
+  window.MM_openDevMessage=openModal;
+  if(closeBtn)closeBtn.addEventListener('click',closeModal);
+  if(cancelBtn)cancelBtn.addEventListener('click',closeModal);
+  modal.addEventListener('click',function(e){if(e.target===modal)closeModal()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('visible'))closeModal()});
+  sendBtn.addEventListener('click',publishMessage);
+  input.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();publishMessage()}});
+})();
+
+</script>
+
+<script>
+(function MM_repairDevControls(){
+  function isDevRoute(){
+    try{return DEV_MODE===true||new URLSearchParams(window.location.search).get('dev')==='1'}catch(e){return DEV_MODE===true}
+  }
+  document.addEventListener('click',function(e){
+    var target=e.target&&e.target.closest?e.target.closest('#userLogHeaderBtn,#devToggleBtn,#devUsersQrBtn,[data-open-dev-message]'):null;
+    if(!target)return;
+    var id=target.id||'';
+    if(id!=='userLogHeaderBtn'&&!isDevRoute())return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    try{
+      if(id==='userLogHeaderBtn'){
+        if(typeof openUserLogModal==='function')openUserLogModal();
+        else alert('No se pudo abrir el panel Usuarios. Recargá la página e intentá de nuevo.');
+      }else if(id==='devToggleBtn'){
+        try{DEV_MODE=true}catch(devStateError){}
+        document.body.classList.add('dev-on');
+        if(typeof toggleAddingMode==='function')toggleAddingMode();
+        else{
+          document.body.classList.toggle('adding-mode');
+          target.classList.toggle('active',document.body.classList.contains('adding-mode'));
+          target.setAttribute('aria-pressed',String(document.body.classList.contains('adding-mode')));
+        }
+      }else if(id==='devUsersQrBtn'){
+        if(typeof window.MM_openDevUsersQr==='function')window.MM_openDevUsersQr();
+        else{
+          var qr=document.getElementById('devUsersQrModal');
+          if(qr){qr.classList.add('visible');qr.setAttribute('aria-hidden','false');var msg=document.getElementById('devUsersQrStatus');if(msg)msg.textContent='No se pudo iniciar automáticamente el generador. Verificá la conexión de las bibliotecas e intentá actualizar.'}
+        }
+      }else if(target.hasAttribute('data-open-dev-message')){
+        if(typeof window.MM_openDevMessage==='function')window.MM_openDevMessage();
+        else{
+          var devModal=document.getElementById('devMessageModal');
+          if(devModal){devModal.classList.add('visible');devModal.setAttribute('aria-hidden','false');var devStatus=document.getElementById('devMessageStatus');if(devStatus)devStatus.textContent='El editor se abrió en modo de recuperación. Si no permite enviar, recargá la página.'}
+          else alert('No se pudo iniciar el editor del mensaje. Recargá la página e intentá de nuevo.');
+        }
+      }
+    }catch(err){
+      console.error('Error al ejecutar un control de desarrollo:',err);
+      try{showAppNotification('No se pudo ejecutar el control. Revis&aacute; la consola del navegador.','fa-triangle-exclamation')}catch(e){}
+    }
+  },true);
 })();
 </script>
 </body>
