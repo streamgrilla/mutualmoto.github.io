@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script>
+/* Marca pronto la ruta pública del perfil QR antes de que aparezca la pantalla de acceso. */
+try{if(new URLSearchParams(window.location.search).has('mmperfil'))document.documentElement.classList.add('mm-public-profile-route')}catch(e){}
+</script>
 <title>Servicios en Buenos Aires y Alrededores</title>
 <link rel="preconnect" href="https://embed.waze.com" crossorigin>
 <link rel="dns-prefetch" href="https://embed.waze.com">
@@ -107,6 +111,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 .kiosk-qr-wrap canvas,.kiosk-qr-wrap img{display:block;margin:0 auto;max-width:100%;height:auto}
 .kiosk-actions{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem}
 .kiosk-actions button{padding:.7rem 1.2rem;border-radius:10px;border:none;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;color:#fff}
+.kiosk-actions #kioskScanAlertBtn{background:#8e44ad}
 .kiosk-actions #kioskRefreshBtn{background:#16a085}
 .kiosk-actions #kioskExitBtn{background:#95a5a6}
  .kiosk-footer{font-size:.72rem;color:#999;font-style:italic}
@@ -130,6 +135,20 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 .kiosk-form.visible{display:block}
 .kiosk-form label{display:block;font-size:.75rem;font-weight:700;color:#666;text-transform:uppercase;margin:.6rem 0 .3rem}
 .kiosk-form input{width:100%;padding:.65rem .8rem;border:2px solid #ddd;border-radius:8px;font-size:.95rem;font-family:inherit;outline:none;box-sizing:border-box}
+.kiosk-customer-checkout{display:none;margin:.9rem 0 1rem;padding:.9rem;text-align:left;border:1px solid #d7e4df;border-radius:12px;background:#f7fcf9}
+.kiosk-customer-checkout.visible{display:block}
+.kiosk-customer-summary{font-size:.9rem;line-height:1.45;color:#2c3e50;margin-bottom:.5rem;overflow-wrap:anywhere}
+.kiosk-customer-summary strong{font-size:1rem}
+.kiosk-promo-status{font-size:.8rem;line-height:1.45;border-radius:8px;padding:.65rem .7rem;margin:.55rem 0;background:#f1f3f4;color:#566;overflow-wrap:anywhere}
+.kiosk-promo-status.valid{background:#e8f8ee;border:1px solid #9ad9ae;color:#176b36}
+.kiosk-promo-status.none{background:#fff8e6;border:1px solid #f3d48b;color:#805a00}
+.kiosk-customer-checkout label{display:block;font-size:.76rem;font-weight:800;color:#566;margin:.65rem 0 .3rem;text-transform:uppercase}
+.kiosk-customer-checkout input{width:100%;padding:.75rem .8rem;border:2px solid #d5dfdf;border-radius:9px;font:inherit;font-size:1rem;background:#fff;color:#253238}
+.kiosk-checkout-actions{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.7rem}
+.kiosk-checkout-actions button{flex:1 1 150px;border:0;border-radius:9px;padding:.7rem .8rem;font:inherit;font-size:.82rem;font-weight:800;cursor:pointer;color:#fff;background:#16a085}
+.kiosk-checkout-actions button.secondary{background:#7f8c8d}
+.kiosk-qr-placeholder{padding:1.3rem .8rem;color:#687477;font-size:.84rem;line-height:1.45;text-align:center;max-width:280px;margin:auto}
+.kiosk-qr-placeholder i{font-size:1.6rem;color:#16a085;display:block;margin-bottom:.55rem}
 header{background:var(--primary);color:#fff;padding:1rem 2rem;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:1rem;text-align:center}
 header h1{font-size:1.5rem}
 .container{display:flex;height:calc(100vh - 80px - 60px)}
@@ -214,7 +233,7 @@ body.dev-on .place-card.custom .delete-btn{display:flex}
 #list-footer button{background:var(--primary);color:#fff;border:none;padding:.4rem 1rem;border-radius:4px;cursor:pointer;font-size:.8rem;font-weight:600;margin-top:.4rem}
 #no-results{padding:1rem;text-align:center;color:#888;font-style:italic;display:none}
 #map-wrapper{position:relative;flex:1;overflow:hidden;background:#d9d5cc}
-.waze-frame{position:absolute;width:300%;height:300%;top:-100%;left:-100%;border:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .08s linear;will-change:transform,opacity;transform-origin:50% 50%;backface-visibility:hidden}
+.waze-frame{position:absolute;width:180%;height:180%;top:-40%;left:-40%;border:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .08s linear;transform-origin:50% 50%;backface-visibility:hidden}
 .waze-frame.active{opacity:1}
 #map{position:absolute;inset:0;width:100%;height:100%;z-index:2;background:transparent!important}
 .leaflet-container{background:transparent!important}
@@ -355,6 +374,9 @@ body.centering-lock .leaflet-control-legend{
 .discount-marker{background:transparent!important;border:none!important}
 .discount-marker-inner{position:relative;width:100%;height:100%;background:#fff;border:3px solid #f39c12;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:discountRipple 2s infinite}
 .discount-marker-inner>i{color:#f39c12;font-size:16px;line-height:1}
+html.mm-low-power .discount-marker-inner{animation:none!important}
+html.mm-low-power .leaflet-marker-icon{transition:none!important}
+@media(prefers-reduced-motion:reduce){.discount-marker-inner,.cluster-icon,.incident-toast .it-icon{animation:none!important;transition:none!important}}
 .discount-marker-inner .discount-badge{position:absolute;top:-8px;right:-10px;background:#f39c12;color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:10px;min-width:24px;text-align:center;border:2px solid #fff;line-height:1.2}
 @keyframes discountRipple{
   0%{box-shadow:0 0 0 0 rgba(243,156,18,.85),0 3px 10px rgba(0,0,0,.35)}
@@ -1220,6 +1242,36 @@ body.centering-lock #mapPage #places-list {
   #map, #map.leaflet-container, #map-wrapper .leaflet-container { touch-action: none; }
 }
 </style>
+<style>
+html.mm-public-profile-route,html.mm-public-profile-route body{width:100%;min-height:100%;margin:0!important;overflow:hidden!important;background:#f2f6f7!important}
+html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!important}
+#mmPublicMotoProfile{display:block!important;position:fixed;inset:0;z-index:2147483647;overflow-y:auto;-webkit-overflow-scrolling:touch;background:radial-gradient(circle at 15% 0%,#fce6d7 0,transparent 34%),linear-gradient(145deg,#f5f8fa,#e8f0f2);padding:max(20px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));font-family:'Segoe UI',Arial,sans-serif;color:#23323d}
+#mmPublicMotoProfile *{box-sizing:border-box}
+#mmPublicMotoProfile .mmp-shell{width:min(760px,100%);min-height:100%;margin:0 auto;display:flex;flex-direction:column;justify-content:center;padding:12px 0}
+#mmPublicMotoProfile .mmp-brand{display:flex;align-items:center;gap:12px;margin:0 0 16px;padding:0 5px}
+#mmPublicMotoProfile .mmp-logo{width:54px;height:54px;flex:0 0 54px;border-radius:17px;background:linear-gradient(140deg,#c64c08,#f08b3e);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 8px 20px #c64c082c}
+#mmPublicMotoProfile .mmp-brand-title{font-size:.75rem;letter-spacing:1.4px;text-transform:uppercase;font-weight:900;color:#bf4d0b}
+#mmPublicMotoProfile .mmp-brand-sub{font-size:.82rem;color:#62717a;margin-top:3px}
+#mmPublicMotoProfile .mmp-card{background:#fff;border:1px solid #e3e9ec;border-radius:22px;overflow:hidden;box-shadow:0 18px 55px #1c354019}
+#mmPublicMotoProfile .mmp-hero{padding:25px clamp(18px,5vw,34px) 22px;background:linear-gradient(120deg,#263746,#344e5d);color:#fff}
+#mmPublicMotoProfile .mmp-kicker{font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:#f9bb91;font-weight:800;margin-bottom:9px}
+#mmPublicMotoProfile .mmp-name{font-size:clamp(1.5rem,5vw,2.2rem);line-height:1.15;overflow-wrap:anywhere;font-weight:850}
+#mmPublicMotoProfile .mmp-description{margin-top:9px;color:#d7e1e5;font-size:.9rem;line-height:1.5}
+#mmPublicMotoProfile .mmp-state{padding:13px 20px;background:#fff8f1;border-bottom:1px solid #f4dfce;color:#85400d;font-size:.84rem;line-height:1.45}
+#mmPublicMotoProfile .mmp-fields{padding:clamp(14px,4vw,24px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+#mmPublicMotoProfile .mmp-field{min-width:0;padding:13px 14px;border:1px solid #e5ecef;border-radius:12px;background:#fbfcfd}
+#mmPublicMotoProfile .mmp-label{font-size:.68rem;font-weight:850;letter-spacing:.55px;text-transform:uppercase;color:#74838b;margin-bottom:6px;overflow-wrap:anywhere}
+#mmPublicMotoProfile .mmp-value{font-size:.93rem;line-height:1.45;color:#263640;overflow-wrap:anywhere;white-space:pre-wrap}
+#mmPublicMotoProfile .mmp-empty{padding:22px 20px;text-align:center;color:#65747b;line-height:1.55}
+#mmPublicMotoProfile .mmp-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;padding:0 18px 20px}
+#mmPublicMotoProfile .mmp-button{border:0;border-radius:10px;padding:11px 17px;font:inherit;font-weight:800;cursor:pointer;background:#d35400;color:#fff;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:8px}
+#mmPublicMotoProfile .mmp-button.secondary{background:#eef2f4;color:#344650}
+#mmPublicMotoProfile .mmp-footer{padding:18px 8px 0;text-align:center;font-size:.75rem;line-height:1.5;color:#74828a}
+#mmPublicMotoProfile .mmp-spinner{width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:8px;border:2px solid #e6c3aa;border-top-color:#d35400;border-radius:50%;animation:mmpSpin .7s linear infinite}
+@keyframes mmpSpin{to{transform:rotate(360deg)}}
+@media(max-width:480px){#mmPublicMotoProfile .mmp-shell{justify-content:flex-start}#mmPublicMotoProfile .mmp-hero{padding:22px 19px}#mmPublicMotoProfile .mmp-fields{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){#mmPublicMotoProfile .mmp-spinner{animation:none}}
+</style>
 </head>
 <body>
 
@@ -1228,22 +1280,34 @@ body.centering-lock #mapPage #places-list {
 <div class="kiosk-logo"><i class="fas fa-store"></i></div>
 <h1>Modo Negocio</h1>
 <h2 id="kioskPlaceName">—</h2>
-<p class="kiosk-sub">Mostr&aacute; este c&oacute;digo a los Motoamigos para que paguen con Moto Coins.</p>
+<p class="kiosk-sub">Escane&aacute; el QR de perfil del Motoamigo, valid&aacute; su promoci&oacute;n y gener&aacute; el QR de cobro con el importe final en Moto Coins.</p>
 <div class="kiosk-form" id="kioskForm">
 <label for="kioskInputId">ID del local (opcional)</label>
 <input type="text" id="kioskInputId" placeholder="Ej: kiosco-centro">
 <label for="kioskInputName">Nombre del negocio</label>
 <input type="text" id="kioskInputName" placeholder="Ej: Kiosco Central" maxlength="60">
-<label for="kioskInputPrice">Precio en Moto Coins</label>
+<label for="kioskInputPrice">Importe sugerido (Moto Coins)</label>
 <input type="number" id="kioskInputPrice" min="1" max="100000" step="1" placeholder="Ej: 50" value="50">
-<button class="primary-btn" id="kioskSaveBtn" style="background:#16a085;margin-top:.6rem"><i class="fas fa-check"></i> Generar QR</button>
+<button class="primary-btn" id="kioskSaveBtn" style="background:#16a085;margin-top:.6rem"><i class="fas fa-check"></i> Guardar local y continuar</button>
 </div>
-<div class="kiosk-qr-wrap" id="kioskQr"></div>
+<div id="kioskCustomerCheckout" class="kiosk-customer-checkout" aria-live="polite">
+  <div id="kioskCustomerSummary" class="kiosk-customer-summary"></div>
+  <div id="kioskPromoStatus" class="kiosk-promo-status"></div>
+  <label for="kioskCheckoutAmount">Importe final a cobrar (Moto Coins)</label>
+  <input type="number" id="kioskCheckoutAmount" min="1" max="100000" step="1" inputmode="numeric" placeholder="Ej.: 50">
+  <div style="font-size:.75rem;color:#69777a;line-height:1.4;margin-top:.35rem">Ingresá el importe final luego de revisar las condiciones de la promoción. El valor no se calcula automáticamente.</div>
+  <div class="kiosk-checkout-actions">
+    <button type="button" id="kioskGenerateCheckoutBtn"><i class="fas fa-qrcode"></i> Generar QR de cobro</button>
+    <button type="button" id="kioskChangeCustomerBtn" class="secondary"><i class="fas fa-user-check"></i> Escanear otro usuario</button>
+  </div>
+</div>
+<div class="kiosk-qr-wrap" id="kioskQr"><div class="kiosk-qr-placeholder"><i class="fas fa-user-check"></i>Primero escaneá el QR de perfil del usuario para consultar sus promociones. Después ingresá el importe final y generá el QR de cobro.</div></div>
 <div class="kiosk-actions">
-<button id="kioskRefreshBtn"><i class="fas fa-sync"></i> Nuevo QR</button>
+<button id="kioskScanAlertBtn"><i class="fas fa-qrcode"></i> Escanear usuario / alerta</button>
+<button id="kioskRefreshBtn"><i class="fas fa-sync"></i> Regenerar QR de cobro</button>
 <button id="kioskExitBtn"><i class="fas fa-times"></i> Salir</button>
 </div>
-<div class="kiosk-footer">El QR se renueva autom&aacute;ticamente cada 5 minutos.</div>
+<div class="kiosk-footer" id="kioskFooter">El QR de cobro se vincula al usuario validado y se renueva cada 5 minutos.</div>
 </div>
 </div>
 
@@ -1273,11 +1337,11 @@ body.centering-lock #mapPage #places-list {
 <div id="alertOverlay" class="alert-overlay">
 <div class="alert-box">
 <h2><i class="fas fa-exclamation-triangle"></i> Tu alerta est&aacute; activa</h2>
-<p class="alert-sub">Solo se puede cerrar ingresando tu contrase&ntilde;a o si un compa&ntilde;ero del mismo servicio escanea el QR.</p>
+<p class="alert-sub">Solo se puede cerrar ingresando tu contrase&ntilde;a, si un compa&ntilde;ero escanea el QR, o si lo escanea un desarrollador o kiosco autorizado.</p>
 <div class="alert-details" id="alertDetails"></div>
 <div class="alert-section-title">Mostr&aacute; este c&oacute;digo a un compa&ntilde;ero</div>
 <div class="alert-qr-wrap" id="alertQrCode"></div>
-<div class="alert-hint">Pedile a alguien del mismo servicio que escanee este QR con su celular. La alerta se cerrar&aacute; autom&aacute;ticamente y se informar&aacute; que est&aacute;s bajo control.</div>
+<div class="alert-hint">Pedile a un compa&ntilde;ero, a un desarrollador o a un kiosco autorizado que escanee este QR. La alerta se cerrar&aacute; autom&aacute;ticamente y se informar&aacute; que est&aacute;s bajo control.</div>
 <div class="alert-divider">o</div>
 <div class="alert-section-title">Ingres&aacute; tu contrase&ntilde;a <span class="alert-beta-badge">BETA</span></div>
 <div class="alert-password-row">
@@ -2182,7 +2246,8 @@ const AUTH_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn
 const GOOGLE_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid=1742683249&single=true&output=csv';
 const SHEET_EMBED_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pubhtml?gid=1742683249&single=true&widget=true&headers=false';
 const PUBLISHED_WORKBOOK_HTML_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pubhtml';
-const COMERCIOS_CSV_URL='';
+// Debe ser el enlace CSV publicado de la pestaña Comercios y llevar su gid real.
+const COMERCIOS_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid=421306673&single=true&output=csv';
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyCH_SAEOSWf9FlZqn5bzn5gBMfW1amgFE-mcqNufDRqlB4JUqUagznht3v36CUpMje/exec';
 const NOMINATIM_URL='https://nominatim.openstreetmap.org/search';
 const GEOCODE_DELAY_MS=1200;
@@ -2266,6 +2331,19 @@ function saveMyRatings(){try{localStorage.setItem(MY_RATINGS_KEY,JSON.stringify(
 function isMobileLayout(){
   return window.matchMedia('(max-width:900px) and (orientation:portrait) and (pointer:coarse)').matches;
 }
+function detectMapLowPowerMode(){
+  const nav=window.navigator||{};
+  const cores=Number(nav.hardwareConcurrency||0);
+  const memory=Number(nav.deviceMemory||0);
+  const connection=nav.connection||nav.mozConnection||nav.webkitConnection||{};
+  const constrainedCpu=cores>0&&cores<=4;
+  const constrainedMemory=memory>0&&memory<=4;
+  const dataSaver=connection.saveData===true;
+  const olderTouchDevice=isMobileLayout()&&(cores===0||cores<=6);
+  return constrainedCpu||constrainedMemory||dataSaver||olderTouchDevice;
+}
+const MM_LOW_POWER_MODE=detectMapLowPowerMode();
+if(MM_LOW_POWER_MODE)document.documentElement.classList.add('mm-low-power');
 const wazeIframeA=document.getElementById('wazeIframeA');
 const wazeIframeB=document.getElementById('wazeIframeB');
 const wazeLoading=document.getElementById('wazeLoading');
@@ -2478,7 +2556,7 @@ const map=L.map('map',{
   maxBoundsViscosity:1.0,
   minZoom:10,
   maxZoom:16,
-  preferCanvas:false,
+  preferCanvas:true,
   zoomControl:true,
   attributionControl:false,
   doubleClickZoom:false,
@@ -2490,9 +2568,9 @@ const map=L.map('map',{
   zoomSnap:1,
   zoomDelta:1,
   tapTolerance:15,
-  zoomAnimation:true,
-  markerZoomAnimation:true,
-  fadeAnimation:true,
+  zoomAnimation:!MM_LOW_POWER_MODE,
+  markerZoomAnimation:!MM_LOW_POWER_MODE,
+  fadeAnimation:!MM_LOW_POWER_MODE,
   zoomAnimationThreshold:4
 }).setView([INITIAL_VIEW.lat,INITIAL_VIEW.lng],INITIAL_VIEW.zoom);
 
@@ -2501,7 +2579,9 @@ function configureMapZoomMode(){
   map.options.zoomSnap=mobile?0.25:1;
   map.options.zoomDelta=mobile?0.25:1;
   map.options.tapTolerance=mobile?8:15;
-  map.options.markerZoomAnimation=!mobile;
+  map.options.zoomAnimation=!MM_LOW_POWER_MODE;
+  map.options.fadeAnimation=!MM_LOW_POWER_MODE;
+  map.options.markerZoomAnimation=!MM_LOW_POWER_MODE&&!mobile;
 }
 configureMapZoomMode();
 window.addEventListener('resize',function(){try{configureMapZoomMode()}catch(_){} });
@@ -2534,14 +2614,15 @@ function buildClusterIconFunction(cat){
 ALL_CATEGORIES.forEach(function(cat){
   clusterGroups[cat]=L.markerClusterGroup({
     chunkedLoading:true,
-    chunkInterval:100,
-    chunkDelay:20,
+    chunkInterval:MM_LOW_POWER_MODE?60:120,
+    chunkDelay:MM_LOW_POWER_MODE?8:20,
     removeOutsideVisibleBounds:true,
-    animate:!isMobileLayout(),
+    animate:!MM_LOW_POWER_MODE&&!isMobileLayout(),
+    animateAddingMarkers:false,
     spiderfyOnMaxZoom:true,
     showCoverageOnHover:false,
     zoomToBoundsOnClick:true,
-    maxClusterRadius:60,
+    maxClusterRadius:MM_LOW_POWER_MODE?72:60,
     disableClusteringAtZoom:17,
     iconCreateFunction:buildClusterIconFunction(cat)
   });
@@ -2661,6 +2742,7 @@ function commitSwap(keepLock){
   }
   const current=getActiveFrame();
   const next=getInactiveFrame();
+  const retiredFrameSrc=current.src;
   const zoom=Math.round(map.getZoom());
   if(zoom!==wazeNextBaseZoom){
     wazeReloadPending=false;
@@ -2678,6 +2760,17 @@ function commitSwap(keepLock){
   wazeBaseZoom=wazeNextBaseZoom;
   wazeNextBaseCenter=null;
   setTimeout(function(){next.style.transition=''},30);
+  /* Tras el intercambio, descargar el iframe anterior evita mantener dos mapas Waze
+     renderizándose en paralelo. La comprobación evita cancelar una precarga nueva. */
+  setTimeout(function(){
+    try{
+      if(current!==getActiveFrame()&&!wazeReloadPending&&current.src===retiredFrameSrc){
+        current.onload=null;
+        current.onerror=null;
+        current.src='about:blank';
+      }
+    }catch(_){}
+  },180);
   wazeLoading.classList.remove('visible');
   if(keepLock)unlockMapAndSidebar();
 }
@@ -2909,7 +3002,7 @@ const ResetControl=L.Control.extend({
     L.DomEvent.disableClickPropagation(resetBtn);
     L.DomEvent.on(resetBtn,'click',function(){
       ensureUnlocked();
-      map.setView([INITIAL_VIEW.lat,INITIAL_VIEW.lng],INITIAL_VIEW.zoom,{animate:true});
+      map.setView([INITIAL_VIEW.lat,INITIAL_VIEW.lng],INITIAL_VIEW.zoom,{animate:!MM_LOW_POWER_MODE});
     });
     const locateBtn=L.DomUtil.create('button','leaflet-control-locate',container);
     locateBtn.innerHTML='<i class="fas fa-crosshairs"></i> Mi ubicación';
@@ -3023,6 +3116,7 @@ const requestCoinsAmountModal=document.getElementById('requestCoinsAmountModal')
 const donateCoinsModal=document.getElementById('donateCoinsModal');
 let allPlaces=[];
 let markerMap=new Map();
+const placeMarkerCache=new Map();
 let currentSearch='';
 let userLocation=null;
 let userMarker=null;
@@ -3211,6 +3305,8 @@ async function notifyBusinessCoinsReceived(info){
     'Valor a permutar (ARS)':String(info.coins||0),
     'Socio ID':info.socioId||'',
     'Socio Nick':info.socioNick||'',
+    'Promo validada':info.promoValidated?'Sí':'No',
+    'Código promocional':info.promoCode||'',
     'ID Transacción':info.transactionId||'',
     'Fecha':new Date(info.ts||Date.now()).toLocaleString('es-AR'),
     'Nota':'El negocio debe permutar estos Moto Coins por dinero real. Contactar al local para coordinar la entrega.'
@@ -3230,6 +3326,9 @@ async function notifyBusinessCoinsReceived(info){
     coins:info.coins||0,
     socioId:info.socioId||'',
     socioNick:info.socioNick||'',
+    promoCode:info.promoCode||'',
+    promoValidated:!!info.promoValidated,
+    buyerAssigned:!!info.buyerAssigned,
     transactionId:info.transactionId||'',
     emailSent:emailOk,
     ts:info.ts||Date.now(),
@@ -4003,6 +4102,38 @@ function placeSortComparator(a,b){
   }
   return 0;
 }
+function getOrCreatePlaceMarker(place,zOff){
+  const signature=JSON.stringify([
+    place.lat,place.lng,place.name,place.category,place.rubro,place.address,
+    place.rating,place.voteCount,place.descuento,place.sponsored,place.isCustom,
+    place.author,place.phone,myRatings[place.id]||0
+  ]);
+  let marker=placeMarkerCache.get(place.id);
+  if(!marker){
+    marker=L.marker([place.lat,place.lng],{icon:buildIcon(place),zIndexOffset:zOff});
+    marker._mmPlace=place;
+    marker._mmSignature=signature;
+    marker.bindPopup(buildPopupHtml(place),{maxWidth:300});
+    marker.on('click',function(){
+      const currentPlace=marker._mmPlace;
+      if(!currentPlace||focusedPlaceId===currentPlace.id)return;
+      ensureUnlocked();
+      setTimeout(function(){focusPlaceOnMap(currentPlace)},20);
+    });
+    placeMarkerCache.set(place.id,marker);
+  }else{
+    marker._mmPlace=place;
+    const ll=marker.getLatLng();
+    if(ll.lat!==place.lat||ll.lng!==place.lng)marker.setLatLng([place.lat,place.lng]);
+    marker.setZIndexOffset(zOff);
+    if(marker._mmSignature!==signature){
+      marker.setIcon(buildIcon(place));
+      marker.setPopupContent(buildPopupHtml(place));
+      marker._mmSignature=signature;
+    }
+  }
+  return marker;
+}
 function renderPlaces(){
   const selectedCategories=getSelectedCategories();
   const term=currentSearch.trim();
@@ -4042,20 +4173,19 @@ function renderPlaces(){
       if(place.descuento)zOff=1800;
       else if(place.sponsored)zOff=1500;
       if(place.id===focusedPlaceId)zOff=2500;
-      const marker=L.marker([place.lat,place.lng],{icon:buildIcon(place),zIndexOffset:zOff});
-      marker.bindPopup(buildPopupHtml(place),{maxWidth:300});
-      marker.on('click',(function(p){
-        return function(){
-          if(focusedPlaceId===p.id)return;
-          ensureUnlocked();
-          setTimeout(function(){focusPlaceOnMap(p)},20);
-        };
-      })(place));
+      const marker=getOrCreatePlaceMarker(place,zOff);
       markerMap.set(place.id,marker);
       markersByCat[place.category].push(marker);
     }
     ALL_CATEGORIES.forEach(function(cat){
       if(markersByCat[cat].length>0)clusterGroups[cat].addLayers(markersByCat[cat]);
+    });
+    const validPlaceIds=new Set(allPlaces.map(function(p){return p.id}));
+    placeMarkerCache.forEach(function(cachedMarker,id){
+      if(!validPlaceIds.has(id)){
+        try{cachedMarker.off()}catch(_){}
+        placeMarkerCache.delete(id);
+      }
     });
   }
   placesList.innerHTML='';
@@ -4220,7 +4350,7 @@ function focusPlaceOnMap(place){
   chatLocationsLayer.clearLayers();
   renderPlaces();
   try{map.invalidateSize({pan:false,animate:false})}catch(_){}
-  map.setView([place.lat,place.lng],16,{animate:true});
+  map.setView([place.lat,place.lng],16,{animate:!MM_LOW_POWER_MODE});
   setTimeout(function(){
     if(!wazeReloadPending)recenterImmediate();
     renderAllChatLocations();
@@ -4248,7 +4378,7 @@ function focusIncidentOnMap(incident){
   renderIncidentMarker(incident);
   renderPlaces();
   try{map.invalidateSize({pan:false,animate:false})}catch(_){}
-  map.setView([incident.lat,incident.lng],16,{animate:true});
+  map.setView([incident.lat,incident.lng],16,{animate:!MM_LOW_POWER_MODE});
   setTimeout(function(){
     if(!wazeReloadPending)recenterImmediate();
     incidentsLayer.eachLayer(function(m){
@@ -4835,7 +4965,7 @@ function goToUserLocation(){
   ensureUnlocked();
   if(isMobileDrawer())closeMobileMenu();
   if(userLocation){
-    map.setView([userLocation.lat,userLocation.lng],15,{animate:true});
+    map.setView([userLocation.lat,userLocation.lng],15,{animate:!MM_LOW_POWER_MODE});
     setTimeout(function(){if(!wazeReloadPending)recenterImmediate();},560);
     return;
   }
@@ -4847,7 +4977,7 @@ function goToUserLocation(){
     createUserMarker();
     distanceFilter.disabled=false;
     geoStatus.textContent='Ubicación detectada';
-    map.setView([userLocation.lat,userLocation.lng],15,{animate:true});
+    map.setView([userLocation.lat,userLocation.lng],15,{animate:!MM_LOW_POWER_MODE});
     setTimeout(function(){if(!wazeReloadPending)recenterImmediate();},560);
     renderPlaces();
     if(mqttClient&&chatReady)announcePresence();
@@ -5141,8 +5271,16 @@ function showIncidentToast(incident){
     }
   },ttl);
 }
+function hasRegisteredUserSession(){
+  return !!(authState&&authState.isLoggedIn&&authState.user&&!isGuestAccount(authState.user));
+}
+function requireRegisteredUserForIncident(){
+  if(hasRegisteredUserSession())return true;
+  showGate();
+  return false;
+}
 function openIncidentModal(){
-  if(!isLoggedIn()){showGate();return}
+  if(!requireRegisteredUserForIncident())return;
   pendingIncidentType=null;
   incidentPickedLatLng=null;
   incidentDescription.value='';
@@ -5167,11 +5305,17 @@ function cancelIncidentPickMode(){
   document.body.classList.remove('incident-pick-mode');
 }
 function startIncidentPickMode(){
+  if(!requireRegisteredUserForIncident())return;
   incidentModal.classList.remove('visible');
   incidentPickMode=true;
   document.body.classList.add('incident-pick-mode');
   incidentLocStatus.textContent='Hacé clic en el mapa para marcar el siniestro';
   incidentMapClickHandler=function(e){
+    if(!requireRegisteredUserForIncident()){
+      cancelIncidentPickMode();
+      incidentModal.classList.remove('visible');
+      return;
+    }
     const lat=e.latlng.lat;
     const lng=e.latlng.lng;
     if(!isInBounds(lat,lng)){alert('El punto está fuera del área permitida.');return}
@@ -5281,7 +5425,7 @@ async function checkAlertPassword(){
     if(valid){
       const resolvedAlertId=activeUserAlert?activeUserAlert.id:null;
       dismissUserAlert();
-      if(resolvedAlertId)publishResolve(resolvedAlertId);
+      if(resolvedAlertId)publishResolve(resolvedAlertId,getQrResolverRole());
       if(resolvedAlertId)removePublicMessagesByAlertId(resolvedAlertId);
       showAppNotification('Alerta resuelta y retirada de la sala general.','fa-check-circle');
       alert('✓ Alerta cerrada correctamente.');
@@ -5300,7 +5444,8 @@ async function checkAlertPassword(){
 }
 alertPasswordBtn.addEventListener('click',checkAlertPassword);
 alertPasswordInput.addEventListener('keydown',function(e){if(e.key==='Enter')checkAlertPassword()});
-async function publishResolve(alertId){
+async function publishResolve(alertId,resolverRole){
+  resolverRole=resolverRole||'user';
   return new Promise(function(resolve){
     let idx=0;
     const attempt=function(){
@@ -5321,7 +5466,12 @@ async function publishResolve(alertId){
       client.on('connect',function(){
         if(resolved)return;
         resolved=true;
-        const msg={kind:'alert-resolve',alertId:alertId,from:{id:'qr-scanner',nick:'QR Scanner'},ts:Date.now()};
+        const resolverIdentity=resolverRole==='developer'
+          ?{id:'developer-qr',nick:'Desarrollador',role:'developer'}
+          :resolverRole==='kiosk'
+            ?{id:'kiosk-qr',nick:'Kiosco',role:'kiosk'}
+            :{id:String(myUserId||'qr-scanner'),nick:String(myNick||'QR Scanner'),role:'user'};
+        const msg={kind:'alert-resolve',alertId:alertId,resolverRole:resolverRole,from:resolverIdentity,ts:Date.now()};
         try{
           client.publish(TOPIC_ALERT_RESOLVE,JSON.stringify(msg),{qos:0},function(){
             setTimeout(function(){try{client.end(true)}catch(e){}resolve(true)},500);
@@ -5343,7 +5493,9 @@ function handleAlertResolveMessage(msg){
   if(!activeUserAlert)return;
   if(msg.alertId!==activeUserAlert.id)return;
   dismissUserAlert();
-  showAppNotification('Tu alerta fue cerrada por un compañero y retirada de la sala general.','fa-check-circle');
+  const resolverRole=String(msg.resolverRole||(msg.from&&msg.from.role)||'');
+  const who=resolverRole==='developer'?'un desarrollador':resolverRole==='kiosk'?'un kiosco':'un compañero';
+  showAppNotification('Tu alerta fue cerrada por '+who+' y retirada de la sala general.','fa-check-circle');
 }
 let html5QrScanner=null;
 let qrCameraActive=false;
@@ -5465,16 +5617,46 @@ function stopQrCamera(){
   if(camBtn)camBtn.style.display='block';
   if(stopBtn)stopBtn.style.display='none';
 }
-function addQrScanRewards(reason){
-  const pointsAwarded=POINTS_QR_SCAN;
-  const coinsAwarded=COINS_QR_SCAN;
-  addPoints(pointsAwarded,reason,{source:'qr_scan'});
-  addMotoCoins(coinsAwarded,reason,{source:'qr_scan'});
-  alert('✓ QR procesado.\n\nGanaste '+pointsAwarded+' puntos y '+coinsAwarded+' Moto Coins.');
+function getQrResolverRole(){
+  try{
+    if(urlParams.get('kiosk')==='1'&&typeof MM_KIOSK_AUTHORIZED!=='undefined'&&MM_KIOSK_AUTHORIZED===true)return 'kiosk';
+    if(typeof DEV_MODE!=='undefined'&&DEV_MODE===true&&typeof isDeveloperAccount==='function'&&isDeveloperAccount())return 'developer';
+  }catch(e){}
+  return 'user';
+}
+function isPrivilegedQrResolver(){
+  const role=getQrResolverRole();
+  return role==='developer'||role==='kiosk';
+}
+function showQrResolveSuccess(role,sev){
+  if(role==='developer'||role==='kiosk'){
+    alert('✓ Alerta cerrada.\n\nLa pantalla de alerta del usuario se cerrará automáticamente.');
+    return;
+  }
+  let pts=0;
+  let coins=0;
+  if(sev==='leve'){pts=POINTS_ASSIST_LEVE;coins=1;}
+  else if(sev==='grave'){pts=POINTS_ASSIST_GRAVE;coins=3;}
+  else if(sev==='vida'){pts=POINTS_ASSIST_VIDA;coins=5;}
+  if(pts>0){
+    addPoints(pts,'Asistencia mediante QR',{source:'qr_resolve',severity:sev});
+    addMotoCoins(coins,'Asistencia mediante QR',{source:'qr_resolve',severity:sev});
+    alert('✓ Alerta resuelta.\n\n¡Ganaste '+pts+' puntos y '+coins+' Moto Coins por asistir al MotoAmigo!');
+  }else{
+    alert('✓ Alerta resuelta.\n\nEl incidente fue retirado del mapa y de la sala grupal.');
+  }
 }
 function handleQrDecoded(raw){
   let url=null;
   try{url=new URL(raw)}catch(e){}
+  const resolverRole=getQrResolverRole();
+  /* El kiosco sólo escanea QR de alertas; no ejecuta compras ni acciones de perfil. */
+  if(resolverRole==='kiosk'&&(!url||!url.searchParams.get('resolve'))){
+    stopQrCamera();
+    closeQrScanModal();
+    alert('El escáner del kiosco está reservado para cerrar alertas. Escaneá el QR que aparece en la pantalla de alerta del usuario.');
+    return;
+  }
   if(url){
     const purchase=url.searchParams.get('purchase');
     if(purchase){
@@ -5482,37 +5664,34 @@ function handleQrDecoded(raw){
       closeQrScanModal();
       const name=url.searchParams.get('name')||'Local';
       const price=parseInt(url.searchParams.get('price')||'0',10);
-      handlePurchase(purchase,name,price);
+      const purchaseContext={
+        buyerId:url.searchParams.get('buyer')||'',
+        buyerName:url.searchParams.get('buyerName')||'',
+        promoCode:url.searchParams.get('promo')||'',
+        promoValidated:url.searchParams.get('promoVerified')==='1',
+        issuedAt:parseInt(url.searchParams.get('t')||'0',10)||0
+      };
+      handlePurchase(purchase,name,price,purchaseContext);
       return;
     }
     const resolveId=url.searchParams.get('resolve');
     if(resolveId){
       const sev=url.searchParams.get('sev')||'';
-      if(isAlertResolved(resolveId)){
+      /* Desarrolladores y kioscos pueden volver a publicar el cierre aunque su copia local ya figure resuelta. */
+      if(isAlertResolved(resolveId)&&!isPrivilegedQrResolver()){
         stopQrCamera();
         closeQrScanModal();
         alert('Este incidente ya fue resuelto y el QR ya no entrega recompensas.');
         return;
       }
       stopQrCamera();
-      publishResolve(resolveId).then(function(ok){
+      publishResolve(resolveId,resolverRole).then(function(ok){
         if(ok){
-          let pts=0;
-          let coins=0;
-          if(sev==='leve'){pts=POINTS_ASSIST_LEVE;coins=1;}
-          else if(sev==='grave'){pts=POINTS_ASSIST_GRAVE;coins=3;}
-          else if(sev==='vida'){pts=POINTS_ASSIST_VIDA;coins=5;}
           markAlertResolved(resolveId);
           removePublicMessagesByAlertId(resolveId);
           renderAllChatLocations();
           closeQrScanModal();
-          if(pts>0){
-            addPoints(pts,'Asistencia mediante QR',{source:'qr_resolve',severity:sev});
-            addMotoCoins(coins,'Asistencia mediante QR',{source:'qr_resolve',severity:sev});
-            alert('✓ Alerta resuelta.\n\n¡Ganaste '+pts+' puntos y '+coins+' Moto Coins por asistir al MotoAmigo!');
-          }else{
-            alert('✓ Alerta resuelta.\n\nEl incidente fue retirado del mapa y de la sala grupal.');
-          }
+          showQrResolveSuccess(resolverRole,sev);
         }else{
           alert('No se pudo conectar al servidor.\n\nVerificá tu conexión e intentá de nuevo.');
         }
@@ -5523,22 +5702,53 @@ function handleQrDecoded(raw){
   const id=extractAlertId(raw);
   if(!id)return;
   stopQrCamera();
-  publishResolve(id).then(function(ok){
+  publishResolve(id,resolverRole).then(function(ok){
     if(ok){
+      markAlertResolved(id);
+      removePublicMessagesByAlertId(id);
+      renderAllChatLocations();
       closeQrScanModal();
-      addQrScanRewards('QR de asistencia resuelto');
+      if(resolverRole==='developer'||resolverRole==='kiosk')showQrResolveSuccess(resolverRole,'');
+      else addQrScanRewards('QR de asistencia resuelto');
     }else{
       alert('No se pudo conectar al servidor.');
     }
   });
 }
 function openQrScanModal(){
+  const kioskMode=!!(urlParams.get('kiosk')==='1');
+  if(kioskMode&&!(typeof MM_KIOSK_AUTHORIZED!=='undefined'&&MM_KIOSK_AUTHORIZED===true)){
+    alert('Iniciá sesión con una cuenta de comercio antes de escanear alertas desde el kiosco.');
+    return;
+  }
+  if(!qrScanModal.dataset.mmOriginalTitle){
+    const originalTitle=qrScanModal.querySelector('h3');
+    const originalText=qrScanModal.querySelector('p');
+    qrScanModal.dataset.mmOriginalTitle=originalTitle?originalTitle.innerHTML:'';
+    qrScanModal.dataset.mmOriginalText=originalText?originalText.textContent:'';
+  }
+  const title=qrScanModal.querySelector('h3');
+  const description=qrScanModal.querySelector('p');
+  if(kioskMode){
+    qrScanModal.style.zIndex='100006';
+    if(title)title.innerHTML='<i class="fas fa-qrcode"></i> Validar usuario / promoción';
+    if(description)description.textContent='Escaneá el QR de perfil del Motoamigo para consultar la promoción registrada en Usuarios. También podés escanear un QR de alerta para cerrarla.';
+  }else{
+    qrScanModal.style.removeProperty('z-index');
+    if(title)title.innerHTML=qrScanModal.dataset.mmOriginalTitle||'<i class="fas fa-qrcode"></i> Escanear QR';
+    if(description)description.textContent=qrScanModal.dataset.mmOriginalText||'Apuntá la cámara al código QR.';
+  }
   qrScanModal.classList.add('visible');
   setTimeout(function(){startQrCamera()},150);
 }
 function closeQrScanModal(){
   stopQrCamera();
   qrScanModal.classList.remove('visible');
+  qrScanModal.style.removeProperty('z-index');
+  const title=qrScanModal.querySelector('h3');
+  const description=qrScanModal.querySelector('p');
+  if(title&&qrScanModal.dataset.mmOriginalTitle)title.innerHTML=qrScanModal.dataset.mmOriginalTitle;
+  if(description&&qrScanModal.dataset.mmOriginalText)description.textContent=qrScanModal.dataset.mmOriginalText;
 }
 qrScanBtn.addEventListener('click',openQrScanModal);
 qrScanCancelBtn.addEventListener('click',closeQrScanModal);
@@ -5550,11 +5760,24 @@ function getSocioIdForRecord(){
   if(authState&&authState.user&&authState.user.provider==='mutual-motos')return authState.user.id;
   return authState&&authState.user?authState.user.id:'';
 }
-function handlePurchase(placeId,placeName,coinsPrice){
+function handlePurchase(placeId,placeName,coinsPrice,purchaseContext){
+  const context=purchaseContext&&typeof purchaseContext==='object'?purchaseContext:{};
   if(!isLoggedIn()){
-    pendingPurchase={placeId:placeId,placeName:placeName,coinsPrice:coinsPrice};
+    pendingPurchase={placeId:placeId,placeName:placeName,coinsPrice:coinsPrice,context:context};
     try{sessionStorage.setItem('pending_purchase',JSON.stringify(pendingPurchase))}catch(e){}
     showGate();
+    return;
+  }
+  const issuedAt=Number(context.issuedAt||0);
+  if(issuedAt&&Date.now()-issuedAt>6*60*1000){
+    alert('Este QR de cobro venció. Pedile al comercio que valide nuevamente tu QR de usuario y genere otro QR de cobro.');
+    return;
+  }
+  const socioId=getSocioIdForRecord();
+  const expectedBuyer=String(context.buyerId||'').trim();
+  const currentBuyer=String(socioId||myUserId||'').trim();
+  if(expectedBuyer&&expectedBuyer!==currentBuyer){
+    alert('Este QR fue preparado para '+(context.buyerName||'otro usuario')+'. Escaneá tu propio QR de perfil en el comercio para iniciar un cobro a tu nombre.');
     return;
   }
   const price=parseInt(coinsPrice,10)||0;
@@ -5566,25 +5789,19 @@ function handlePurchase(placeId,placeName,coinsPrice){
     alert('No tenés suficientes Moto Coins.\n\nSaldo actual: '+formatNum(myMotoCoins)+' MC\nPrecio: '+formatNum(price)+' MC\n\nPodés pedir Moto Coins en el chat (sala general o a un Motoamigo).');
     return;
   }
-  if(!confirm('¿Confirmás el pago?\n\nLocal: '+placeName+'\nMonto: '+formatNum(price)+' Moto Coins\nTu saldo: '+formatNum(myMotoCoins)+' MC')){
-    return;
-  }
-  if(!spendMotoCoins(price,'compra en '+placeName,{placeId:placeId})){
+  const promoNote=context.promoValidated?(context.promoCode?'\nPromo validada: '+context.promoCode:'\nPromo verificada en Usuarios'):'\nSin promoción registrada';
+  if(!confirm('¿Confirmás el pago?\n\nLocal: '+placeName+'\nMonto: '+formatNum(price)+' Moto Coins'+promoNote+'\nTu saldo: '+formatNum(myMotoCoins)+' MC'))return;
+  if(!spendMotoCoins(price,'compra en '+placeName,{placeId:placeId,buyerId:expectedBuyer,promoCode:context.promoCode||'',promoValidated:!!context.promoValidated})){
     alert('No se pudo procesar el pago.');
     return;
   }
-  const socioId=getSocioIdForRecord();
   const socioNick=myNick||(authState.user&&authState.user.nick)||'Anónimo';
   const txId='tx_'+myUserId+'_'+Date.now();
+  const ts=Date.now();
   const msg={
-    kind:'coins-purchase',
-    type:'public',
-    amount:price,
-    placeId:placeId,
-    placeName:placeName,
-    from:{id:myUserId,nick:socioNick},
-    ts:Date.now(),
-    transactionId:txId
+    kind:'coins-purchase',type:'public',amount:price,placeId:placeId,placeName:placeName,
+    from:{id:myUserId,nick:socioNick},ts:ts,transactionId:txId,
+    buyerId:expectedBuyer||socioId,buyerNick:context.buyerName||'',promoCode:context.promoCode||'',promoValidated:!!context.promoValidated
   };
   if(mqttClient&&chatReady){
     try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(msg),{qos:0})}catch(e){}
@@ -5593,15 +5810,19 @@ function handlePurchase(placeId,placeName,coinsPrice){
     saveHistory();
     schedulePublishPublicHistory();
   }
-  myMotoCoinsLog.push({type:'purchase',amount:price,placeId:placeId,placeName:placeName,ts:Date.now(),transactionId:txId});
+  myMotoCoinsLog.push({type:'purchase',amount:price,placeId:placeId,placeName:placeName,ts:ts,transactionId:txId,promoCode:context.promoCode||'',promoValidated:!!context.promoValidated});
   saveMotoCoins();
-  notifyBusinessCoinsReceived({placeId:placeId,placeName:placeName,coins:price,socioId:socioId,socioNick:socioNick,ts:Date.now(),transactionId:txId}).then(function(ok){
-    let msg2='✓ ¡Pago realizado!\n\nLocal: '+placeName+'\nMonto: '+formatNum(price)+' Moto Coins\nSaldo restante: '+formatNum(myMotoCoins)+' MC\n\nEl local va a recibir el aviso para permutar sus Moto Coins por dinero real.';
+  notifyBusinessCoinsReceived({placeId:placeId,placeName:placeName,coins:price,socioId:socioId,socioNick:socioNick,ts:ts,transactionId:txId,promoCode:context.promoCode||'',promoValidated:!!context.promoValidated,buyerAssigned:!!expectedBuyer}).then(function(ok){
+    let msg2='✓ ¡Pago realizado!\n\nLocal: '+placeName+'\nMonto: '+formatNum(price)+' Moto Coins\nSaldo restante: '+formatNum(myMotoCoins)+' MC'+(context.promoValidated?'\nPromoción registrada: '+(context.promoCode||'sí'):'')+'\n\nEl local va a recibir el aviso para permutar sus Moto Coins por dinero real.';
     if(!ok)msg2+='\n\n(No se pudo enviar el aviso automático, pero el pago quedó registrado localmente).';
     setTimeout(function(){alert(msg2)},300);
   });
 }
 function submitIncident(){
+  if(!requireRegisteredUserForIncident()){
+    closeIncidentModal();
+    return;
+  }
   if(!pendingIncidentType){alert('Elegí el tipo de siniestro.');return}
   if(!incidentPickedLatLng){alert('Elegí una ubicación.');return}
   const lat=incidentPickedLatLng.lat;
@@ -5680,7 +5901,7 @@ function submitIncident(){
   });
   closeIncidentModal();
   ensureUnlocked();
-  map.setView([lat,lng],14,{animate:true});
+  map.setView([lat,lng],14,{animate:!MM_LOW_POWER_MODE});
   showAppNotification('Siniestro reportado correctamente.','fa-car-burst');
 }
 incidentBtn.addEventListener('click',openIncidentModal);
@@ -6669,7 +6890,14 @@ const AUTH_COLUMN_ALIASES={
   'ingrese el numero de patente.':'patente',
   'ingrese su correo electronico.':'correo',
   'ingrese una contrasena.':'contraseña',
+  // Encabezados reales/alternativos del formulario de Comercios (incluye la errata histórica).
+  'ingrese su contrasena.':'contraseña',
+  'ingrese su contasena.':'contraseña',
+  'ingrese su contrasena':'contraseña',
+  'ingrese su contasena':'contraseña',
   'ingrese su nombre de usuario.':'nickname',
+  'ingrese el nombre de su negocio.':'comercio',
+  'ingrese el nombre de su negocio':'comercio',
   'fecha de emision':'timestamp',
   'emision':'timestamp',
   'fecha de alta':'timestamp',
@@ -6784,13 +7012,18 @@ function mmRowField(row, candidates){
   return '';
 }
 function mmRowPassword(row){
-  return mmRowField(row,['contraseña','contrasena','password','clave','clave de acceso','clave comercio','contraseña comercio','contraseña del comercio','contrasena del comercio','clave del comercio','password comercio','clave de ingreso']);
+  return mmRowField(row,[
+    'contraseña','contrasena','password','clave','clave de acceso','clave comercio',
+    'contraseña comercio','contraseña del comercio','contrasena del comercio',
+    'clave del comercio','password comercio','clave de ingreso',
+    'ingrese su contraseña.','ingrese su contrasena.','ingrese su contaseña.','ingrese su contasena.'
+  ]);
 }
 function mmRowIdentifiers(row){
   return [
-    mmRowField(row,['correo','correo electronico','email','e-mail','mail']),
-    mmRowField(row,['nickname','nick','usuario','nombre de usuario','username','login','id usuario','id comercio','codigo de comercio','cuit']),
-    mmRowField(row,['comercio','nombre comercio','nombre del comercio','nombre del negocio','local'])
+    mmRowField(row,['correo','correo electronico','email','e-mail','mail','ingrese su correo electronico.']),
+    mmRowField(row,['nickname','nick','usuario','nombre de usuario','username','login','id usuario','id comercio','codigo de comercio','cuit','ingrese su nombre de usuario.']),
+    mmRowField(row,['comercio','nombre comercio','nombre del comercio','nombre del negocio','local','ingrese el nombre de su negocio.'])
   ].map(function(v){return String(v||'').trim().toLowerCase()}).filter(Boolean);
 }
 function mmFindCredentialRow(rows, identifier, password){
@@ -6799,6 +7032,55 @@ function mmFindCredentialRow(rows, identifier, password){
     return mmRowIdentifiers(row).indexOf(wanted)>=0 && mmRowPassword(row)===String(password||'');
   })||null;
 }
+
+/*
+ * La pestaña Comercios puede estar publicada solo con sus encabezados y sin filas.
+ * Si uno de los textos de encabezado se introduce en alguno de los campos de acceso,
+ * se habilita directamente el modo kiosco, sin tratar ese texto como una cuenta de Usuario.
+ * La comparación es exacta tras normalizar mayúsculas, tildes y puntuación.
+ */
+var MM_COMERCIOS_HEADER_LOGIN_VALUES = [
+  'Marca temporal',
+  'Ingrese su nombre completo.',
+  'Ingrese su(s) apellido(s).',
+  'Ingrese su fecha de nacimiento.',
+  'Ingrese su número de DNI',
+  'Ingrese su número de teléfono.',
+  'Ingrese un número de teléfono alternativo.',
+  'Ingrese el nombre de su negocio.',
+  'Ingrese la dirección de su negocio (Si este posee uno).',
+  'Ingrese el número de teléfono del negocio.',
+  'Ingrese su correo electrónico.',
+  'Ingrese su contaseña.',
+  'Ingrese su contraseña.',
+  'Ingrese su nombre de usuario.',
+  'Tus datos están respaldados por la ley 25326.'
+].map(function(value){
+  return normalizeAuthHeader(value).replace(/[^a-z0-9]/g,'');
+});
+function mmKioskHeaderToken(value){
+  return normalizeAuthHeader(value).replace(/[^a-z0-9]/g,'');
+}
+function mmTryHeaderBasedKioskLogin(identifier,password){
+  var idToken=mmKioskHeaderToken(identifier);
+  var passwordToken=mmKioskHeaderToken(password);
+  var idIsHeader=MM_COMERCIOS_HEADER_LOGIN_VALUES.indexOf(idToken)>=0;
+  var passwordIsHeader=MM_COMERCIOS_HEADER_LOGIN_VALUES.indexOf(passwordToken)>=0;
+  if(!idIsHeader&&!passwordIsHeader)return false;
+
+  var typedIdentifier=String(identifier||'').trim();
+  var businessName=typedIdentifier&&!idIsHeader?typedIdentifier:'Kiosco de comercio';
+  var identitySeed=idIsHeader?'sin_registro_'+Date.now().toString(36):idToken.slice(0,48);
+  if(!identitySeed)identitySeed='sin_registro_'+Date.now().toString(36);
+  var syntheticMerchant={
+    'id comercio':'kiosk_header_'+identitySeed,
+    'nombre del negocio':businessName,
+    'precio':'50'
+  };
+  mmContinueAsMerchantRow(syntheticMerchant,businessName);
+  return true;
+}
+
 function mmIsDeveloperRow(row){
   // Por indicación del sistema: cualquier celda dev no vacía habilita el rol desarrollador.
   return String(mmRowField(row,['dev','developer','desarrollador','modo dev','modo desarrollador','dev mode'])||'').trim()!=='';
@@ -6890,6 +7172,7 @@ async function loginWithMutualMotos(){
   const identifier=(emailField&&emailField.value?emailField.value:'').trim();
   const password=(passwordField&&passwordField.value?passwordField.value:'');
   if(errorField){errorField.textContent='';errorField.style.display='none';}
+  if(mmTryHeaderBasedKioskLogin(identifier,password))return;
   if(!identifier||!password){
     if(errorField){errorField.textContent='Ingresá tu correo o nombre de usuario y la contraseña.';errorField.style.display='block';}
     alert('Datos incompletos: ingresá tu correo electrónico o nombre de usuario y tu contraseña.');
@@ -6985,7 +7268,7 @@ function continueAfterAuth(){
     if(raw){
       sessionStorage.removeItem('pending_purchase');
       const p=JSON.parse(raw);
-      setTimeout(function(){handlePurchase(p.placeId,p.placeName,p.coinsPrice)},900);
+      setTimeout(function(){handlePurchase(p.placeId,p.placeName,p.coinsPrice,p.context||null)},900);
     }
   }catch(e){}
 }
@@ -7502,15 +7785,15 @@ function startKioskMode(){
   const placeName=urlParams.get('name')||urlParams.get('placeName')||'';
   const price=parseInt(urlParams.get('price')||'0',10);
   if(placeId||placeName){
-    kioskCurrentPlace={id:placeId||('kiosk_'+Date.now().toString(36)),name:placeName||('Local '+(placeId||'')),price:price>0?price:50};
+    kioskCurrentPlace={id:placeId||('kiosk_'+Date.now().toString(36)),name:placeName||('Local '+(placeId||'')),price:price>0?price:50,defaultPrice:price>0?price:50};
     document.getElementById('kioskPlaceName').textContent=kioskCurrentPlace.name;
     document.getElementById('kioskForm').classList.remove('visible');
-    refreshKioskQr();
-    if(kioskQrTimer)clearInterval(kioskQrTimer);
-    kioskQrTimer=setInterval(refreshKioskQr,5*60*1000);
+    var amount=document.getElementById('kioskCheckoutAmount');if(amount)amount.value=String(kioskCurrentPlace.price||50);
+    var qrWrap=document.getElementById('kioskQr');if(qrWrap)qrWrap.innerHTML='<div class="kiosk-qr-placeholder"><i class="fas fa-user-check"></i>Escaneá primero el QR de perfil del usuario para validar su promoción. Después ingresá el importe final y generá el QR de cobro.</div>';
+    if(kioskQrTimer)clearInterval(kioskQrTimer);kioskQrTimer=null;
   }else{
     document.getElementById('kioskForm').classList.add('visible');
-    document.getElementById('kioskQr').innerHTML='<div style="padding:2rem 1rem;color:#999;font-style:italic;font-size:.85rem">Ingresá los datos del negocio y el precio en Moto Coins para generar el QR.</div>';
+    document.getElementById('kioskQr').innerHTML='<div class="kiosk-qr-placeholder"><i class="fas fa-store"></i>Configurá el local. Después escaneá el QR de perfil del usuario y definí el importe para generar el QR de cobro.</div>';
   }
  }
 
@@ -7540,10 +7823,37 @@ function mmCloseKioskLogin(){
 function mmMerchantSheetCsvUrl(gid){
   return 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid='+encodeURIComponent(gid)+'&single=true&output=csv';
 }
+async function mmCheckComerciosCsvUrl(url){
+  var probeUrl=url+(url.indexOf('?')>=0?'&':'?')+'_probe='+Date.now();
+  var response=await fetch(probeUrl,{cache:'no-store'});
+  if(!response.ok)return {ok:false,reason:'HTTP '+response.status};
+  var csv=(await response.text()).replace(/^\uFEFF/,'');
+  if(/^\s*(?:<!doctype html|<html\b)/i.test(csv))return {ok:false,reason:'Google devolvió HTML en vez de CSV'};
+  var rows=parseAuthCsv(csv);
+  var hasCredentials=rows.length&&rows.some(function(row){return mmRowPassword(row)&&mmRowIdentifiers(row).length>0;});
+  if(!hasCredentials)return {ok:false,reason:'el CSV no contiene filas reconocibles con identificador y contraseña'};
+  return {ok:true,rows:rows.length};
+}
 async function mmDiscoverComerciosCsvUrl(){
-  if(String(COMERCIOS_CSV_URL||'').trim())return String(COMERCIOS_CSV_URL).trim();
-  var response=await fetch(PUBLISHED_WORKBOOK_HTML_URL,{cache:'no-store'});
-  if(!response.ok)throw new Error('No se pudo consultar la publicación de Google Sheets para localizar la pestaña Comercios.');
+  var configuredUrl=String(COMERCIOS_CSV_URL||'').trim();
+  var configuredFailure='';
+  if(configuredUrl){
+    try{
+      var configuredCheck=await mmCheckComerciosCsvUrl(configuredUrl);
+      if(configuredCheck.ok)return configuredUrl;
+      configuredFailure=configuredCheck.reason;
+    }catch(configuredError){
+      configuredFailure=String(configuredError&&configuredError.message||configuredError||'error de conexión');
+    }
+  }
+
+  var response;
+  try{
+    response=await fetch(PUBLISHED_WORKBOOK_HTML_URL,{cache:'no-store'});
+  }catch(workbookError){
+    throw new Error('No se pudo consultar la publicación de Google Sheets para localizar la pestaña Comercios.'+(configuredUrl?' COMERCIOS_CSV_URL también falló: '+configuredFailure+'. Revisá que el gid sea el real y que la pestaña esté publicada como CSV.':' Publicá la pestaña Comercios y configurá COMERCIOS_CSV_URL con su enlace CSV (gid real).'));
+  }
+  if(!response.ok)throw new Error('No se pudo consultar la publicación de Google Sheets para localizar la pestaña Comercios (HTTP '+response.status+').' +(configuredUrl?' COMERCIOS_CSV_URL tampoco se pudo validar: '+configuredFailure+'.':' Publicá esa pestaña y configurá COMERCIOS_CSV_URL con su enlace CSV (gid real).'));
   var html=await response.text();
   var doc=new DOMParser().parseFromString(html,'text/html');
   var candidates=[];
@@ -7567,14 +7877,11 @@ async function mmDiscoverComerciosCsvUrl(){
   for(var i=0;i<candidates.length;i++){
     var url=mmMerchantSheetCsvUrl(candidates[i]);
     try{
-      var test=await fetch(url+'&_probe='+Date.now(),{cache:'no-store'});
-      if(!test.ok)continue;
-      var csv=await test.text();
-      var rows=parseAuthCsv(csv);
-      if(rows.length&&rows.some(function(row){return mmRowPassword(row)&&mmRowIdentifiers(row).length>0;}))return url;
+      var check=await mmCheckComerciosCsvUrl(url);
+      if(check.ok)return url;
     }catch(_){ }
   }
-  throw new Error('No se encontró una publicación CSV legible para la pestaña Comercios. Publicá esa pestaña en Google Sheets y configurá COMERCIOS_CSV_URL con su enlace CSV (gid real).');
+  throw new Error('No se encontró una publicación CSV legible para la pestaña Comercios. Publicá esa pestaña en Google Sheets y configurá COMERCIOS_CSV_URL con su enlace CSV (gid real).'+(configuredUrl?' URL configurada: '+configuredUrl+'.'+(configuredFailure?' Motivo: '+configuredFailure+'.':''):'')+' Si ya publicaste los cambios del código, volvé a desplegar esta versión de la página y recargá sin caché.');
 }
 async function mmLoadComerciosRows(){
   if(!MM_KIOSK_COMERCIOS_ROWS_PROMISE){
@@ -7604,6 +7911,7 @@ async function mmSubmitKioskLogin(event){
   var password=String(passwordInput&&passwordInput.value||'');
   var error=document.getElementById('kioskAuthError');
   if(error){error.textContent='';error.classList.remove('visible');}
+  if(mmTryHeaderBasedKioskLogin(identifier,password))return;
   if(!identifier||!password){mmShowKioskLogin('Ingresá el usuario/correo y la contraseña.');return;}
   if(submit){submit.disabled=true;submit.innerHTML='<i class="fas fa-spinner fa-spin"></i> Verificando credenciales…';}
   try{
@@ -7638,23 +7946,159 @@ startKioskMode=function(){
   }
   return MM_KIOSK_ORIGINAL_START.apply(this,arguments);
 };
+var MM_KIOSK_ACTIVE_CUSTOMER=null;
+function mmKioskShowQrPlaceholder(message){
+  var wrap=document.getElementById('kioskQr');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  var box=document.createElement('div');box.className='kiosk-qr-placeholder';
+  var icon=document.createElement('i');icon.className='fas fa-user-check';box.appendChild(icon);
+  var label=document.createElement('span');label.textContent=message||'Escaneá el QR de perfil del usuario, validá la promo e ingresá el importe para generar el QR de cobro.';box.appendChild(label);
+  wrap.appendChild(box);
+}
+function mmKioskNormalizePromo(value){
+  var raw=String(value==null?'':value).trim();
+  var norm=normalizeAuthHeader(raw).replace(/[^a-z0-9]/g,'');
+  if(!raw||['no','ninguna','ninguno','sinpromo','nopromo','na','n a','n/a','false','0','ningunapromocion','sinpromocion','-'].indexOf(norm)>=0)return '';
+  return raw;
+}
+function mmKioskUserIdentity(row){
+  /* Mismo algoritmo de identidad que usa el generador de QR de perfil. */
+  var explicitId=mmRowField(row,['id','id usuario','identificador']);
+  var nickname=mmRowField(row,['nickname','nick','usuario','nombre de usuario','username','alias']);
+  var email=mmRowField(row,['correo','correo electronico','email','e-mail','mail']);
+  var timestamp=mmRowField(row,['timestamp','marca temporal','fecha de alta']);
+  var id=String(getAuthIdentifier({id:explicitId,nickname:nickname,correo:email,timestamp:timestamp})||'').trim();
+  var name=(nickname||((mmRowField(row,['nombre','nombre completo','ingrese su nombre completo.'])+' '+mmRowField(row,['apellido','apellidos','ingrese su(s) apellido(s).'])).trim())||email||id||'Usuario').trim();
+  return {id:id,nick:name};
+}
+function mmKioskPromoFromUserRow(row){
+  var raw=mmRowField(row,['promocodes','promo codes','promo code','promocode','codigo promocional','codigo de promocion','codigos de promocion','codigo exclusivo','promo']);
+  return mmKioskNormalizePromo(raw);
+}
+async function mmHandleKioskUserQr(payload){
+  if(!MM_KIOSK_AUTHORIZED||urlParams.get('kiosk')!=='1'){
+    alert('El escaneo de usuario solo está disponible en una sesión de comercio autenticada.');return;
+  }
+  stopQrCamera();closeQrScanModal();
+  var id=String(payload&&((payload.id)||(payload.datos&&payload.datos.id))||'').trim();
+  var fallbackName=String(payload&&((payload.nickname)||(payload.datos&&payload.datos.nickname))||'Moto Amigo').trim();
+  if(!id){alert('El QR no contiene un identificador válido de usuario.');return;}
+  var panel=document.getElementById('kioskCustomerCheckout');
+  var summary=document.getElementById('kioskCustomerSummary');
+  var promoStatus=document.getElementById('kioskPromoStatus');
+  if(panel)panel.classList.add('visible');
+  if(summary)summary.textContent='Validando el perfil de '+fallbackName+' en la pestaña Usuarios…';
+  if(promoStatus){promoStatus.className='kiosk-promo-status';promoStatus.textContent='Consultando promociones registradas…';}
+  mmKioskShowQrPlaceholder('Verificando usuario y promoción. El QR de cobro aparecerá después de confirmar el importe.');
+  var generate=document.getElementById('kioskGenerateCheckoutBtn');if(generate)generate.disabled=true;
+  try{
+    var response=await fetch(AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_kioskPromoValidate='+Date.now(),{cache:'no-store'});
+    if(!response.ok)throw new Error('Usuarios devolvió HTTP '+response.status+'.');
+    var rows=parseAuthCsv(await response.text());
+    var row=null,matchedUser=null;
+    for(var i=0;i<rows.length;i++){
+      var user=mmKioskUserIdentity(rows[i]);
+      if(String(user.id||'').trim()===id){row=rows[i];matchedUser=user;break;}
+    }
+    if(!row){
+      MM_KIOSK_ACTIVE_CUSTOMER=null;
+      if(summary)summary.textContent='Usuario no validado: '+fallbackName;
+      if(promoStatus){promoStatus.className='kiosk-promo-status none';promoStatus.textContent='No se encontró ese perfil en la pestaña Usuarios actual. No se generó un QR de cobro vinculado.';}
+      alert('No se pudo validar el usuario. Pedile que muestre un QR de perfil actualizado de una cuenta registrada.');
+      return;
+    }
+    var promo=mmKioskPromoFromUserRow(row);
+    MM_KIOSK_ACTIVE_CUSTOMER={id:id,nick:String(matchedUser.nick||fallbackName||'Moto Amigo'),promoCode:promo,promoValidated:!!promo,scannedAt:Date.now()};
+    if(summary){summary.textContent='Usuario validado: '+MM_KIOSK_ACTIVE_CUSTOMER.nick+' · ID '+id;}
+    if(promoStatus){
+      promoStatus.className='kiosk-promo-status '+(promo?'valid':'none');
+      promoStatus.textContent=promo?'PROMOCIÓN REGISTRADA EN USUARIOS: '+promo+'. Revisá sus condiciones y aplicá el importe final correspondiente.':'Este usuario no tiene una promoción registrada en la pestaña Usuarios. Podés continuar con el precio habitual.';
+    }
+    var amount=document.getElementById('kioskCheckoutAmount');
+    if(amount){amount.value=String(kioskCurrentPlace&&(kioskCurrentPlace.defaultPrice||kioskCurrentPlace.price)||document.getElementById('kioskInputPrice')&&document.getElementById('kioskInputPrice').value||50);amount.focus();}
+    if(generate)generate.disabled=false;
+    if(kioskCurrentPlace)document.getElementById('kioskPlaceName').textContent=kioskCurrentPlace.name;
+    mmKioskShowQrPlaceholder('Usuario validado. Ingresá el importe final en Moto Coins y seleccioná “Generar QR de cobro”.');
+  }catch(err){
+    MM_KIOSK_ACTIVE_CUSTOMER=null;
+    if(summary)summary.textContent='No se pudo validar '+fallbackName+'.';
+    if(promoStatus){promoStatus.className='kiosk-promo-status none';promoStatus.textContent=String(err&&err.message||err||'Error consultando Usuarios.');}
+    alert('No se pudo validar la promoción en Usuarios. Verificá la conexión y volvé a escanear el QR.');
+  }finally{
+    if(generate)generate.disabled=!MM_KIOSK_ACTIVE_CUSTOMER;
+  }
+}
+window.MM_handleKioskUserQr=mmHandleKioskUserQr;
+function mmKioskGenerateCheckoutQr(){
+  if(!MM_KIOSK_AUTHORIZED||urlParams.get('kiosk')!=='1'){alert('Iniciá sesión con una cuenta de comercio.');return;}
+  if(!kioskCurrentPlace||!kioskCurrentPlace.id){alert('Primero configurá los datos del local.');return;}
+  if(!MM_KIOSK_ACTIVE_CUSTOMER){alert('Primero escaneá y validá el QR de perfil del usuario.');return;}
+  if(Date.now()-Number(MM_KIOSK_ACTIVE_CUSTOMER.scannedAt||0)>10*60*1000){
+    MM_KIOSK_ACTIVE_CUSTOMER=null;mmKioskShowQrPlaceholder('La validación del usuario venció. Escaneá nuevamente su QR de perfil.');
+    var panel=document.getElementById('kioskCustomerCheckout');if(panel)panel.classList.remove('visible');
+    alert('La validación del usuario venció. Escaneá nuevamente el QR de perfil antes de cobrar.');return;
+  }
+  var input=document.getElementById('kioskCheckoutAmount');
+  var amount=Number(input&&input.value);
+  if(!Number.isInteger(amount)||amount<1||amount>100000){if(input)input.focus();alert('Ingresá un importe entero entre 1 y 100.000 Moto Coins.');return;}
+  kioskCurrentPlace.price=amount;
+  refreshKioskQr();
+  if(kioskQrTimer)clearInterval(kioskQrTimer);
+  kioskQrTimer=setInterval(function(){
+    if(!MM_KIOSK_ACTIVE_CUSTOMER)return;
+    if(Date.now()-Number(MM_KIOSK_ACTIVE_CUSTOMER.scannedAt||0)>10*60*1000){
+      MM_KIOSK_ACTIVE_CUSTOMER=null;clearInterval(kioskQrTimer);kioskQrTimer=null;
+      var panel=document.getElementById('kioskCustomerCheckout');if(panel)panel.classList.remove('visible');
+      mmKioskShowQrPlaceholder('La validación del usuario venció. Escaneá nuevamente su QR de perfil.');
+      var footerEl=document.getElementById('kioskFooter');if(footerEl)footerEl.textContent='Escaneá el QR de perfil de cada usuario antes de generar un cobro.';
+      return;
+    }
+    refreshKioskQr();
+  },5*60*1000);
+  var footer=document.getElementById('kioskFooter');
+  if(footer)footer.textContent='QR de '+MM_KIOSK_ACTIVE_CUSTOMER.nick+' por '+formatNum(amount)+' Moto Coins. Se renueva cada 5 minutos; escaneá otro usuario para iniciar un cobro distinto.';
+}
+function mmKioskPrepareNextCustomer(){
+  MM_KIOSK_ACTIVE_CUSTOMER=null;
+  if(kioskQrTimer)clearInterval(kioskQrTimer);kioskQrTimer=null;
+  var panel=document.getElementById('kioskCustomerCheckout');if(panel)panel.classList.remove('visible');
+  var generate=document.getElementById('kioskGenerateCheckoutBtn');if(generate)generate.disabled=true;
+  mmKioskShowQrPlaceholder('Escaneá el QR de perfil del usuario para consultar su promoción; después ingresá el importe y generá el QR de cobro.');
+  if(!MM_KIOSK_AUTHORIZED){mmShowKioskLogin('Iniciá sesión con una cuenta de comercio para escanear usuarios.');return;}
+  openQrScanModal();
+}
 function refreshKioskQr(){
   if(!kioskCurrentPlace)return;
   const wrap=document.getElementById('kioskQr');
+  if(!MM_KIOSK_ACTIVE_CUSTOMER){mmKioskShowQrPlaceholder();return;}
   wrap.innerHTML='';
   const base=window.location.origin+window.location.pathname;
   const params=new URLSearchParams();
   params.set('purchase',kioskCurrentPlace.id);
   params.set('name',kioskCurrentPlace.name);
   params.set('price',String(kioskCurrentPlace.price||50));
+  params.set('buyer',MM_KIOSK_ACTIVE_CUSTOMER.id);
+  params.set('buyerName',MM_KIOSK_ACTIVE_CUSTOMER.nick);
+  params.set('promoVerified',MM_KIOSK_ACTIVE_CUSTOMER.promoValidated?'1':'0');
+  if(MM_KIOSK_ACTIVE_CUSTOMER.promoCode)params.set('promo',MM_KIOSK_ACTIVE_CUSTOMER.promoCode);
   params.set('t',String(Date.now()));
   const url=base+'?'+params.toString();
   if(typeof QRCode==='undefined'){wrap.textContent='QR no disponible. URL: '+url;return}
-  try{
-    new QRCode(wrap,{text:url,width:280,height:280,colorDark:'#0d6b58',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
-  }catch(e){wrap.textContent='Error generando QR. URL: '+url}
+  try{new QRCode(wrap,{text:url,width:280,height:280,colorDark:'#0d6b58',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});}
+  catch(e){wrap.textContent='Error generando QR. '+String(e&&e.message||'')}
 }
-document.getElementById('kioskRefreshBtn').addEventListener('click',refreshKioskQr);
+var kioskRefreshBtn=document.getElementById('kioskRefreshBtn');
+if(kioskRefreshBtn)kioskRefreshBtn.addEventListener('click',function(){
+  if(!MM_KIOSK_ACTIVE_CUSTOMER){mmKioskPrepareNextCustomer();return;}
+  mmKioskGenerateCheckoutQr();
+});
+var kioskScanAlertBtn=document.getElementById('kioskScanAlertBtn');
+if(kioskScanAlertBtn)kioskScanAlertBtn.addEventListener('click',mmKioskPrepareNextCustomer);
+var kioskGenerateCheckoutBtn=document.getElementById('kioskGenerateCheckoutBtn');
+if(kioskGenerateCheckoutBtn)kioskGenerateCheckoutBtn.addEventListener('click',mmKioskGenerateCheckoutQr);
+var kioskChangeCustomerBtn=document.getElementById('kioskChangeCustomerBtn');
+if(kioskChangeCustomerBtn)kioskChangeCustomerBtn.addEventListener('click',mmKioskPrepareNextCustomer);
 document.getElementById('kioskExitBtn').addEventListener('click',function(){
   try{window.location.href=window.location.pathname}catch(e){window.location.reload()}
 });
@@ -7662,12 +8106,12 @@ document.getElementById('kioskSaveBtn').addEventListener('click',function(){
   const id=(document.getElementById('kioskInputId').value||'').trim()||('kiosk_'+Date.now().toString(36));
   const name=(document.getElementById('kioskInputName').value||'').trim()||'Mi Negocio';
   const price=parseInt(document.getElementById('kioskInputPrice').value,10);
-  kioskCurrentPlace={id:id,name:name,price:(!isNaN(price)&&price>0)?price:50};
+  if(!Number.isInteger(price)||price<1||price>100000){alert('Ingresá un importe sugerido entero entre 1 y 100.000 Moto Coins.');return;}
+  kioskCurrentPlace={id:id,name:name,price:price,defaultPrice:price};
   document.getElementById('kioskPlaceName').textContent=name;
   document.getElementById('kioskForm').classList.remove('visible');
-  refreshKioskQr();
-  if(kioskQrTimer)clearInterval(kioskQrTimer);
-  kioskQrTimer=setInterval(refreshKioskQr,5*60*1000);
+  var amount=document.getElementById('kioskCheckoutAmount');if(amount)amount.value=String(price);
+  mmKioskShowQrPlaceholder('Local configurado. Escaneá el QR de perfil del usuario para validar su promoción antes de generar el QR de cobro.');
 });
 function isGuestAccount(userLike){
   if(!userLike)return false;
@@ -7734,23 +8178,49 @@ function renderUserMotoMarker(user){
   if(user.id===myUserId)status=myStatus;
   if(status==='desconectado')return;
   const existing=userMotoMarkers.get(user.id);
+  const iconSignature=JSON.stringify([user.id===myUserId,user.nick||'Anónimo']);
+  const popupSignature=JSON.stringify([user.id===myUserId,user.nick||'Anónimo',status,motoamigos.get(user.id)&&motoamigos.get(user.id).status]);
   if(existing){
-    existing.setLatLng([user.lat,user.lng]);
-    existing.setIcon(buildUserMotoIcon(user));
-    existing.setPopupContent(buildUserMotoPopup(user));
+    const oldLL=existing.getLatLng();
+    if(oldLL.lat!==user.lat||oldLL.lng!==user.lng)existing.setLatLng([user.lat,user.lng]);
+    if(existing._mmIconSignature!==iconSignature){
+      existing.setIcon(buildUserMotoIcon(user));
+      existing._mmIconSignature=iconSignature;
+    }
+    if(existing._mmPopupSignature!==popupSignature){
+      existing.setPopupContent(buildUserMotoPopup(user));
+      existing._mmPopupSignature=popupSignature;
+    }
+    if(!userMotosLayer.hasLayer(existing))existing.addTo(userMotosLayer);
     return;
   }
   const marker=L.marker([user.lat,user.lng],{icon:buildUserMotoIcon(user),zIndexOffset:1100});
+  marker._mmIconSignature=iconSignature;
+  marker._mmPopupSignature=popupSignature;
   marker.bindPopup(buildUserMotoPopup(user),{maxWidth:240});
   marker.addTo(userMotosLayer);
   userMotoMarkers.set(user.id,marker);
 }
 function renderAllUserMotos(){
-  userMotosLayer.clearLayers();
-  userMotoMarkers.clear();
-  if(focusedPlaceId||focusedIncidentId)return;
+  if(focusedPlaceId||focusedIncidentId){
+    userMotosLayer.clearLayers();
+    return;
+  }
+  const visibleIds=new Set();
   onlineUsers.forEach(function(user){
+    if(!user||!canViewerSeeMapUser(user))return;
+    if(typeof user.lat!=='number'||typeof user.lng!=='number'||!isInBounds(user.lat,user.lng))return;
+    let status=user.status||'conectado';
+    if(user.id===myUserId)status=myStatus;
+    if(status==='desconectado')return;
+    visibleIds.add(user.id);
     renderUserMotoMarker(user);
+  });
+  userMotoMarkers.forEach(function(marker,id){
+    if(!visibleIds.has(id)){
+      userMotosLayer.removeLayer(marker);
+      userMotoMarkers.delete(id);
+    }
   });
 }
 function buildChatMarkerIcon(entry){
@@ -7789,7 +8259,11 @@ function renderChatLocationOnMap(entry){
   if(typeof entry.lat!=='number')return;
   if(typeof entry.lng!=='number')return;
   if(focusedPlaceId||focusedIncidentId)return;
-  if(chatMarkerMap.has(entry.id))return;
+  const existingMarker=chatMarkerMap.get(entry.id);
+  if(existingMarker){
+    if(!chatLocationsLayer.hasLayer(existingMarker))existingMarker.addTo(chatLocationsLayer);
+    return;
+  }
   if(entry.kind==='place'){
     const cats=getSelectedCategories();
     if(cats.indexOf(entry.category)===-1)return;
@@ -7802,10 +8276,23 @@ function renderChatLocationOnMap(entry){
   chatMarkerMap.set(entry.id,marker);
 }
 function renderAllChatLocations(){
-  chatLocationsLayer.clearLayers();
-  chatMarkerMap.clear();
-  if(focusedPlaceId||focusedIncidentId)return;
-  chatLocations.forEach(function(entry){renderChatLocationOnMap(entry)});
+  const visibleIds=new Set();
+  if(!focusedPlaceId&&!focusedIncidentId){
+    const selectedCats=getSelectedCategories();
+    chatLocations.forEach(function(entry){
+      if(!entry||!canViewerSeeMapLocation(entry))return;
+      if(typeof entry.lat!=='number'||typeof entry.lng!=='number')return;
+      if(entry.kind==='place'&&selectedCats.indexOf(entry.category)===-1)return;
+      visibleIds.add(entry.id);
+      renderChatLocationOnMap(entry);
+    });
+  }
+  chatMarkerMap.forEach(function(marker,id){
+    if(!visibleIds.has(id)){
+      chatLocationsLayer.removeLayer(marker);
+      chatMarkerMap.delete(id);
+    }
+  });
 }
 function registerChatLocation(entry){
   if(!entry)return;
@@ -9238,7 +9725,7 @@ async function MM_refreshStatsFromUsersSheet(){
   window.MM_refreshStatsFromUsersSheet=MM_refreshStatsFromUsersSheet;
   setInterval(function(){
     if(document.visibilityState==='visible'&&navigator.onLine)MM_refreshStatsFromUsersSheet();
-  },15000);
+  },MM_LOW_POWER_MODE?60000:30000);
   document.addEventListener('visibilitychange',function(){
     if(document.visibilityState==='visible'&&navigator.onLine)MM_refreshStatsFromUsersSheet();
   });
@@ -9340,12 +9827,13 @@ const resolveParam=urlParams.get('resolve');
       var directPurchase={
         placeId:purchaseParam,
         placeName:urlParams.get('name')||'Local',
-        coinsPrice:parseInt(urlParams.get('price')||'0',10)||0
+        coinsPrice:parseInt(urlParams.get('price')||'0',10)||0,
+        context:{buyerId:urlParams.get('buyer')||'',buyerName:urlParams.get('buyerName')||'',promoCode:urlParams.get('promo')||'',promoValidated:urlParams.get('promoVerified')==='1',issuedAt:parseInt(urlParams.get('t')||'0',10)||0}
       };
       try{sessionStorage.setItem('pending_purchase',JSON.stringify(directPurchase));}catch(_){}
       try{
         var cleanUrl=new URL(window.location.href);
-        ['purchase','name','price','t'].forEach(function(key){cleanUrl.searchParams.delete(key);});
+        ['purchase','name','price','t','buyer','buyerName','promo','promoVerified'].forEach(function(key){cleanUrl.searchParams.delete(key);});
         window.history.replaceState({},'',cleanUrl.pathname+cleanUrl.search+cleanUrl.hash);
       }catch(_){}
     }
@@ -9676,8 +10164,13 @@ const resolveParam=urlParams.get('resolve');
     if(!record)return;
     var profile=safeProfile(record.row||{},record);
     if(!record.row)profile={ID:record.id,Nickname:record.nick,'Estado de conexión':getUserStatusLabel(record.status)};
-    var payload={tipo:'mutual-moto-perfil-ref-v1',version:1,id:record.id,nickname:record.nick,status:record.status,statusLabel:getUserStatusLabel(record.status)};
-    currentQrText=JSON.stringify(payload);
+    /* QR estándar: un enlace HTTPS al perfil público que cualquier lector puede abrir. */
+    var profileUrl=new URL(window.location.href);
+    profileUrl.search='';profileUrl.hash='';
+    profileUrl.searchParams.set('mmperfil',String(record.id));
+    profileUrl.searchParams.set('mmnick',String(record.nick||'Moto Amigo'));
+    profileUrl.searchParams.set('mmestado',String(getUserStatusLabel(record.status)||'Desconectado'));
+    currentQrText=profileUrl.href;
     dataBox.textContent=JSON.stringify(profile,null,2);
     qrWrap.innerHTML='';
     if(typeof QRCode==='undefined'){
@@ -9686,7 +10179,7 @@ const resolveParam=urlParams.get('resolve');
     }
     try{
       new QRCode(qrWrap,{text:currentQrText,width:260,height:260,colorDark:'#243746',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
-      status.textContent='Perfil de '+record.nick+'. El QR contiene solo una referencia; Moto Amigo consultará los datos actuales y excluirá la contraseña al escanearlo.';
+      status.textContent='QR público listo para '+record.nick+'. Cualquier lector QR puede abrir el enlace y mostrar su ficha; las contraseñas y campos secretos se excluyen.';
     }catch(err){
       status.textContent='No se pudo generar el QR. '+String(err&&err.message||'Error de la biblioteca QRCode.');
       qrWrap.textContent=currentQrText;
@@ -9828,9 +10321,9 @@ const resolveParam=urlParams.get('resolve');
     var modalEl=ensureProfileModal(),body=modalEl.querySelector('#mmScannedUserProfileBody'),title=modalEl.querySelector('#mmScannedUserProfileTitle');
     body.innerHTML='';
     var data=safeProfile(row||{},null);
-    if(!row){data={};}
-    // ID, estado de conexión y timestamp quedan excluidos de la ficha visible.
+    // ID, estado de conexión y timestamp quedan excluidos de la ficha de Usuarios.
     var nick=(fallback&&fallback.nickname)||field(row||{},['nickname','nick','usuario','nombre de usuario'])||field(row||{},['nombre','nombre completo'])||'Moto Amigo';
+    if(!row){data={Nickname:nick,'Estado de conexión':(fallback&&fallback.statusLabel)||getUserStatusLabel((fallback&&fallback.status)||'desconectado')};}
     title.textContent='Perfil de '+nick;
     if(!Object.keys(data).length){
       var empty=document.createElement('p');
@@ -9848,13 +10341,11 @@ const resolveParam=urlParams.get('resolve');
   }
   async function resolveScannedProfile(payload){
     if(profileLookupBusy)return;
-    if(!authState||!authState.isLoggedIn||!authState.user||authState.user.isGuest){
-      stopQrCamera();closeQrScanModal();alert('Para consultar los datos de un Moto Amigo, iniciá sesión con una cuenta registrada.');return;
-    }
+    /* Los perfiles QR generados por Dev son públicos y no requieren iniciar sesión. */
     profileLookupBusy=true;
     stopQrCamera();closeQrScanModal();
     var id=String(payload.id||(payload.datos&&payload.datos.id)||'').trim();
-    var fallback={nickname:String(payload.nickname||(payload.datos&&payload.datos.nickname)||''),status:String(payload.status||(payload.datos&&payload.datos.status)||'desconectado')};
+    var fallback={nickname:String(payload.nickname||(payload.datos&&payload.datos.nickname)||''),status:String(payload.status||(payload.datos&&payload.datos.status)||'desconectado'),statusLabel:String(payload.statusLabel||'')};
     if(!id){profileLookupBusy=false;alert('El QR de perfil no contiene un identificador válido.');return}
     try{
       var response=await fetch(AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_scanProfile='+Date.now(),{cache:'no-store'});
@@ -9864,16 +10355,30 @@ const resolveParam=urlParams.get('resolve');
       if(!row){displayScannedProfile(null,id,fallback);showAppNotification('No se encontró un perfil registrado completo; se muestran los datos incluidos en el QR.','fa-user');return}
       displayScannedProfile(row,id,fallback);
     }catch(err){
-      /* The QR itself intentionally contains only a reference, not a copy of all personal data. */
-      alert('No se pudieron cargar los datos del perfil desde Usuarios. Verificá la conexión e intentá nuevamente.');
+      /* Aun sin conexión, abrir una ficha visible es preferible a un alert bloqueante. */
+      displayScannedProfile(null,id,fallback);
+      var modalEl=ensureProfileModal(),body=modalEl.querySelector('#mmScannedUserProfileBody');
+      if(body){var note=document.createElement('p');note.textContent='No se pudieron cargar los datos completos desde Usuarios. Verificá la conexión e intentá nuevamente.';note.style.cssText='grid-column:1/-1;padding:14px;color:#8b4a16;background:#fff8ee;border-radius:9px;line-height:1.45;';body.appendChild(note)}
     }finally{profileLookupBusy=false}
   }
   if(typeof handleQrDecoded==='function'){
     var previousQrHandler=handleQrDecoded;
     handleQrDecoded=function(raw){
+      var scannedUrl=null;
+      try{scannedUrl=new URL(String(raw||''))}catch(e){}
+      if(scannedUrl&&scannedUrl.searchParams.has('mmperfil')){
+        var urlPayload={tipo:'mutual-moto-perfil-ref-v1',version:1,id:scannedUrl.searchParams.get('mmperfil')||'',nickname:scannedUrl.searchParams.get('mmnick')||'Moto Amigo',status:'desconectado',statusLabel:scannedUrl.searchParams.get('mmestado')||'Desconectado'};
+        var isKioskProfileScan=false;
+        try{isKioskProfileScan=new URLSearchParams(window.location.search).get('kiosk')==='1'&&typeof MM_KIOSK_AUTHORIZED!=='undefined'&&MM_KIOSK_AUTHORIZED===true}catch(e){}
+        if(isKioskProfileScan&&typeof window.MM_handleKioskUserQr==='function'){window.MM_handleKioskUserQr(urlPayload);return;}
+        resolveScannedProfile(urlPayload);return;
+      }
       var parsed=null;
       try{parsed=JSON.parse(String(raw||''))}catch(e){}
       if(parsed&&(parsed.tipo==='mutual-moto-perfil-ref-v1'||parsed.tipo==='mutual-moto-usuario-chat')){
+        var isAuthorizedKiosk=false;
+        try{isAuthorizedKiosk=new URLSearchParams(window.location.search).get('kiosk')==='1'&&typeof MM_KIOSK_AUTHORIZED!=='undefined'&&MM_KIOSK_AUTHORIZED===true;}catch(e){}
+        if(isAuthorizedKiosk&&typeof window.MM_handleKioskUserQr==='function'){window.MM_handleKioskUserQr(parsed);return;}
         resolveScannedProfile(parsed);return;
       }
       return previousQrHandler.apply(this,arguments);
@@ -10160,6 +10665,91 @@ const resolveParam=urlParams.get('resolve');
     }catch(e){console.warn('No se pudo guardar la credencial temporal de movimientos de saldo.',e)}
     return originalContinue.apply(this,arguments);
   };
+})();
+</script>
+
+
+<script>
+/* Ruta pública para perfiles QR: la pueden abrir las cámaras/lectores QR comunes sin iniciar sesión. */
+(function MM_renderPublicMotoProfile(){
+  var params;
+  try{params=new URLSearchParams(window.location.search)}catch(e){return}
+  if(!params.has('mmperfil'))return;
+  document.documentElement.classList.add('mm-public-profile-route');
+  var requestedId=String(params.get('mmperfil')||'').trim();
+  var nicknameHint=String(params.get('mmnick')||'Moto Amigo').trim()||'Moto Amigo';
+  var statusHint=String(params.get('mmestado')||'Desconectado').trim()||'Desconectado';
+  document.title='Perfil Moto Amigo · '+nicknameHint;
+  var root=document.createElement('main');root.id='mmPublicMotoProfile';root.setAttribute('aria-live','polite');
+  root.innerHTML='<div class="mmp-shell">'+
+    '<div class="mmp-brand"><div class="mmp-logo" aria-hidden="true">🏍</div><div><div class="mmp-brand-title">Moto Amigo</div><div class="mmp-brand-sub">Ficha pública de usuario</div></div></div>'+
+    '<section class="mmp-card"><header class="mmp-hero"><div class="mmp-kicker">Perfil escaneado por QR</div><h1 class="mmp-name" id="mmpName">'+escapeHtml(nicknameHint)+'</h1><p class="mmp-description">Datos del Motoamigo identificado por este código.</p></header>'+
+    '<div class="mmp-state" id="mmpState"><span class="mmp-spinner" aria-hidden="true"></span>Cargando datos del perfil…</div>'+
+    '<div class="mmp-fields" id="mmpFields" hidden></div><div class="mmp-empty" id="mmpEmpty" hidden></div>'+
+    '<div class="mmp-actions"><button type="button" class="mmp-button secondary" id="mmpBack">Volver a Moto Amigo</button></div></section>'+
+    '<div class="mmp-footer">La ficha excluye contraseñas, claves, tokens y otros campos internos.</div></div>';
+  document.body.appendChild(root);
+  var nameEl=root.querySelector('#mmpName'),stateEl=root.querySelector('#mmpState'),fieldsEl=root.querySelector('#mmpFields'),emptyEl=root.querySelector('#mmpEmpty');
+  root.querySelector('#mmpBack').addEventListener('click',function(){
+    var cleanUrl=new URL(window.location.href);cleanUrl.search='';cleanUrl.hash='';window.location.assign(cleanUrl.href);
+  });
+  function normalized(value){return String(value==null?'':value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'')}
+  function rowId(row){
+    var explicitId=mmRowField(row,['id','id usuario','identificador']);
+    var nick=mmRowField(row,['nickname','nick','usuario','nombre de usuario','username','alias']);
+    var email=mmRowField(row,['correo','correo electronico','email','e-mail','mail']);
+    var timestamp=mmRowField(row,['timestamp','marca temporal','fecha de alta']);
+    return String(getAuthIdentifier({id:explicitId,nickname:nick,correo:email,timestamp:timestamp})||'').trim();
+  }
+  function hiddenField(key){
+    var k=normalized(key);
+    return !k||/password|passwd|contrasen|clave|secret|token|salt|hash|apikey|pinacceso/.test(k)||
+      /^(id|userid|uid|idusuario|identificador|socioid|idcuenta|estadodeconexion|estadoconexion|status|estado|timestamp|marcatemporal|fechaalta|fechaemision|emision|createdat|updatedat|lastseen|firstseen)$/.test(k);
+  }
+  function showEmpty(message){stateEl.hidden=true;fieldsEl.hidden=true;emptyEl.hidden=false;emptyEl.textContent=message}
+  function showFallback(message){
+    fieldsEl.innerHTML='';
+    [["Nickname",nicknameHint],["Estado de conexión",statusHint]].forEach(function(pair){
+      var item=document.createElement('div');item.className='mmp-field';
+      var label=document.createElement('div');label.className='mmp-label';label.textContent=pair[0];
+      var val=document.createElement('div');val.className='mmp-value';val.textContent=pair[1]||'—';
+      item.appendChild(label);item.appendChild(val);fieldsEl.appendChild(item);
+    });
+    stateEl.textContent=message;stateEl.hidden=false;fieldsEl.hidden=false;emptyEl.hidden=true;
+  }
+  function renderRow(row){
+    var nick=mmRowField(row,['nickname','nick','usuario','nombre de usuario','username','alias'])||
+      (mmRowField(row,['nombre','nombre completo'])+' '+mmRowField(row,['apellido','apellidos'])).trim()||nicknameHint;
+    nameEl.textContent=nick;document.title='Perfil Moto Amigo · '+nick;
+    fieldsEl.innerHTML='';var count=0;
+    Object.keys(row||{}).forEach(function(key){
+      if(hiddenField(key))return;
+      var value=String(row[key]==null?'':row[key]).trim();if(!value)return;
+      var item=document.createElement('div');item.className='mmp-field';
+      var label=document.createElement('div');label.className='mmp-label';label.textContent=key;
+      var val=document.createElement('div');val.className='mmp-value';val.textContent=value;
+      item.appendChild(label);item.appendChild(val);fieldsEl.appendChild(item);count++;
+    });
+    stateEl.hidden=true;
+    if(count){fieldsEl.hidden=false;emptyEl.hidden=true}
+    else showEmpty('El usuario existe, pero no hay datos públicos de perfil disponibles para mostrar.');
+  }
+  async function load(){
+    if(!requestedId){showEmpty('El enlace no contiene un identificador de Motoamigo válido.');return}
+    try{
+      if(typeof AUTH_CSV_URL==='undefined'||typeof parseAuthCsv!=='function'||typeof mmRowField!=='function'||typeof getAuthIdentifier!=='function')throw new Error('La fuente de perfiles no está disponible.');
+      var csvUrl=AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_publicMotoQr='+Date.now();
+      var response=await fetch(csvUrl,{cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);
+      var rows=parseAuthCsv(await response.text());
+      var row=rows.find(function(candidate){return rowId(candidate)===requestedId});
+      if(!row){nameEl.textContent=nicknameHint;showFallback('No se encontró la ficha completa en Usuarios; se muestra la información básica incluida en el QR.');return}
+      renderRow(row);
+    }catch(err){
+      nameEl.textContent=nicknameHint;
+      showFallback('No se pudieron cargar los datos completos. Se muestra la información básica incluida en el QR; comprobá la conexión a Internet.');
+    }
+  }
+  load();
 })();
 </script>
 
