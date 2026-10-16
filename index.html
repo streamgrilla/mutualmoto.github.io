@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Servicios en Buenos Aires y Alrededores</title>
 <link rel="preconnect" href="https://embed.waze.com" crossorigin>
 <link rel="dns-prefetch" href="https://embed.waze.com">
@@ -1212,6 +1212,14 @@ body.centering-lock #mapPage #places-list {
   if(removeLanding)document.documentElement.classList.add('mm-dev-requested');
 })();
 </script>
+
+<style id="mm-mobile-zoom-policy">
+@media (max-width: 768px), (pointer: coarse) {
+  html, body { max-width: 100%; overflow-x: hidden; touch-action: pan-y; overscroll-behavior-x: none; }
+  /* Leaflet owns gestures inside the map; the document itself cannot be pinch-zoomed. */
+  #map, #map.leaflet-container, #map-wrapper .leaflet-container { touch-action: none; }
+}
+</style>
 </head>
 <body>
 
@@ -1468,7 +1476,8 @@ body.centering-lock #mapPage #places-list {
 <button class="sidebar-action-btn dev-only" id="devToggleBtn"><i class="fas fa-plus-circle"></i> A&ntilde;adir en mapa</button>
 <button class="sidebar-action-btn dev-only" id="devClearBtn"><i class="fas fa-trash"></i> Borrar todo</button>
 <button class="sidebar-action-btn dev-only" id="devUsersQrBtn" type="button"><i class="fas fa-qrcode"></i> QR de usuarios</button>
-<button class="sidebar-action-btn dev-only" id="devClearIncidentsBtn" type="button"><i class="fas fa-broom"></i> Limpiar incidentes guardados</button>
+<button class="sidebar-action-btn dev-only" id="devClearIncidentsBtn" type="button"><i class="fas fa-broom"></i> Limpiar todas las incidencias</button>
+<button class="sidebar-action-btn dev-only" id="devManageUsersBtn" type="button"><i class="fas fa-user-slash"></i> Eliminar usuarios de prueba</button>
 <button class="sidebar-action-btn dev-only" id="devMessageOpenBtn" type="button" data-open-dev-message><i class="fas fa-bullhorn"></i> Mensaje del desarrollador</button>
 </div>
 <h2><i class="fas fa-triangle-exclamation"></i> Siniestros en ruta</h2>
@@ -1993,11 +2002,11 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="dev-users-qr-modal" id="devUsersQrModal" aria-hidden="true">
   <div class="dev-users-qr-box" role="dialog" aria-modal="true" aria-labelledby="devUsersQrTitle">
     <div class="dev-users-qr-head">
-      <h3 id="devUsersQrTitle"><i class="fas fa-qrcode"></i> QR de usuarios de Google Sheets</h3>
+      <h3 id="devUsersQrTitle"><i class="fas fa-qrcode"></i> QR de usuarios del chat</h3>
       <button class="dev-users-qr-close" id="devUsersQrClose" type="button" aria-label="Cerrar"><i class="fas fa-times"></i></button>
     </div>
     <p style="font-size:.82rem;color:#666;line-height:1.45">
-      Elegí una fila de la pestaña Usuarios. El QR incluye los datos de esa fila, salvo contraseñas, tokens, claves, hashes y credenciales. Cualquier persona que escanee el QR podrá leer los datos incluidos; compartilo solo con autorización.
+      Elegí un usuario registrado o detectado por la mensajería. El QR contiene una referencia de perfil; al escanearlo desde Moto Amigo se consultan los datos actuales de Usuarios, sin incluir ni mostrar la contraseña.
     </p>
     <div class="dev-users-qr-controls">
       <select id="devUsersQrSelect" aria-label="Seleccionar usuario"><option value="">Cargar usuarios…</option></select>
@@ -2006,7 +2015,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
     <div class="dev-users-qr-status" id="devUsersQrStatus" role="status"></div>
     <div class="dev-users-qr-content">
       <div id="devUsersQrCode"><span style="color:#888;font-size:.85rem">Seleccioná un usuario.</span></div>
-      <pre id="devUsersQrData">Los datos del usuario seleccionado aparecerán aquí.</pre>
+      <pre id="devUsersQrData">Los datos disponibles del perfil aparecerán aquí, excluyendo la contraseña y otros secretos.</pre>
     </div>
     <div class="dev-users-qr-footer">
       <button class="secondary" id="devUsersQrDownload" type="button"><i class="fas fa-download"></i> Descargar QR PNG</button>
@@ -2056,6 +2065,118 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <script>
+const urlParams=new URLSearchParams(window.location.search);
+let DEV_MODE=false; // El rol de desarrollo se habilita solo después de validar credenciales.
+const MQTT_BROKERS=['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt','wss://test.mosquitto.org:8081/mqtt'];
+const CHAT_PREFIX='servicios-ba-map/chat/v1';
+const TOPIC_PUBLIC=CHAT_PREFIX+'/public';
+const TOPIC_PRESENCE=CHAT_PREFIX+'/presence';
+const TOPIC_PRIVATE_BASE=CHAT_PREFIX+'/private/';
+const TOPIC_REPORTS=CHAT_PREFIX+'/reports';
+const TOPIC_REQ_BASE=CHAT_PREFIX+'/motoamigo-request/';
+const TOPIC_RESP_BASE=CHAT_PREFIX+'/motoamigo-response/';
+const TOPIC_INCIDENTS=CHAT_PREFIX+'/incidents';
+const TOPIC_USER_LOG=CHAT_PREFIX+'/user-log';
+const TOPIC_USER_REMOVED_BASE=CHAT_PREFIX+'/removed-user/';
+const TOPIC_TYPING=CHAT_PREFIX+'/typing';
+const TOPIC_TYPING_BASE=CHAT_PREFIX+'/typing/';
+const TOPIC_READ_BASE=CHAT_PREFIX+'/read/';
+const TOPIC_ALERT_RESOLVE=CHAT_PREFIX+'/alert-resolve';
+const TOPIC_PUBLIC_HISTORY=CHAT_PREFIX+'/public-history';
+const TOPIC_USERLOG_HISTORY=CHAT_PREFIX+'/userlog-history';
+const TOPIC_MAILBOX=CHAT_PREFIX+'/mailbox';
+const TOPIC_DEV_INBOX_BASE=CHAT_PREFIX+'/developer-inbox/';
+const TOPIC_SUGGESTIONS=CHAT_PREFIX+'/suggestions';
+const TOPIC_COINS=CHAT_PREFIX+'/coins';
+const TOPIC_COINS_TRANSFER_BASE=CHAT_PREFIX+'/coins-transfer/';
+const TOPIC_COIN_FULFILL=CHAT_PREFIX+'/coins-fulfilled';
+const PUBLIC_HISTORY_MAX=200;
+const USERLOG_HISTORY_MAX=500;
+const CHAT_KEY_UID='chat_user_id_v1';
+const CHAT_KEY_NICK='chat_user_nick_v1';
+const AUTH_KEY='servicios_ba_auth_v1';
+const HISTORY_KEY='servicios_ba_chat_history_v3';
+const LOCATIONS_KEY='servicios_ba_chat_locations_v2';
+const PERMS_KEY='servicios_ba_motoamigos_v2';
+const MY_STATUS_KEY='servicios_ba_my_status_v1';
+const PRESENCE_STORE_KEY='servicios_ba_presence_store_v1';
+const USER_LOG_KEY='servicios_ba_user_log_v2';
+const USER_LOG_MAX=2000;
+const LOCATIONS_MAX=150;
+const PUBLIC_MSGS_MAX=500;
+const PRIVATE_MSGS_MAX_PER_PEER=250;
+const PRIVATE_PEERS_MAX=50;
+const PRESENCE_INTERVAL=15000;
+const PRESENCE_INACTIVE_AFTER=45000;
+const PRESENCE_DISCONNECT_AFTER=90000;
+const INACTIVITY_CHECK_INTERVAL=20000;
+const TYPING_SEND_THROTTLE=2000;
+const TYPING_SHOW_TIMEOUT=4000;
+const STATUS_LABELS={conectado:'Conectado',inactivo:'Inactivo','no-molestar':'No molestar',desconectado:'Desconectado'};
+const STATUS_ORDER={conectado:0,inactivo:1,'no-molestar':2,desconectado:3};
+let mqttClient=null;
+let myUserId=null;
+let myNick='';
+let chatReady=false;
+let currentContext='public';
+let currentPrivatePeer=null;
+let onlineUsers=new Map();
+let removedChatUserIds=[];
+let publicMessages=[];
+let privateConversations=new Map();
+let unreadPublic=0;
+let unreadPrivateTotal=0;
+let unreadPerPeer=new Map();
+let presenceInterval=null;
+let cleanupInterval=null;
+let incidentCleanupInterval=null;
+let motoamigos=new Map();
+let pendingIncomingPeerId=null;
+let userMenuPeer=null;
+let reportMode=false;
+let selectedMessages=new Map();
+let pendingPlaceToShare=null;
+let chatLocations=[];
+const chatMarkerMap=new Map();
+let authState={isLoggedIn:false,user:null};
+let myStatus='conectado';
+let manualStatus=false;
+let lastActivityTs=Date.now();
+let inactivityCheckInterval=null;
+let typingUsers=new Map();
+let lastTypingSent=0;
+let typingCleanupInterval=null;
+let historyPubTimer1=null;
+let historyPubTimer2=null;
+let chatStartupTs=0;
+
+/* Estado base del chat inicializado antes del resto de la interfaz. */
+
+/* Fuente única para los selectores de desarrollo: exactamente el Map que consume
+   renderUsers() en la sala grupal. No consulta Google Sheets ni crea un listado paralelo;
+   loadPresenceStore() ya hidrata este mismo Map con la caché que utiliza el chat. */
+window.MM_getChatPresenceUsers=function(){
+  try{
+    return Array.from(onlineUsers.values()).filter(function(user){
+      return !!(user&&String(user.id||'').trim());
+    }).map(function(user){
+      return {
+        id:String(user.id).trim(),
+        nick:String(user.nick||'Anónimo'),
+        status:String(user.status||'desconectado'),
+        lastSeen:user.lastSeen||Date.now(),
+        firstSeen:user.firstSeen||user.lastSeen||Date.now()
+      };
+    });
+  }catch(e){
+    return [];
+  }
+};
+window.MM_refreshDevUserPickers=function(){
+  try{if(typeof window.MM_refreshDevRecipients==='function')window.MM_refreshDevRecipients()}catch(e){}
+  try{if(typeof window.MM_refreshDevQrUsers==='function')window.MM_refreshDevQrUsers()}catch(e){}
+};
+
 const AUTH_CONFIG={requireLogin:true,mutualMotosTestMode:true,showMutualMotosLogin:true};
 const AUTH_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid=554435341&single=true&output=csv';
 const GOOGLE_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid=1742683249&single=true&output=csv';
@@ -2078,10 +2199,7 @@ const categoryLabels={motos:'Insumos de motos',talleres:'Talleres',comida:'Comid
 const keyToRubro={motos:'Insumos de motos',talleres:'Talleres',comida:'Comida rápida',gomerias:'Gomerías',combustible:'Estaciones de servicio'};
 const ALL_CATEGORIES=['motos','talleres','comida','gomerias','combustible'];
 const SOCIOS=[
-  {id:'MM-0001',nick:'Juan Pérez',nombre:'Juan Pérez',email:'juan@mutualmotos.com',telefono:'11-5555-0001'},
-  {id:'MM-0002',nick:'María López',nombre:'María López',email:'maria@mutualmotos.com',telefono:'11-5555-0002'},
-  {id:'MM-0003',nick:'Carlos Ruiz',nombre:'Carlos Ruiz',email:'carlos@mutualmotos.com',telefono:'11-5555-0003'},
-  {id:'MM-0004',nick:'Lucía Fernández',nombre:'Lucía Fernández',email:'lucia@mutualmotos.com',telefono:'11-5555-0004'}
+ 
 ];
 const REPORT_REASON_LABELS={falsa_alerta:'Falsa alerta / emergencia falsa',siniestro_fuga:'Siniestro y se dio a la fuga',autor_robo:'Autor de un robo',spam:'Spam o publicidad no deseada',acoso:'Acoso, insultos o amenazas',contenido:'Contenido inapropiado u ofensivo',suplantacion:'Suplantación de identidad',ubicacion_falsa:'Ubicación falsa o maliciosa',incidente_falso:'Siniestro falso',usuario:'Denunciar a un usuario',otro:'Otro'};
 const INCIDENT_TYPE_LABELS={accident:'Accidente',closure:'Ruta cerrada',police:'Control policial'};
@@ -2096,11 +2214,16 @@ const COINS_QR_SCAN=5;
 const POINTS_ASSIST_LEVE=10;
 const POINTS_ASSIST_GRAVE=30;
 const POINTS_ASSIST_VIDA=50;
-const urlParams=new URLSearchParams(window.location.search);
-let DEV_MODE=urlParams.get('dev')==='1';
+
+
+
 const CUSTOM_KEY='custom_places_v5';
 const SINIESTROS_KEY='servicios_ba_siniestros_v1';
 const INCIDENTS_KEY='servicios_ba_incidents_v1';
+const INCIDENT_CLEAR_BEFORE_KEY='servicios_ba_incident_clear_before_v1';
+let incidentClearBeforeTs=0;
+try{incidentClearBeforeTs=parseInt(localStorage.getItem(INCIDENT_CLEAR_BEFORE_KEY)||'0',10)||0}catch(e){incidentClearBeforeTs=0}
+const REMOVED_CHAT_USERS_KEY='servicios_ba_removed_chat_users_v1';
 const INCIDENTS_MAX=120;
 const SINIESTROS_MAX=300;
 const INCIDENT_TTL=6*60*60*1000;
@@ -2271,6 +2394,42 @@ function saveSiniestros(){
 }
 async function postToSheets(action,data){
   const record={action:action,data:data,ts:Date.now()};
+  // Los cambios de saldo se autentican con la credencial de la propia cuenta.
+  // Nunca se incrusta la contraseña maestra de la API en el HTML.
+  if(action==='points_change'||action==='coins_change'){
+    var currentUser=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:null;
+    var accountIdentifier=String(currentUser&&(currentUser.email||currentUser.correo||currentUser.nick||currentUser.nickname||currentUser.id)||'');
+    var accountPassword=String(currentUser&&currentUser.password||'');
+    var accountUserId=String(currentUser&&currentUser.id||'');
+    if(!accountPassword){
+      try{
+        var cachedCredential=JSON.parse(sessionStorage.getItem('MM_STAT_ACCOUNT_CREDENTIAL_V1')||'null');
+        if(cachedCredential&&cachedCredential.expiresAt>Date.now()&&cachedCredential.userId===accountUserId){
+          accountIdentifier=String(cachedCredential.identifier||accountIdentifier);
+          accountPassword=String(cachedCredential.password||'');
+        }
+      }catch(_){}
+    }
+    // Las sesiones recordadas no guardan contraseñas en almacenamiento
+    // permanente. Si venció la credencial temporal, solicitarla antes de intentar
+    // escribir un saldo para no enviar una operación que el servidor rechazará.
+    if(!accountPassword&&currentUser&&!currentUser.isGuest&&accountIdentifier){
+      var enteredPassword='';
+      try{enteredPassword=String(window.prompt('Para guardar tus puntos y Moto Coins en Google Sheets, ingresá la contraseña de tu cuenta:')||'')}catch(_){}
+      if(!enteredPassword){
+        try{if(typeof showAppNotification==='function')showAppNotification('No se guardó el cambio de saldo: falta validar la contraseña de la cuenta.','fa-lock')}catch(_){}
+        return {ok:false,authRequired:true};
+      }
+      accountPassword=enteredPassword;
+      try{sessionStorage.setItem('MM_STAT_ACCOUNT_CREDENTIAL_V1',JSON.stringify({userId:accountUserId,identifier:accountIdentifier,password:accountPassword,expiresAt:Date.now()+8*60*60*1000}))}catch(_){}
+    }
+    if(accountIdentifier&&accountPassword){
+      record.accountIdentifier=accountIdentifier;
+      record.accountPassword=accountPassword;
+    }else if(action==='points_change'||action==='coins_change'){
+      return {ok:false,authRequired:true};
+    }
+  }
   if(!APPS_SCRIPT_URL){
     return {ok:false,offline:true};
   }
@@ -2281,6 +2440,12 @@ async function postToSheets(action,data){
       headers:{'Content-Type':'text/plain;charset=utf-8'},
       body:JSON.stringify(record)
     });
+    /* Releer el valor de Usuarios luego del tiempo normal de propagación de la hoja. */
+    if(action==='points_change'||action==='coins_change'){
+      setTimeout(function(){
+        try{if(typeof window.MM_refreshStatsFromUsersSheet==='function')window.MM_refreshStatsFromUsersSheet()}catch(_){}
+      },5000);
+    }
     return {ok:true};
   }catch(e){
     return {ok:false,error:e.message};
@@ -4194,11 +4359,15 @@ function solveIncident(incidentId){
 }
 function isDeveloperAccount(){
   const user=authState&&authState.user;
-  const expected=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'').trim().toLowerCase();
-  const actual=String(user&&(user.email||user.correo)||'').trim().toLowerCase();
-  return !!(authState&&authState.isLoggedIn&&user&&!user.isGuest&&expected&&actual===expected);
+  return !!(authState&&authState.isLoggedIn&&user&&!user.isGuest&&(user.isDeveloper===true||user.devAccess===true));
 }
 function enableDevMode(){
+  if(!isDeveloperAccount()){
+    DEV_MODE=false;
+    document.body.classList.remove('dev-on','dev-qr-enabled');
+    document.documentElement.classList.remove('mm-dev-requested');
+    return;
+  }
   DEV_MODE=true;
   document.body.classList.add('dev-on');
   if(mqttClient)if(chatReady){try{mqttClient.subscribe(TOPIC_SUGGESTIONS,{qos:0})}catch(e){}}
@@ -4206,7 +4375,7 @@ function enableDevMode(){
   updateSuggestionBadge();
 }
 function toggleAddingMode(){
-  if(!DEV_MODE){alert('Esta acción solo está disponible con ?dev=1.');return}
+  if(!isDeveloperAccount()||!DEV_MODE){alert('Esta acción requiere iniciar sesión con una cuenta habilitada para desarrollo.');return}
   addingMode=!addingMode;
   document.body.classList.toggle('adding-mode',addingMode);
   if(devToggleBtn){
@@ -4214,48 +4383,119 @@ function toggleAddingMode(){
     devToggleBtn.setAttribute('aria-pressed',String(addingMode));
   }
 }
-function clearIncidentsDev(){
-  if(!DEV_MODE){alert('Esta acción solo está disponible con ?dev=1.');return;}
-  const ids=new Set();
-  incidents.forEach(function(it){if(it&&it.id)ids.add(String(it.id));});
-  publicMessages.forEach(function(m){
-    if(!m)return;
-    const isIncident=m.kind==='incident'||m.incidentRef||m.incidentId;
-    if(!isIncident)return;
-    if(m.incidentRef)ids.add(String(m.incidentRef));
-    if(m.incidentId)ids.add(String(m.incidentId));
-    if(m.from&&m.from.id&&m.ts)ids.add('inc_chat_'+m.from.id+'_'+m.ts);
-    if(m.id&&m.kind==='incident')ids.add(String(m.id));
-  });
-  if(!confirm('Se quitarán del mapa y del historial local TODOS los incidentes activos y de prueba de este navegador. También se marcarán como resueltos para que el historial compartido no los vuelva a mostrar. No se borrará el registro histórico de Google Sheets. ¿Continuar?'))return;
-  ids.forEach(function(id){markIncidentResolved(id)});
-  incidents=[];
-  publicMessages=publicMessages.filter(function(m){
-    if(!m)return false;
-    if(m.kind==='incident')return false;
-    if(m.incidentRef&&ids.has(String(m.incidentRef)))return false;
-    if(m.incidentId&&ids.has(String(m.incidentId)))return false;
-    if(m.kind==='emergency'&&m.alertId&&isAlertResolved(m.alertId))return false;
-    return true;
-  });
-  saveIncidents();
-  saveHistory();
-  if(incidentToastStack)incidentToastStack.innerHTML='';
-  if(focusedIncidentId)clearFocusMode();
-  renderAllIncidents();
-  renderAllChatLocations();
-  if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom()}
-  updateBadges();
-  if(mqttClient&&chatReady){
-    ids.forEach(function(id){
-      const msg={kind:'incident-resolve',incidentId:id,incidentRef:id,from:{id:myUserId,nick:myNick||'Desarrollador'},ts:Date.now()};
-      try{mqttClient.publish(TOPIC_INCIDENTS,JSON.stringify(msg),{qos:0})}catch(_){}
-      try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(msg),{qos:0})}catch(_){}
-    });
-    schedulePublishPublicHistory();
-  }
-  alert('Limpieza completada. Incidentes quitados: '+ids.size+'.');
+function isIncidentPublicRecord(msg){
+  if(!msg)return false;
+  return msg.kind==='incident'||msg.kind==='incident-resolve'||msg.kind==='emergency'||msg.kind==='alert-resolve'||
+    !!msg.incidentRef||!!msg.incidentId||!!msg.alertId;
 }
+function applyIncidentClearEvent(cutoff, explicitIds, clearEverything){
+  const ts=Math.max(0,Number(cutoff)||Date.now());
+  incidentClearBeforeTs=Math.max(incidentClearBeforeTs,ts);
+  try{localStorage.setItem(INCIDENT_CLEAR_BEFORE_KEY,String(incidentClearBeforeTs))}catch(e){}
+  const ids=new Set((explicitIds||[]).map(function(id){return String(id||'').trim()}).filter(Boolean));
+  const alertIds=new Set();
+  incidents.forEach(function(it){
+    if(!it||!it.id)return;
+    if(clearEverything||ids.has(String(it.id))||Number(it.ts||0)<=incidentClearBeforeTs)ids.add(String(it.id));
+  });
+  (siniestros||[]).forEach(function(it){
+    if(!it||!it.id)return;
+    if(clearEverything||Number(it.ts||0)<=incidentClearBeforeTs){
+      ids.add(String(it.id));
+      if(it.kind==='emergency')alertIds.add(String(it.id));
+    }
+  });
+  publicMessages.forEach(function(msg){
+    if(!isIncidentPublicRecord(msg))return;
+    const msgTs=Number(msg.ts||0);
+    const related=(msg.incidentRef&&ids.has(String(msg.incidentRef)))||(msg.incidentId&&ids.has(String(msg.incidentId)))||(msg.id&&ids.has(String(msg.id)))||(msg.alertId&&alertIds.has(String(msg.alertId)));
+    if(clearEverything||related||msgTs<=incidentClearBeforeTs){
+      if(msg.incidentRef)ids.add(String(msg.incidentRef));
+      if(msg.incidentId)ids.add(String(msg.incidentId));
+      if(msg.id)ids.add(String(msg.id));
+      if(msg.alertId)alertIds.add(String(msg.alertId));
+      if(msg.kind==='emergency'&&msg.id)alertIds.add(String(msg.id));
+      if(msg.from&&msg.from.id&&msg.ts)ids.add('inc_chat_'+msg.from.id+'_'+msg.ts);
+    }
+  });
+  alertIds.forEach(function(id){if(resolvedAlertIds.indexOf(id)<0)resolvedAlertIds.push(id)});
+  if(resolvedAlertIds.length>RESOLVED_MAX)resolvedAlertIds=resolvedAlertIds.slice(-RESOLVED_MAX);
+  ids.forEach(function(id){if(resolvedIncidentIds.indexOf(id)<0)resolvedIncidentIds.push(id)});
+  if(resolvedIncidentIds.length>RESOLVED_MAX)resolvedIncidentIds=resolvedIncidentIds.slice(-RESOLVED_MAX);
+  incidents=incidents.filter(function(it){
+    if(!it)return false;
+    if(clearEverything)return false;
+    return Number(it.ts||0)>incidentClearBeforeTs&&!ids.has(String(it.id||''))&&!isIncidentResolved(it.id);
+  });
+  publicMessages=publicMessages.filter(function(msg){
+    if(!isIncidentPublicRecord(msg))return true;
+    if(clearEverything)return false;
+    const t=Number(msg.ts||0);
+    if(t<=incidentClearBeforeTs)return false;
+    if(msg.incidentRef&&ids.has(String(msg.incidentRef)))return false;
+    if(msg.incidentId&&ids.has(String(msg.incidentId)))return false;
+    if(msg.id&&ids.has(String(msg.id)))return false;
+    return !isIncidentResolved(msg.incidentRef||msg.incidentId||msg.id);
+  });
+  if(typeof chatLocations!=='undefined'){
+    chatLocations=chatLocations.filter(function(loc){
+      if(!loc)return false;
+      const old=Number(loc.ts||0)<=incidentClearBeforeTs;
+      if(clearEverything&&((loc.kind==='incident'||loc.kind==='emergency')||loc.incidentRef||loc.incidentId||loc.alertId))return false;
+      if(old&&((loc.kind==='incident'||loc.kind==='emergency')||loc.incidentRef||loc.incidentId||loc.alertId))return false;
+      if(loc.id&&ids.has(String(loc.id)))return false;
+      if(loc.alertId&&alertIds.has(String(loc.alertId)))return false;
+      return true;
+    });
+    try{saveChatLocations()}catch(e){}
+  }
+  if(clearEverything){
+    siniestros=[];
+  }else{
+    siniestros=(siniestros||[]).filter(function(it){return it&&Number(it.ts||0)>incidentClearBeforeTs&&!ids.has(String(it.id||''))});
+  }
+  try{saveSiniestros()}catch(e){}
+  if(activeUserAlert&&((clearEverything)||Number(activeUserAlert.ts||0)<=incidentClearBeforeTs)){
+    if(activeUserAlert.id&&resolvedAlertIds.indexOf(String(activeUserAlert.id))<0)resolvedAlertIds.push(String(activeUserAlert.id));
+    if(activeUserAlert.id&&resolvedIncidentIds.indexOf(String(activeUserAlert.id))<0)resolvedIncidentIds.push(String(activeUserAlert.id));
+    activeUserAlert=null;
+    try{saveActiveAlert()}catch(e){}
+    try{if(alertOverlay)alertOverlay.classList.remove('visible')}catch(e){}
+  }
+  try{saveIncidents()}catch(e){}
+  try{saveResolvedState()}catch(e){}
+  try{saveHistory()}catch(e){}
+  if(incidentToastStack){
+    incidentToastStack.querySelectorAll('.incident-toast').forEach(function(toast){toast.remove()});
+  }
+  if(focusedIncidentId){
+    const stillExists=incidents.some(function(it){return String(it.id)===String(focusedIncidentId)});
+    if(!stillExists)clearFocusMode();
+  }
+  try{renderAllIncidents()}catch(e){}
+  try{renderAllChatLocations()}catch(e){}
+  try{updateBadges()}catch(e){}
+  if(isChatOpen()&&currentContext==='public'){
+    try{renderMessages();scrollMessagesBottom()}catch(e){}
+  }
+  return {cutoff:incidentClearBeforeTs,ids:Array.from(ids)};
+}
+function clearIncidentsDev(){
+  if(!isDeveloperAccount()||!DEV_MODE){alert('Esta acción requiere iniciar sesión con una cuenta habilitada para desarrollo.');return;}
+  const incidentCount=incidents.length+(siniestros||[]).length+publicMessages.filter(isIncidentPublicRecord).length;
+  if(!confirm('Se eliminarán todas las incidencias y emergencias conocidas del mapa, las ubicaciones de chat y la sala grupal. También se borrará el registro local de siniestros y se bloqueará la reaparición de reportes anteriores al limpiar el historial compartido. Esto no borra filas ya guardadas en Google Sheets. ¿Continuar?'))return;
+  const cutoff=Date.now();
+  const result=applyIncidentClearEvent(cutoff,[],true);
+  const control={kind:'incident-clear-all',clearBeforeTs:result.cutoff,incidentIds:result.ids,from:{id:String(myUserId||''),nick:myNick||'Desarrollador'},ts:Date.now()};
+  let sent=false;
+  if(mqttClient&&chatReady){
+    try{mqttClient.publish(TOPIC_INCIDENTS,JSON.stringify(control),{qos:1,retain:false});sent=true}catch(e){}
+    try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(control),{qos:1,retain:false});sent=true}catch(e){}
+    try{publishPublicHistory()}catch(e){}
+  }
+  alert('Limpieza local completada: '+incidentCount+' elementos. '+(sent?'Se publicó la limpieza para otros clientes conectados.':'No hay conexión al chat: la marca quedó guardada y se sincronizará al reconectar con esta cuenta desarrollador.')+' Las filas históricas de Google Sheets no se eliminan desde el HTML.');
+}
+
 addingMode=false;
 document.body.classList.remove('adding-mode','incident-pick-mode');
 if(devToggleBtn){
@@ -4277,6 +4517,7 @@ if(devClearBtn){
   });
 }
 if(document.getElementById('devClearIncidentsBtn'))document.getElementById('devClearIncidentsBtn').addEventListener('click',clearIncidentsDev);
+if(document.getElementById('devManageUsersBtn'))document.getElementById('devManageUsersBtn').addEventListener('click',openDevUsersAdminModal);
 function buildDevAddFormHtml(lat,lng){
   const opts=ALL_CATEGORIES.map(function(c){
     return '<option value="'+c+'">'+categoryLabels[c]+'</option>';
@@ -4785,7 +5026,7 @@ function renderAllIncidents(){
 }
 function getActiveIncidents(){
   const now=Date.now();
-  return incidents.filter(function(it){return !isIncidentResolved(it.id)&&(now-(it.ts||0))<INCIDENT_TTL}).sort(function(a,b){return b.ts-a.ts});
+  return incidents.filter(function(it){return Number(it.ts||0)>incidentClearBeforeTs&&!isIncidentResolved(it.id)&&(now-(it.ts||0))<INCIDENT_TTL}).sort(function(a,b){return b.ts-a.ts});
 }
 function updateIncidentsPanel(active){
   if(!active)active=getActiveIncidents();
@@ -4828,6 +5069,7 @@ function updateIncidentBadges(active){
 }
 function addIncident(incident){
   if(!incident||!incident.id)return;
+  if(Number(incident.ts||0)<=incidentClearBeforeTs)return;
   if(isIncidentResolved(incident.id))return;
   const existing=incidents.findIndex(function(it){return it.id===incident.id});
   if(existing>=0)return;
@@ -4843,6 +5085,7 @@ function addIncident(incident){
 function registerIncomingIncident(incident,options){
   if(!incident)return;
   if(!incident.id)return;
+  if(Number(incident.ts||0)<=incidentClearBeforeTs)return;
   if(isIncidentResolved(incident.id))return;
   let isNews=false;
   if(incident.isNews)isNews=true;
@@ -5454,86 +5697,7 @@ document.querySelectorAll('.incident-opt').forEach(function(btn){
   });
 });
 incidentSubmitBtn.addEventListener('click',submitIncident);
-const MQTT_BROKERS=['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt','wss://test.mosquitto.org:8081/mqtt'];
-const CHAT_PREFIX='servicios-ba-map/chat/v1';
-const TOPIC_PUBLIC=CHAT_PREFIX+'/public';
-const TOPIC_PRESENCE=CHAT_PREFIX+'/presence';
-const TOPIC_PRIVATE_BASE=CHAT_PREFIX+'/private/';
-const TOPIC_REPORTS=CHAT_PREFIX+'/reports';
-const TOPIC_REQ_BASE=CHAT_PREFIX+'/motoamigo-request/';
-const TOPIC_RESP_BASE=CHAT_PREFIX+'/motoamigo-response/';
-const TOPIC_INCIDENTS=CHAT_PREFIX+'/incidents';
-const TOPIC_USER_LOG=CHAT_PREFIX+'/user-log';
-const TOPIC_TYPING=CHAT_PREFIX+'/typing';
-const TOPIC_TYPING_BASE=CHAT_PREFIX+'/typing/';
-const TOPIC_READ_BASE=CHAT_PREFIX+'/read/';
-const TOPIC_ALERT_RESOLVE=CHAT_PREFIX+'/alert-resolve';
-const TOPIC_PUBLIC_HISTORY=CHAT_PREFIX+'/public-history';
-const TOPIC_USERLOG_HISTORY=CHAT_PREFIX+'/userlog-history';
-const TOPIC_MAILBOX=CHAT_PREFIX+'/mailbox';
-const TOPIC_DEV_INBOX_BASE=CHAT_PREFIX+'/developer-inbox/';
-const TOPIC_SUGGESTIONS=CHAT_PREFIX+'/suggestions';
-const TOPIC_COINS=CHAT_PREFIX+'/coins';
-const TOPIC_COINS_TRANSFER_BASE=CHAT_PREFIX+'/coins-transfer/';
-const TOPIC_COIN_FULFILL=CHAT_PREFIX+'/coins-fulfilled';
-const PUBLIC_HISTORY_MAX=200;
-const USERLOG_HISTORY_MAX=500;
-const CHAT_KEY_UID='chat_user_id_v1';
-const CHAT_KEY_NICK='chat_user_nick_v1';
-const AUTH_KEY='servicios_ba_auth_v1';
-const HISTORY_KEY='servicios_ba_chat_history_v3';
-const LOCATIONS_KEY='servicios_ba_chat_locations_v2';
-const PERMS_KEY='servicios_ba_motoamigos_v2';
-const MY_STATUS_KEY='servicios_ba_my_status_v1';
-const PRESENCE_STORE_KEY='servicios_ba_presence_store_v1';
-const USER_LOG_KEY='servicios_ba_user_log_v2';
-const USER_LOG_MAX=2000;
-const LOCATIONS_MAX=150;
-const PUBLIC_MSGS_MAX=500;
-const PRIVATE_MSGS_MAX_PER_PEER=250;
-const PRIVATE_PEERS_MAX=50;
-const PRESENCE_INTERVAL=15000;
-const PRESENCE_INACTIVE_AFTER=45000;
-const PRESENCE_DISCONNECT_AFTER=90000;
-const INACTIVITY_CHECK_INTERVAL=20000;
-const TYPING_SEND_THROTTLE=2000;
-const TYPING_SHOW_TIMEOUT=4000;
-const STATUS_LABELS={conectado:'Conectado',inactivo:'Inactivo','no-molestar':'No molestar',desconectado:'Desconectado'};
-const STATUS_ORDER={conectado:0,inactivo:1,'no-molestar':2,desconectado:3};
-let mqttClient=null;
-let myUserId=null;
-let myNick='';
-let chatReady=false;
-let currentContext='public';
-let currentPrivatePeer=null;
-let onlineUsers=new Map();
-let publicMessages=[];
-let privateConversations=new Map();
-let unreadPublic=0;
-let unreadPrivateTotal=0;
-let unreadPerPeer=new Map();
-let presenceInterval=null;
-let cleanupInterval=null;
-let incidentCleanupInterval=null;
-let motoamigos=new Map();
-let pendingIncomingPeerId=null;
-let userMenuPeer=null;
-let reportMode=false;
-let selectedMessages=new Map();
-let pendingPlaceToShare=null;
-let chatLocations=[];
-const chatMarkerMap=new Map();
-let authState={isLoggedIn:false,user:null};
-let myStatus='conectado';
-let manualStatus=false;
-let lastActivityTs=Date.now();
-let inactivityCheckInterval=null;
-let typingUsers=new Map();
-let lastTypingSent=0;
-let typingCleanupInterval=null;
-let historyPubTimer1=null;
-let historyPubTimer2=null;
-let chatStartupTs=0;
+
 const chatToggleBtn=document.getElementById('chatToggleBtn');
 const chatBadge=document.getElementById('chatBadge');
 const chatPanel=document.getElementById('chatPanel');
@@ -5740,7 +5904,7 @@ function saveUserLog(){
 function publishPublicHistory(){
   if(!mqttClient)return;
   if(!chatReady)return;
-  const payload={kind:'public-history',messages:publicMessages.slice(-PUBLIC_HISTORY_MAX),resolvedIncidentIds:resolvedIncidentIds.slice(-RESOLVED_MAX),resolvedAlertIds:resolvedAlertIds.slice(-RESOLVED_MAX),ts:Date.now(),from:{id:myUserId,nick:myNick}};
+  const payload={kind:'public-history',messages:publicMessages.slice(-PUBLIC_HISTORY_MAX),resolvedIncidentIds:resolvedIncidentIds.slice(-RESOLVED_MAX),resolvedAlertIds:resolvedAlertIds.slice(-RESOLVED_MAX),incidentClearBeforeTs:incidentClearBeforeTs,ts:Date.now(),from:{id:myUserId,nick:myNick}};
   try{mqttClient.publish(TOPIC_PUBLIC_HISTORY,JSON.stringify(payload),{qos:0,retain:true})}catch(e){}
 }
 function publishUserLogHistory(){
@@ -5768,14 +5932,18 @@ function loadResolvedState(){
     resolvedAlertIds=raw?JSON.parse(raw):[];
     if(!Array.isArray(resolvedAlertIds))resolvedAlertIds=[];
   }catch(e){resolvedAlertIds=[]}
-  incidents=incidents.filter(function(it){return it&&!isIncidentResolved(it.id)});
+  incidents=incidents.filter(function(it){return it&&Number(it.ts||0)>incidentClearBeforeTs&&!isIncidentResolved(it.id)});
   saveIncidents();
   publicMessages=publicMessages.filter(function(m){
+    if(isIncidentPublicRecord(m)&&Number(m.ts||0)<=incidentClearBeforeTs)return false;
     if(m&&m.incidentRef)if(isIncidentResolved(m.incidentRef))return false;
     if(m&&m.incidentId)if(isIncidentResolved(m.incidentId))return false;
     if(m&&m.alertId)if(isAlertResolved(m.alertId))return false;
     return true;
   });
+  siniestros=(siniestros||[]).filter(function(it){return it&&Number(it.ts||0)>incidentClearBeforeTs&&!isIncidentResolved(it.id)&&!isAlertResolved(it.id)});
+  saveSiniestros();
+  if(activeUserAlert&&(Number(activeUserAlert.ts||0)<=incidentClearBeforeTs||isAlertResolved(activeUserAlert.id))){activeUserAlert=null;saveActiveAlert();if(alertOverlay)alertOverlay.classList.remove('visible')}
   saveHistory();
   renderAllIncidents();
 }
@@ -5810,7 +5978,7 @@ function isAlertResolved(id){return !!id&&resolvedAlertIds.indexOf(id)>=0}
 function handlePublicHistory(payload){
   if(!payload)return;
   if(!Array.isArray(payload.messages))return;
-  if(payload.from)if(payload.from.id===myUserId)return;
+  if(Number(payload.incidentClearBeforeTs||0)>incidentClearBeforeTs){applyIncidentClearEvent(Number(payload.incidentClearBeforeTs),[],false);}
   if(Array.isArray(payload.resolvedIncidentIds)){
     payload.resolvedIncidentIds.forEach(function(id){markIncidentResolved(id)});
   }
@@ -5823,17 +5991,19 @@ function handlePublicHistory(payload){
     return u+':'+(m.ts||0);
   };
   const mapMerge=new Map();
+  publicMessages=publicMessages.filter(function(m){return !m||!m.from||!isRemovedChatUser(m.from.id)});
   publicMessages.forEach(function(m){mapMerge.set(key(m),m)});
-  payload.messages.forEach(function(m){if(!mapMerge.has(key(m)))mapMerge.set(key(m),m)});
+  payload.messages.forEach(function(m){if(!m||!m.from||!isRemovedChatUser(m.from.id)){if(!mapMerge.has(key(m))&&m)mapMerge.set(key(m),m)}});
   publicMessages=Array.from(mapMerge.values()).sort(function(a,b){return (a.ts||0)-(b.ts||0)});
   publicMessages=publicMessages.filter(function(m){
+    if(isIncidentPublicRecord(m)&&Number(m.ts||0)<=incidentClearBeforeTs)return false;
     if(m&&m.incidentRef)if(isIncidentResolved(m.incidentRef))return false;
     if(m&&m.incidentId)if(isIncidentResolved(m.incidentId))return false;
     if(m&&m.alertId)if(isAlertResolved(m.alertId))return false;
     return true;
   });
   if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages=publicMessages.slice(-PUBLIC_MSGS_MAX);
-  payload.messages.forEach(function(m){const loc=locationFromMessage(m);if(loc)registerChatLocation(loc)});
+  publicMessages.forEach(function(m){const loc=locationFromMessage(m);if(loc)registerChatLocation(loc)});
   saveHistory();
   if(isChatOpen())if(currentContext==='public'){renderMessages();scrollMessagesBottom()}
   else updateBadges();
@@ -5847,7 +6017,7 @@ function handleUserLogHistory(payload){
   const mapMerge=new Map();
   userLog.forEach(function(e){mapMerge.set(key(e),e)});
   payload.entries.forEach(function(e){if(!mapMerge.has(key(e)))mapMerge.set(key(e),e)});
-  userLog=Array.from(mapMerge.values()).sort(function(a,b){return a.ts-b.ts});
+  userLog=Array.from(mapMerge.values()).filter(function(e){return !isRemovedChatUser(e.id)}).sort(function(a,b){return a.ts-b.ts});
   if(userLog.length>USER_LOG_MAX)userLog=userLog.slice(-USER_LOG_MAX);
   saveUserLog();
   const modal=document.getElementById('userLogModal');
@@ -5875,6 +6045,7 @@ function registerUserEntry(userId,nick,status,action){
 function handleUserLog(msg){
   if(!msg)return;
   if(!msg.id)return;
+  if(isRemovedChatUser(msg.id))return;
   if(msg.id===myUserId)return;
   const exists=userLog.find(function(e){
     if(e.id!==msg.id)return false;
@@ -5961,6 +6132,148 @@ function openUserLogModal(){
   renderUserLogContent();
   modal.classList.add('visible');
 }
+function openDevUsersAdminModal(){
+  if(!isDeveloperAccount()||!DEV_MODE){alert('Esta función requiere una sesión desarrollador válida.');return;}
+  var modal=document.getElementById('devUsersAdminModal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='devUsersAdminModal';
+    modal.className='modal-overlay';
+    modal.innerHTML='<div class="modal-box" style="max-width:760px;width:min(760px,96vw);max-height:88vh;overflow:hidden;display:flex;flex-direction:column">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:.7rem"><h3 style="margin:0"><i class="fas fa-user-slash" style="color:#c0392b"></i> Eliminar usuarios de prueba</h3><button type="button" id="devUsersAdminClose" aria-label="Cerrar" style="border:0;background:#ecf0f1;border-radius:50%;width:34px;height:34px;cursor:pointer"><i class="fas fa-times"></i></button></div>'+
+      '<p style="font-size:.82rem;line-height:1.45;color:#666;margin:.6rem 0">Se bloqueará el usuario en el chat y se enviará una solicitud de eliminación a Google Sheets. La pestaña publicada es de solo lectura; el borrado definitivo requiere que Apps Script admita la acción <code>delete_user</code>.</p>'+
+      '<div id="devUsersAdminStatus" role="status" style="font-size:.8rem;color:#666;padding:.45rem 0;min-height:1.4rem"></div>'+
+      '<div id="devUsersAdminList" style="overflow:auto;min-height:100px;max-height:60vh"></div>'+
+      '<div style="display:flex;justify-content:flex-end;gap:.5rem;margin-top:.7rem"><button type="button" id="devUsersAdminRefresh" class="modal-cancel-btn"><i class="fas fa-sync"></i> Actualizar</button><button type="button" id="devUsersAdminDone" class="modal-cancel-btn">Cerrar</button></div></div>';
+    document.body.appendChild(modal);
+    function close(){modal.classList.remove('visible');modal.setAttribute('aria-hidden','true')}
+    document.getElementById('devUsersAdminClose').addEventListener('click',close);
+    document.getElementById('devUsersAdminDone').addEventListener('click',close);
+    modal.addEventListener('click',function(e){if(e.target===modal)close()});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('visible'))close()});
+    document.getElementById('devUsersAdminRefresh').addEventListener('click',function(){loadRows()});
+    modal._mmLoadRows=loadRows;
+  }
+  modal.classList.add('visible');modal.setAttribute('aria-hidden','false');
+  modal._mmLoadRows();
+
+  async function loadRows(){
+    if(!isDeveloperAccount()||!DEV_MODE){alert('La sesión desarrollador ya no es válida.');modal.classList.remove('visible');return;}
+    var status=document.getElementById('devUsersAdminStatus');
+    var list=document.getElementById('devUsersAdminList');
+    status.textContent='Leyendo usuarios registrados…';
+    list.innerHTML='';
+    try{
+      var response=await fetch(AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_devUserAdminTs='+Date.now(),{cache:'no-store'});
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      var parsed=parseAuthCsv(await response.text());
+      var accounts=parsed.map(function(row,index){
+        var user=mmBuildAuthUserFromRow(row,false);
+        return {row:row,rowNumber:index+2,id:String(user.id||''),nick:String(user.nick||'Usuario'),email:String(user.email||''),isDeveloper:!!user.isDeveloper};
+      }).filter(function(item){return !!item.id});
+      if(!accounts.length){status.textContent='No se encontraron usuarios en la pestaña Usuarios.';return;}
+      status.textContent=accounts.length+' usuario(s) registrados. La cuenta con la que iniciaste sesión no se puede eliminar desde esta pantalla.';
+      list.innerHTML=accounts.map(function(item,index){
+        var isSelf=String(item.id)===String(myUserId||'')||!!(item.email&&authState&&authState.user&&String(item.email).toLowerCase()===String(authState.user.email||authState.user.correo||'').toLowerCase());
+        var blocked=isRemovedChatUser(item.id);
+        return '<div style="display:flex;align-items:center;gap:.65rem;padding:.65rem .35rem;border-bottom:1px solid #edf0f2;flex-wrap:wrap">'+
+          '<div style="flex:1;min-width:180px"><strong style="display:block;color:#2c3e50;font-size:.9rem">'+escapeHtml(item.nick)+(item.isDeveloper?' <span style="font-size:.68rem;color:#8e44ad">DESARROLLADOR</span>':'')+'</strong><span style="font-size:.75rem;color:#777">'+escapeHtml(item.email||'Sin correo')+' · ID '+escapeHtml(item.id)+'</span>'+(blocked?'<div style="font-size:.72rem;color:#c0392b">Bloqueado en el chat</div>':'')+'</div>'+
+          '<button type="button" data-delete-user-index="'+index+'" '+(isSelf?'disabled':'')+' style="border:0;border-radius:7px;padding:.5rem .7rem;background:'+(isSelf?'#bdc3c7':'#c0392b')+';color:#fff;cursor:'+(isSelf?'not-allowed':'pointer')+';font:inherit;font-size:.78rem;font-weight:700"><i class="fas fa-trash"></i> '+(isSelf?'Tu cuenta':'Eliminar')+'</button></div>';
+      }).join('');
+      list.querySelectorAll('[data-delete-user-index]').forEach(function(button){
+        button.addEventListener('click',async function(){
+          if(!isDeveloperAccount()||!DEV_MODE){alert('La sesión desarrollador ya no es válida.');return;}
+          var item=accounts[Number(button.dataset.deleteUserIndex)];
+          if(!item||!item.id||String(item.id)===String(myUserId||'')||(item.email&&authState&&authState.user&&String(item.email).toLowerCase()===String(authState.user.email||authState.user.correo||'').toLowerCase()))return;
+          if(!confirm('¿Eliminar a '+item.nick+'? Se bloqueará de inmediato en el chat de esta aplicación y se enviará una solicitud para eliminarlo de Google Sheets.'))return;
+          button.disabled=true;button.textContent='Eliminando…';
+          mmPublishUserRemoval(item.id,item.nick);
+          // La hoja CSV publicada no permite escribir; el Apps Script debe implementar action=delete_user.
+          var requestSent=false;
+          try{
+            var result=await postToSheets('delete_user',{id:item.id,correo:item.email,nickname:item.nick,rowNumber:item.rowNumber,source:'dev-user-admin'});
+            requestSent=!!(result&&result.ok);
+          }catch(err){requestSent=false;}
+          accounts=accounts.filter(function(account){return account.id!==item.id});
+          status.textContent='Usuario bloqueado en el chat. '+(requestSent?'Se envió la solicitud a Apps Script, pero el navegador no puede confirmar que la fila se haya borrado.':'No se pudo enviar la solicitud al servidor.')+' Verificá la pestaña Usuarios; si la fila permanece, el Apps Script debe incorporar la acción delete_user.';
+          button.closest('div[style*="border-bottom"]')?.remove();
+          if(accounts.length===0)list.innerHTML='<div style="padding:1rem;text-align:center;color:#999">No quedan usuarios en la lista.</div>';
+        });
+      });
+    }catch(err){
+      status.textContent='No se pudo consultar la pestaña Usuarios: '+String(err&&err.message||err);
+    }
+  }
+}
+
+function loadRemovedChatUsers(){
+  try{var raw=localStorage.getItem(REMOVED_CHAT_USERS_KEY);var data=raw?JSON.parse(raw):[];removedChatUserIds=Array.isArray(data)?data.map(function(id){return String(id||'').trim()}).filter(Boolean):[]}catch(e){removedChatUserIds=[]}
+  if(typeof userLog!=='undefined')userLog=userLog.filter(function(entry){return !isRemovedChatUser(entry.id)});
+  if(typeof publicMessages!=='undefined')publicMessages=publicMessages.filter(function(msg){return !msg||!msg.from||!isRemovedChatUser(msg.from.id)});
+  if(typeof onlineUsers!=='undefined')onlineUsers.forEach(function(user,id){if(isRemovedChatUser(id))onlineUsers.delete(id)});
+  if(typeof privateConversations!=='undefined')privateConversations.forEach(function(conv,id){if(isRemovedChatUser(id))privateConversations.delete(id)});
+  if(typeof motoamigos!=='undefined')motoamigos.forEach(function(peer,id){if(isRemovedChatUser(id))motoamigos.delete(id)});
+  try{saveHistory()}catch(e){}
+  try{saveUserLog()}catch(e){}
+}
+function saveRemovedChatUsers(){
+  try{localStorage.setItem(REMOVED_CHAT_USERS_KEY,JSON.stringify(removedChatUserIds.slice(-5000)))}catch(e){}
+}
+function isRemovedChatUser(userId){return !!userId&&removedChatUserIds.indexOf(String(userId))>=0}
+function handleRemovedChatUser(payload){
+  if(!payload)return;
+  var userId=String(payload.userId||payload.targetId||payload.id||'').trim();
+  if(!userId)return;
+  const removingSelf=String(myUserId||'')===userId;
+  if(removedChatUserIds.indexOf(userId)<0)removedChatUserIds.push(userId);
+  if(removedChatUserIds.length>5000)removedChatUserIds=removedChatUserIds.slice(-5000);
+  saveRemovedChatUsers();
+  onlineUsers.delete(userId);
+  userLog=userLog.filter(function(entry){return String(entry.id||'')!==userId});
+  publicMessages=publicMessages.filter(function(msg){return !msg||!msg.from||String(msg.from.id||'')!==userId});
+  incidents=incidents.filter(function(item){return item&&String((item.from&&item.from.id)||item.socioId||'')!==userId});
+  siniestros=(siniestros||[]).filter(function(item){return item&&String(item.socioId||item.fromId||'')!==userId});
+  chatLocations=chatLocations.filter(function(item){return item&&(!item.from||String(item.from.id||'')!==userId)});
+  privateConversations.delete(userId);
+  unreadPerPeer.delete(userId);
+  motoamigos.delete(userId);
+  try{savePresenceStore()}catch(e){}
+  try{saveUserLog()}catch(e){}
+  try{saveHistory()}catch(e){}
+  try{saveMotoamigos()}catch(e){}
+  try{saveSiniestros()}catch(e){}
+  try{saveChatLocations()}catch(e){}
+  try{saveIncidents()}catch(e){}
+  try{renderAllIncidents()}catch(e){}
+  try{renderAllChatLocations()}catch(e){}
+  try{recomputeUnreadPrivateTotal()}catch(e){}
+  try{renderUsers()}catch(e){}
+  try{renderAllUserMotos()}catch(e){}
+  try{schedulePublishUserLogHistory()}catch(e){}
+  try{schedulePublishPublicHistory()}catch(e){}
+  if(removingSelf){
+    authState={isLoggedIn:false,user:null};
+    DEV_MODE=false;
+    try{saveAuth()}catch(e){}
+    try{localStorage.removeItem(CHAT_KEY_UID);localStorage.removeItem(CHAT_KEY_NICK)}catch(e){}
+    myUserId=null;myNick='';
+    try{if(typeof closeChat==='function')closeChat()}catch(e){}
+    try{document.body.classList.remove('dev-on','dev-qr-enabled','adding-mode')}catch(e){}
+    try{document.documentElement.classList.remove('mm-dev-requested')}catch(e){}
+    try{if(typeof showGate==='function')showGate()}catch(e){}
+    try{if(typeof showAppNotification==='function')showAppNotification('Esta cuenta fue retirada de la aplicación.','fa-user-slash')}catch(e){}
+  }
+}
+function mmPublishUserRemoval(userId,nick){
+  var id=String(userId||'').trim();
+  if(!id)return false;
+  var payload={kind:'user-remove',userId:id,nick:String(nick||''),from:{id:String(myUserId||''),nick:String(myNick||'Desarrollador')},ts:Date.now()};
+  handleRemovedChatUser(payload);
+  if(mqttClient&&chatReady){
+    try{mqttClient.publish(TOPIC_USER_REMOVED_BASE+encodeURIComponent(id),JSON.stringify(payload),{qos:1,retain:true})}catch(e){}
+  }
+  return true;
+}
 let presenceSaveTimer=null;
 function flushPresenceStore(){
   presenceSaveTimer=null;
@@ -5984,6 +6297,7 @@ function loadPresenceStore(){
       if(!u)return;
       if(!u.id)return;
       if(u.id===myUserId)return;
+      if(isRemovedChatUser(u.id))return;
       const entry={id:u.id,nick:u.nick||'Anónimo',status:'desconectado',lastSeen:u.lastSeen||Date.now(),firstSeen:u.firstSeen||u.lastSeen||Date.now(),isGuest:isGuestAccount(u)};
       if(typeof u.lat==='number'&&typeof u.lng==='number'){entry.lat=u.lat;entry.lng=u.lng;}
       onlineUsers.set(u.id,entry);
@@ -6144,6 +6458,7 @@ function loadMotoamigosFromStorage(){
       if(!it)return;
       if(!it.peerId)return;
       if(!it.status)return;
+      if(typeof isRemovedChatUser==='function'&&isRemovedChatUser(it.peerId))return;
       motoamigos.set(it.peerId,{status:it.status,peer:it.peer||{id:it.peerId,nick:'Usuario'},ts:it.ts||Date.now()});
     });
   }catch(e){}
@@ -6332,6 +6647,15 @@ function normalizeAuthHeader(value){
 const MEMBERSHIP_ALERT_KEY='servicios_ba_membership_alert_v1';
 const MEMBERSHIP_WARNING_MS=7*24*60*60*1000;
 const AUTH_COLUMN_ALIASES={
+  'dev':'dev',
+  'developer':'dev',
+  'desarrollador':'dev',
+  'modo dev':'dev',
+  'modo desarrollador':'dev',
+  'correo electronico':'correo',
+  'email':'correo',
+  'nombre de usuario':'nickname',
+  'usuario':'nickname',
   'beta-test':'betaTest',
   'beta_test':'betaTest',
   'marcatemporal':'timestamp',
@@ -6460,7 +6784,7 @@ function mmRowField(row, candidates){
   return '';
 }
 function mmRowPassword(row){
-  return mmRowField(row,['contraseña','contrasena','password','clave','clave de acceso','clave comercio','contraseña comercio']);
+  return mmRowField(row,['contraseña','contrasena','password','clave','clave de acceso','clave comercio','contraseña comercio','contraseña del comercio','contrasena del comercio','clave del comercio','password comercio','clave de ingreso']);
 }
 function mmRowIdentifiers(row){
   return [
@@ -6475,13 +6799,95 @@ function mmFindCredentialRow(rows, identifier, password){
     return mmRowIdentifiers(row).indexOf(wanted)>=0 && mmRowPassword(row)===String(password||'');
   })||null;
 }
+function mmIsDeveloperRow(row){
+  // Por indicación del sistema: cualquier celda dev no vacía habilita el rol desarrollador.
+  return String(mmRowField(row,['dev','developer','desarrollador','modo dev','modo desarrollador','dev mode'])||'').trim()!=='';
+}
+function mmBuildAuthUserFromRow(row,remember){
+  const email=mmRowField(row,['correo','correo electronico','email','e-mail','mail']);
+  const nickname=mmRowField(row,['nickname','nombre de usuario','usuario','nick','username']);
+  const nombre=mmRowField(row,['nombre','nombre completo','ingrese su nombre completo.']);
+  const apellido=mmRowField(row,['apellido','apellidos','ingrese su(s) apellido(s).']);
+  const displayName=(nickname||((nombre+' '+apellido).trim())||email||'Usuario').trim();
+  const dev=mmIsDeveloperRow(row);
+  const beta=String(mmRowField(row,['betaTest','beta test','beta-test'])||'').trim().toLowerCase();
+  return {
+    id:getAuthIdentifier({id:mmRowField(row,['id','id usuario','identificador']),nickname:nickname,correo:email,timestamp:mmRowField(row,['timestamp','marca temporal'])}),
+    nick:displayName,nombre:nombre,apellido:apellido,email:email,
+    telefono:mmRowField(row,['telefono','número de teléfono','numero de telefono']),
+    telefonoFamiliar:mmRowField(row,['telefonoFamiliar','telefono familiar','numero de telefono de un familiar']),
+    moto:mmRowField(row,['moto','modelo de su moto']),patente:mmRowField(row,['patente','numero de patente']),
+    sangre:mmRowField(row,['sangre','grupo sanguineo']),fecha:mmRowField(row,['fecha','fecha de nacimiento']),
+    timestamp:mmRowField(row,['timestamp','marca temporal','fecha de emision','fecha de alta']),
+    emision:mmRowField(row,['timestamp','marca temporal','fecha de emision','fecha de alta']),
+    betaTest:/^(1|true|si|sí|yes|x)$/i.test(beta),
+    isDeveloper:dev,devAccess:dev,dev:mmRowField(row,['dev','developer','desarrollador','modo dev']),
+    password:mmRowPassword(row),isGuest:false,rememberDevice:!!remember,provider:'google-sheet'
+  };
+}
+function mmSetRoleRoute(role){
+  role=role==='dev'||role==='kiosk'?role:'user';
+  DEV_MODE=role==='dev';
+  try{
+    if(role==='dev'){urlParams.set('dev','1');urlParams.delete('kiosk')}
+    else if(role==='kiosk'){urlParams.set('kiosk','1');urlParams.delete('dev')}
+    else{urlParams.delete('dev');urlParams.delete('kiosk')}
+  }catch(e){}
+  try{
+    var current=new URL(window.location.href);
+    current.searchParams.delete('dev');current.searchParams.delete('kiosk');
+    if(role==='dev')current.searchParams.set('dev','1');
+    else if(role==='kiosk')current.searchParams.set('kiosk','1');
+    window.history.replaceState({},'',current.pathname+current.search+current.hash);
+  }catch(e){}
+  document.documentElement.classList.toggle('mm-dev-requested',role==='dev');
+  document.body.classList.toggle('dev-on',role==='dev');
+  document.body.classList.toggle('dev-qr-enabled',role==='dev');
+  if(window.MM_DEV_ROUTE!==undefined)window.MM_DEV_ROUTE=role==='dev';
+  if(window.MM_REMOVE_LANDING_IN_DEV!==undefined)window.MM_REMOVE_LANDING_IN_DEV=role==='dev';
+  if(role==='dev'){
+    try{enableDevMode()}catch(e){}
+  }
+}
+function mmContinueAsUserRow(row,remember,source){
+  const wasSpecial=source==='kiosk'||urlParams.get('kiosk')==='1'||urlParams.get('dev')==='1';
+  const user=mmBuildAuthUserFromRow(row,remember);
+  if(isRemovedChatUser(user.id)){alert('Esta cuenta fue retirada de la aplicación y ya no puede iniciar sesión.');return;}
+  authState={isLoggedIn:true,user:user};
+  mmSetRoleRoute(user.isDeveloper?'dev':'user');
+  if(source==='kiosk'||document.getElementById('kioskAuthGate')&&document.getElementById('kioskAuthGate').classList.contains('visible')){
+    mmCloseKioskLogin();
+    const kiosk=document.getElementById('kioskScreen');if(kiosk)kiosk.classList.remove('visible');
+  }
+  showBetaTestNoticeIfFirstLogin(user);
+  alert(user.isDeveloper?'Inicio de sesión correcto. Acceso de desarrollador habilitado.':'¡Inicio de sesión correcto! Bienvenido/a, '+user.nick+'.');
+  finalizeLogin();
+  if(wasSpecial)showMapPage();
+  if(user.isDeveloper){
+    document.body.classList.add('dev-on','dev-qr-enabled');
+    try{enableDevMode()}catch(e){}
+    setTimeout(function(){try{map.invalidateSize()}catch(e){};try{recenterImmediate()}catch(e){}},250);
+  }
+}
+function mmContinueAsMerchantRow(row,identifier){
+  MM_KIOSK_MERCHANT_SESSION=mmMerchantIdentity(row,identifier);
+  MM_KIOSK_AUTHORIZED=true;
+  urlParams.set('place',MM_KIOSK_MERCHANT_SESSION.id);
+  urlParams.set('placeName',MM_KIOSK_MERCHANT_SESSION.name);
+  urlParams.set('name',MM_KIOSK_MERCHANT_SESSION.name);
+  urlParams.set('price',String(MM_KIOSK_MERCHANT_SESSION.price));
+  mmSetRoleRoute('kiosk');
+  mmCloseKioskLogin();
+  hideLoginModal();
+  hideGate();
+  startKioskMode();
+}
 async function loginWithMutualMotos(){
   const emailField=(gateEmailInput&&gateEmailInput.offsetParent!==null)?gateEmailInput:loginEmailInput;
   const passwordField=(gatePasswordInput&&gatePasswordInput.offsetParent!==null)?gatePasswordInput:loginPasswordInput;
   const rememberField=(gateRememberInput&&gateRememberInput.offsetParent!==null)?gateRememberInput:loginRememberInput;
   const errorField=(gateLoginError&&gateLoginError.offsetParent!==null)?gateLoginError:loginError;
   const identifier=(emailField&&emailField.value?emailField.value:'').trim();
-  const identifierNormalized=identifier.toLowerCase();
   const password=(passwordField&&passwordField.value?passwordField.value:'');
   if(errorField){errorField.textContent='';errorField.style.display='none';}
   if(!identifier||!password){
@@ -6489,58 +6895,34 @@ async function loginWithMutualMotos(){
     alert('Datos incompletos: ingresá tu correo electrónico o nombre de usuario y tu contraseña.');
     return;
   }
-  loginMutualBtn.disabled=true;
-  loginMutualBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Verificando...';
+  const submit=gateLoginBtn&&gateLoginBtn.offsetParent!==null?gateLoginBtn:loginMutualBtn;
+  if(submit){submit.disabled=true;submit.innerHTML='<i class="fas fa-spinner fa-spin"></i> Verificando…';}
   try{
-    const response=await fetch(AUTH_CSV_URL,{cache:'no-store'});
-    if(!response.ok)throw new Error('HTTP '+response.status);
-    const csv=await response.text();
-    const rows=parseAuthCsv(csv);
-    const user=rows.find(function(row){
-      const correo=String(row.correo||'').trim().toLowerCase();
-      const nickname=String(row.nickname||'').trim().toLowerCase();
-      const rowPassword=mmRowPassword(row);
-      return (correo===identifierNormalized||nickname===identifierNormalized) && rowPassword===password;
-    });
-    if(!user){
-      if(errorField){errorField.textContent='Correo/nombre de usuario o contraseña incorrectos.';errorField.style.display='block';}
-      alert('Uno de los datos ingresados es incorrecto. Revisá tu correo electrónico o nombre de usuario y tu contraseña.');
-      return;
-    }
-    const displayName=(user.nickname||((user.nombre||'')+' '+(user.apellido||'')).trim()||user.correo||'Usuario').trim();
-    const resolvedId=getAuthIdentifier(user);
-    authState={isLoggedIn:true,user:{
-      id:resolvedId,
-      nick:displayName,
-      nombre:user.nombre||'',
-      apellido:user.apellido||'',
-      email:user.correo||'',
-      telefono:user.telefono||'',
-      telefonoFamiliar:user.telefonoFamiliar||user['telefono-familiar']||'',
-      moto:user.moto||'',
-      patente:user.patente||'',
-      sangre:user.sangre||'',
-      fecha:user.fecha||'',
-      timestamp:user.timestamp||user.emision||'',
-      emision:user.timestamp||user.emision||'',
-      betaTest:String(user.betaTest||'').trim().toLowerCase()==='true',
-      password:mmRowPassword(user),
-      isGuest:false,
-      rememberDevice:!!(rememberField&&rememberField.checked),
-      provider:'google-sheet'
-    }};
-    showBetaTestNoticeIfFirstLogin(authState.user);
-    alert('¡Inicio de sesión correcto! Bienvenido/a, '+displayName+'.');
-    finalizeLogin();
+    const response=await fetch(AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_authRoleTs='+Date.now(),{cache:'no-store'});
+    if(!response.ok)throw new Error('No se pudo consultar Usuarios (HTTP '+response.status+').');
+    const rows=parseAuthCsv(await response.text());
+    const user=mmFindCredentialRow(rows,identifier,password);
+    if(user){mmContinueAsUserRow(user,!!(rememberField&&rememberField.checked),'normal');return;}
+
+    // Solo si no coincide con ninguna cuenta de Usuarios se comprueba Comercios.
+    let merchantRows;
+    try{merchantRows=await mmLoadComerciosRows();}
+    catch(merchantError){throw new Error('Las credenciales no coinciden con Usuarios y no se pudo verificar Comercios: '+String(merchantError&&merchantError.message||merchantError));}
+    const merchant=mmFindCredentialRow(merchantRows,identifier,password);
+    if(merchant){mmContinueAsMerchantRow(merchant,identifier);return;}
+    const message='La cuenta no existe o las credenciales son incorrectas. Registrate si todavía no tenés una cuenta.';
+    if(errorField){errorField.textContent=message;errorField.style.display='block';}
+    alert(message);
   }catch(e){
     console.error('Error verificando credenciales:',e);
-    if(errorField){errorField.textContent='No se pudo consultar la planilla de Usuarios. Verificá tu conexión e intentá nuevamente.';errorField.style.display='block';}
-    alert('No se pudo comprobar el inicio de sesión porque no se pudo consultar la planilla de Usuarios. Verificá tu conexión e intentá nuevamente.');
+    const message=String(e&&e.message||'No se pudo validar la cuenta.');
+    if(errorField){errorField.textContent=message;errorField.style.display='block';}
+    alert(message);
   }finally{
-    loginMutualBtn.disabled=false;
-    loginMutualBtn.innerHTML='<i class="fas fa-sign-in-alt"></i> Iniciar sesión';
+    if(submit){submit.disabled=false;submit.innerHTML=submit===gateLoginBtn?'<i class="fas fa-sign-in-alt"></i> Iniciar sesión':'<i class="fas fa-sign-in-alt"></i> Iniciar sesión';}
   }
 }
+
 function escapeProfileValue(value){
   const v=(value===null||value===undefined?'':String(value)).trim();
   return v?escapeHtml(v):'—';
@@ -7066,8 +7448,18 @@ function loadMyLevel(){
 function saveMyLevel(){
   try{localStorage.setItem(LEVELS_KEY,JSON.stringify({level:myLevel,points:myPoints}))}catch(e){}
 }
-function getUserLevel(){return 1}
-function getUserPoints(){return 0}
+function getUserLevel(userId){
+  try{var stats=window.MM_getSheetUserStats&&window.MM_getSheetUserStats(userId);if(stats)return getLevelFromPoints(Math.max(0,Number(stats.points)||0))}catch(e){}
+  return 1;
+}
+function getUserPoints(userId){
+  try{var stats=window.MM_getSheetUserStats&&window.MM_getSheetUserStats(userId);if(stats)return Math.max(0,Number(stats.points)||0)}catch(e){}
+  return 0;
+}
+function getUserCoins(userId){
+  try{var stats=window.MM_getSheetUserStats&&window.MM_getSheetUserStats(userId);if(stats&&Number.isFinite(Number(stats.coins)))return Math.max(0,Number(stats.coins)||0)}catch(e){}
+  return null;
+}
 function renderLevelPanel(){
   const panel=document.getElementById('levelPanel');
   const titleEl=document.getElementById('levelTitle');
@@ -7212,38 +7604,26 @@ async function mmSubmitKioskLogin(event){
   var password=String(passwordInput&&passwordInput.value||'');
   var error=document.getElementById('kioskAuthError');
   if(error){error.textContent='';error.classList.remove('visible');}
-  if(!identifier||!password){mmShowKioskLogin('Ingresá el usuario/correo y la contraseña del comercio.');return;}
+  if(!identifier||!password){mmShowKioskLogin('Ingresá el usuario/correo y la contraseña.');return;}
   if(submit){submit.disabled=true;submit.innerHTML='<i class="fas fa-spinner fa-spin"></i> Verificando credenciales…';}
   try{
     var usersResponse=await fetch(AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_kioskAuthTs='+Date.now(),{cache:'no-store'});
-    if(!usersResponse.ok)throw new Error('No se pudo verificar Usuarios (HTTP '+usersResponse.status+'). Por seguridad no se iniciará el kiosco.');
+    if(!usersResponse.ok)throw new Error('No se pudo verificar Usuarios (HTTP '+usersResponse.status+').');
     var userRows=parseAuthCsv(await usersResponse.text());
-    var normalUser=mmFindCredentialRow(userRows,identifier,password);
-    if(normalUser){
-      mmShowKioskLogin('Estas credenciales pertenecen a una cuenta de Motoamigo en la pestaña Usuarios. El modo kiosco solo acepta credenciales registradas en Comercios.');
-      return;
-    }
+    var registeredUser=mmFindCredentialRow(userRows,identifier,password);
+    if(registeredUser){mmContinueAsUserRow(registeredUser,false,'kiosk');return;}
     var merchantRows=await mmLoadComerciosRows();
     var merchant=mmFindCredentialRow(merchantRows,identifier,password);
-    if(!merchant){
-      mmShowKioskLogin('Credenciales incorrectas o comercio no registrado en la pestaña Comercios.');
-      return;
-    }
-    MM_KIOSK_MERCHANT_SESSION=mmMerchantIdentity(merchant,identifier);
-    MM_KIOSK_AUTHORIZED=true;
-    urlParams.set('place',MM_KIOSK_MERCHANT_SESSION.id);
-    urlParams.set('placeName',MM_KIOSK_MERCHANT_SESSION.name);
-    urlParams.set('name',MM_KIOSK_MERCHANT_SESSION.name);
-    urlParams.set('price',String(MM_KIOSK_MERCHANT_SESSION.price));
-    mmCloseKioskLogin();
-    startKioskMode();
+    if(!merchant){mmShowKioskLogin('La cuenta no existe o las credenciales son incorrectas. Registrate si todavía no tenés una cuenta.');return;}
+    mmContinueAsMerchantRow(merchant,identifier);
   }catch(err){
-    console.error('Error de autenticación del kiosco:',err);
+    console.error('Error de autenticación:',err);
     mmShowKioskLogin(String(err&&err.message||'No se pudieron verificar las credenciales.'));
   }finally{
-    if(submit){submit.disabled=false;submit.innerHTML='<i class="fas fa-store"></i> Verificar e iniciar kiosco';}
+    if(submit){submit.disabled=false;submit.innerHTML='<i class="fas fa-store"></i> Verificar e iniciar sesión';}
   }
 }
+
 var kioskAuthForm=document.getElementById('kioskAuthForm');
 if(kioskAuthForm&&!kioskAuthForm.dataset.mmBound){kioskAuthForm.dataset.mmBound='1';kioskAuthForm.addEventListener('submit',mmSubmitKioskLogin);}
 var kioskAuthExit=document.getElementById('kioskAuthExit');
@@ -7543,6 +7923,8 @@ async function startChat(){
     return;
   }
   chatStartupTs=Date.now();
+  mqttClient.on('message',handleIncomingMessage);
+  mqttClient.subscribe(TOPIC_USER_REMOVED_BASE+'+',{qos:1});
   mqttClient.subscribe(TOPIC_PUBLIC,{qos:0});
   mqttClient.subscribe(TOPIC_PRESENCE,{qos:0});
   mqttClient.subscribe(TOPIC_PRIVATE_BASE+myUserId,{qos:0});
@@ -7567,9 +7949,20 @@ async function startChat(){
   mqttClient.subscribe(TOPIC_COINS,{qos:0});
   mqttClient.subscribe(TOPIC_COINS_TRANSFER_BASE+myUserId,{qos:0});
   mqttClient.subscribe(TOPIC_COIN_FULFILL,{qos:0});
-  mqttClient.on('message',handleIncomingMessage);
   chatReady=true;
   chatStatusSet('Conectado','connected');
+  if(isDeveloperAccount()&&incidentClearBeforeTs>0){
+    const syncClear={kind:'incident-clear-all',clearBeforeTs:incidentClearBeforeTs,incidentIds:[],from:{id:String(myUserId||''),nick:myNick||'Desarrollador'},ts:Date.now()};
+    try{mqttClient.publish(TOPIC_INCIDENTS,JSON.stringify(syncClear),{qos:1,retain:false})}catch(e){}
+    try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(syncClear),{qos:1,retain:false})}catch(e){}
+  }
+  if(isDeveloperAccount()&&DEV_MODE){
+    removedChatUserIds.forEach(function(removedId){
+      if(!removedId||String(removedId)===String(myUserId||''))return;
+      const removal={kind:'user-remove',userId:String(removedId),from:{id:String(myUserId||''),nick:String(myNick||'Desarrollador')},ts:Date.now()};
+      try{mqttClient.publish(TOPIC_USER_REMOVED_BASE+encodeURIComponent(String(removedId)),JSON.stringify(removal),{qos:1,retain:true})}catch(e){}
+    });
+  }
   chatInput.disabled=false;
   chatSendBtn.disabled=false;
   const now=Date.now();
@@ -7588,6 +7981,8 @@ async function startChat(){
   updateBadges();
   updateChatTitle();
   renderAllUserMotos();
+  try{if(typeof window.MM_refreshDevRecipients==='function')window.MM_refreshDevRecipients()}catch(e){}
+  try{if(typeof window.MM_refreshDevQrUsers==='function')window.MM_refreshDevQrUsers()}catch(e){}
   setTimeout(function(){publishPublicHistory();publishUserLogHistory()},3000);
 }
 function cleanupIncidents(){
@@ -7623,6 +8018,7 @@ function announcePresence(){
   savePresenceStore();
   renderAllUserMotos();
   renderUsers();
+  try{if(typeof window.MM_refreshDevUserPickers==='function')window.MM_refreshDevUserPickers()}catch(e){}
   if(!mqttClient)return;
   if(!chatReady)return;
   const msg={type:'presence',from:{id:myUserId,nick:myNick,isGuest:isGuestAccount(authState.user)},status:myStatus,ts:now};
@@ -7643,11 +8039,16 @@ function cleanupOfflineUsers(){
       if(u.status!=='desconectado')if(u.status!=='inactivo')if(u.status!=='no-molestar'){u.status='inactivo';changed=true}
     }
   });
-  if(changed){savePresenceStore();renderUsers();renderAllUserMotos()}
+  if(changed){
+    savePresenceStore();renderUsers();renderAllUserMotos();
+    try{if(typeof window.MM_refreshDevRecipients==='function')window.MM_refreshDevRecipients()}catch(e){}
+    try{if(typeof window.MM_refreshDevQrUsers==='function')window.MM_refreshDevQrUsers()}catch(e){}
+  }
 }
 function handleIncomingMessage(topic,payload){
   let msg;
   try{msg=JSON.parse(payload.toString())}catch(e){return}
+  if(topic.indexOf(TOPIC_USER_REMOVED_BASE)===0){handleRemovedChatUser(msg);return}
   if(topic===TOPIC_PUBLIC_HISTORY){handlePublicHistory(msg);return}
   if(topic===TOPIC_USERLOG_HISTORY){handleUserLogHistory(msg);return}
   if(topic===TOPIC_MAILBOX){handleMailboxMessage(msg);return}
@@ -7659,6 +8060,7 @@ function handleIncomingMessage(topic,payload){
   if(!msg.from)return;
   if(!msg.from.id)return;
   if(msg.from.id===myUserId)return;
+  if(isRemovedChatUser(msg.from.id))return;
   if(topic===TOPIC_PUBLIC)handlePublicMessage(msg);
   else if(topic===TOPIC_PRESENCE)handlePresence(msg);
   else if(topic===TOPIC_REPORTS)handleReportMessage(msg);
@@ -7741,6 +8143,7 @@ function removePublicMessagesByAlertId(alertId){
 }
 function handleIncidentMessage(msg){
   if(!msg)return;
+  if(msg.kind==='incident-clear-all'){applyIncidentClearEvent(msg.clearBeforeTs,msg.incidentIds||[],false);schedulePublishPublicHistory();return;}
   if(msg.kind==='incident-resolve'){
     const resolvedId=msg.incidentId||msg.incidentRef;
     if(resolvedId)removePublicMessagesByIncidentId(resolvedId);
@@ -7750,6 +8153,8 @@ function handleIncidentMessage(msg){
   registerIncomingIncident(msg,{silent:false});
 }
 function handlePublicMessage(msg){
+  if(msg.kind==='incident-clear-all'){applyIncidentClearEvent(msg.clearBeforeTs,msg.incidentIds||[],false);schedulePublishPublicHistory();return;}
+  if(isIncidentPublicRecord(msg)&&Number(msg.ts||0)<=incidentClearBeforeTs)return;
   if(msg.kind==='incident-resolve'){
     removePublicMessagesByIncidentId(msg.incidentRef||msg.incidentId);
     return;
@@ -7789,6 +8194,7 @@ function handlePublicMessage(msg){
 function handlePresence(msg){
   if(!msg.from)return;
   if(!msg.from.id)return;
+  if(isRemovedChatUser(msg.from.id))return;
   let status='conectado';
   if(msg.status)if(STATUS_LABELS[msg.status])status=msg.status;
   const existing=onlineUsers.get(msg.from.id);
@@ -7811,6 +8217,7 @@ function handlePresence(msg){
   savePresenceStore();
   renderUsers();
   renderAllUserMotos();
+  try{if(typeof window.MM_refreshDevUserPickers==='function')window.MM_refreshDevUserPickers()}catch(e){}
 }
 function handlePrivateMessage(msg){
   const peer={id:msg.from.id,nick:msg.from.nick||'Anónimo'};
@@ -8192,11 +8599,13 @@ function renderUsers(){
     }
     let label=u.nick||'Anónimo'; if(isMe)label=myNick+' (vos)';
     const lvl=isMe?myLevel:getUserLevel(u.id);
+    const userCoins=isMe?myMotoCoins:getUserCoins(u.id);
     const safeLabel=escapeHtml(label).slice(0,18);
     const levelBadge=lvl>=MAX_LEVEL?'<span class="user-level-badge max">MAX</span>':'<span class="user-level-badge">N'+lvl+'</span>';
+    const coinBadge=userCoins===null?'':'<span class="user-coin-badge">'+escapeHtml(formatNum(userCoins))+' MC</span>';
     let typingHtml=''; if(isTyping)typingHtml='<span class="typing-dot"><i></i><i></i><i></i></span>';
     let unreadHtml=''; if(unread>0)if(!isMe)unreadHtml='<span class="conv-badge">'+unread+'</span>';
-    html+='<div class="'+cls+'" data-user-id="'+escapeHtml(u.id)+'" data-nick="'+escapeHtml(u.nick||'Anónimo')+'"><span class="status-dot '+userStatus+'"></span><span class="nick">'+safeLabel+'</span>'+levelBadge+typingHtml+amigoBadge+unreadHtml+'</div>';
+    html+='<div class="'+cls+'" data-user-id="'+escapeHtml(u.id)+'" data-nick="'+escapeHtml(u.nick||'Anónimo')+'"><span class="status-dot '+userStatus+'"></span><span class="nick">'+safeLabel+'</span>'+levelBadge+coinBadge+typingHtml+amigoBadge+unreadHtml+'</div>';
   });
   chatUsersEl.innerHTML=html;
   const myStatusBtn=document.getElementById('myStatusBtn');
@@ -8741,6 +9150,7 @@ function MM_field(row,candidates){
   }
   return {found:false,value:''};
 }
+function MM_fieldValue(row,candidates){var result=MM_field(row,candidates);return result.found?result.value:''}
 function MM_parseNumber(value){
   var s=String(value==null?'':value).trim();
   if(!s)return 0;
@@ -8756,25 +9166,57 @@ async function MM_refreshStatsFromUsersSheet(){
     var response=await fetch(url,{cache:'no-store'});
     if(!response.ok)throw new Error('HTTP '+response.status);
     var rows=parseAuthCsv(await response.text());
+    var byId=Object.create(null),byKey=Object.create(null);
+    rows.forEach(function(r){
+      var rid='';
+      try{
+        rid=String(getAuthIdentifier({
+          id:MM_fieldValue(r,['id','id usuario','identificador']),
+          nickname:MM_fieldValue(r,['nickname','nick','usuario','nombre de usuario','username']),
+          correo:MM_fieldValue(r,['correo','correo electronico','email','mail']),
+          timestamp:MM_fieldValue(r,['timestamp','marca temporal','fecha de alta'])
+        })||'').trim();
+      }catch(e){}
+      var pointsField=MM_field(r,['puntos','points','puntos totales','total puntos','puntos acumulados']);
+      var coinsField=MM_field(r,['moto coins','motocoins','coins','saldo mc','saldo moto coins','monedas']);
+      var levelField=MM_field(r,['nivel','level']);
+      if(!pointsField.found&&!coinsField.found&&!levelField.found)return;
+      var points=pointsField.found?Math.max(0,MM_parseNumber(pointsField.value)):0;
+      var coins=coinsField.found?Math.max(0,MM_parseNumber(coinsField.value)):0;
+      var savedLevel=levelField.found?MM_parseNumber(levelField.value):0;
+      var level=savedLevel>0?Math.max(1,Math.min(MAX_LEVEL,savedLevel)):getLevelFromPoints(points);
+      var stats={id:rid,nick:MM_fieldValue(r,['nickname','nick','usuario','nombre de usuario','username']),email:MM_fieldValue(r,['correo','correo electronico','email','mail']),points:points,coins:coins,level:level};
+      if(rid)byId[rid]=stats;
+      [stats.nick,stats.email,MM_fieldValue(r,['id','id usuario','identificador'])].forEach(function(key){var k=String(key||'').trim().toLowerCase();if(k)byKey[k]=stats});
+    });
+    window.MM_SHEET_USER_STATS_BY_ID=byId;
+    window.MM_SHEET_USER_STATS_BY_KEY=byKey;
+    window.MM_getSheetUserStats=function(identifier){
+      var key=String(identifier||'').trim();
+      return byId[key]||byKey[key.toLowerCase()]||null;
+    };
+
     var userEmail=String(u.email||u.correo||'').trim().toLowerCase();
     var userNick=String(u.nick||u.nickname||'').trim().toLowerCase();
     var userId=String(u.socioId||u.id||'').trim();
     var row=rows.find(function(r){
-      var rid=String(r.id||r.user_id||r.userid||r.socioid||'').trim();
-      var email=String(r.correo||r.email||'').trim().toLowerCase();
-      var nick=String(r.nickname||r.nick||r.usuario||'').trim().toLowerCase();
+      var rid='';
+      try{rid=String(getAuthIdentifier({id:MM_fieldValue(r,['id','id usuario','identificador']),nickname:MM_fieldValue(r,['nickname','nick','usuario','nombre de usuario','username']),correo:MM_fieldValue(r,['correo','correo electronico','email','mail']),timestamp:MM_fieldValue(r,['timestamp','marca temporal','fecha de alta'])})||'').trim()}catch(e){}
+      var email=String(MM_fieldValue(r,['correo','email','mail'])||'').trim().toLowerCase();
+      var nick=String(MM_fieldValue(r,['nickname','nick','usuario'])||'').trim().toLowerCase();
       return (userId&&rid&&userId===rid)||(userEmail&&email===userEmail)||(userNick&&nick===userNick);
     });
-    if(!row)return;
-    var pointsField=MM_field(row,['puntos','points','puntos totales','total puntos','puntos acumulados']);
-    var coinsField=MM_field(row,['moto coins','motocoins','coins','saldo mc','saldo moto coins','monedas']);
-    if(pointsField.found&&String(pointsField.value).trim()!=='')myPoints=Math.max(0,MM_parseNumber(pointsField.value));
-    if(coinsField.found&&String(coinsField.value).trim()!=='')myMotoCoins=Math.max(0,MM_parseNumber(coinsField.value));
-    myLevel=getLevelFromPoints(myPoints);
-    saveMyLevel();
-    saveMotoCoins();
-    renderLevelPanel();
-    renderMotoCoins();
+    if(row){
+      var currentStats=window.MM_getSheetUserStats(userId)||window.MM_getSheetUserStats(userEmail)||window.MM_getSheetUserStats(userNick);
+      if(currentStats){
+        myPoints=currentStats.points;
+        myMotoCoins=currentStats.coins;
+        myLevel=getLevelFromPoints(myPoints);
+        saveMyLevel();saveMotoCoins();renderLevelPanel();renderMotoCoins();
+      }
+    }
+    try{if(typeof renderUsers==='function')renderUsers()}catch(e){}
+    try{var logModal=document.getElementById('userLogModal');if(logModal&&logModal.classList.contains('visible'))renderUserLogContent()}catch(e){}
   }catch(err){
     console.warn('No se pudieron refrescar puntos/Moto Coins desde Usuarios:',err);
   }
@@ -8793,155 +9235,15 @@ async function MM_refreshStatsFromUsersSheet(){
   loadMotoCoins();
   renderLevelPanel();
   renderMotoCoins();
+  window.MM_refreshStatsFromUsersSheet=MM_refreshStatsFromUsersSheet;
   setInterval(function(){
-    if(document.visibilityState==='visible')MM_refreshStatsFromUsersSheet();
-  },90000);
+    if(document.visibilityState==='visible'&&navigator.onLine)MM_refreshStatsFromUsersSheet();
+  },15000);
   document.addEventListener('visibilitychange',function(){
-    if(document.visibilityState==='visible')MM_refreshStatsFromUsersSheet();
+    if(document.visibilityState==='visible'&&navigator.onLine)MM_refreshStatsFromUsersSheet();
   });
-})();
-(function MM_installUsersQr(){
-  var exactDevUrl=new URLSearchParams(window.location.search).get('dev')==='1';
-  var button=document.getElementById('devUsersQrBtn');
-  var modal=document.getElementById('devUsersQrModal');
-  var closeA=document.getElementById('devUsersQrClose');
-  var closeB=document.getElementById('devUsersQrClose2');
-  var select=document.getElementById('devUsersQrSelect');
-  var refresh=document.getElementById('devUsersQrRefresh');
-  var download=document.getElementById('devUsersQrDownload');
-  var qrWrap=document.getElementById('devUsersQrCode');
-  var dataBox=document.getElementById('devUsersQrData');
-  var status=document.getElementById('devUsersQrStatus');
-  var users=[];
-  var currentQrText='';
-  if(!exactDevUrl||!button||!modal)return;
-
-  function isAuthorizedDev(){
-    var u=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:null;
-    var expected=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'').trim().toLowerCase();
-    var actual=String(u&&(u.email||u.correo)||'').trim().toLowerCase();
-    var route=false;
-    try{route=new URLSearchParams(window.location.search).get('dev')==='1'}catch(e){}
-    return !!(route&&DEV_MODE)||!!(u&&!u.isGuest&&expected&&actual===expected);
-  }
-  function syncVisibility(){
-    var enabled=isAuthorizedDev();
-    document.body.classList.toggle('dev-qr-enabled',enabled);
-    if(!enabled&&modal.classList.contains('visible'))closeModal();
-  }
-  function closeModal(){
-    modal.classList.remove('visible');
-    modal.setAttribute('aria-hidden','true');
-  }
-  function safeUserData(row){
-    var result={};
-    Object.keys(row||{}).forEach(function(key){
-      var k=MM_normField(key);
-      if(/password|contrasena|clave|token|secret|hash|credential|credencial|recovery|recuperacion|resetcode|securityanswer/.test(k))return;
-      result[String(key)]=row[key]==null?'':String(row[key]);
-    });
-    return result;
-  }
-  function renderSelectedUser(){
-    if(!select||select.selectedIndex<0||!users.length)return;
-    var record=users[parseInt(select.value,10)];
-    if(!record)return;
-    var qrPayload={tipo:'mutual-moto-usuario',fechaGeneracion:new Date().toISOString(),datos:safeUserData(record)};
-    currentQrText=JSON.stringify(qrPayload);
-    dataBox.textContent=JSON.stringify(qrPayload,null,2);
-    qrWrap.innerHTML='';
-    if(typeof QRCode==='undefined'){
-      status.textContent='No está disponible la biblioteca QRCode. Verificá que qrcode.min.js cargue correctamente.';
-      qrWrap.textContent=currentQrText;
-      return;
-    }
-    try{
-      new QRCode(qrWrap,{text:currentQrText,width:260,height:260,colorDark:'#243746',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
-      var label=record.nickname||record.nick||record.nombre||record.correo||record.email||('usuario '+(Number(select.value)+1));
-      status.textContent='QR generado para '+label+'. El QR contiene los campos visibles en el JSON de la derecha, excepto credenciales.';
-    }catch(err){
-      status.textContent='No se pudo generar el QR. La fila puede contener demasiados datos para un único código.';
-      qrWrap.textContent=String(err.message||err);
-    }
-  }
-  async function loadUsers(){
-    if(!isAuthorizedDev()){
-      status.textContent='Iniciá sesión con la cuenta de desarrollador para consultar usuarios.';
-      syncVisibility();
-      return;
-    }
-    status.textContent='Leyendo la sección Usuarios de Google Sheets…';
-    if(refresh)refresh.disabled=true;
-    try{
-      var csvUrl=AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_qrts='+Date.now();
-      var response=await fetch(csvUrl,{cache:'no-store'});
-      if(!response.ok)throw new Error('HTTP '+response.status);
-      var parsed=parseAuthCsv(await response.text());
-      users=parsed.filter(function(row){
-        return Object.keys(row||{}).some(function(k){return String(row[k]==null?'':row[k]).trim()!=='';});
-      });
-      select.innerHTML='';
-      if(!users.length){
-        select.add(new Option('No hay usuarios',''));
-        status.textContent='La sección Usuarios no devolvió filas.';
-        dataBox.textContent='';
-        qrWrap.innerHTML='';
-        return;
-      }
-      users.forEach(function(row,i){
-        var name=String(row.nickname||row.nick||((row.nombre||'')+' '+(row.apellido||'')).trim()||row.correo||row.email||('Usuario '+(i+1)));
-        var identifier=String(row.id||row.socioid||row.correo||row.email||'');
-        select.add(new Option(name+(identifier?' · '+identifier:''),String(i)));
-      });
-      status.textContent=users.length+' usuario(s) disponibles. Elegí uno para generar su QR.';
-      select.value='0';
-      renderSelectedUser();
-    }catch(err){
-      status.textContent='No se pudo leer la hoja Usuarios: '+String(err.message||err);
-    }finally{
-      if(refresh)refresh.disabled=false;
-    }
-  }
-
-  function openQrModal(){
-    if(!isAuthorizedDev()){
-      alert('El generador QR está disponible solo para la cuenta de desarrollador.');
-      syncVisibility();
-      return;
-    }
-    modal.classList.add('visible');
-    modal.setAttribute('aria-hidden','false');
-    if(!users.length)loadUsers();
-  }
-  window.MM_openDevUsersQr=openQrModal;
-  button.addEventListener('click',openQrModal);
-  if(closeA)closeA.addEventListener('click',closeModal);
-  if(closeB)closeB.addEventListener('click',closeModal);
-  modal.addEventListener('click',function(e){if(e.target===modal)closeModal();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
-  if(select)select.addEventListener('change',renderSelectedUser);
-  if(refresh)refresh.addEventListener('click',loadUsers);
-  if(download)download.addEventListener('click',function(){
-    var image=qrWrap.querySelector('img');
-    var canvas=qrWrap.querySelector('canvas');
-    var imageUrl=image&&image.src?image.src:(canvas?canvas.toDataURL('image/png'):'');
-    if(!imageUrl){status.textContent='Primero generá un QR válido.';return;}
-    var link=document.createElement('a');
-    var current=users[parseInt(select.value,10)]||{};
-    var name=String(current.nickname||current.nick||current.correo||current.email||'usuario').replace(/[^a-z0-9_-]+/gi,'_').slice(0,50);
-    link.href=imageUrl;
-    link.download='qr-usuario-'+name+'.png';
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  });
-
-  syncVisibility();
-  var originalFinalizeLoginForQr=finalizeLogin;
-  finalizeLogin=function(){
-    originalFinalizeLoginForQr.apply(this,arguments);
-    syncVisibility();
-  };
+  window.addEventListener('focus',function(){if(navigator.onLine)MM_refreshStatsFromUsersSheet()});
+  window.addEventListener('online',function(){MM_refreshStatsFromUsersSheet()});
 })();
 (function MM_resumeDevAfterLogin(){
   var originalFinalizeLoginForDev=finalizeLogin;
@@ -8984,6 +9286,7 @@ const resolveParam=urlParams.get('resolve');
       if(typeof loadHistory==='function')loadHistory();
       if(typeof loadResolvedState==='function')loadResolvedState();
       if(typeof loadUserLog==='function')loadUserLog();
+      if(typeof loadRemovedChatUsers==='function')loadRemovedChatUsers();
       if(typeof loadActiveAlert==='function')loadActiveAlert();
       if(typeof loadInactivitySetting==='function')loadInactivitySetting();
       if(typeof loadPresenceStore==='function')loadPresenceStore();
@@ -8996,9 +9299,13 @@ const resolveParam=urlParams.get('resolve');
       if(typeof MM_loadDevInbox==='function')MM_loadDevInbox(true);
       if(typeof loadSuggestions==='function')loadSuggestions();
       if(typeof loadChatLocationsFromStorage==='function')chatLocations=loadChatLocationsFromStorage();
-      if(activeUserAlert&&typeof isAlertResolved==='function'&&!isAlertResolved(activeUserAlert.id)){
-        showAlertOverlay();
+      if(typeof incidentClearBeforeTs!=='undefined'){
+        chatLocations=chatLocations.filter(function(loc){return loc&&(!((loc.kind==='emergency'||loc.kind==='incident'||loc.incidentRef||loc.incidentId||loc.alertId)&&Number(loc.ts||0)<=incidentClearBeforeTs))});
+        try{saveChatLocations()}catch(e){}
       }
+      if(activeUserAlert&&typeof isAlertResolved==='function'&&!isAlertResolved(activeUserAlert.id)&&Number(activeUserAlert.ts||0)>incidentClearBeforeTs){
+        showAlertOverlay();
+      }else if(activeUserAlert){activeUserAlert=null;try{saveActiveAlert()}catch(e){}}
     }catch(err){
       try{log('No se pudo restaurar estado local: '+(err&&err.message||err),'warn');}catch(_){}
     }
@@ -9049,22 +9356,7 @@ const resolveParam=urlParams.get('resolve');
         try{showError();}catch(_){}
       });
 
-    if(DEV_MODE===true){
-      if(!isDeveloperAccount()){
-        var devEmail=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'developer@local.invalid').trim().toLowerCase();
-        var devId='dev_'+(devEmail.replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'local');
-        authState={isLoggedIn:true,user:{
-          id:devId,
-          nick:'Desarrollador',
-          email:devEmail,
-          isGuest:false,
-          rememberDevice:false,
-          provider:'dev'
-        }};
-        try{myUserId=devId;}catch(_){}
-        try{myNick='Desarrollador';}catch(_){}
-      }
-
+    if(DEV_MODE===true&&isDeveloperAccount()){
       purgeAuthGate();
       try{ window.showGate=function(){}; }catch(_){}
       try{ showGate=function(){}; }catch(_){}
@@ -9179,17 +9471,18 @@ const resolveParam=urlParams.get('resolve');
       return;
     }
 
+    if(dev&&!isDeveloperAccount()){
+      // La ruta no concede privilegios. Se elimina el estilo que oculta el login antes de pedir credenciales.
+      DEV_MODE=false;
+      document.documentElement.classList.remove('mm-dev-requested');
+      document.body.classList.remove('dev-on','dev-qr-enabled','adding-mode');
+      if(gate){gate.classList.remove('hidden');gate.classList.remove('fading');gate.style.removeProperty('display');gate.style.removeProperty('visibility');gate.style.removeProperty('pointer-events');gate.removeAttribute('aria-hidden');}
+      var pendingMap=document.getElementById('mapPage');if(pendingMap)pendingMap.classList.add('hidden');
+      return;
+    }
+
     if(dev){
       DEV_MODE=true;
-      var expectedEmail=String(typeof DEV_EMAIL!=='undefined'?DEV_EMAIL:'developer@local.invalid').trim().toLowerCase();
-      var currentUser=authState&&authState.user;
-      var currentEmail=String(currentUser&&(currentUser.email||currentUser.correo)||'').trim().toLowerCase();
-      if(!(authState&&authState.isLoggedIn&&currentUser&&!currentUser.isGuest&&currentEmail===expectedEmail)){
-        var devId='dev_'+(expectedEmail.replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'local');
-        authState={isLoggedIn:true,user:{id:devId,nick:'Desarrollador',email:expectedEmail,isGuest:false,rememberDevice:false,provider:'dev'}};
-        try{myUserId=devId;}catch(_){}
-        try{myNick='Desarrollador';}catch(_){}
-      }
       if(gate){
         gate.classList.add('hidden');
         gate.classList.remove('fading');
@@ -9273,6 +9566,324 @@ const resolveParam=urlParams.get('resolve');
   }
 })();
 
+
+
+</script>
+
+<script>
+/* El generador QR de desarrollo consulta Usuarios para incluir también cuentas
+   desconectadas. El QR lleva una referencia de perfil; al escanearlo, otro Moto
+   Amigo resuelve la fila actual y nunca incluye el campo de contraseña en el QR. */
+(function MM_installUsersQrStandalone(){
+  var button=document.getElementById('devUsersQrBtn');
+  var modal=document.getElementById('devUsersQrModal');
+  var closeA=document.getElementById('devUsersQrClose');
+  var closeB=document.getElementById('devUsersQrClose2');
+  var select=document.getElementById('devUsersQrSelect');
+  var refresh=document.getElementById('devUsersQrRefresh');
+  var download=document.getElementById('devUsersQrDownload');
+  var qrWrap=document.getElementById('devUsersQrCode');
+  var dataBox=document.getElementById('devUsersQrData');
+  var status=document.getElementById('devUsersQrStatus');
+  var users=[];
+  var currentQrText='';
+  var profileModal=null;
+  var profileLookupBusy=false;
+  if(!button||!modal||!select||!qrWrap||!dataBox||!status)return;
+
+  function isAuthorizedDev(){
+    var route=false;
+    try{route=new URLSearchParams(window.location.search).get('dev')==='1'}catch(e){}
+    var devMode=false;
+    try{devMode=typeof DEV_MODE!=='undefined'&&DEV_MODE===true}catch(e){}
+    var account=false;
+    try{account=typeof isDeveloperAccount==='function'&&isDeveloperAccount()}catch(e){}
+    return account&&route&&devMode;
+  }
+  function syncVisibility(){
+    var enabled=isAuthorizedDev();
+    document.body.classList.toggle('dev-qr-enabled',enabled);
+    if(!enabled&&modal.classList.contains('visible'))closeModal();
+  }
+  function closeModal(){modal.classList.remove('visible');modal.setAttribute('aria-hidden','true')}
+  function getUserStatusLabel(value){
+    try{return (typeof STATUS_LABELS!=='undefined'&&STATUS_LABELS[value])||value||'Desconectado'}catch(e){return value||'Desconectado'}
+  }
+  function norm(value){
+    return String(value==null?'':value).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+  }
+  function field(row,candidates){
+    if(typeof mmRowField==='function')return mmRowField(row,candidates);
+    var keys=Object.keys(row||{}), wanted=candidates.map(norm);
+    for(var i=0;i<keys.length;i++)if(wanted.indexOf(norm(keys[i]))>=0&&String(row[keys[i]]||'').trim())return String(row[keys[i]]).trim();
+    return '';
+  }
+  function rowId(row){
+    /* Mantiene exactamente la misma regla de identidad usada al iniciar sesión:
+       ID explícito reconocido, luego nickname, correo y marca temporal. */
+    var id=field(row,['id','id usuario','identificador']);
+    var nick=field(row,['nickname','nick','usuario','nombre de usuario','username','alias']);
+    var email=field(row,['correo','correo electronico','email','e-mail','mail']);
+    var timestamp=field(row,['timestamp','marca temporal','fecha de alta']);
+    try{return String(getAuthIdentifier({id:id,nickname:nick,correo:email,timestamp:timestamp})||'').trim()}catch(e){return String(id||nick||email||'').trim()}
+  }
+  function rowNick(row){
+    return field(row,['nickname','nick','usuario','nombre de usuario','username','alias']) ||
+      (field(row,['nombre','nombre completo'])+' '+field(row,['apellido','apellidos'])).trim() ||
+      field(row,['correo','correo electronico','email']) || rowId(row) || 'Usuario';
+  }
+  function isSecretField(key){
+    var k=norm(key);
+    return !k || /password|passwd|contrasen|clave|secret|token|salt|hash|apikey|pinacceso/.test(k);
+  }
+  function isHiddenProfileField(key){
+    var k=norm(key);
+    // Estos campos se usan internamente para encontrar el perfil o auditar la
+    // cuenta; no forman parte de la ficha que ve quien escanea el QR.
+    return isSecretField(key) || /^(id|userid|uid|idusuario|identificador|socioid|idcuenta|estadodeconexion|estadoconexion|status|estado|timestamp|marcatemporal|fechaalta|fechaemision|emision|createdat|updatedat|lastseen|firstseen)$/.test(k);
+  }
+  function safeProfile(row,record){
+    var result={};
+    Object.keys(row||{}).forEach(function(key){
+      if(isHiddenProfileField(key))return;
+      var value=row[key];
+      if(value===null||value===undefined)value='';
+      if(String(value).trim()!=='')result[key]=String(value).trim();
+    });
+    // No agregar ID ni estado de conexión al perfil visible. La identidad se
+    // conserva solamente en el payload de referencia del QR.
+    return result;
+  }
+  function mapPresence(){
+    var byId=new Map(),byNick=new Map(),source=[];
+    try{source=typeof window.MM_getChatPresenceUsers==='function'?window.MM_getChatPresenceUsers():[]}catch(e){}
+    source.forEach(function(u){
+      if(!u)return;
+      var id=String(u.id||'').trim(), nick=String(u.nick||'').trim().toLowerCase();
+      if(id)byId.set(id,u);
+      if(nick)byNick.set(nick,u);
+    });
+    return {byId:byId,byNick:byNick,source:source};
+  }
+  function statusFor(record,presence){
+    var live=presence.byId.get(record.id)||presence.byNick.get(String(record.nick||'').trim().toLowerCase());
+    if(!live)return 'desconectado';
+    var last=Number(live.lastSeen||0);
+    if(last&&Date.now()-last>(typeof PRESENCE_DISCONNECT_AFTER==='number'?PRESENCE_DISCONNECT_AFTER:90000))return 'desconectado';
+    return String(live.status||'desconectado');
+  }
+  function drawQr(record){
+    if(!record)return;
+    var profile=safeProfile(record.row||{},record);
+    if(!record.row)profile={ID:record.id,Nickname:record.nick,'Estado de conexión':getUserStatusLabel(record.status)};
+    var payload={tipo:'mutual-moto-perfil-ref-v1',version:1,id:record.id,nickname:record.nick,status:record.status,statusLabel:getUserStatusLabel(record.status)};
+    currentQrText=JSON.stringify(payload);
+    dataBox.textContent=JSON.stringify(profile,null,2);
+    qrWrap.innerHTML='';
+    if(typeof QRCode==='undefined'){
+      status.textContent='No está disponible la biblioteca QRCode. Verificá que qrcode.min.js cargue correctamente.';
+      qrWrap.textContent=currentQrText;return;
+    }
+    try{
+      new QRCode(qrWrap,{text:currentQrText,width:260,height:260,colorDark:'#243746',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+      status.textContent='Perfil de '+record.nick+'. El QR contiene solo una referencia; Moto Amigo consultará los datos actuales y excluirá la contraseña al escanearlo.';
+    }catch(err){
+      status.textContent='No se pudo generar el QR. '+String(err&&err.message||'Error de la biblioteca QRCode.');
+      qrWrap.textContent=currentQrText;
+    }
+  }
+  function renderSelectedUser(){
+    if(!select||select.selectedIndex<0||!users.length)return;
+    var record=users[parseInt(select.value,10)];
+    if(!record)return;
+    drawQr(record);
+  }
+  async function loadUsers(){
+    if(!isAuthorizedDev()){
+      status.textContent='Iniciá sesión con la cuenta desarrolladora y abrí la página en modo ?dev=1.';
+      syncVisibility();return;
+    }
+    status.textContent='Leyendo Usuarios y combinando el estado de presencia…';
+    if(refresh)refresh.disabled=true;
+    var previousId=String((users[parseInt(select.value,10)]||{}).id||'');
+    try{
+      var response=await fetch(AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_devQrUsers='+Date.now(),{cache:'no-store'});
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      var rows=parseAuthCsv(await response.text());
+      var presence=mapPresence(), seen=new Set();
+      var sheetUsers=rows.map(function(row){
+        var id=rowId(row),nick=rowNick(row);
+        if(!id)return null;
+        return {id:id,nick:nick,status:'desconectado',row:row};
+      }).filter(Boolean);
+      users=[];
+      sheetUsers.forEach(function(user){
+        if(seen.has(user.id))return;
+        seen.add(user.id);
+        user.status=statusFor(user,presence);
+        users.push(user);
+      });
+      /* Incluye presencias sin fila registrada (por ejemplo, invitado) para no
+         perder la vista de lo que realmente está viendo la sala grupal. */
+      presence.source.forEach(function(user){
+        var id=String(user&&user.id||'').trim();
+        if(!id||seen.has(id))return;
+        seen.add(id);
+        users.push({id:id,nick:String(user.nick||'Anónimo'),status:statusFor({id:id,nick:String(user.nick||'Anónimo')},presence),row:null});
+      });
+      users.sort(function(a,b){
+        var table=typeof STATUS_ORDER!=='undefined'?STATUS_ORDER:{};
+        var sa=Object.prototype.hasOwnProperty.call(table,a.status)?table[a.status]:4;
+        var sb=Object.prototype.hasOwnProperty.call(table,b.status)?table[b.status]:4;
+        if(sa!==sb)return sa-sb;
+        try{if(a.id===String(myUserId||''))return -1;if(b.id===String(myUserId||''))return 1}catch(e){}
+        return a.nick.localeCompare(b.nick);
+      });
+      select.innerHTML='';
+      if(!users.length){
+        select.add(new Option('No hay usuarios registrados',''));
+        status.textContent='La hoja Usuarios no devolvió cuentas para mostrar.';
+        dataBox.textContent='No hay usuarios disponibles.';
+        qrWrap.innerHTML='<span style="color:#888;font-size:.85rem">No hay usuarios disponibles.</span>';
+        currentQrText='';return;
+      }
+      users.forEach(function(user,index){select.add(new Option(user.nick+' · '+getUserStatusLabel(user.status)+' · '+user.id,String(index)))});
+      var previousIndex=users.findIndex(function(user){return user.id===previousId});
+      select.value=String(previousIndex>=0?previousIndex:0);
+      var disconnected=users.filter(function(u){return u.status==='desconectado'}).length;
+      status.textContent=users.length+' usuario(s) registrados/detectados; '+disconnected+' desconectado(s) incluidos.';
+      renderSelectedUser();
+    }catch(err){
+      /* Fallback gives a useful view of known chat presences but says clearly
+         that the complete registered roster could not be fetched. */
+      var presence=mapPresence(), seen=new Set();
+      users=presence.source.map(function(u){return {id:String(u.id||''),nick:String(u.nick||'Anónimo'),status:statusFor(u,presence),row:null}}).filter(function(u){if(!u.id||seen.has(u.id))return false;seen.add(u.id);return true});
+      select.innerHTML='';
+      users.forEach(function(user,index){select.add(new Option(user.nick+' · '+getUserStatusLabel(user.status)+' · '+user.id,String(index)))});
+      status.textContent='No se pudo leer la hoja Usuarios ('+String(err&&err.message||err)+'). Se muestran solo las presencias conocidas.';
+      if(users.length){select.value='0';renderSelectedUser()}
+      else {dataBox.textContent='No se pudieron cargar usuarios.';qrWrap.textContent='Sin usuarios';currentQrText=''}
+    }finally{if(refresh)refresh.disabled=false}
+  }
+  function refreshPresenceStatuses(){
+    if(!modal.classList.contains('visible')||!users.length)return;
+    var presence=mapPresence();
+    users.forEach(function(user){user.status=statusFor(user,presence)});
+    var previousId=String((users[parseInt(select.value,10)]||{}).id||'');
+    select.innerHTML='';
+    users.forEach(function(user,index){select.add(new Option(user.nick+' · '+getUserStatusLabel(user.status)+' · '+user.id,String(index)))});
+    var idx=users.findIndex(function(user){return user.id===previousId});
+    select.value=String(idx>=0?idx:0);
+    renderSelectedUser();
+  }
+  function openQrModal(){
+    if(!isAuthorizedDev()){
+      alert('El generador QR requiere iniciar sesión con la cuenta desarrolladora y usar ?dev=1.');
+      syncVisibility();return;
+    }
+    modal.classList.add('visible');modal.setAttribute('aria-hidden','false');loadUsers();
+  }
+  window.MM_openDevUsersQr=openQrModal;
+  /* Presence callbacks update only statuses; they do not refetch the CSV for every ping. */
+  window.MM_refreshDevQrUsers=refreshPresenceStatuses;
+  button.addEventListener('click',openQrModal);
+  if(closeA)closeA.addEventListener('click',closeModal);
+  if(closeB)closeB.addEventListener('click',closeModal);
+  modal.addEventListener('click',function(e){if(e.target===modal)closeModal()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('visible'))closeModal()});
+  select.addEventListener('change',renderSelectedUser);
+  if(refresh)refresh.addEventListener('click',loadUsers);
+  if(download)download.addEventListener('click',function(){
+    var image=qrWrap.querySelector('img'),canvas=qrWrap.querySelector('canvas'),imageUrl=image&&image.src?image.src:'';
+    try{if(!imageUrl&&canvas)imageUrl=canvas.toDataURL('image/png')}catch(e){}
+    if(!imageUrl){status.textContent='Primero generá un QR válido.';return}
+    var link=document.createElement('a'),current=users[parseInt(select.value,10)]||{};
+    var name=String(current.nick||'usuario').replace(/[^a-z0-9_-]+/gi,'_').slice(0,50);
+    link.href=imageUrl;link.download='qr-perfil-motoamigo-'+name+'.png';document.body.appendChild(link);link.click();link.remove();
+  });
+
+  function ensureProfileModal(){
+    if(profileModal)return profileModal;
+    profileModal=document.createElement('div');
+    profileModal.id='mmScannedUserProfileModal';
+    profileModal.style.cssText='position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:12px;overflow:auto;';
+    var box=document.createElement('div');
+    box.style.cssText='width:min(680px,100%);max-height:92dvh;display:flex;flex-direction:column;background:#fff;border-radius:16px;box-shadow:0 18px 60px rgba(0,0,0,.4);overflow:hidden;';
+    var header=document.createElement('div');
+    header.style.cssText='display:flex;align-items:center;gap:12px;padding:14px 16px;background:#16a085;color:#fff;';
+    var title=document.createElement('strong');title.id='mmScannedUserProfileTitle';title.textContent='Perfil Moto Amigo';title.style.cssText='flex:1;font-size:1rem;';
+    var close=document.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Cerrar perfil');close.style.cssText='border:0;border-radius:50%;width:34px;height:34px;background:rgba(255,255,255,.18);color:#fff;font-size:24px;cursor:pointer;';
+    close.addEventListener('click',function(){profileModal.style.display='none'});
+    header.appendChild(title);header.appendChild(close);
+    var note=document.createElement('p');note.textContent='Datos del perfil recuperados de Usuarios. La contraseña y los campos secretos se excluyen.';note.style.cssText='padding:10px 14px;margin:0;background:#f2fbf8;color:#43545a;font-size:.8rem;line-height:1.45;border-bottom:1px solid #e2ece8;';
+    var body=document.createElement('div');body.id='mmScannedUserProfileBody';body.style.cssText='padding:12px;overflow:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;';
+    var footer=document.createElement('div');footer.style.cssText='padding:10px 14px;border-top:1px solid #eee;display:flex;justify-content:flex-end;';
+    var done=document.createElement('button');done.type='button';done.textContent='Cerrar';done.style.cssText='border:0;border-radius:8px;padding:9px 16px;background:#2c3e50;color:#fff;font-weight:700;cursor:pointer;';done.addEventListener('click',function(){profileModal.style.display='none'});footer.appendChild(done);
+    box.appendChild(header);box.appendChild(note);box.appendChild(body);box.appendChild(footer);profileModal.appendChild(box);document.body.appendChild(profileModal);
+    profileModal.addEventListener('click',function(e){if(e.target===profileModal)profileModal.style.display='none'});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&profileModal&&profileModal.style.display==='flex')profileModal.style.display='none'});
+    return profileModal;
+  }
+  function displayScannedProfile(row,payloadId,fallback){
+    var modalEl=ensureProfileModal(),body=modalEl.querySelector('#mmScannedUserProfileBody'),title=modalEl.querySelector('#mmScannedUserProfileTitle');
+    body.innerHTML='';
+    var data=safeProfile(row||{},null);
+    if(!row){data={};}
+    // ID, estado de conexión y timestamp quedan excluidos de la ficha visible.
+    var nick=(fallback&&fallback.nickname)||field(row||{},['nickname','nick','usuario','nombre de usuario'])||field(row||{},['nombre','nombre completo'])||'Moto Amigo';
+    title.textContent='Perfil de '+nick;
+    if(!Object.keys(data).length){
+      var empty=document.createElement('p');
+      empty.textContent='No hay datos de perfil disponibles para mostrar.';
+      empty.style.cssText='grid-column:1/-1;padding:14px;color:#66757a;text-align:center;';
+      body.appendChild(empty);
+    }
+    Object.keys(data).forEach(function(key){
+      var card=document.createElement('div');card.style.cssText='min-width:0;padding:10px;border:1px solid #e2e8e8;border-radius:9px;background:#fbfdfd;';
+      var label=document.createElement('div');label.textContent=key;label.style.cssText='font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:#6c7a80;margin-bottom:4px;';
+      var value=document.createElement('div');value.textContent=String(data[key]==null?'':data[key])||'—';value.style.cssText='font-size:.88rem;line-height:1.4;color:#263238;overflow-wrap:anywhere;white-space:pre-wrap;';
+      card.appendChild(label);card.appendChild(value);body.appendChild(card);
+    });
+    modalEl.style.display='flex';
+  }
+  async function resolveScannedProfile(payload){
+    if(profileLookupBusy)return;
+    if(!authState||!authState.isLoggedIn||!authState.user||authState.user.isGuest){
+      stopQrCamera();closeQrScanModal();alert('Para consultar los datos de un Moto Amigo, iniciá sesión con una cuenta registrada.');return;
+    }
+    profileLookupBusy=true;
+    stopQrCamera();closeQrScanModal();
+    var id=String(payload.id||(payload.datos&&payload.datos.id)||'').trim();
+    var fallback={nickname:String(payload.nickname||(payload.datos&&payload.datos.nickname)||''),status:String(payload.status||(payload.datos&&payload.datos.status)||'desconectado')};
+    if(!id){profileLookupBusy=false;alert('El QR de perfil no contiene un identificador válido.');return}
+    try{
+      var response=await fetch(AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_scanProfile='+Date.now(),{cache:'no-store'});
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      var rows=parseAuthCsv(await response.text());
+      var row=rows.find(function(r){return rowId(r)===id})||rows.find(function(r){return norm(rowNick(r))===norm(fallback.nickname)});
+      if(!row){displayScannedProfile(null,id,fallback);showAppNotification('No se encontró un perfil registrado completo; se muestran los datos incluidos en el QR.','fa-user');return}
+      displayScannedProfile(row,id,fallback);
+    }catch(err){
+      /* The QR itself intentionally contains only a reference, not a copy of all personal data. */
+      alert('No se pudieron cargar los datos del perfil desde Usuarios. Verificá la conexión e intentá nuevamente.');
+    }finally{profileLookupBusy=false}
+  }
+  if(typeof handleQrDecoded==='function'){
+    var previousQrHandler=handleQrDecoded;
+    handleQrDecoded=function(raw){
+      var parsed=null;
+      try{parsed=JSON.parse(String(raw||''))}catch(e){}
+      if(parsed&&(parsed.tipo==='mutual-moto-perfil-ref-v1'||parsed.tipo==='mutual-moto-usuario-chat')){
+        resolveScannedProfile(parsed);return;
+      }
+      return previousQrHandler.apply(this,arguments);
+    };
+  }
+  syncVisibility();
+})();
+</script>
+
+<script>
 (function MM_initDevMessageComposer(){
   var modal=document.getElementById('devMessageModal');
   var input=document.getElementById('devMessageText');
@@ -9293,47 +9904,66 @@ const resolveParam=urlParams.get('resolve');
   if(!modal||!input||!sendBtn)return;
 
   function isDevRoute(){
-    try{return DEV_MODE===true||new URLSearchParams(window.location.search).get('dev')==='1'}
-    catch(e){return DEV_MODE===true}
+    try{
+      var account=typeof isDeveloperAccount==='function'&&isDeveloperAccount();
+      var route=new URLSearchParams(window.location.search).get('dev')==='1';
+      return !!(account&&route&&typeof DEV_MODE!=='undefined'&&DEV_MODE===true);
+    }catch(e){return false}
   }
   function closeModal(){modal.classList.remove('visible');modal.setAttribute('aria-hidden','true')}
   function selectedRecipient(){
     var id=String(recipientSelect&&recipientSelect.value||'');
     return recipients.find(function(row){return String(row.id)===id})||null;
   }
-  function normalizeRecipient(row){
-    var id=String(getAuthIdentifier(row)||'').trim();
-    var email=String(row.correo||row.email||row.mail||'').trim().toLowerCase();
-    var nick=String(row.nickname||row.nick||row.usuario||((row.nombre||'')+' '+(row.apellido||'')).trim()||email||id).trim();
-    return {id:id,email:email,nick:nick,row:row};
+  function normalizeRecipient(user){
+    var id=String(user&&user.id||'').trim();
+    var nick=String(user&&user.nick||'Anónimo').trim();
+    var userStatus=String(user&&user.status||'desconectado').trim();
+    return {id:id,nick:nick,status:userStatus,row:user};
   }
-  async function loadRecipients(){
+  function loadRecipients(){
     if(recipientsLoading)return;
     recipientsLoading=true;
     if(recipientRefresh)recipientRefresh.disabled=true;
-    if(recipientSelect)recipientSelect.innerHTML='<option value="">Leyendo la pesta&ntilde;a Usuarios…</option>';
-    if(status)status.textContent='Cargando usuarios registrados…';
+    if(recipientSelect)recipientSelect.innerHTML='<option value="">Leyendo usuarios de la mensajer&iacute;a…</option>';
+    if(status)status.textContent='Obteniendo usuarios del mismo listado que muestra la sala grupal…';
+    var previousId=String(recipientSelect&&recipientSelect.value||'');
     try{
-      var response=await fetch(AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_devrecipients='+Date.now(),{cache:'no-store'});
-      if(!response.ok)throw new Error('HTTP '+response.status);
-      var rows=parseAuthCsv(await response.text());
-      var expected=String(DEV_EMAIL||'').trim().toLowerCase();
-      recipients=rows.map(normalizeRecipient).filter(function(item){
-        return !!item.id&&!!item.nick&&item.email!==expected;
+      /* La sala grupal y su listado se alimentan de onlineUsers mediante mensajes de presencia MQTT. */
+      var source=typeof window.MM_getChatPresenceUsers==='function'?window.MM_getChatPresenceUsers():[];
+      var selfId=String(myUserId||'').trim();
+      var stableDevId='';
+      try{if(typeof MM_getStableDevInboxId==='function')stableDevId=String(MM_getStableDevInboxId()||'').trim()}catch(e){}
+      recipients=source.map(normalizeRecipient).filter(function(item){
+        return !!item.id&&!!item.nick&&item.id!==selfId&&item.id!==stableDevId;
       });
       var used=new Set();
       recipients=recipients.filter(function(item){if(used.has(item.id))return false;used.add(item.id);return true});
+      recipients.sort(function(a,b){
+        var sa=Object.prototype.hasOwnProperty.call(STATUS_ORDER,a.status)?STATUS_ORDER[a.status]:4;
+        var sb=Object.prototype.hasOwnProperty.call(STATUS_ORDER,b.status)?STATUS_ORDER[b.status]:4;
+        if(sa!==sb)return sa-sb;
+        return a.nick.localeCompare(b.nick);
+      });
       recipientsLoaded=true;
       if(recipientSelect){
         recipientSelect.innerHTML='';
-        recipientSelect.add(new Option(recipients.length?'Seleccion&aacute; un usuario…':'No hay usuarios registrados',''));
-        recipients.forEach(function(item){recipientSelect.add(new Option(item.nick+(item.email?' · '+item.email:'')+' · '+item.id,item.id))});
+        recipientSelect.add(new Option(recipients.length?'Seleccion&aacute; un usuario…':'No hay otros usuarios en la lista del chat',''));
+        recipients.forEach(function(item){
+          var statusLabel=STATUS_LABELS[item.status]||item.status||'Desconectado';
+          recipientSelect.add(new Option(item.nick+' · '+statusLabel+' · '+item.id,item.id));
+        });
+        if(previousId&&recipients.some(function(item){return item.id===previousId}))recipientSelect.value=previousId;
       }
-      if(status)status.textContent=recipients.length+' usuario(s) cargados desde la pesta&ntilde;a Usuarios.';
+      if(status){
+        status.textContent=recipients.length
+          ?recipients.length+' usuario(s) cargados desde el mismo listado de la mensajer&iacute;a grupal.'
+          :'No se detectaron otros usuarios en el chat. La lista se actualizar&aacute; al recibir nuevas presencias.';
+      }
     }catch(err){
       recipientsLoaded=false;
-      if(recipientSelect)recipientSelect.innerHTML='<option value="">No se pudieron cargar los usuarios</option>';
-      if(status)status.textContent='No se pudo leer la pesta&ntilde;a Usuarios: '+String(err.message||err);
+      if(recipientSelect)recipientSelect.innerHTML='<option value="">No se pudieron obtener los usuarios del chat</option>';
+      if(status)status.textContent='No se pudo leer la lista de usuarios del chat: '+String(err.message||err);
     }finally{recipientsLoading=false;if(recipientRefresh)recipientRefresh.disabled=false}
   }
   function updateDeliveryUi(){
@@ -9346,11 +9976,11 @@ const resolveParam=urlParams.get('resolve');
       else if(value==='private')sendBtn.innerHTML='<i class="fas fa-lock"></i> Enviar mensaje privado';
       else sendBtn.innerHTML='<i class="fas fa-paper-plane"></i> Enviar mensaje';
     }
-    if(value==='private'&&!recipientsLoaded)loadRecipients();
     if(status&&value==='mailbox')status.textContent='El mensaje ser&aacute; visible para todos en el buz&oacute;n.';
     else if(status&&value==='group')status.textContent='El mensaje aparecer&aacute; en la mensajer&iacute;a grupal (sala general).';
-    else if(status&&value==='private')status.textContent='Eleg&iacute; un usuario de la pesta&ntilde;a Usuarios para enviarle un mensaje directo.';
+    else if(status&&value==='private')status.textContent='Eleg&iacute; un usuario de la lista de la mensajer&iacute;a grupal para enviarle un mensaje directo.';
     else if(status)status.textContent='Seleccion&aacute; el destino del mensaje.';
+    if(value==='private')loadRecipients();
   }
   function openModal(){
     if(!isDevRoute()){alert('Esta funci&oacute;n solo est&aacute; disponible en modo Dev (?dev=1).');return}
@@ -9419,6 +10049,10 @@ const resolveParam=urlParams.get('resolve');
   }
   if(delivery)delivery.addEventListener('change',updateDeliveryUi);
   if(recipientRefresh)recipientRefresh.addEventListener('click',loadRecipients);
+  window.MM_refreshDevRecipients=function(){
+    if(!modal.classList.contains('visible'))return;
+    if(delivery&&delivery.value==='private')loadRecipients();
+  };
   if(recipientSelect)recipientSelect.addEventListener('change',function(){if(status&&recipientSelect.value)status.textContent='El mensaje se enviar&aacute; a '+(selectedRecipient()||{}).nick+'.'});
   openBtns.forEach(function(btn){btn.addEventListener('click',openModal)});
   window.MM_openDevMessage=openModal;
@@ -9429,13 +10063,28 @@ const resolveParam=urlParams.get('resolve');
   sendBtn.addEventListener('click',publishMessage);
   input.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();publishMessage()}});
 })();
-
 </script>
+
+<script>
+/* Cierre de respaldo independiente para que X/Cancelar/Escape siempre respondan en ?dev=1. */
+(function MM_repairDevMessageModalControls(){
+  var modal=document.getElementById('devMessageModal');
+  if(!modal)return;
+  function close(){modal.classList.remove('visible');modal.setAttribute('aria-hidden','true')}
+  document.addEventListener('click',function(e){
+    var target=e.target&&e.target.closest?e.target.closest('#devMessageClose,#devMessageCancel'):null;
+    if(target){e.preventDefault();close();return}
+    if(e.target===modal&&modal.classList.contains('visible'))close();
+  },true);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('visible'))close()});
+})();
+</script>
+
 
 <script>
 (function MM_repairDevControls(){
   function isDevRoute(){
-    try{return DEV_MODE===true||new URLSearchParams(window.location.search).get('dev')==='1'}catch(e){return DEV_MODE===true}
+    try{return !!(typeof isDeveloperAccount==='function'&&isDeveloperAccount()&&DEV_MODE===true&&new URLSearchParams(window.location.search).get('dev')==='1')}catch(e){return false}
   }
   document.addEventListener('click',function(e){
     var target=e.target&&e.target.closest?e.target.closest('#userLogHeaderBtn,#devToggleBtn,#devUsersQrBtn,[data-open-dev-message]'):null;
@@ -9478,5 +10127,41 @@ const resolveParam=urlParams.get('resolve');
   },true);
 })();
 </script>
+
+<script>
+(function MM_preventMobilePageZoom(){
+  function insideMap(target){return !!(target&&target.closest&&target.closest('#map, .leaflet-container'))}
+  document.addEventListener('touchstart',function(e){if(e.touches&&e.touches.length>1&&!insideMap(e.target))e.preventDefault()},{passive:false,capture:true});
+  document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1&&!insideMap(e.target))e.preventDefault()},{passive:false,capture:true});
+  document.addEventListener('gesturestart',function(e){if(!insideMap(e.target))e.preventDefault()},{passive:false,capture:true});
+})();
+</script>
+
+<script>
+/* Autorización de movimientos de saldo: credencial de la sesión actual. */
+(function MM_captureStatAccountCredential(){
+  if(typeof mmContinueAsUserRow!=='function')return;
+  var originalContinue=mmContinueAsUserRow;
+  mmContinueAsUserRow=function(row,remember,source){
+    try{
+      if(source!=='kiosk'&&row){
+        var pass=typeof mmRowPassword==='function'?mmRowPassword(row):'';
+        var email=typeof mmRowField==='function'?mmRowField(row,['correo','correo electronico','email','mail']):'';
+        var nick=typeof mmRowField==='function'?mmRowField(row,['nickname','nick','usuario','nombre de usuario','username']):'';
+        var built=typeof mmBuildAuthUserFromRow==='function'?mmBuildAuthUserFromRow(row,remember):null;
+        var userId=String(built&&built.id||'');
+        var identifier=String(email||nick||userId||'');
+        if(pass&&identifier&&userId){
+          sessionStorage.setItem('MM_STAT_ACCOUNT_CREDENTIAL_V1',JSON.stringify({
+            userId:userId,identifier:identifier,password:String(pass),expiresAt:Date.now()+8*60*60*1000
+          }));
+        }
+      }
+    }catch(e){console.warn('No se pudo guardar la credencial temporal de movimientos de saldo.',e)}
+    return originalContinue.apply(this,arguments);
+  };
+})();
+</script>
+
 </body>
 </html>
