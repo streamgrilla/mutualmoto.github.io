@@ -571,7 +571,7 @@ body.adding-mode .dev-hint{display:block}
 .modal-option-btn.incident-opt.police{border-color:#2980b9}
 .modal-option-btn.incident-opt.police strong{color:#21618c}
 .modal-option-btn.emergency-opt.leve strong{color:#f39c12}
-.modal-option-btn.emergency-opt.grave strong{color:#e67e22}
+.modal-option-btn.emergency-opt.grave strong{color:#2c3e50}.modal-option-btn.emergency-opt.grave strong i{color:#f1c40f}
 .modal-option-btn.emergency-opt.vida strong{color:#c0392b}
 .modal-option-btn.accept strong{color:var(--moto)}
 .modal-option-btn.reject strong{color:#c0392b}
@@ -915,15 +915,46 @@ header{padding-left:3.5rem;padding-right:3.5rem}
 .price-box h3{font-size:1.05rem;margin-bottom:.7rem}
 .price-main{font-size:1.6rem;font-weight:900;margin:.35rem 0}.price-sub{font-size:.82rem;color:#d5dde1;line-height:1.5}
 .price-annual{margin-top:.9rem;padding:.8rem;border-radius:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12)}
-.price-annual strong{display:block;color:#f1c40f;font-size:1.15rem}
+.price-annual strong{display:block;color:#f1c40f;font-size:1.15rem;margin-bottom:.25rem}
+.price-annual span,.price-quarterly span{display:block;color:#e7edf0;font-size:.82rem;line-height:1.5}
+.price-gift{display:flex;align-items:center;gap:.45rem;margin-top:.65rem;padding:.55rem .6rem;border-radius:8px;background:rgba(39,174,96,.18);border:1px solid rgba(46,204,113,.42);color:#d5f5e3;font-size:.82rem;font-weight:800;line-height:1.4}
+.price-gift i{color:#2ecc71;flex-shrink:0}
+.price-quarterly{margin-top:.7rem;padding:.85rem;border-radius:10px;background:rgba(241,196,15,.11);border:1px solid rgba(241,196,15,.45)}
+.price-quarterly .promo-label{display:block;margin-bottom:.35rem;color:#f9e79f;font-size:.68rem;font-weight:900;letter-spacing:.8px;text-transform:uppercase}
+.price-quarterly strong{display:block;color:#f1c40f;font-size:1.02rem;margin-bottom:.3rem}
+.price-quarterly .price-gift{margin-top:.6rem}
 .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
 .contact-item{background:#fff;border:1px solid #e1e7ea;border-radius:14px;padding:1rem;text-align:center}
 .contact-item i{font-size:1.5rem;color:var(--moto);margin-bottom:.5rem}.contact-item strong{display:block;color:var(--primary);margin-bottom:.25rem}.contact-item span{font-size:.8rem;color:#68757c}
 .guide-image-wrap{background:#fff;border:1px solid #dfe6e9;border-radius:16px;padding:.75rem;text-align:center;box-shadow:0 8px 24px rgba(44,62,80,.07);margin-bottom:1rem}
 .guide-image-wrap img{display:block;width:100%;max-height:520px;object-fit:contain;border-radius:10px}
+.guide-button-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;background:#fff;border:1px solid #dfe6e9;border-radius:16px;padding:.85rem;box-shadow:0 8px 24px rgba(44,62,80,.07);margin-bottom:1rem}
+.guide-button-item{display:flex;align-items:center;gap:.75rem;min-width:0;padding:.75rem;border:1px solid #edf0f2;border-radius:12px;background:#fbfcfd}
+.guide-button-logo{position:relative;display:flex;align-items:center;justify-content:center;flex:0 0 48px;width:48px;height:48px;border-radius:50%;font-size:20px;color:#fff;line-height:1;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.guide-button-logo.auth-floating-btn{background:var(--moto)}
+.guide-button-logo.buzon-btn{background:#8e44ad}
+.guide-button-logo.suggestion-btn{background:#16a085}
+.guide-button-logo.coins-btn{background:linear-gradient(135deg,#b7950b,#f1c40f)}
+.guide-button-logo.add-place-btn{background:#9b59b6}
+.guide-button-logo.police-btn{background:#e67e22;flex-direction:column;font-size:18px}
+.guide-button-logo.police-btn small{font-size:.55rem;line-height:1;font-weight:900;letter-spacing:.4px;margin-top:2px}
+.guide-button-logo.qrscan-btn{background:#8e44ad}
+.guide-button-logo.incident-btn{background:#e67e22}
+.guide-button-logo.emergency-btn{background:#e74c3c}
+.guide-button-logo.chat-btn{background:var(--chat)}
+.guide-button-logo.toggle-btn{background:linear-gradient(135deg,#2c3e50,#34495e)}
+.guide-emergency-corner{position:absolute;top:-3px;right:-3px;width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;color:#e74c3c;border:2px solid #e74c3c;font-size:9px}
+.guide-button-copy{min-width:0}
+.guide-button-copy strong{display:block;color:var(--primary);font-size:.9rem;line-height:1.3;margin-bottom:.15rem}
+.guide-card .guide-button-copy p{font-size:.8rem;line-height:1.45;color:#5e6a70;margin:0}
+.solidarity-reward-card{display:flex;align-items:center;justify-content:center;gap:.9rem;margin:0 0 1rem;padding:1.05rem 1.2rem;border:1px solid #f0d7bd;border-radius:14px;background:linear-gradient(135deg,#fff8f0,#fff);box-shadow:0 5px 16px rgba(44,62,80,.06)}
+.solidarity-reward-icon{width:48px;height:48px;flex:0 0 48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--moto);color:#fff;font-size:1.35rem}
+.solidarity-reward-copy strong{display:block;color:var(--primary);font-size:1rem;line-height:1.35}
+.solidarity-reward-copy span{display:block;margin-top:.25rem;color:#9a7500;font-size:1rem;font-weight:900}
+@media(max-width:700px){.guide-button-grid{grid-template-columns:1fr}.solidarity-reward-card{justify-content:flex-start;padding:.9rem}.solidarity-reward-copy strong{font-size:.9rem}.solidarity-reward-icon{width:42px;height:42px;flex-basis:42px}}
 .reward-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:1rem 0}
 .reward-card{border-radius:14px;padding:1rem;border:1px solid #e1e7ea;background:#fff;text-align:center;box-shadow:0 5px 16px rgba(44,62,80,.06)}
-.reward-card .reward-icon{font-size:1.4rem;color:var(--moto);margin-bottom:.35rem}.reward-card strong{display:block;color:var(--primary);font-size:1rem}.reward-card span{display:block;color:#68757c;font-size:.82rem;margin-top:.25rem}
+.reward-card .reward-icon{font-size:1.4rem;color:var(--moto);margin-bottom:.35rem}.reward-card .reward-icon-grave i{color:#f1c40f;text-shadow:0 1px 1px rgba(110,85,0,.25)}.reward-card strong{display:block;color:var(--primary);font-size:1rem}.reward-card span{display:block;color:#68757c;font-size:.82rem;margin-top:.25rem}
 .guide-note{padding:.85rem 1rem;background:#fff8e8;border:1px solid #f4d58a;border-radius:12px;color:#765b14;font-size:.82rem;line-height:1.5}
 .association-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100001;display:none;align-items:center;justify-content:center;padding:1rem}.association-modal.visible{display:flex}
 .association-box{background:#fff;border-radius:18px;width:min(900px,96vw);height:min(900px,92vh);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5)}
@@ -1380,13 +1411,11 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
     <div class="association-header"><h3><i class="fas fa-handshake"></i> Asociarte como Motoamigazo</h3><button type="button" id="associationCloseBtn" aria-label="Cerrar"><i class="fas fa-times"></i></button></div>
     <div class="form-context-note association-form-intro">
       <strong class="form-context-title">Información para comercios Motoamigazos</strong>
-      <p>Los comercios que ofrecen servicios exclusivos a Moto Amigos se llaman Motoamigazos, los Motoamigazos, con respecto a otros comercios que figuran en el mapa, contarán con una etiqueta destacada, y encabezarán la lista de los diferentes servicios. En adición a esto, podrán publicitar una vez a la semana en nuestro buzón o en nuestra mensajería grupal.</p>
-      <p>Los Motoamigazos son los únicos usuarios que pueden canjear Moto Coins por dinero real, Los Motoamigazos efectúan un canje de un producto por Moto Coins y Mutual Moto se compromete a abonar el mismo valor en dinero real.</p>
+      <p>Los comercios que ofrecen servicios exclusivos a Moto Amigos se llaman <strong>Motoamigazos</strong>. <p>Los <strong>Motoamigazos</strong> con respecto a otros comercios que figuran en el mapa contarán con una <strong>etiqueta destacada, y encabezarán la lista de los diferentes servicios.</strong> <p>Además, <strong>podrán publicitar una vez a la semana en nuestro buzón o en nuestra mensajería grupal.</strong></p>
+      <p>Los Motoamigazos son los únicos que pueden efectuar el canje de un producto por Moto Coins y Mutual Moto se compromete a abonar el mismo valor en dinero real al instante.</p>
     </div>
     <div class="association-form-unavailable" id="associationFormNotice" role="status">
-      <i class="fas fa-link-slash" aria-hidden="true"></i>
-      <strong>El formulario de Google Forms para Motoamigazos todavía no está vinculado en esta página.</strong>
-      <span>El texto informativo está listo, pero hace falta configurar el enlace del formulario para mostrarlo aquí.</span>
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdVQwl7i3t5Je6uRi5CFxHSdy2ruFTeXwXFKJtT_w5o1S6kDw/viewform?embedded=true" width="700" height="520" frameborder="0" marginheight="0" marginwidth="0">Cargando…</iframe>
     </div>
     <iframe class="association-iframe" id="associationIframe" src="about:blank" title="Formulario para asociarse como Motoamigazo" style="display:none"></iframe>
   </div>
@@ -1426,38 +1455,63 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
     <p class="lead">Ser motoquero es mucho más que andar en moto: es compartir rutas, experiencias, conocimientos y también los desafíos que aparecen todos los días. Mutual Moto nace para convertir esa comunidad en una red útil, activa y llena de oportunidades.</p>
     <div class="about-grid">
       <div class="about-card">
-        <p><strong>Una mutual pensada para quienes viven la moto.</strong> Nuestro objetivo es conectar a los motociclistas con lugares, servicios y personas que realmente entienden sus necesidades. Desde encontrar una gomería o un taller hasta descubrir comercios adheridos, todo empieza en un mismo lugar: el mapa interactivo de Mutual Moto.</p>
+        <p><strong>Una mutual pensada para quienes viven la moto.</strong> Nuestro objetivo es conectar a los motociclistas con lugares, servicios y personas que realmente entienden sus necesidades. Desde encontrar una gomería o un taller hasta descubrir comercios adheridos, todo empieza en un mismo lugar: <strong>el mapa interactivo de Mutual Moto.</strong></p>
         <div class="benefit-grid">
           <div class="benefit-item"><i class="fas fa-percent"></i><strong>Beneficios exclusivos</strong><span>Descuentos y oportunidades especiales en comercios adheridos.</span></div>
           <div class="benefit-item"><i class="fas fa-chart-line"></i><strong>Sistema de niveles</strong><span>Tu participación construye progreso y puede abrirte mejores beneficios.</span></div>
           <div class="benefit-item"><i class="fas fa-map-location-dot"></i><strong>Mapa para motoqueros</strong><span>Talleres, gomerías, repuestos, combustible, comida y más.</span></div>
         </div>
         <p><strong>Tu experiencia también tiene valor.</strong> Podés calificar establecimientos, compartir tus experiencias y ayudar a otros motoqueros a identificar lugares confiables. Cada nuevo socio y cada nuevo comercio hacen que la red sea más útil para todos.</p>
-        <p>Además, la comunidad puede participar ayudando a un Moto Amigo cuando tiene un incidente. Esa colaboración se reconoce mediante puntos y Moto Coins, haciendo que ayudar también forme parte de la experiencia de Mutual Moto.</p>
+        <p>La comunidad puede participar ayudando a un Moto Amigo cuando tiene un incidente o cuando Mutual Moto le asigne alguna tarea/acción solidaria. Esa colaboración se reconoce mediante puntos y Moto Coins.<p>haciendo que ayudar también forme parte de la experiencia de Mutual Moto.</p>
         <p><strong>No se trata solamente de pagar una membresía.</strong> Se trata de formar parte de una red de lugares, beneficios y personas que comparten una misma pasión.</p>
       </div>
       <div class="price-box">
         <h3><i class="fas fa-id-card"></i> ¿Cuánto cuesta ser socio?</h3>
         <div class="price-main">$20.000 <small>/ mes</small></div>
         <div class="price-sub">Membresía mensual para formar parte de la comunidad y acceder a sus beneficios.</div>
-        <div class="price-annual"><strong>$200.000 / año</strong><span>Pagando el año completo, tenés dos meses gratis.</span></div>
-        <p style="margin-top:1rem;color:#fff;line-height:1.6;font-size:.86rem">Tu moto te lleva a cualquier lugar. Nosotros queremos ayudarte a encontrar lo que necesitás en el camino.</p>
+        <div class="price-annual">
+          <strong>$200.000 / año</strong>
+          <span>Pagando el año completo, tenés dos meses gratis.</span>
+          <div class="price-gift"><i class="fas fa-satellite-dish" aria-hidden="true"></i><span>Además, recibís un GPS de regalo con su instalación incluida.</span></div>
+        </div>
+        <div class="price-quarterly">
+          <span class="promo-label"><i class="fas fa-gift" aria-hidden="true"></i> Nueva promoción</span>
+          <strong>3 meses de membresía · $60.000</strong>
+          <span>Abonando los tres meses por adelantado, recibís un GPS de regalo con su instalación incluida.</span>
+        </div>
+        <p style="margin-top:1rem;color:#fff;line-height:1.6;font-size:.86rem">Durante el proceso de asociación, deberás rellenar un formulario donde deberás ingresar tus datos personales que únicamente serán visibles por usted. Una vez dada de alta la cuenta, el usuario deberá visitar un local "Motoamigazo" para retirar un colgante con un código QR con sus datos personales y de salud, junto con una remera de regalo de asociación, el usuario deberá comunicarse con los desarrolladores para coordinar su diseño.<p>Tu moto te lleva a cualquier lugar. Nosotros queremos ayudarte a encontrar lo que necesitás en el camino.</p>
       </div>
     </div>
     <div style="text-align:center;margin-top:1.5rem"><strong style="color:var(--moto);font-size:1.05rem">Sumate a Mutual Moto y hacé crecer la comunidad con nosotros.</strong></div>
   </section>
   <section class="pre-map-section" id="preSection-guide">
-    <div class="section-kicker">Conocé el mapa</div>
+    <div class="section-kicker">ATENCIÓN: El mapa es de uso público para todos, pero para acceder a beneficios exclusivos y funciones especiales, deberá asociarse.</div>
     <h2>Aprende sobre el mapa</h2>
     <p class="lead">Antes de ingresar, podés conocer cómo interpretar los botones y las herramientas principales. Después, en el mapa, vas a poder explorar lugares, usuarios, alertas e interacciones de la comunidad.</p>
-    <div class="guide-image-wrap"><img src="guiadebotones.png" alt="Guía de botones del mapa de Mutual Moto" loading="lazy"></div>
+    <div class="guide-button-grid" role="list" aria-label="Funciones de la botonera del mapa">
+      <div class="guide-button-item" role="listitem"><span class="guide-button-logo auth-floating-btn" aria-hidden="true"><i class="fas fa-sign-in-alt"></i></span><div class="guide-button-copy"><strong>Iniciar sesión</strong><p>Iniciá sesión o abrí el acceso a tu cuenta.</p></div></div>
+      <div class="guide-button-item" role="listitem"><span class="guide-button-logo buzon-btn" aria-hidden="true"><i class="fas fa-envelope"></i></span><div class="guide-button-copy"><strong>Buzón</strong><p>Revisá los mensajes y avisos que recibiste.</p></div></div>
+      <div class="guide-button-item" role="listitem"><span class="guide-button-logo suggestion-btn" aria-hidden="true"><i class="fas fa-lightbulb"></i></span><div class="guide-button-copy"><strong>Buzón de sugerencias</strong><p>Enviá sugerencias para mejorar el mapa y sus servicios.</p></div></div>
+      <div class="guide-button-item" role="listitem"><span class="guide-button-logo coins-btn" aria-hidden="true"><i class="fas fa-coins"></i></span><div class="guide-button-copy"><strong>Moto Coins</strong><p>Consultá tu saldo y las opciones para pedir o donar Moto Coins.</p></div></div>
+      <div class="guide-button-item" role="listitem"><span class="guide-button-logo add-place-btn" aria-hidden="true"><i class="fas fa-plus"></i></span><div class="guide-button-copy"><strong>Añadir lugar</strong><p>Proponé un comercio o punto de interés para sumarlo al mapa.</p></div></div>
+      <div class="guide-button-item" role="listitem"><span class="guide-button-logo police-btn" aria-hidden="true"><i class="fas fa-phone"></i><small>911</small></span><div class="guide-button-copy"><strong>Llamar al 911</strong><p>Llamá a emergencias ante una situación que requiera asistencia inmediata.</p></div></div>
+      <div class="guide-button-item" role="listitem"><span class="guide-button-logo qrscan-btn" aria-hidden="true"><i class="fas fa-qrcode"></i></span><div class="guide-button-copy"><strong>Escanear QR</strong><p>Escaneá códigos QR de incidentes o pagos con Moto Coins.</p></div></div>
+      <div class="guide-button-item" role="listitem"><span class="guide-button-logo incident-btn" aria-hidden="true"><i class="fas fa-plus"></i><span class="guide-emergency-corner"><i class="fas fa-triangle-exclamation"></i></span></span><div class="guide-button-copy"><strong>Reportar incidente</strong><p>Informá un siniestro, corte u otro incidente para avisar a la comunidad.</p></div></div>
+      <div class="guide-button-item" role="listitem"><span class="guide-button-logo emergency-btn" aria-hidden="true"><i class="fas fa-triangle-exclamation"></i></span><div class="guide-button-copy"><strong>Alerta de emergencia</strong><p>Activá una alerta para pedir ayuda y compartir tu ubicación.</p></div></div>
+      <div class="guide-button-item" role="listitem"><span class="guide-button-logo chat-btn" aria-hidden="true"><i class="fas fa-comments"></i></span><div class="guide-button-copy"><strong>Chat</strong><p>Comunicate con la comunidad y tus Motoamigos desde la sala de chat.</p></div></div>
+      <div class="guide-button-item" role="listitem"><span class="guide-button-logo toggle-btn" aria-hidden="true"><i class="fas fa-ellipsis-v"></i></span><div class="guide-button-copy"><strong>Mostrar u ocultar acciones</strong><p>Mostrá u ocultá los accesos rápidos de la botonera.</p></div></div>
+    </div>
     <div class="guide-card">
       <h3 style="color:var(--primary);margin-bottom:.5rem"><i class="fas fa-coins" style="color:var(--coin)"></i> Puntos y Moto Coins al ayudar a un Moto Amigo</h3>
       <p>Cuando un Moto Amigo activa una alerta, puede mostrar un QR para que otro usuario confirme que acudió a ayudarlo. Al escanear y resolver correctamente el incidente, el usuario que escanea recibe la recompensa correspondiente a la gravedad:</p>
       <div class="reward-grid">
-        <div class="reward-card"><div class="reward-icon"><i class="fas fa-triangle-exclamation"></i></div><strong>Leve</strong><span><b>10 puntos</b> + <b>1 Moto Coin</b></span></div>
-        <div class="reward-card"><div class="reward-icon"><i class="fas fa-car-burst"></i></div><strong>Grave</strong><span><b>30 puntos</b> + <b>3 Moto Coins</b></span></div>
-        <div class="reward-card"><div class="reward-icon"><i class="fas fa-heart-pulse"></i></div><strong>Riesgo de vida</strong><span><b>50 puntos</b> + <b>5 Moto Coins</b></span></div>
+        <div class="reward-card"><div class="reward-icon"><i class="fas fa-triangle-exclamation"></i></div><strong>Leve</strong><span><b>10 puntos</b> + <b>100 Moto Coin</b></span></div>
+        <div class="reward-card"><div class="reward-icon reward-icon-grave"><i class="fas fa-triangle-exclamation" aria-label="Alerta grave"></i></div><strong>Grave</strong><span><b>30 puntos</b> + <b>150 Moto Coins</b></span></div>
+        <div class="reward-card"><div class="reward-icon"><i class="fas fa-heart-pulse"></i></div><strong>Riesgo de vida</strong><span><b>50 puntos</b> + <b>200 Moto Coins</b></span></div>
+      </div>
+      <div class="solidarity-reward-card" role="group" aria-label="Recompensa por acciones solidarias">
+        <div class="solidarity-reward-icon" aria-hidden="true"><i class="fas fa-hand-holding-heart"></i></div>
+        <div class="solidarity-reward-copy"><strong>Acciones Solidarias emitidas por Mutual Moto</strong><span>250 Moto Coins</span></div>
       </div>
       <div class="guide-note guide-note-rewards">
         <i class="fas fa-circle-info" aria-hidden="true"></i>
@@ -2269,8 +2323,6 @@ const SOCIOS=[
 const REPORT_REASON_LABELS={falsa_alerta:'Falsa alerta / emergencia falsa',siniestro_fuga:'Siniestro y se dio a la fuga',autor_robo:'Autor de un robo',spam:'Spam o publicidad no deseada',acoso:'Acoso, insultos o amenazas',contenido:'Contenido inapropiado u ofensivo',suplantacion:'Suplantación de identidad',ubicacion_falsa:'Ubicación falsa o maliciosa',incidente_falso:'Siniestro falso',usuario:'Denunciar a un usuario',otro:'Otro'};
 const INCIDENT_TYPE_LABELS={accident:'Accidente',closure:'Ruta cerrada',police:'Control policial'};
 const ALERT_TTL=24*60*60*1000;
-const INITIAL_CARDS=80;
-const CARDS_PER_PAGE=80;
 const BASE_POINTS_PER_LEVEL=100000;
 const MAX_LEVEL=10;
 const POINTS_PURCHASE=1;
@@ -2343,6 +2395,9 @@ function detectMapLowPowerMode(){
   return constrainedCpu||constrainedMemory||dataSaver||olderTouchDevice;
 }
 const MM_LOW_POWER_MODE=detectMapLowPowerMode();
+// Menos tarjetas y trabajo de cámara en equipos limitados para ahorrar memoria/CPU.
+const INITIAL_CARDS=MM_LOW_POWER_MODE?40:80;
+const CARDS_PER_PAGE=MM_LOW_POWER_MODE?40:80;
 if(MM_LOW_POWER_MODE)document.documentElement.classList.add('mm-low-power');
 const wazeIframeA=document.getElementById('wazeIframeA');
 const wazeIframeB=document.getElementById('wazeIframeB');
@@ -2474,11 +2529,19 @@ async function postToSheets(action,data){
   const record={action:action,data:data,ts:Date.now()};
   // Los cambios de saldo se autentican con la credencial de la propia cuenta.
   // Nunca se incrusta la contraseña maestra de la API en el HTML.
-  if(action==='points_change'||action==='coins_change'){
+  if(['points_change','coins_change','add_place','register_siniestro','resolve_siniestro_qr','clear_user_incidents_after_qr'].indexOf(action)!==-1){
     var currentUser=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:null;
     var accountIdentifier=String(currentUser&&(currentUser.email||currentUser.correo||currentUser.nick||currentUser.nickname||currentUser.id)||'');
     var accountPassword=String(currentUser&&currentUser.password||'');
     var accountUserId=String(currentUser&&currentUser.id||'');
+    if(!accountIdentifier||!accountPassword){
+      try{
+        if(typeof MM_KIOSK_MERCHANT_SESSION!=='undefined'&&MM_KIOSK_MERCHANT_SESSION){
+          accountIdentifier=String(MM_KIOSK_MERCHANT_SESSION.identifier||MM_KIOSK_MERCHANT_SESSION.email||MM_KIOSK_MERCHANT_SESSION.username||MM_KIOSK_MERCHANT_SESSION.id||accountIdentifier);
+          accountPassword=String(MM_KIOSK_MERCHANT_SESSION.password||accountPassword);
+        }
+      }catch(_){}
+    }
     if(!accountPassword){
       try{
         var cachedCredential=JSON.parse(sessionStorage.getItem('MM_STAT_ACCOUNT_CREDENTIAL_V1')||'null');
@@ -2493,9 +2556,10 @@ async function postToSheets(action,data){
     // escribir un saldo para no enviar una operación que el servidor rechazará.
     if(!accountPassword&&currentUser&&!currentUser.isGuest&&accountIdentifier){
       var enteredPassword='';
-      try{enteredPassword=String(window.prompt('Para guardar tus puntos y Moto Coins en Google Sheets, ingresá la contraseña de tu cuenta:')||'')}catch(_){}
+      var credentialPrompt=(action==='resolve_siniestro_qr'||action==='clear_user_incidents_after_qr')?'Para retirar el incidente del mapa y de la sala grupal, validá la contraseña de tu cuenta:':((action==='add_place'||action==='register_siniestro')?'Para guardar esta actividad en Mutual Moto, validá la contraseña de tu cuenta:':'Para guardar tus puntos y Moto Coins en Google Sheets, ingresá la contraseña de tu cuenta:');
+      try{enteredPassword=String(window.prompt(credentialPrompt)||'')}catch(_){}
       if(!enteredPassword){
-        try{if(typeof showAppNotification==='function')showAppNotification('No se guardó el cambio de saldo: falta validar la contraseña de la cuenta.','fa-lock')}catch(_){}
+        try{if(typeof showAppNotification==='function')showAppNotification('No se pudo completar la operación: falta validar la contraseña de la cuenta.','fa-lock')}catch(_){}
         return {ok:false,authRequired:true};
       }
       accountPassword=enteredPassword;
@@ -2504,7 +2568,7 @@ async function postToSheets(action,data){
     if(accountIdentifier&&accountPassword){
       record.accountIdentifier=accountIdentifier;
       record.accountPassword=accountPassword;
-    }else if(action==='points_change'||action==='coins_change'){
+    }else{
       return {ok:false,authRequired:true};
     }
   }
@@ -5514,7 +5578,7 @@ function tryStartScanner(scanner,config,onSuccess,onError){
   const finishOk=function(){if(settled)return;settled=true;onSuccess()};
   const finishErr=function(err){if(settled)return;settled=true;onError(err)};
   try{
-    const p=scanner.start(config,{fps:10,qrbox:{width:240,height:240},aspectRatio:1.0},function(decodedText){handleQrDecoded(decodedText)},function(){});
+    const p=scanner.start(config,{fps:MM_LOW_POWER_MODE?5:10,qrbox:{width:MM_LOW_POWER_MODE?200:240,height:MM_LOW_POWER_MODE?200:240},aspectRatio:1.0},function(decodedText){handleQrDecoded(decodedText)},function(){});
     if(p)if(typeof p.then==='function')p.then(finishOk).catch(finishErr);
     else setTimeout(finishOk,300);
     else setTimeout(finishOk,300);
@@ -5646,6 +5710,31 @@ function showQrResolveSuccess(role,sev){
     alert('✓ Alerta resuelta.\n\nEl incidente fue retirado del mapa y de la sala grupal.');
   }
 }
+function mmFinalizeScannedQrResolution(incidentId,resolverRole){
+  incidentId=String(incidentId||'').trim();
+  if(!incidentId)return;
+  markAlertResolved(incidentId);
+  markIncidentResolved(incidentId);
+  removePublicMessagesByAlertId(incidentId);
+  removePublicMessagesByIncidentId(incidentId);
+  siniestros=(siniestros||[]).filter(function(it){return it&&String(it.id||'')!==incidentId&&String(it.incidentRef||'')!==incidentId&&String(it.alertId||'')!==incidentId});
+  saveSiniestros();
+  if(typeof chatLocations!=='undefined'){
+    chatLocations=chatLocations.filter(function(loc){return loc&&String(loc.id||'')!==incidentId&&String(loc.incidentRef||'')!==incidentId&&String(loc.incidentId||'')!==incidentId&&String(loc.alertId||'')!==incidentId});
+    try{saveChatLocations()}catch(_){}
+  }
+  if(activeUserAlert&&String(activeUserAlert.id||'')===incidentId){try{dismissUserAlert()}catch(_){}}
+  try{saveHistory()}catch(_){}
+  try{saveResolvedState()}catch(_){}
+  try{renderAllIncidents()}catch(_){}
+  try{renderAllChatLocations()}catch(_){}
+  try{if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom()}}catch(_){}
+  // Borrado permanente en la pestaña Siniestros; se ejecuta solo después del QR.
+  postToSheets('resolve_siniestro_qr',{siniestroId:incidentId,resolverRole:resolverRole||'user'}).then(function(r){
+    if(r&&r.authRequired)showAppNotification('El incidente se retiró localmente, pero falta validar la cuenta para eliminarlo definitivamente del servidor.','fa-lock');
+  }).catch(function(){});
+}
+
 function handleQrDecoded(raw){
   let url=null;
   try{url=new URL(raw)}catch(e){}
@@ -5687,9 +5776,7 @@ function handleQrDecoded(raw){
       stopQrCamera();
       publishResolve(resolveId,resolverRole).then(function(ok){
         if(ok){
-          markAlertResolved(resolveId);
-          removePublicMessagesByAlertId(resolveId);
-          renderAllChatLocations();
+          mmFinalizeScannedQrResolution(resolveId,resolverRole);
           closeQrScanModal();
           showQrResolveSuccess(resolverRole,sev);
         }else{
@@ -5704,9 +5791,7 @@ function handleQrDecoded(raw){
   stopQrCamera();
   publishResolve(id,resolverRole).then(function(ok){
     if(ok){
-      markAlertResolved(id);
-      removePublicMessagesByAlertId(id);
-      renderAllChatLocations();
+      mmFinalizeScannedQrResolution(id,resolverRole);
       closeQrScanModal();
       if(resolverRole==='developer'||resolverRole==='kiosk')showQrResolveSuccess(resolverRole,'');
       else addQrScanRewards('QR de asistencia resuelto');
@@ -6871,6 +6956,13 @@ const AUTH_COLUMN_ALIASES={
   'dev':'dev',
   'developer':'dev',
   'desarrollador':'dev',
+  'amount':'amount',
+  'monto':'amount',
+  'meses':'amount',
+  'duracion':'amount',
+  'duracion de membresia':'amount',
+  'periodo de membresia':'amount',
+  'meses de membresia':'amount',
   'modo dev':'dev',
   'modo desarrollador':'dev',
   'correo electronico':'correo',
@@ -6949,12 +7041,20 @@ function parseMembershipIssueDate(value){
   const parsed=Date.parse(normalized);
   return isNaN(parsed)?null:new Date(parsed);
 }
-function addExactMembershipMonth(issueDate){
+function addMembershipMonths(issueDate,months){
   if(!(issueDate instanceof Date)||isNaN(issueDate.getTime()))return null;
-  const targetMonth=issueDate.getMonth()+1;
+  const count=Number(months);
+  if([1,3,12].indexOf(count)===-1)return null;
+  const targetMonth=issueDate.getMonth()+count;
   const lastDay=new Date(issueDate.getFullYear(),targetMonth+1,0).getDate();
   const day=Math.min(issueDate.getDate(),lastDay);
-  return new Date(issueDate.getFullYear(),targetMonth,day,issueDate.getHours(),issueDate.getMinutes(),issueDate.getSeconds(),issueDate.getMilliseconds());
+  return new Date(issueDate.getFullYear(),targetMonth,day,0,0,0,0);
+}
+function parseMembershipAmount(value){
+  const raw=String(value==null?'':value).trim();
+  if(!/^(1|3|12)(?:\.0+)?$/.test(raw))return 0;
+  const months=Number(raw);
+  return [1,3,12].indexOf(months)>=0?months:0;
 }
 function formatMembershipDate(date){
   if(!(date instanceof Date)||isNaN(date.getTime()))return 'fecha desconocida';
@@ -6962,29 +7062,26 @@ function formatMembershipDate(date){
 }
 function getMembershipInfo(user){
   if(!user||user.isGuest)return null;
-  const issueValue=user.timestamp||user.emision||'';
-  const issueDate=parseMembershipIssueDate(issueValue);
-  if(!issueDate)return null;
-  const expiryDate=addExactMembershipMonth(issueDate);
+  const months=parseMembershipAmount(user.amount);
+  if(!months)return null;
+  const createdDate=parseMembershipIssueDate(user.timestamp||user.emision||'');
+  const paymentDate=parseMembershipIssueDate(user.lastPayment||user.paymentDate||'');
+  const anchorDate=paymentDate||createdDate;
+  if(!anchorDate)return null;
+  const expiryDate=addMembershipMonths(anchorDate,months);
   if(!expiryDate)return null;
-  return {issueDate:issueDate,expiryDate:expiryDate,warningDate:new Date(expiryDate.getTime()-MEMBERSHIP_WARNING_MS)};
+  return {issueDate:createdDate||anchorDate,anchorDate:anchorDate,expiryDate:expiryDate,warningDate:new Date(expiryDate.getTime()-MEMBERSHIP_WARNING_MS),months:months};
 }
 function checkMembershipExpiryAlert(){
   if(!authState.isLoggedIn||!authState.user||authState.user.isGuest)return;
   const info=getMembershipInfo(authState.user);
   if(!info)return;
-  const now=Date.now();
-  const expiryTs=info.expiryDate.getTime();
-  if(now<info.warningDate.getTime()||now>=expiryTs)return;
-  const userId=String(authState.user.id||authState.user.email||authState.user.nick||'user');
-  const key=MEMBERSHIP_ALERT_KEY+'|'+userId+'|'+expiryTs;
-  let lastShown=0;
-  try{lastShown=parseInt(localStorage.getItem(key)||'0',10)||0}catch(e){}
-  if(lastShown&&now-lastShown<24*60*60*1000)return;
-  try{localStorage.setItem(key,String(now))}catch(e){}
-  const daysLeft=Math.max(0,Math.ceil((expiryTs-now)/(24*60*60*1000)));
-  alert('⚠️ Tu membresía está por expirar. La respuesta del formulario cumple un mes el '+formatMembershipDate(info.expiryDate)+'.'+
-    (daysLeft===1?' Falta 1 día.':' Faltan aproximadamente '+daysLeft+' días.')+' Renovala antes de esa fecha.');
+  const nowDate=new Date();
+  const today=new Date(nowDate.getFullYear(),nowDate.getMonth(),nowDate.getDate());
+  const daysLeft=Math.ceil((info.expiryDate.getTime()-today.getTime())/(24*60*60*1000));
+  if(daysLeft<1||daysLeft>7)return;
+  alert('⚠️ Tu membresía de '+info.months+' '+(info.months===1?'mes':'meses')+' vence el '+formatMembershipDate(info.expiryDate)+'. '+
+    (daysLeft===1?'Falta 1 día.':'Faltan '+daysLeft+' días.')+' Renovala antes de esa fecha para evitar el bloqueo.');
 }
 
 function getAuthIdentifier(user){
@@ -7102,6 +7199,9 @@ function mmBuildAuthUserFromRow(row,remember){
     sangre:mmRowField(row,['sangre','grupo sanguineo']),fecha:mmRowField(row,['fecha','fecha de nacimiento']),
     timestamp:mmRowField(row,['timestamp','marca temporal','fecha de emision','fecha de alta']),
     emision:mmRowField(row,['timestamp','marca temporal','fecha de emision','fecha de alta']),
+    amount:mmRowField(row,['amount','monto','meses','duracion de membresia','periodo de membresia']),
+    pending:mmRowField(row,['pending','pendiente','estado de pago']),
+    lastPayment:mmRowField(row,['fecha ultimo pago','fecha de ultimo pago','ultimo pago','fecha de pago','fecha ultima renovacion']),
     betaTest:/^(1|true|si|sí|yes|x)$/i.test(beta),
     isDeveloper:dev,devAccess:dev,dev:mmRowField(row,['dev','developer','desarrollador','modo dev']),
     password:mmRowPassword(row),isGuest:false,rememberDevice:!!remember,provider:'google-sheet'
@@ -7131,7 +7231,59 @@ function mmSetRoleRoute(role){
     try{enableDevMode()}catch(e){}
   }
 }
+function mmParseBillingDate(value){
+  var raw=String(value==null?'':value).trim();
+  if(!raw)return null;
+  var m=raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/);
+  var d;
+  if(m){
+    var first=Number(m[1]),second=Number(m[2]),year=Number(m[3]);
+    var day=first,month=second;
+    if(second>12&&first<=12){month=first;day=second;}
+    if(month<1||month>12||day<1||day>31)return null;
+    d=new Date(year,month-1,day);
+    if(d.getFullYear()!==year||d.getMonth()!==month-1||d.getDate()!==day)return null;
+  }else d=new Date(raw);
+  if(isNaN(d.getTime()))return null;
+  return new Date(d.getFullYear(),d.getMonth(),d.getDate());
+}
+function mmBillingDueDate(row){
+  var months=parseMembershipAmount(mmRowField(row,['amount','monto','meses','duracion de membresia','periodo de membresia']));
+  if(!months)return null;
+  var base=mmParseBillingDate(mmRowField(row,['fecha ultimo pago','fecha de ultimo pago','ultimo pago','fecha de pago','fecha ultima renovacion']))||
+    mmParseBillingDate(mmRowField(row,['fecha de emision','fecha emision','fecha de alta','fecha de creacion','fecha de registro','timestamp','marca temporal']));
+  if(!base)return null;
+  var dueMonth=base.getMonth()+months;
+  var dueFirst=new Date(base.getFullYear(),dueMonth,1);
+  var lastDay=new Date(dueFirst.getFullYear(),dueFirst.getMonth()+1,0).getDate();
+  return new Date(dueFirst.getFullYear(),dueFirst.getMonth(),Math.min(base.getDate(),lastDay));
+}
+function mmGetPendingLoginDecision(row){
+  var months=parseMembershipAmount(mmRowField(row,['amount','monto','meses','duracion de membresia','periodo de membresia']));
+  // Un amount vacío o distinto de 1/3/12 deja intacto el acceso actual del usuario/comercio.
+  if(!months)return {allowed:true,warning:false,managed:false,message:''};
+  var due=mmBillingDueDate(row);
+  if(!due)return {allowed:true,warning:false,managed:false,message:''};
+  var todayDate=new Date();
+  var today=new Date(todayDate.getFullYear(),todayDate.getMonth(),todayDate.getDate());
+  var days=Math.ceil((due.getTime()-today.getTime())/86400000);
+  if(days<=0){
+    return {allowed:false,blocked:true,managed:true,dueDate:due,daysRemaining:days,message:'Tu membresía está vencida desde el '+formatMembershipDate(due)+'. No podés ingresar hasta que se registre el pago.'};
+  }
+  if(days<=7){
+    return {allowed:true,warning:true,managed:true,dueDate:due,daysRemaining:days,message:'Tu membresía de '+months+' '+(months===1?'mes':'meses')+' vence el '+formatMembershipDate(due)+'. '+(days===1?'Falta 1 día.':'Faltan '+days+' días.')+' Recordá abonar para evitar el bloqueo.'};
+  }
+  return {allowed:true,warning:false,managed:true,dueDate:due,daysRemaining:days,message:''};
+}
+
 function mmContinueAsUserRow(row,remember,source){
+  const pendingDecision=mmGetPendingLoginDecision(row);
+  if(!pendingDecision.allowed){
+    alert(pendingDecision.message);
+    var pendingError=(document.getElementById('gateLoginError')&&document.getElementById('gateLoginError').offsetParent!==null)?document.getElementById('gateLoginError'):document.getElementById('loginError');
+    if(pendingError){pendingError.textContent=pendingDecision.message;pendingError.style.display='block'}
+    return false;
+  }
   const wasSpecial=source==='kiosk'||urlParams.get('kiosk')==='1'||urlParams.get('dev')==='1';
   const user=mmBuildAuthUserFromRow(row,remember);
   if(isRemovedChatUser(user.id)){alert('Esta cuenta fue retirada de la aplicación y ya no puede iniciar sesión.');return;}
@@ -7142,7 +7294,8 @@ function mmContinueAsUserRow(row,remember,source){
     const kiosk=document.getElementById('kioskScreen');if(kiosk)kiosk.classList.remove('visible');
   }
   showBetaTestNoticeIfFirstLogin(user);
-  alert(user.isDeveloper?'Inicio de sesión correcto. Acceso de desarrollador habilitado.':'¡Inicio de sesión correcto! Bienvenido/a, '+user.nick+'.');
+  var loginMessage=user.isDeveloper?'Inicio de sesión correcto. Acceso de desarrollador habilitado.':'¡Inicio de sesión correcto! Bienvenido/a, '+user.nick+'.';
+  alert(loginMessage);
   finalizeLogin();
   if(wasSpecial)showMapPage();
   if(user.isDeveloper){
@@ -7150,8 +7303,19 @@ function mmContinueAsUserRow(row,remember,source){
     try{enableDevMode()}catch(e){}
     setTimeout(function(){try{map.invalidateSize()}catch(e){};try{recenterImmediate()}catch(e){}},250);
   }
+  return true;
 }
 function mmContinueAsMerchantRow(row,identifier){
+  var pendingDecision=mmGetPendingLoginDecision(row);
+  if(!pendingDecision.allowed){
+    alert(pendingDecision.message);
+    var kioskError=document.getElementById('kioskAuthError');
+    if(kioskError){kioskError.textContent=pendingDecision.message;kioskError.classList.add('visible');}
+    var loginErrorNode=document.getElementById('loginError');
+    if(loginErrorNode){loginErrorNode.textContent=pendingDecision.message;loginErrorNode.style.display='block';}
+    return false;
+  }
+  if(pendingDecision.warning)alert('⚠️ '+pendingDecision.message);
   MM_KIOSK_MERCHANT_SESSION=mmMerchantIdentity(row,identifier);
   MM_KIOSK_AUTHORIZED=true;
   urlParams.set('place',MM_KIOSK_MERCHANT_SESSION.id);
@@ -7224,6 +7388,7 @@ function openProfileModal(){
       const membershipInfo=getMembershipInfo(u);
       if(membershipInfo){
         rows.push(['Emisión del formulario',formatMembershipDate(membershipInfo.issueDate)]);
+        rows.push(['Duración contratada',membershipInfo.months+' '+(membershipInfo.months===1?'mes':'meses')]);
         rows.push(['Vencimiento de membresía',formatMembershipDate(membershipInfo.expiryDate)]);
       }
       profileContent.innerHTML=rows.map(function(row){return '<div class="profile-row-label">'+escapeHtml(row[0])+'</div><div class="profile-row-value">'+escapeProfileValue(row[1])+'</div>'}).join('');
@@ -7900,7 +8065,7 @@ function mmMerchantIdentity(row, typedIdentifier){
   var priceRaw=mmRowField(row,['precio moto coins','preciomotocoins','precio','price','precio base']);
   var price=parseInt(priceRaw||urlParams.get('price')||'50',10);
   if(!Number.isFinite(price)||price<1)price=50;
-  return {id:String(id),name:String(name),price:price,email:mmRowField(row,['correo','email','mail']),username:mmRowField(row,['usuario','username','nickname','nick'])};
+  return {id:String(id),name:String(name),price:price,email:mmRowField(row,['correo','email','mail']),username:mmRowField(row,['usuario','username','nickname','nick']),identifier:String(typedIdentifier||''),password:mmRowPassword(row)};
 }
 async function mmSubmitKioskLogin(event){
   if(event){event.preventDefault();event.stopPropagation();}
@@ -8459,9 +8624,9 @@ async function startChat(){
   registerUserEntry(myUserId,myNick,myStatus,'connect');
   announcePresence();
   presenceInterval=setInterval(announcePresence,PRESENCE_INTERVAL);
-  cleanupInterval=setInterval(cleanupOfflineUsers,10000);
+  cleanupInterval=setInterval(cleanupOfflineUsers,MM_LOW_POWER_MODE?20000:10000);
   incidentCleanupInterval=setInterval(cleanupIncidents,60000);
-  typingCleanupInterval=setInterval(cleanupTypingUsers,2000);
+  typingCleanupInterval=setInterval(cleanupTypingUsers,MM_LOW_POWER_MODE?5000:2000);
   startInactivityDetector();
   renderUsers();
   renderMessages();
@@ -8594,6 +8759,12 @@ function removePublicMessagesByIncidentId(incidentId){
   });
   incidents=incidents.filter(function(it){return it&&!ids.has(String(it.id||''))&&!ids.has(String(it.incidentRef||''))});
   saveIncidents();
+  siniestros=(siniestros||[]).filter(function(it){return it&&!ids.has(String(it.id||''))&&!ids.has(String(it.incidentRef||''))&&!ids.has(String(it.alertId||''))});
+  saveSiniestros();
+  if(typeof chatLocations!=='undefined'){
+    chatLocations=chatLocations.filter(function(loc){return loc&&!ids.has(String(loc.id||''))&&!ids.has(String(loc.incidentRef||''))&&!ids.has(String(loc.incidentId||''))&&!ids.has(String(loc.alertId||''))});
+    try{saveChatLocations()}catch(_){}
+  }
   if(incidentToastStack){
     incidentToastStack.querySelectorAll('.incident-toast').forEach(function(toast){
       if(ids.has(String(toast.dataset.incidentId||'')))toast.remove();
@@ -8617,13 +8788,24 @@ function removePublicMessagesByAlertId(alertId){
     if(m.kind==='emergency'&&m.id===alertId)return false;
     return true;
   });
+  // Quitar también la copia persistida que alimenta el mapa y el registro local.
+  siniestros=(siniestros||[]).filter(function(it){return it&&String(it.id||'')!==String(alertId)&&String(it.alertId||'')!==String(alertId)});
+  saveSiniestros();
+  if(typeof chatLocations!=='undefined'){
+    chatLocations=chatLocations.filter(function(loc){return loc&&String(loc.id||'')!==String(alertId)&&String(loc.alertId||'')!==String(alertId)&&String(loc.incidentRef||'')!==String(alertId)&&String(loc.incidentId||'')!==String(alertId)});
+    try{saveChatLocations()}catch(_){}
+  }
+  if(activeUserAlert&&String(activeUserAlert.id||'')===String(alertId)){try{dismissUserAlert()}catch(_){}}
   if(publicMessages.length===before){
+    saveHistory();
+    renderAllIncidents();
     renderAllChatLocations();
     schedulePublishPublicHistory();
     return;
   }
   saveHistory();
   schedulePublishPublicHistory();
+  renderAllIncidents();
   renderAllChatLocations();
   if(isChatOpen())if(currentContext==='public'){renderMessages();scrollMessagesBottom()}
   updateBadges();
