@@ -923,9 +923,12 @@ header{padding-left:3.5rem;padding-right:3.5rem}
 .price-quarterly .promo-label{display:block;margin-bottom:.35rem;color:#f9e79f;font-size:.68rem;font-weight:900;letter-spacing:.8px;text-transform:uppercase}
 .price-quarterly strong{display:block;color:#f1c40f;font-size:1.02rem;margin-bottom:.3rem}
 .price-quarterly .price-gift{margin-top:.6rem}
-.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
-.contact-item{background:#fff;border:1px solid #e1e7ea;border-radius:14px;padding:1rem;text-align:center}
-.contact-item i{font-size:1.5rem;color:var(--moto);margin-bottom:.5rem}.contact-item strong{display:block;color:var(--primary);margin-bottom:.25rem}.contact-item span{font-size:.8rem;color:#68757c}
+.contact-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.8rem}
+.contact-item{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:150px;background:#fff;border:1px solid #e1e7ea;border-radius:14px;padding:1.1rem 1rem;text-align:center;text-decoration:none;color:inherit;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.contact-item:hover{transform:translateY(-3px);border-color:var(--moto);box-shadow:0 8px 20px rgba(44,62,80,.1)}
+.contact-item:focus-visible{outline:3px solid rgba(211,84,0,.35);outline-offset:3px}
+.contact-item i{font-size:1.7rem;color:var(--moto);margin-bottom:.65rem}.contact-item strong{display:block;color:var(--primary);margin-bottom:.3rem}.contact-item span{font-size:.82rem;line-height:1.45;color:#68757c;overflow-wrap:anywhere}
+@media(min-width:701px) and (max-width:1000px){.contact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .guide-image-wrap{background:#fff;border:1px solid #dfe6e9;border-radius:16px;padding:.75rem;text-align:center;box-shadow:0 8px 24px rgba(44,62,80,.07);margin-bottom:1rem}
 .guide-image-wrap img{display:block;width:100%;max-height:520px;object-fit:contain;border-radius:10px}
 .guide-button-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;background:#fff;border:1px solid #dfe6e9;border-radius:16px;padding:.85rem;box-shadow:0 8px 24px rgba(44,62,80,.07);margin-bottom:1rem}
@@ -1255,6 +1258,81 @@ body.centering-lock #mapPage #places-list {
   -webkit-user-select:none!important;
 }
 
+
+/* Formularios de Google: diseño adaptable a escritorio, tabletas y móviles. */
+.register-box,
+.association-box {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.register-iframe,
+.google-form-iframe,
+.association-iframe,
+.association-form-unavailable iframe {
+  display: block;
+  box-sizing: border-box;
+  width: 100% !important;
+  max-width: 100%;
+  border: 0;
+  background: #fff;
+}
+.register-iframe {
+  flex: 1 1 0%;
+  min-height: 240px;
+  height: 100%;
+  overflow: auto;
+}
+.association-form-unavailable {
+  flex: 1 1 0%;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0;
+  align-items: stretch;
+  justify-content: stretch;
+}
+.association-form-unavailable iframe {
+  flex: 1 1 0%;
+  min-height: 240px;
+  height: 100%;
+  margin: 0;
+}
+.association-iframe {
+  flex: 1 1 0%;
+  min-height: 240px;
+  height: 100%;
+}
+@media (max-width: 600px), (max-height: 620px) and (pointer: coarse) {
+  .register-box {
+    width: 98vw;
+    height: 94vh;
+    height: 94dvh;
+    max-height: 94dvh;
+    border-radius: 14px;
+  }
+  .register-iframe,
+  .association-form-unavailable iframe,
+  .association-iframe {
+    min-height: 220px;
+  }
+  .form-context-note {
+    flex-shrink: 0;
+    max-height: 28dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .association-box {
+    width: 98vw;
+    height: 94vh;
+    height: 94dvh;
+    max-height: 94dvh;
+    border-radius: 14px;
+  }
+}
+
 </style>
 <script>
 (function(){
@@ -1433,7 +1511,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
   <p>Los datos personales que se ingresan aquí se encuentran respaldados por la ley 28.255 y únicamente pueden ser utilizados por el usuario que llena el formulario. Los datos de salud ingresados por el usuario serán adjuntados a un código QR que sólo se puede mostrar a otro Motoamigo en caso de una emergencia de clase 'Riesgo de vida'.</p>
   <p>Con el pago de la primera cuota, o la promoción anual, el Motoamigo tendrá la posibilidad de obtener una chapa colgante con el QR de sus datos y una remera personalizada en agradecimiento por la inscripción al servicio.</p>
 </div>
-<iframe class="register-iframe" src="https://docs.google.com/forms/d/e/1FAIpQLSfKPVPXGwORQ5tUylZ1Re47im4DdiepitvaN_OjzkqPNvhtYA/viewform?embedded=true" title="Formulario de inscripción" loading="lazy">Cargando…</iframe>
+<iframe class="register-iframe google-form-iframe" src="https://docs.google.com/forms/d/e/1FAIpQLSfKPVPXGwORQ5tUylZ1Re47im4DdiepitvaN_OjzkqPNvhtYA/viewform?embedded=true" width="640" height="2052" frameborder="0" marginheight="0" marginwidth="0" title="Formulario de inscripción para miembros Motoamigos" loading="lazy" scrolling="auto">Cargando…</iframe>
 </div>
 </div>
 
@@ -1444,7 +1522,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 <button type="button" class="header-auth-btn" data-pre-section="guide"><i class="fas fa-map-marked-alt"></i> Aprende sobre el mapa</button>
 <button type="button" class="header-auth-btn" data-pre-section="contacts"><i class="fas fa-address-book"></i> Contactos</button>
 <button type="button" class="header-auth-btn register" id="associationHeaderBtn"><i class="fas fa-handshake"></i> Asociarte como Motoamigazo</button>
-<button type="button" class="header-auth-btn" id="enterMapBtn"><i class="fas fa-map"></i> Acceder al mapa</button>
+<button type="button" class="header-auth-btn register" id="enterMapBtn"><i class="fas fa-map"></i> Acceder al mapa</button>
 </div>
 </header>
 
@@ -1455,7 +1533,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
     <p class="lead">Ser motoquero es mucho más que andar en moto: es compartir rutas, experiencias, conocimientos y también los desafíos que aparecen todos los días. Mutual Moto nace para convertir esa comunidad en una red útil, activa y llena de oportunidades.</p>
     <div class="about-grid">
       <div class="about-card">
-        <p><strong>Una mutual pensada para quienes viven la moto.</strong> Nuestro objetivo es conectar a los motociclistas con lugares, servicios y personas que realmente entienden sus necesidades. Desde encontrar una gomería o un taller hasta descubrir comercios adheridos, todo empieza en un mismo lugar: <strong>el mapa interactivo de Mutual Moto.</strong></p>
+        <p><strong>Una mutual pensada para quienes viven la moto.</strong> Nuestro objetivo es conectar a los motoqueros con lugares, servicios y personas que realmente entienden sus necesidades. Desde encontrar una gomería o un taller hasta descubrir comercios adheridos, todo empieza en un mismo lugar: <strong>el mapa interactivo de Mutual Moto.</strong></p>
         <div class="benefit-grid">
           <div class="benefit-item"><i class="fas fa-percent"></i><strong>Beneficios exclusivos</strong><span>Descuentos y oportunidades especiales en comercios adheridos.</span></div>
           <div class="benefit-item"><i class="fas fa-chart-line"></i><strong>Sistema de niveles</strong><span>Tu participación construye progreso y puede abrirte mejores beneficios.</span></div>
@@ -1517,7 +1595,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
         <i class="fas fa-circle-info" aria-hidden="true"></i>
         <div class="guide-note-content">
           <p>Al resolverse el incidente, la alerta se retira de la sala grupal y del mapa. La recompensa se acredita a la persona que escaneó el QR del incidente.</p>
-          <p>Cada Moto Coin equivale a $1 ARS, no existe posibilidad de canjear esta moneda virtual por dinero real para los Motoamigos. Por cada 10.000 puntos que se acumulen, un Motoamigo sube de nivel, en esta subida de nivel, Mutual Moto ofrecerá un producto de temporada a seleccionar y retirar por algún local Motoamigazo aderido a Mutual Moto.</p>
+          <p>Cada Moto Coin equivale a $1 ARS, no existe posibilidad de canjear esta moneda virtual por dinero real para los Motoamigos. Por cada 10.000 puntos que se acumulen, un Motoamigo sube de nivel, en esta subida de nivel, Mutual Moto ofrecerá un producto de temporada a seleccionar y retirar por algún local Motoamigazo adherido a Mutual Moto.</p>
           <p>Estos puntos y Moto Coins son otorgados a aquellos usuarios que efectúen una acción solidaria para con otro Motoamigo.</p>
         </div>
       </div>
@@ -1527,10 +1605,27 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
     <div class="section-kicker">Estamos para ayudarte</div>
     <h2>Contactos</h2>
     <p class="lead">Si querés comunicarte con Mutual Moto, consultar sobre la membresía o proponer un comercio para la red, podés utilizar estos canales.</p>
-    <div class="contact-grid">
-      <div class="contact-item"><i class="fas fa-envelope"></i><strong>Atención</strong><span>Consultas generales y membresías.</span></div>
-      <div class="contact-item"><i class="fas fa-store"></i><strong>Comercios</strong><span>Propuestas para sumar nuevos establecimientos.</span></div>
-      <div class="contact-item"><i class="fas fa-headset"></i><strong>Comunidad</strong><span>Ayuda con el mapa, beneficios y Motoamigos.</span></div>
+    <div class="contact-grid" aria-label="Canales oficiales de contacto de Mutual Moto">
+      <a class="contact-item" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=mutualmoto@gmail.com" target="_blank" rel="noopener noreferrer" aria-label="Enviar un correo a mutualmoto@gmail.com mediante Gmail">
+        <i class="fas fa-envelope" aria-hidden="true"></i>
+        <strong>Correo electrónico</strong>
+        <span>mutualmoto@gmail.com</span>
+      </a>
+      <a class="contact-item" href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp sin mensaje predeterminado">
+        <i class="fab fa-whatsapp" aria-hidden="true"></i>
+        <strong>Contacto de WhatsApp / Número de teléfono</strong>
+        <span>Número de teléfono exclusivo</span>
+      </a>
+      <a class="contact-item" href="https://www.instagram.com/mutualmoto2026/" target="_blank" rel="noopener noreferrer" aria-label="Visitar el perfil de Instagram de Mutual Moto">
+        <i class="fab fa-instagram" aria-hidden="true"></i>
+        <strong>Perfil de Instagram</strong>
+        <span>@mutualmoto2026</span>
+      </a>
+      <a class="contact-item" href="https://www.facebook.com/profile.php?id=61594940932881&amp;locale=es_LA" target="_blank" rel="noopener noreferrer" aria-label="Visitar la página de Facebook de Mutual Moto">
+        <i class="fab fa-facebook-f" aria-hidden="true"></i>
+        <strong>Perfil de Facebook</strong>
+        <span>Mutual Moto</span>
+      </a>
     </div>
   </section>
 </div>
@@ -1648,7 +1743,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="legend-row"><div class="legend-icon waze-closure"><i class="fas fa-road-circle-xmark"></i></div><div class="legend-info"><strong>Calle cerrada</strong><span>Corte total o parcial de la v&iacute;a.</span></div></div>
 <div class="legend-row"><div class="legend-icon waze-construction"><i class="fas fa-person-digging"></i></div><div class="legend-info"><strong>Obra / construcci&oacute;n</strong><span>Trabajos viales, remodelaciones, arreglos.</span></div></div>
 <div class="legend-row"><div class="legend-icon waze-camera"><i class="fas fa-camera"></i></div><div class="legend-info"><strong>C&aacute;mara de velocidad</strong><span>Fotomulta fija o m&oacute;vil reportada.</span></div></div>
-<div class="legend-row"><div class="legend-icon waze-moto"><i class="fas fa-motorcycle"></i></div><div class="legend-info"><strong>Usuario Waze</strong><span>Otro motociclista o conductor usando Waze en vivo.</span></div></div>
+<div class="legend-row"><div class="legend-icon waze-moto"><i class="fas fa-motorcycle"></i></div><div class="legend-info"><strong>Usuario Waze</strong><span>Otro motoquero o conductor usando Waze en vivo.</span></div></div>
 </div>
 <div class="legend-section">
 <div class="legend-section-title">S&iacute;mbolos propios de este mapa</div>
@@ -1661,7 +1756,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="legend-row"><div class="legend-icon" style="color:#3498db;border-color:#3498db"><i class="fas fa-wrench"></i></div><div class="legend-info"><strong>Gomer&iacute;as</strong><span>Parches, neum&aacute;ticos, alineaci&oacute;n.</span></div></div>
 <div class="legend-row"><div class="legend-icon" style="color:#27ae60;border-color:#27ae60"><i class="fas fa-gas-pump"></i></div><div class="legend-info"><strong>Estaciones de servicio</strong><span>Combustible, GNC, aire.</span></div></div>
 <div class="legend-row"><div class="legend-icon" style="color:#f39c12;border-color:#f39c12;animation:discountRipple 2s infinite"><i class="fas fa-tag"></i></div><div class="legend-info"><strong>Local con descuento</strong><span>Comercio con descuento exclusivo para la comunidad (onda expansiva).</span></div></div>
-<div class="legend-row"><div class="legend-icon" style="color:#e67e22;border-color:#e67e22"><i class="fas fa-motorcycle"></i></div><div class="legend-info"><strong>Usuario en el mapa</strong><span>Posici&oacute;n compartida por otro motociclista del chat.</span></div></div>
+<div class="legend-row"><div class="legend-icon" style="color:#e67e22;border-color:#e67e22"><i class="fas fa-motorcycle"></i></div><div class="legend-info"><strong>Usuario en el mapa</strong><span>Posici&oacute;n compartida por otro motoquero del chat.</span></div></div>
 <div class="legend-row"><div class="legend-icon" style="color:#b7950b;border-color:#f1c40f"><i class="fas fa-coins"></i></div><div class="legend-info"><strong>Moto Coins</strong><span>Divisa virtual para canjear en locales adheridos. Ped&iacute; y don&aacute; Moto Coins entre Motoamigos.</span></div></div>
 </div>
 <div class="legend-note"><i class="fas fa-info-circle"></i> Los s&iacute;mbolos dentro del mapa de Waze <strong>no son clicables</strong>. Esta gu&iacute;a te ayuda a interpretarlos.</div>
@@ -1814,7 +1909,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="nick-box">
 <h3><i class="fas fa-comments"></i> Eleg&iacute; tu apodo</h3>
 <p>Se va a mostrar en el chat junto a tus mensajes. Pod&eacute;s cambiarlo despu&eacute;s con doble clic en el bot&oacute;n "Chat" del header.</p>
-<input type="text" id="nickInput" maxlength="20" placeholder="Ej: Motociclista42">
+<input type="text" id="nickInput" maxlength="20" placeholder="Ej: motoquero42">
 <button class="primary-btn" id="nickSaveBtn">Entrar al chat</button>
 </div>
 </div>
