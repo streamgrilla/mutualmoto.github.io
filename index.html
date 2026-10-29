@@ -1614,12 +1614,12 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
       <a class="contact-item" href="#contact-phone-pending" data-mm-contact-action="whatsapp" aria-label="Enviar un mensaje a Mutual Moto por WhatsApp">
         <i class="fab fa-whatsapp" aria-hidden="true"></i>
         <strong>Enviar mensaje por WhatsApp</strong>
-        <span>Número de teléfono exclusivo</span>
+        <span>+54 9 11 6201-5207</span>
       </a>
       <a class="contact-item" href="#contact-phone-pending" data-mm-contact-action="call" aria-label="Llamar a Mutual Moto por teléfono">
         <i class="fas fa-phone" aria-hidden="true"></i>
         <strong>Llamar por teléfono</strong>
-        <span>Número de teléfono exclusivo</span>
+        <span>+54 9 11 6201-5207</span>
       </a>
       <a class="contact-item" href="https://www.instagram.com/mutualmoto2026/" target="_blank" rel="noopener noreferrer" aria-label="Visitar el perfil de Instagram de Mutual Moto">
         <i class="fab fa-instagram" aria-hidden="true"></i>
@@ -1634,10 +1634,10 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
     </div>
   
     <script id="mm-contact-actions-config">
-      // PENDIENTE: completar con el número oficial en formato internacional.
-      // Se aceptan +, espacios y guiones; al abrir el enlace se conservarán solo los dígitos.
+      // Número oficial de contacto en formato internacional.
+      // El código elimina espacios, + y guiones para los enlaces tel: y wa.me.
       // No se escribe ningún mensaje predeterminado en WhatsApp.
-      window.MM_CONTACT_PHONE_E164 = "";
+      window.MM_CONTACT_PHONE_E164 = "+54 9 11 6201-5207";
       (function () {
         var phoneDigits = String(window.MM_CONTACT_PHONE_E164 || "").replace(/\D/g, "");
         var actions = document.querySelectorAll('#preSection-contacts [data-mm-contact-action]');
@@ -1645,7 +1645,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
           link.addEventListener('click', function (event) {
             event.preventDefault();
             if (!phoneDigits) {
-              window.alert('El número de teléfono exclusivo de Mutual Moto todavía está pendiente de configuración.');
+              window.alert('El número de teléfono de Mutual Moto todavía no está configurado.');
               return;
             }
             var action = link.getAttribute('data-mm-contact-action');
