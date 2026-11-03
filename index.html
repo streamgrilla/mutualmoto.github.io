@@ -24,6 +24,18 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 #authGate.hidden{display:none}
 #authGate.fading{opacity:0;pointer-events:none}
 .gate-card{background:#fff;border-radius:20px;padding:2.5rem 2rem;max-width:460px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.5);text-align:center}
+.gate-card.gate-card-with-contribution{max-width:620px;max-height:calc(100vh - 2rem);max-height:calc(100dvh - 2rem);overflow-y:auto;overscroll-behavior:contain}
+.gate-contribution{margin-top:1rem;padding-top:1rem;border-top:1px solid #ecf0f1;text-align:left}
+.gate-contribution-heading{text-align:center;margin-bottom:.85rem}
+.gate-contribution-kicker{display:inline-flex;align-items:center;gap:.4rem;color:var(--moto);font-size:.7rem;font-weight:900;letter-spacing:.5px;text-transform:uppercase;margin-bottom:.35rem}
+.gate-contribution-heading h3{color:#2c3e50;font-size:1.02rem;line-height:1.3;margin-bottom:.45rem}
+.gate-contribution-heading p{color:#5f6b70;font-size:.82rem;line-height:1.5}
+.gate-contribution .price-box{padding:1rem}
+.gate-contribution .price-box h4{font-size:.95rem;margin-bottom:.55rem}
+.gate-contribution .price-main{font-size:1.45rem}
+.gate-contribution-thanks{margin:.7rem 0 0;color:#647078;font-size:.76rem;line-height:1.45;text-align:center}
+.gate-contribution-thanks i{color:var(--moto);margin-right:.2rem}
+#preSection-about .about-grid{grid-template-columns:1fr}
 .register-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100000;display:none;align-items:center;justify-content:center;padding:1rem}
 .register-modal.visible{display:flex}
 .register-box{background:#fff;border-radius:18px;width:min(900px,96vw);height:min(900px,92vh);box-shadow:0 30px 80px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden}
@@ -86,6 +98,14 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
   .gate-card p.gate-intro{font-size:.78rem;}
   .password-input-row{gap:.3rem;}
   .password-toggle-btn{font-size:.68rem;padding:.55rem .4rem;}
+}
+@media (max-width:900px) and (orientation:portrait) and (pointer:coarse), (max-width:600px), (max-height:620px) and (pointer:coarse) {
+  #authGate .gate-card.gate-card-with-contribution{width:100%;max-width:560px;max-height:calc(100vh - 1.3rem);max-height:calc(100dvh - 1.3rem);padding:1rem .85rem}
+  #authGate .gate-contribution{margin-top:.8rem;padding-top:.8rem}
+  #authGate .gate-contribution-heading h3{font-size:.94rem}
+  #authGate .gate-contribution-heading p{font-size:.77rem}
+  #authGate .gate-contribution .price-box{padding:.85rem}
+  #authGate .gate-contribution .price-sub,#authGate .gate-contribution .price-annual span,#authGate .gate-contribution .price-quarterly span{font-size:.76rem}
 }
 .profile-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:4500;display:none;align-items:center;justify-content:center;padding:1rem;overflow:auto}
 .profile-modal.visible{display:flex}
@@ -1462,7 +1482,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 </div>
 
 <div id="authGate" class="hidden">
-<div class="gate-card">
+<div class="gate-card gate-card-with-contribution">
 <div class="gate-logo"><i class="fas fa-motorcycle"></i></div>
 <h1>Mutual Motos</h1>
 <h2>Iniciar sesi&oacute;n</h2>
@@ -1480,6 +1500,29 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 <button type="button" class="gate-register-btn" data-open-register><i class="fas fa-user-plus"></i> Registrarse</button>
 <div class="gate-divider">o</div>
 <button class="gate-guest-btn" id="gateGuestBtn"><i class="fas fa-user-secret"></i> Continuar como invitado</button>
+<section class="gate-contribution" aria-labelledby="gateContributionTitle">
+  <div class="gate-contribution-heading">
+    <span class="gate-contribution-kicker"><i class="fas fa-heart" aria-hidden="true"></i> Una comunidad que se sostiene entre todos</span>
+    <h3 id="gateContributionTitle">Una contribución para mantener Mutual Moto en funcionamiento</h3>
+    <p>Mutual Moto necesita recursos para seguir disponible. Los aportes de los Motoamigos ayudan a sostener el mantenimiento y la operación de la plataforma, para que el mapa, el chat y sus herramientas sigan al aire y podamos continuar mejorándolos.</p>
+  </div>
+  <div class="price-box">
+    <h4><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> Modalidades de contribución</h4>
+    <div class="price-main">$20.000 <small>/ mes</small></div>
+    <div class="price-sub">Aporte mensual para colaborar con el sostenimiento de Mutual Moto y acompañar la continuidad de sus servicios.</div>
+    <div class="price-annual">
+      <strong>$200.000 / año</strong>
+      <span>Con el aporte anual tenés dos meses bonificados.</span>
+      <div class="price-gift"><i class="fas fa-satellite-dish" aria-hidden="true"></i><span>Además, <strong>recibís un combo de alarma con rastreador GPS de regalo, con su instalación incluida.</strong></span></div>
+    </div>
+    <div class="price-quarterly">
+      <span class="promo-label"><i class="fas fa-gift" aria-hidden="true"></i> Promoción especial</span>
+      <strong>5 meses de membresía · $100.000</strong>
+      <span>Con esta promoción, también recibís un <strong>combo de alarma con rastreador GPS de regalo, con su instalación incluida.</strong></span>
+    </div>
+  </div>
+  <p class="gate-contribution-thanks"><i class="fas fa-heart" aria-hidden="true"></i> Gracias por ayudar a que Mutual Moto siga al aire y continúe creciendo.</p>
+</section>
 <div class="gate-footer">Sin marcar "Recu&eacute;rdame", la pr&oacute;xima vez se volver&aacute; a mostrar esta pantalla.</div>
 </div>
 </div>
@@ -1507,9 +1550,9 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 </div>
 <div class="form-context-note user-registration-intro">
   <strong class="form-context-title">Información para Motoamigos</strong>
-  <p>Toda persona que llene el formulario de ingreso, leído las bases y condiciones, y abonado el mes o la promo anual, serán considerados 'Motoamigos', cuando se acerque el momento de abonar la mensualidad, se le avisará con un anticipo de una semana, en caso de no abonar la cuota mensual, la cuenta será desactivada, no obstante, no se modificaran los valores de los puntos ni los Moto Coins, para poder gozar de los puntos, los Moto Coins y todos los servicios exclusivos, deberá abonar el mes y adjuntar el comprobante cuando la página lo solicite.</p>
+  <p>Al completar el formulario y elegir una modalidad de contribución, pasás a formar parte de la comunidad de Motoamigos. Estos aportes ayudan a cubrir el mantenimiento y la operación de Mutual Moto para que la plataforma pueda seguir disponible. Una semana antes de la fecha de renovación recibirás un recordatorio. Si al llegar el vencimiento no se registra la renovación, el acceso a tu cuenta y a sus funciones para miembros quedará temporalmente pausado; tus puntos y Moto Coins se conservarán. Cuando el sistema lo solicite, podrás enviar el comprobante desde el buzón.</p>
   <p>Los datos personales que se ingresan aquí se encuentran respaldados por la ley 28.255 y únicamente pueden ser utilizados por el usuario que llena el formulario. Los datos de salud ingresados por el usuario serán adjuntados a un código QR que sólo se puede mostrar a otro Motoamigo en caso de una emergencia de clase 'Riesgo de vida'.</p>
-  <p>Con el pago de la primera cuota, o la promoción anual, el Motoamigo tendrá la posibilidad de obtener una chapa colgante con el QR de sus datos y una remera personalizada en agradecimiento por la inscripción al servicio.</p>
+  <p>Como agradecimiento por sumarte y colaborar con la comunidad, quienes realicen su primera contribución o elijan la modalidad anual podrán obtener una chapa colgante con el QR de sus datos y una remera personalizada. El diseño se coordina directamente con los desarrolladores.</p>
 </div>
 <iframe class="register-iframe google-form-iframe" src="https://docs.google.com/forms/d/e/1FAIpQLSfKPVPXGwORQ5tUylZ1Re47im4DdiepitvaN_OjzkqPNvhtYA/viewform?embedded=true" width="640" height="2052" frameborder="0" marginheight="0" marginwidth="0" title="Formulario de inscripción para miembros Motoamigos" loading="lazy" scrolling="auto">Cargando…</iframe>
 </div>
@@ -1541,23 +1584,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
         </div>
         <p><strong>Tu experiencia también tiene valor.</strong> Podés calificar establecimientos, compartir tus experiencias y ayudar a otros motoqueros a identificar lugares confiables. Cada nuevo socio y cada nuevo comercio hacen que la red sea más útil para todos.</p>
         <p>La comunidad puede participar ayudando a un Moto Amigo cuando tiene un incidente o cuando Mutual Moto le asigne alguna tarea/acción solidaria. Esa colaboración se reconoce mediante puntos y Moto Coins.<p>haciendo que ayudar también forme parte de la experiencia de Mutual Moto.</p>
-        <p><strong>No se trata solamente de pagar una membresía.</strong> Se trata de formar parte de una red de lugares, beneficios y personas que comparten una misma pasión.</p>
-      </div>
-      <div class="price-box">
-        <h3><i class="fas fa-id-card"></i> ¿Cuánto cuesta ser socio?</h3>
-        <div class="price-main">$20.000 <small>/ mes</small></div>
-        <div class="price-sub">Membresía mensual para formar parte de la comunidad y acceder a sus beneficios.</div>
-        <div class="price-annual">
-          <strong>$200.000 / año</strong>
-          <span>Pagando el año completo, tenés dos meses gratis.</span>
-          <div class="price-gift"><i class="fas fa-satellite-dish" aria-hidden="true"></i><span>Además, <strong>recibís un combo de alarma con rastreador GPS de regalo con su instalación incluida.</strong></span></div>
-        </div>
-        <div class="price-quarterly">
-          <span class="promo-label"><i class="fas fa-gift" aria-hidden="true"></i> Nueva promoción</span>
-          <strong>5 meses de membresía · $100.000</strong>
-          <span>Abonando los tres meses por adelantado, recibís un <strong>combo de alarma con rastreador GPS de regalo con su instalación incluida.</strong></span>
-        </div>
-        <p style="margin-top:1rem;color:#fff;line-height:1.6;font-size:.86rem">Durante el proceso de asociación, deberás rellenar un formulario donde deberás ingresar tus datos personales que únicamente serán visibles por usted. Una vez dada de alta la cuenta, el usuario deberá visitar un local "Motoamigazo" para retirar un colgante con un código QR con sus datos personales y de salud, junto con una remera de regalo de asociación, el usuario deberá comunicarse con los desarrolladores para coordinar su diseño.<p>Tu moto te lleva a cualquier lugar. Nosotros queremos ayudarte a encontrar lo que necesitás en el camino.</p>
+        <p><strong>La comunidad también ayuda a sostener Mutual Moto.</strong> Los aportes de sus miembros contribuyen a mantener la plataforma disponible y a seguir mejorando la red de lugares, beneficios y personas que compartimos.</p>
       </div>
     </div>
     <div style="text-align:center;margin-top:1.5rem"><strong style="color:var(--moto);font-size:1.05rem">Sumate a Mutual Moto y hacé crecer la comunidad con nosotros.</strong></div>
@@ -7205,8 +7232,8 @@ function checkMembershipExpiryAlert(){
   const today=new Date(nowDate.getFullYear(),nowDate.getMonth(),nowDate.getDate());
   const daysLeft=Math.ceil((info.expiryDate.getTime()-today.getTime())/(24*60*60*1000));
   if(daysLeft<1||daysLeft>7)return;
-  alert('⚠️ Tu membresía de '+info.months+' '+(info.months===1?'mes':'meses')+' vence el '+formatMembershipDate(info.expiryDate)+'. '+
-    (daysLeft===1?'Falta 1 día.':'Faltan '+daysLeft+' días.')+' Renovala antes de esa fecha para evitar el bloqueo.');
+  alert('💛 Te recordamos que tu contribución para sostener Mutual Moto ('+info.months+' '+(info.months===1?'mes':'meses')+') vence el '+formatMembershipDate(info.expiryDate)+'. '+
+    (daysLeft===1?'Falta 1 día.':'Faltan '+daysLeft+' días.')+' Podés gestionar la renovación antes de esa fecha para mantener activas las funciones de tu cuenta.');
 }
 
 function getAuthIdentifier(user){
@@ -7393,10 +7420,10 @@ function mmGetPendingLoginDecision(row){
   var today=new Date(todayDate.getFullYear(),todayDate.getMonth(),todayDate.getDate());
   var days=Math.ceil((due.getTime()-today.getTime())/86400000);
   if(days<=0){
-    return {allowed:false,blocked:true,managed:true,dueDate:due,daysRemaining:days,message:'Tu membresía está vencida desde el '+formatMembershipDate(due)+'. No podés ingresar hasta que se registre el pago.'};
+    return {allowed:false,blocked:true,managed:true,dueDate:due,daysRemaining:days,message:'Tu período de contribución finalizó el '+formatMembershipDate(due)+'. Para retomar el acceso, necesitás registrar la renovación. Tus puntos y Moto Coins se conservan.'};
   }
   if(days<=7){
-    return {allowed:true,warning:true,managed:true,dueDate:due,daysRemaining:days,message:'Tu membresía de '+months+' '+(months===1?'mes':'meses')+' vence el '+formatMembershipDate(due)+'. '+(days===1?'Falta 1 día.':'Faltan '+days+' días.')+' Recordá abonar para evitar el bloqueo.'};
+    return {allowed:true,warning:true,managed:true,dueDate:due,daysRemaining:days,message:'Tu contribución para sostener Mutual Moto ('+months+' '+(months===1?'mes':'meses')+') vence el '+formatMembershipDate(due)+'. '+(days===1?'Falta 1 día.':'Faltan '+days+' días.')+' Recordá gestionar la renovación para mantener disponibles las funciones de tu cuenta.'};
   }
   return {allowed:true,warning:false,managed:true,dueDate:due,daysRemaining:days,message:''};
 }
