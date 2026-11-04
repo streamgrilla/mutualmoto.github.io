@@ -1965,15 +1965,6 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 </div>
 </div>
 
-<div class="nick-modal" id="nickModal">
-<div class="nick-box">
-<h3><i class="fas fa-comments"></i> Eleg&iacute; tu apodo</h3>
-<p>Se va a mostrar en el chat junto a tus mensajes. Pod&eacute;s cambiarlo despu&eacute;s con doble clic en el bot&oacute;n "Chat" del header.</p>
-<input type="text" id="nickInput" maxlength="20" placeholder="Ej: motoquero42">
-<button class="primary-btn" id="nickSaveBtn">Entrar al chat</button>
-</div>
-</div>
-
 <div class="modal-overlay add-place-modal" id="addPlaceModal">
 <div class="modal-box">
 <h3><i class="fas fa-store"></i> A&ntilde;adir lugar</h3>
@@ -6260,9 +6251,6 @@ const chatInput=document.getElementById('chatInput');
 const chatSendBtn=document.getElementById('chatSendBtn');
 const chatStatus=document.getElementById('chatStatus');
 const typingIndicatorEl=document.getElementById('typingIndicator');
-const nickModal=document.getElementById('nickModal');
-const nickInput=document.getElementById('nickInput');
-const nickSaveBtn=document.getElementById('nickSaveBtn');
 const loginModal=document.getElementById('loginModal');
 const loginMutualBtn=document.getElementById('loginMutualBtn');
 const loginGuestBtn=document.getElementById('loginGuestBtn');
@@ -7147,30 +7135,32 @@ function showBetaTestNoticeIfFirstLogin(user){
   alert('PRUEBA DE 10 DÍAS, TUS DATOS SERÁN BORRADOS PASADO EL LAPSO LÍMITE');
 }
 function finalizeLogin(){
-  if(authState.user&&authState.user.id){
-    myUserId=String(authState.user.id);
-    try{localStorage.setItem(CHAT_KEY_UID,myUserId)}catch(e){}
+  if(authState.user){
+    if(authState.user.id){
+      myUserId=String(authState.user.id);
+      try{localStorage.setItem(CHAT_KEY_UID,myUserId)}catch(e){}
+    }
+    if(authState.user.isGuest){
+      authState.user.nick='Invitado';
+      myNick='Invitado';
+    }else{
+      myNick=String(authState.user.nick||authState.user.nickname||authState.user.nombre||authState.user.email||'Usuario').trim()||'Usuario';
+      authState.user.nick=myNick;
+    }
   }
-  if(authState.user&&authState.user.nick){
-    myNick=authState.user.nick;
-    try{localStorage.setItem(CHAT_KEY_NICK,myNick)}catch(e){}
-  }
+  // Elimina cualquier apodo manual guardado por versiones anteriores.
+  try{localStorage.removeItem(CHAT_KEY_NICK)}catch(e){}
   saveAuth();
   updateAuthUI();
   hideLoginModal();
   hideGate();
   updateGuestControls();
   setTimeout(function(){checkMembershipExpiryAlert()},350);
-  if(authState.user&&authState.user.isGuest){
-    myNick='Invitado';
-    try{localStorage.setItem(CHAT_KEY_NICK,myNick)}catch(e){}
-    continueAfterAuth();
-  }else if(!myNick)setTimeout(askForNick,500);
-  else continueAfterAuth();
+  continueAfterAuth();
 }
 function loginAsGuest(){
   const guestId='guest_'+Date.now().toString(36)+Math.random().toString(36).substr(2,6);
-  authState={isLoggedIn:true,user:{id:guestId,nick:'',isGuest:true,rememberDevice:false,provider:'guest'}};
+  authState={isLoggedIn:true,user:{id:guestId,nick:'Invitado',isGuest:true,rememberDevice:false,provider:'guest'}};
   finalizeLogin();
 }
 function parseCsvLine(line){
@@ -7451,6 +7441,79 @@ function mmBuildAuthUserFromRow(row,remember){
     password:mmRowPassword(row),isGuest:false,rememberDevice:!!remember,provider:'google-sheet'
   };
 }
+function mmFindRememberedUserRow(rows,savedUser){
+  var saved=savedUser||{};
+  var savedEmail=String(saved.email||saved.correo||'').trim().toLowerCase();
+  var savedId=String(saved.id||'').trim().toLowerCase();
+  var savedNick=String(saved.nick||saved.nickname||'').trim().toLowerCase();
+  function rowIdentity(row){
+    var explicitId=mmRowField(row,['id','id usuario','identificador']);
+    var nickname=mmRowField(row,['nickname','nick','usuario','nombre de usuario','username','alias']);
+    var email=mmRowField(row,['correo','correo electronico','email','e-mail','mail']);
+    var timestamp=mmRowField(row,['timestamp','marca temporal','fecha de alta']);
+    var id=String(getAuthIdentifier({id:explicitId,nickname:nickname,correo:email,timestamp:timestamp})||'').trim();
+    return {id:id.toLowerCase(),explicitId:String(explicitId||'').trim().toLowerCase(),email:String(email||'').trim().toLowerCase(),nick:String(nickname||'').trim().toLowerCase()};
+  }
+  var identities=(rows||[]).map(function(row){return {row:row,identity:rowIdentity(row)}});
+  if(savedEmail){
+    var emailMatches=identities.filter(function(item){return item.identity.email===savedEmail});
+    if(emailMatches.length){
+      if(savedId){
+        var emailAndId=emailMatches.find(function(item){return item.identity.id===savedId||item.identity.explicitId===savedId});
+        if(emailAndId)return emailAndId.row;
+      }
+      return emailMatches[0].row;
+    }
+  }
+  if(savedId){
+    var idMatch=identities.find(function(item){return item.identity.id===savedId||item.identity.explicitId===savedId});
+    if(idMatch)return idMatch.row;
+  }
+  // Compatibilidad con sesiones antiguas que no guardaban el correo.
+  if(!savedEmail&&savedNick){
+    var nickMatch=identities.find(function(item){return item.identity.nick===savedNick});
+    if(nickMatch)return nickMatch.row;
+  }
+  return null;
+}
+async function mmRestoreRememberedUserFromGoogle(savedUser){
+  if(!savedUser||savedUser.isGuest)throw new Error('No hay una cuenta registrada para restaurar.');
+  var csvUrl=AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_restoreRemembered='+Date.now();
+  var response=await fetch(csvUrl,{cache:'no-store'});
+  if(!response.ok)throw new Error('No se pudo consultar la pestaña Usuarios (HTTP '+response.status+').');
+  var rows=parseAuthCsv(await response.text());
+  var row=mmFindRememberedUserRow(rows,savedUser);
+  if(!row){
+    var missing=new Error('No encontramos tu cuenta en la tabla de Google Sheets. Iniciá sesión nuevamente para verificar tus datos.');
+    missing.code='MM_REMEMBERED_USER_NOT_FOUND';
+    throw missing;
+  }
+  var access=mmGetPendingLoginDecision(row);
+  if(!access.allowed){
+    var blocked=new Error(access.message||'El acceso de esta cuenta está pausado.');
+    blocked.code='MM_REMEMBERED_USER_BLOCKED';
+    throw blocked;
+  }
+  var user=mmBuildAuthUserFromRow(row,true);
+  user.rememberDevice=true;
+  user.isGuest=false;
+  user.nick=String(user.nick||user.nickname||user.nombre||user.email||'Usuario').trim()||'Usuario';
+  if(isRemovedChatUser(user.id)){
+    var removed=new Error('Esta cuenta fue retirada de Mutual Moto y ya no puede iniciar sesión.');
+    removed.code='MM_REMEMBERED_USER_REMOVED';
+    throw removed;
+  }
+  authState={isLoggedIn:true,user:user};
+  mmSetRoleRoute(user.isDeveloper?'dev':'user');
+  myUserId=String(user.id||'');
+  myNick=user.nick;
+  try{if(myUserId)localStorage.setItem(CHAT_KEY_UID,myUserId);localStorage.removeItem(CHAT_KEY_NICK)}catch(e){}
+  saveAuth();
+  updateAuthUI();
+  updateGuestControls();
+  return user;
+}
+
 function mmSetRoleRoute(role){
   role=role==='dev'||role==='kiosk'?role:'user';
   DEV_MODE=role==='dev';
@@ -7671,11 +7734,6 @@ function logout(){
   updateAuthUI();
   if(isChatOpen())closeChat();
   showGate();
-}
-function askForNick(){
-  nickInput.value=myNick||(authState.user&&authState.user.nick)||'';
-  nickModal.classList.add('visible');
-  setTimeout(function(){nickInput.focus()},100);
 }
 function continueAfterAuth(){
   if(!chatReady)if(!mqttClient){
@@ -8768,17 +8826,20 @@ function locationFromMessage(msg){
   };
 }
 function initUserId(){
-  let id=localStorage.getItem(CHAT_KEY_UID);
+  var user=authState&&authState.isLoggedIn?authState.user:null;
+  var id=String(user&&user.id||'').trim();
   if(!id){
-    id='u_'+Date.now().toString(36)+Math.random().toString(36).substr(2,8);
-    localStorage.setItem(CHAT_KEY_UID,id);
+    id=String(localStorage.getItem(CHAT_KEY_UID)||'').trim();
+    if(!id){
+      id='u_'+Date.now().toString(36)+Math.random().toString(36).substr(2,8);
+      try{localStorage.setItem(CHAT_KEY_UID,id)}catch(e){}
+    }
+  }else{
+    try{localStorage.setItem(CHAT_KEY_UID,id)}catch(e){}
   }
   myUserId=id;
-  myNick=localStorage.getItem(CHAT_KEY_NICK)||'';
-}
-function saveNick(nick){
-  myNick=nick;
-  localStorage.setItem(CHAT_KEY_NICK,nick);
+  myNick=user?(user.isGuest?'Invitado':String(user.nick||user.nickname||user.nombre||user.email||'Usuario').trim()||'Usuario'):'Usuario';
+  try{localStorage.removeItem(CHAT_KEY_NICK)}catch(e){}
 }
 function chatStatusSet(text,cls){
   chatStatus.textContent=text;
@@ -9721,19 +9782,6 @@ function sendChatMessage(){
 chatSendBtn.addEventListener('click',sendChatMessage);
 chatInput.addEventListener('keydown',function(e){if(e.key==='Enter')if(!e.shiftKey){e.preventDefault();sendChatMessage()}});
 chatInput.addEventListener('input',function(){if(chatInput.value.length>0)sendTypingIndicator()});
-nickSaveBtn.addEventListener('click',function(){
-  const nick=nickInput.value.trim();
-  if(nick.length<2){alert('El apodo debe tener al menos 2 caracteres.');return}
-  saveNick(nick.slice(0,20)); nickModal.classList.remove('visible');
-  const now=Date.now(); const existing=onlineUsers.get(myUserId);
-  const entry={id:myUserId,nick:myNick,status:myStatus,lastSeen:now,firstSeen:existing&&existing.firstSeen?existing.firstSeen:now,isGuest:isGuestAccount(authState.user)};
-  if(userLocation){entry.lat=userLocation.lat;entry.lng=userLocation.lng}
-  else if(existing&&typeof existing.lat==='number'){entry.lat=existing.lat;entry.lng=existing.lng}
-  onlineUsers.set(myUserId,entry);
-  if(mqttClient)if(chatReady){registerUserEntry(myUserId,myNick,myStatus,'connect');announcePresence()}
-  continueAfterAuth();
-});
-nickInput.addEventListener('keydown',function(e){if(e.key==='Enter')nickSaveBtn.click()});
 function pedirUbicacionYPrompt(callback){
   if(userLocation){callback();return}
   if(!navigator.geolocation){alert('La geolocalización no está disponible.');return}
@@ -10281,34 +10329,53 @@ const resolveParam=urlParams.get('resolve');
       });
 
     if(DEV_MODE===true&&isDeveloperAccount()){
-      purgeAuthGate();
-      try{ window.showGate=function(){}; }catch(_){}
-      try{ showGate=function(){}; }catch(_){}
-
-      try{ enableDevMode(); }catch(_){}
-      try{ updateAuthUI&&updateAuthUI(); }catch(_){}
-      try{ updateGuestControls&&updateGuestControls(); }catch(_){}
-      document.body.classList.add('dev-on','dev-qr-enabled');
-
-      enterMapDirectly();
-      try{if(typeof continueAfterAuth==='function')continueAfterAuth();else if(typeof startChat==='function'&&!chatReady&&!mqttClient)startChat();}catch(devInitError){try{console.warn('No se pudo inicializar el chat de desarrollador:',devInitError);}catch(_){}}
-      var publicHeader=document.getElementById('siteHeader');
-      var publicHome=document.getElementById('preMapContent');
-      var mapPage=document.getElementById('mapPage');
-      if(publicHeader)publicHeader.style.display='none';
-      if(publicHome)publicHome.style.display='none';
-      if(mapPage)mapPage.classList.remove('hidden');
-
-      try{
-        var devGateObserver=new MutationObserver(function(){purgeAuthGate();});
-        devGateObserver.observe(document.body,{childList:true,subtree:true});
-      }catch(_){}
-
-      setTimeout(function(){
-        try{map.invalidateSize();}catch(_){}
-        try{recenterImmediate();}catch(_){}
-        if(typeof MM_scheduleMapResize==='function')MM_scheduleMapResize();
-      },300);
+      var developerSnapshot=Object.assign({},authState.user||{});
+      setTimeout(async function(){
+        try{
+          await mmRestoreRememberedUserFromGoogle(developerSnapshot);
+          if(!isDeveloperAccount())throw new Error('La cuenta ya no tiene permisos de desarrollador.');
+          purgeAuthGate();
+          try{window.showGate=function(){};}catch(_){}
+          try{showGate=function(){};}catch(_){}
+          try{enableDevMode();}catch(_){}
+          try{updateAuthUI&&updateAuthUI();}catch(_){}
+          try{updateGuestControls&&updateGuestControls();}catch(_){}
+          document.body.classList.add('dev-on','dev-qr-enabled');
+          enterMapDirectly();
+          try{if(typeof continueAfterAuth==='function')continueAfterAuth();else if(typeof startChat==='function'&&!chatReady&&!mqttClient)startChat();}catch(devInitError){try{console.warn('No se pudo inicializar el chat de desarrollador:',devInitError);}catch(_){}}
+          var publicHeader=document.getElementById('siteHeader');
+          var publicHome=document.getElementById('preMapContent');
+          var mapPage=document.getElementById('mapPage');
+          if(publicHeader)publicHeader.style.display='none';
+          if(publicHome)publicHome.style.display='none';
+          if(mapPage)mapPage.classList.remove('hidden');
+          try{
+            var devGateObserver=new MutationObserver(function(){purgeAuthGate();});
+            devGateObserver.observe(document.body,{childList:true,subtree:true});
+          }catch(_){}
+          setTimeout(function(){
+            try{map.invalidateSize();}catch(_){}
+            try{recenterImmediate();}catch(_){}
+            if(typeof MM_scheduleMapResize==='function')MM_scheduleMapResize();
+          },300);
+        }catch(devRestoreError){
+          console.warn('No se pudo recuperar la cuenta desarrolladora desde Google Sheets:',devRestoreError);
+          authState={isLoggedIn:false,user:null};
+          DEV_MODE=false;
+          if(devRestoreError&&devRestoreError.code){try{localStorage.removeItem(AUTH_KEY)}catch(_){}}
+          try{sessionStorage.removeItem('mm_wasOnMap')}catch(_){}
+          try{
+            document.body.classList.remove('dev-on','dev-qr-enabled');
+            document.documentElement.classList.remove('mm-dev-requested');
+            var cleanDevUrl=new URL(window.location.href);
+            cleanDevUrl.searchParams.delete('dev');
+            cleanDevUrl.searchParams.delete('kiosk');
+            history.replaceState({},'',cleanDevUrl.pathname+cleanDevUrl.search+cleanDevUrl.hash);
+          }catch(_){}
+          if(typeof showGate==='function')showGate();
+          if(gateLoginError){gateLoginError.textContent=(devRestoreError&&devRestoreError.message)||'No se pudieron recuperar los datos de desarrollador desde Google Sheets. Iniciá sesión nuevamente.';gateLoginError.style.display='block';}
+        }
+      },150);
       return;
     }
 
@@ -10318,15 +10385,32 @@ const resolveParam=urlParams.get('resolve');
     var hasRememberedSession=!!(authState&&authState.isLoggedIn&&authState.user&&!authState.user.isGuest&&authState.user.rememberDevice===true);
 
     if(hasRememberedSession){
-      try{authGate.classList.add('hidden');}catch(_){}
-      updateAuthUI&&updateAuthUI();
-      updateGuestControls&&updateGuestControls();
-      if(wasOnMap){enterMapDirectly();}
-      setTimeout(function(){
-        if(typeof checkMembershipExpiryAlert==='function')checkMembershipExpiryAlert();
-        if(!myNick){if(typeof askForNick==='function')askForNick();}
-        else if(typeof continueAfterAuth==='function')continueAfterAuth();
-      },400);
+      var rememberedSnapshot=Object.assign({},authState.user||{});
+      setTimeout(async function(){
+        try{
+          await mmRestoreRememberedUserFromGoogle(rememberedSnapshot);
+          try{authGate.classList.add('hidden')}catch(_){}
+          if(wasOnMap)enterMapDirectly();
+          if(typeof checkMembershipExpiryAlert==='function')checkMembershipExpiryAlert();
+          if(typeof continueAfterAuth==='function')continueAfterAuth();
+        }catch(restoreError){
+          console.warn('No se pudo restaurar la sesión recordada desde Google Sheets:',restoreError);
+          authState={isLoggedIn:false,user:null};
+          if(restoreError&&restoreError.code&&restoreError.code!=='MM_REMEMBERED_USER_NOT_FOUND'){
+            try{localStorage.removeItem(AUTH_KEY)}catch(_){}
+          }else if(restoreError&&restoreError.code==='MM_REMEMBERED_USER_NOT_FOUND'){
+            try{localStorage.removeItem(AUTH_KEY)}catch(_){}
+          }
+          try{sessionStorage.removeItem('mm_wasOnMap')}catch(_){}
+          if(typeof showGate==='function')showGate();
+          if(gateEmailInput&&rememberedSnapshot.email)gateEmailInput.value=String(rememberedSnapshot.email);
+          if(gateLoginError){
+            gateLoginError.textContent=(restoreError&&restoreError.message)||'No se pudieron recuperar los datos de tu cuenta desde Google Sheets. Iniciá sesión nuevamente.';
+            gateLoginError.style.display='block';
+          }
+          if(gatePasswordInput)gatePasswordInput.value='';
+        }
+      },150);
     }else{
       try{
         if(authGate){
