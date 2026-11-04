@@ -340,6 +340,9 @@ body.centering-lock .leaflet-control-legend{
 .popup-content .popup-rating{color:#f39c12;font-weight:700;font-size:.85rem;display:inline-block;margin-top:.2rem}
 .popup-content .popup-route{display:inline-block;margin-top:.6rem;padding:.45rem .9rem;background:#33ccff;color:#fff!important;text-decoration:none;border-radius:6px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;border:none}
 .popup-content .popup-share{display:inline-block;margin-top:.6rem;margin-left:.4rem;padding:.45rem .9rem;background:#16a085;color:#fff;border:none;border-radius:6px;font-size:.85rem;font-weight:600;cursor:pointer}
+.popup-content .popup-delete-place{display:block;margin-top:.55rem;padding:.5rem .8rem;background:#c0392b;color:#fff;border:0;border-radius:7px;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;width:100%}
+.popup-content .popup-delete-place:hover{background:#a93226}
+.popup-content .popup-delete-place:disabled{opacity:.6;cursor:wait}
 .popup-content .popup-dev-badge{font-size:10px;color:#9b59b6;font-weight:bold;display:block;margin-top:.3rem}
 .popup-content .popup-sponsor-badge{font-size:10px;color:var(--sponsor);font-weight:bold;font-style:italic;display:block;margin-top:.3rem;letter-spacing:.4px}
 .popup-content .popup-discount-badge{font-size:11px;color:#f39c12;font-weight:800;display:block;margin-top:.3rem;letter-spacing:.4px;background:#fffbe6;border:1px solid #f39c12;border-radius:6px;padding:2px 6px;text-align:center}
@@ -2681,7 +2684,7 @@ async function postToSheets(action,data){
   const record={action:action,data:data,ts:Date.now()};
   // Los cambios de saldo se autentican con la credencial de la propia cuenta.
   // Nunca se incrusta la contraseña maestra de la API en el HTML.
-  if(['points_change','coins_change','add_place','register_siniestro','resolve_siniestro_qr','clear_user_incidents_after_qr'].indexOf(action)!==-1){
+  if(['points_change','coins_change','add_place','delete_place','register_siniestro','resolve_siniestro_qr','clear_user_incidents_after_qr'].indexOf(action)!==-1){
     var currentUser=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:null;
     var accountIdentifier=String(currentUser&&(currentUser.email||currentUser.correo||currentUser.nick||currentUser.nickname||currentUser.id)||'');
     var accountPassword=String(currentUser&&currentUser.password||'');
@@ -2708,7 +2711,7 @@ async function postToSheets(action,data){
     // escribir un saldo para no enviar una operación que el servidor rechazará.
     if(!accountPassword&&currentUser&&!currentUser.isGuest&&accountIdentifier){
       var enteredPassword='';
-      var credentialPrompt=(action==='resolve_siniestro_qr'||action==='clear_user_incidents_after_qr')?'Para retirar el incidente del mapa y de la sala grupal, validá la contraseña de tu cuenta:':((action==='add_place'||action==='register_siniestro')?'Para guardar esta actividad en Mutual Moto, validá la contraseña de tu cuenta:':'Para guardar tus puntos y Moto Coins en Google Sheets, ingresá la contraseña de tu cuenta:');
+      var credentialPrompt=action==='delete_place'?'Para eliminar una dirección del mapa, validá la contraseña de tu cuenta desarrollador:':((action==='resolve_siniestro_qr'||action==='clear_user_incidents_after_qr')?'Para retirar el incidente del mapa y de la sala grupal, validá la contraseña de tu cuenta:':((action==='add_place'||action==='register_siniestro')?'Para guardar esta actividad en Mutual Moto, validá la contraseña de tu cuenta:':'Para guardar tus puntos y Moto Coins en Google Sheets, ingresá la contraseña de tu cuenta:'));
       try{enteredPassword=String(window.prompt(credentialPrompt)||'')}catch(_){}
       if(!enteredPassword){
         try{if(typeof showAppNotification==='function')showAppNotification('No se pudo completar la operación: falta validar la contraseña de la cuenta.','fa-lock')}catch(_){}
@@ -3125,6 +3128,22 @@ map.on('dblclick',function(e){
   goToUserLocation();
 });
 document.body.addEventListener('click',function(e){
+  const btn=e.target.closest('[data-delete-map-place]');
+  if(!btn)return;
+  e.preventDefault();
+  e.stopPropagation();
+  if(!isDeveloperAccount()||!DEV_MODE){alert('Esta acción requiere una sesión desarrollador activa.');return;}
+  const placeId=btn.dataset.deleteMapPlace;
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Enviando…';
+  deleteMapPlaceFromMarker(placeId).finally(function(){
+    if(document.body.contains(btn)){
+      btn.disabled=false;
+      btn.innerHTML='<i class="fas fa-trash"></i> Eliminar dirección';
+    }
+  });
+});
+document.body.addEventListener('click',function(e){
   const btn=e.target.closest('[data-waze-nav-lat]');
   if(!btn)return;
   e.preventDefault();
@@ -3354,6 +3373,7 @@ let focusedPlaceId=null;
 let focusedIncidentId=null;
 let focusedTarget=null;
 let addPlaceBusy=false;
+let devMapAddContext=null;
 let inactivityTimeoutMs=300000;
 const userMotoMarkers=new Map();
 const ALERT_KEY='servicios_ba_active_alert_v1';
@@ -4108,6 +4128,7 @@ function rowsToPlaces(rows){
   const iPat=find(['patron','patrocinado','sponsor']);
   const iDesc=find(['descuento','discount','desc','descuentos','oferta']);
   const iCnt=find(['cantidad_votos','votos','cantidad','votantes']);
+  const iId=find(['id','id lugar','identificador']);
   if(iLat<0)return[];
   if(iLng<0)return[];
   if(iNom<0)return[];
@@ -4144,6 +4165,8 @@ function rowsToPlaces(rows){
     }
     out.push({
       id:'csv/'+i,
+      sheetId:iId>=0?String(r[iId]||'').trim():'',
+      sheetRowNumber:i+1,
       category:category,
       rubro:rubroRaw||categoryLabels[category],
       name:name,
@@ -4222,6 +4245,8 @@ function mergeCustomPlaces(){
   customPlaces.forEach(function(cp){
     allPlaces.push({
       id:cp.id,
+      sheetId:cp.id,
+      sheetRowNumber:null,
       category:cp.category,
       rubro:cp.rubro||keyToRubro[cp.category],
       name:cp.name,
@@ -4288,7 +4313,9 @@ function buildPopupHtml(place){
   if(place.sponsored)sponsorBadge='<span class="popup-sponsor-badge">MOTOAMIGAZO</span>';
   let discountBadge='';
   if(place.descuento)discountBadge='<span class="popup-discount-badge"><i class="fas fa-tag"></i> -'+Math.round(place.descuento)+'% DE DESCUENTO</span>';
-  return '<div class="popup-content"><span class="popup-title"><strong>'+escapeHtml(place.name)+'</strong></span><div class="popup-line"><i class="fas fa-map-pin" style="color:'+colors[place.category]+'"></i> '+escapeHtml(place.address||'Sin dirección')+'</div><div class="popup-rubro">'+escapeHtml(place.rubro||categoryLabels[place.category])+'</div>'+ratingHtml+'<br><button class="popup-route" data-waze-nav-lat="'+place.lat+'" data-waze-nav-lng="'+place.lng+'"><i class="fas fa-route"></i> Ir con Waze</button><button class="popup-share" data-place-id="'+escapeHtml(place.id)+'"><i class="fas fa-share-alt"></i> Compartir</button>'+buildRatingStarsHtml(place)+discountBadge+devBadge+sponsorBadge+'</div>';
+  const canDeletePlace=!!(DEV_MODE&&typeof isDeveloperAccount==='function'&&isDeveloperAccount());
+  const deleteButton=canDeletePlace?'<button type="button" class="popup-delete-place" data-delete-map-place="'+escapeHtml(place.id)+'"><i class="fas fa-trash"></i> Eliminar dirección</button>':'';
+  return '<div class="popup-content"><span class="popup-title"><strong>'+escapeHtml(place.name)+'</strong></span><div class="popup-line"><i class="fas fa-map-pin" style="color:'+colors[place.category]+'"></i> '+escapeHtml(place.address||'Sin dirección')+'</div><div class="popup-rubro">'+escapeHtml(place.rubro||categoryLabels[place.category])+'</div>'+ratingHtml+'<br><button class="popup-route" data-waze-nav-lat="'+place.lat+'" data-waze-nav-lng="'+place.lng+'"><i class="fas fa-route"></i> Ir con Waze</button><button class="popup-share" data-place-id="'+escapeHtml(place.id)+'"><i class="fas fa-share-alt"></i> Compartir</button>'+buildRatingStarsHtml(place)+discountBadge+devBadge+sponsorBadge+deleteButton+'</div>';
 }
 function computeDistances(places){
   if(!userLocation)return;
@@ -4322,7 +4349,7 @@ function getOrCreatePlaceMarker(place,zOff){
   const signature=JSON.stringify([
     place.lat,place.lng,place.name,place.category,place.rubro,place.address,
     place.rating,place.voteCount,place.descuento,place.sponsored,place.isCustom,
-    place.author,place.phone,myRatings[place.id]||0
+    place.author,place.phone,myRatings[place.id]||0,!!(DEV_MODE&&typeof isDeveloperAccount==='function'&&isDeveloperAccount())
   ]);
   let marker=placeMarkerCache.get(place.id);
   if(!marker){
@@ -4553,6 +4580,53 @@ function deleteCustomPlace(id){
   allPlaces=allPlaces.filter(function(p){return p.id!==id});
   renderPlaces();
 }
+async function deleteMapPlaceFromMarker(placeId){
+  if(!isDeveloperAccount()||!DEV_MODE){
+    alert('Eliminar direcciones del mapa es una función exclusiva del modo desarrollador.');
+    return;
+  }
+  const place=allPlaces.find(function(item){return String(item.id)===String(placeId)});
+  if(!place){alert('No se encontró la dirección seleccionada.');return;}
+  let rowNumber=Number(place.sheetRowNumber||0);
+  if(!rowNumber){
+    const rowMatch=String(place.id||'').match(/^csv\/(\d+)$/);
+    if(rowMatch)rowNumber=Number(rowMatch[1])+1;
+  }
+  const sheetId=String(place.sheetId||((String(place.id||'').indexOf('csv-pending/')===0)?place.id:'')).trim();
+  if(!rowNumber&&!sheetId){
+    alert('No se pudo identificar la fila de esta dirección en Google Sheets. Actualizá el mapa y volvé a seleccionarla.');
+    return;
+  }
+  const detail='\n\n'+place.name+(place.address?'\n'+place.address:'')+'\n'+Number(place.lat).toFixed(6)+', '+Number(place.lng).toFixed(6);
+  if(!confirm('¿Enviar una solicitud para eliminar esta dirección del mapa y del CSV?'+detail+'\n\nEsta acción es exclusiva de desarrolladores.'))return;
+  try{
+    const result=await postToSheets('delete_place',{
+      id:sheetId||String(place.id||''),
+      placeId:String(place.id||''),
+      rowNumber:rowNumber||'',
+      nombre:String(place.name||''),
+      rubro:String(place.rubro||categoryLabels[place.category]||''),
+      direccion:String(place.address||''),
+      lat:Number(place.lat).toFixed(6),
+      lng:Number(place.lng).toFixed(6),
+      source:'dev-map-marker'
+    });
+    if(!result||!result.ok){
+      alert(result&&result.offline?'No se pudo enviar la solicitud: el servidor de Google Sheets no está configurado.':'No se pudo enviar la solicitud de eliminación.');
+      return;
+    }
+    allPlaces=allPlaces.filter(function(item){return String(item.id)!==String(place.id)});
+    customPlaces=customPlaces.filter(function(item){return String(item.id)!==String(place.id)});
+    saveCustomPlaces();
+    if(focusedPlaceId===place.id){focusedPlaceId=null;focusedTarget=null;}
+    renderPlaces();
+    try{map.closePopup()}catch(_){}
+    showAppNotification('Solicitud de eliminación enviada. El Apps Script validará los permisos y retirará el registro de la hoja.','fa-trash');
+  }catch(err){
+    console.error('No se pudo solicitar la eliminación de la dirección:',err);
+    alert('No se pudo enviar la solicitud de eliminación. '+String(err&&err.message||''));
+  }
+}
 function focusPlaceOnMap(place){
   if(!place)return;
   ensureUnlocked();
@@ -4712,6 +4786,7 @@ function enableDevMode(){
     DEV_MODE=false;
     document.body.classList.remove('dev-on','dev-qr-enabled');
     document.documentElement.classList.remove('mm-dev-requested');
+    try{if(typeof renderPlaces==='function')renderPlaces()}catch(_){}
     return;
   }
   DEV_MODE=true;
@@ -4719,6 +4794,9 @@ function enableDevMode(){
   if(mqttClient)if(chatReady){try{mqttClient.subscribe(TOPIC_SUGGESTIONS,{qos:0})}catch(e){}}
   loadSuggestions();
   updateSuggestionBadge();
+  try{renderAllUserMotos()}catch(e){}
+  try{renderAllChatLocations()}catch(e){}
+  try{if(typeof renderPlaces==='function')renderPlaces()}catch(e){}
 }
 function toggleAddingMode(){
   if(!isDeveloperAccount()||!DEV_MODE){alert('Esta acción requiere iniciar sesión con una cuenta habilitada para desarrollo.');return}
@@ -4864,93 +4942,23 @@ if(devClearBtn){
 }
 if(document.getElementById('devClearIncidentsBtn'))document.getElementById('devClearIncidentsBtn').addEventListener('click',clearIncidentsDev);
 if(document.getElementById('devManageUsersBtn'))document.getElementById('devManageUsersBtn').addEventListener('click',openDevUsersAdminModal);
-function buildDevAddFormHtml(lat,lng){
-  const opts=ALL_CATEGORIES.map(function(c){
-    return '<option value="'+c+'">'+categoryLabels[c]+'</option>';
-  }).join('');
-  return '<div class="add-form"><h4><i class="fas fa-plus-circle" style="color:#9b59b6"></i> Nueva ubicación (dev)</h4>'+
-    '<label>Nombre</label><input id="af-name" type="text" placeholder="Ej: Taller López" maxlength="80">'+
-    '<label>Rubro</label><select id="af-cat">'+opts+'</select>'+
-    '<label>Dirección</label><input id="af-addr" type="text" placeholder="Ej: Av. Corrientes 1234" maxlength="120">'+
-    '<label>Puntuación</label>'+
-    '<div class="af-rating-stars" id="af-rating-stars">'+
-    '<button type="button" data-rating="1" aria-label="1 estrella">★</button>'+
-    '<button type="button" data-rating="2" aria-label="2 estrellas">★</button>'+
-    '<button type="button" data-rating="3" aria-label="3 estrellas">★</button>'+
-    '<button type="button" data-rating="4" aria-label="4 estrellas">★</button>'+
-    '<button type="button" data-rating="5" aria-label="5 estrellas">★</button>'+
-    '<span class="ap-rating-value" id="af-rating-value">Sin puntuación</span>'+
-    '</div>'+
-    '<input id="af-rating" type="hidden" value="">'+
-    '<div class="af-coords">'+lat.toFixed(5)+', '+lng.toFixed(5)+'</div>'+
-    '<div class="af-actions"><button class="af-save" id="af-save"><i class="fas fa-save"></i> Guardar</button>'+
-    '<button class="af-cancel" id="af-cancel"><i class="fas fa-times"></i> Cancelar</button></div></div>';
-}
+/* En modo desarrollador se selecciona el punto en el mapa y se abre el mismo
+   formulario de alta que utilizan los Motoamigos. El alta se registra en Sheets
+   sin socioId/socioNick y se representa como una fila normal del CSV. */
 map.on('click',function(e){
   if(!addingMode)return;
   if(mapInteractionLocked)return;
   const lat=e.latlng.lat;
   const lng=e.latlng.lng;
   if(!isInBounds(lat,lng))return;
+  if(!isDeveloperAccount()||!DEV_MODE){
+    addingMode=false;
+    document.body.classList.remove('adding-mode');
+    return;
+  }
   ensureUnlocked();
-  const formHtml=buildDevAddFormHtml(lat,lng);
-  const popup=L.popup({closeButton:true,autoClose:false,closeOnClick:false,className:'dev-popup'}).setLatLng(e.latlng).setContent(formHtml).openOn(map);
-  setTimeout(function(){const n=document.getElementById('af-name');if(n)n.focus()},100);
-  document.querySelectorAll('#af-rating-stars button').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      const value=parseInt(btn.getAttribute('data-rating'),10);
-      const input=document.getElementById('af-rating');
-      const valueEl=document.getElementById('af-rating-value');
-      if(input)input.value=String(value);
-      document.querySelectorAll('#af-rating-stars button').forEach(function(star){
-        const starValue=parseInt(star.getAttribute('data-rating'),10);
-        star.classList.toggle('active',starValue<=value);
-      });
-      if(valueEl)valueEl.textContent=value+'/5';
-    });
-  });
-  document.getElementById('af-save').addEventListener('click',function(){
-    const name=document.getElementById('af-name').value.trim();
-    const category=document.getElementById('af-cat').value;
-    let address=document.getElementById('af-addr').value.trim();
-    if(!address)address=lat.toFixed(5)+', '+lng.toFixed(5);
-    const ratingRaw=parseFloat(document.getElementById('af-rating').value);
-    let rating=null;
-    if(!isNaN(ratingRaw))rating=ratingRaw;
-    if(!name){alert('El nombre es obligatorio.');return}
-    const newPlace={
-      id:'custom/'+Date.now()+'/'+Math.random().toString(36).substr(2,6),
-      name:name,
-      category:category,
-      rubro:categoryLabels[category],
-      address:address,
-      rating:rating,
-      lat:lat,
-      lng:lng
-    };
-    customPlaces.push(newPlace);
-    saveCustomPlaces();
-    allPlaces.push({
-      id:newPlace.id,
-      category:newPlace.category,
-      rubro:newPlace.rubro,
-      name:newPlace.name,
-      address:newPlace.address,
-      rating:newPlace.rating,
-      voteCount:0,
-      lat:newPlace.lat,
-      lng:newPlace.lng,
-      isCustom:true,
-      sponsored:false,
-      descuento:null,
-      searchBlob:normalize(newPlace.name+' '+newPlace.address+' '+newPlace.rubro),
-      dist:null
-    });
-    map.closePopup(popup);
-    renderPlaces();
-    toggleAddingMode();
-  });
-  document.getElementById('af-cancel').addEventListener('click',function(){map.closePopup(popup)});
+  toggleAddingMode();
+  openAddPlaceModal({developerMap:true,lat:lat,lng:lng});
 });
 function renderAddressFields(addresses){
   apAddressList.innerHTML='';
@@ -4995,10 +5003,22 @@ function setApStatus(text,cls){
   apStatus.textContent=text||'';
   apStatus.className='ap-status'+(cls?' '+cls:'');
 }
-function openAddPlaceModal(){
+function openAddPlaceModal(options){
+  options=options||{};
+  const developerMap=options.developerMap===true;
   if(!isLoggedIn()){
     alert('Necesitás iniciar sesión para añadir lugares.');
     showGate();
+    return;
+  }
+  if(developerMap&&(!isDeveloperAccount()||!DEV_MODE)){
+    alert('Esta acción requiere una sesión desarrollador activa.');
+    return;
+  }
+  devMapAddContext=developerMap?{lat:Number(options.lat),lng:Number(options.lng)}:null;
+  if(developerMap&&(!Number.isFinite(devMapAddContext.lat)||!Number.isFinite(devMapAddContext.lng)||!isInBounds(devMapAddContext.lat,devMapAddContext.lng))){
+    devMapAddContext=null;
+    alert('No se pudo reconocer el punto seleccionado en el mapa.');
     return;
   }
   apName.value='';
@@ -5008,6 +5028,19 @@ function openAddPlaceModal(){
   apRatingValue.textContent='Sin puntuación';
   setApStatus('');
   renderAddressFields(['']);
+  const intro=addPlaceModal.querySelector('.modal-box > p');
+  const addressLabel=apAddressList.previousElementSibling;
+  if(developerMap){
+    if(intro)intro.textContent='Completá los datos del lugar. Se guardará en el punto que seleccionaste en el mapa; la dirección es opcional.';
+    if(addressLabel)addressLabel.textContent='Dirección (opcional)';
+    if(apAddAddrBtn)apAddAddrBtn.style.display='none';
+    apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar en el mapa';
+  }else{
+    if(intro)intro.textContent='Completá los datos. La página calcula las coordenadas a partir de la dirección automáticamente.';
+    if(addressLabel)addressLabel.textContent='Direcciones';
+    if(apAddAddrBtn)apAddAddrBtn.style.display='';
+    apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar lugar';
+  }
   addPlaceModal.classList.add('visible');
   setTimeout(function(){apName.focus()},120);
 }
@@ -5015,6 +5048,12 @@ function closeAddPlaceModal(){
   addPlaceModal.classList.remove('visible');
   setApStatus('');
   addPlaceBusy=false;
+  devMapAddContext=null;
+  const intro=addPlaceModal.querySelector('.modal-box > p');
+  const addressLabel=apAddressList.previousElementSibling;
+  if(intro)intro.textContent='Completá los datos. La página calcula las coordenadas a partir de la dirección automáticamente.';
+  if(addressLabel)addressLabel.textContent='Direcciones';
+  if(apAddAddrBtn)apAddAddrBtn.style.display='';
   apSubmitBtn.disabled=false;
   apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar lugar';
 }
@@ -5035,31 +5074,50 @@ if(apRatingStars)apRatingStars.querySelectorAll('button').forEach(function(btn){
 });
 async function submitAddPlace(){
   if(addPlaceBusy)return;
+  const developerMap=!!(devMapAddContext&&isDeveloperAccount()&&DEV_MODE);
+  if(devMapAddContext&&!developerMap){
+    setApStatus('La sesión desarrollador ya no está activa. Volvé a ingresar al modo dev.','error');
+    return;
+  }
   const name=(apName.value||'').trim();
   const category=apCat.value;
   const addresses=collectAddresses();
   if(!name){setApStatus('Ingresá el nombre del lugar.','error');apName.focus();return}
-  if(addresses.length===0){setApStatus('Ingresá al menos una dirección.','error');return}
+  if(!developerMap&&addresses.length===0){setApStatus('Ingresá al menos una dirección.','error');return}
   const ratingRaw=parseFloat(apRating.value);
   let rating=null;
   if(!isNaN(ratingRaw))rating=ratingRaw;
   addPlaceBusy=true;
   apSubmitBtn.disabled=true;
-  apSubmitBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Buscando coordenadas...';
-  setApStatus('Buscando coordenadas de las direcciones...','working');
+  apSubmitBtn.innerHTML=developerMap?'<i class="fas fa-spinner fa-spin"></i> Guardando en Google Sheets...':'<i class="fas fa-spinner fa-spin"></i> Buscando coordenadas...';
+  setApStatus(developerMap?'Guardando el lugar en Google Sheets...':'Buscando coordenadas de las direcciones...','working');
   const results=[];
-  for(let i=0;i<addresses.length;i++){
-    setApStatus('Buscando dirección '+(i+1)+' de '+addresses.length+'...','working');
-    const r=await geocodeAddress(addresses[i]);
-    if(r)results.push({address:addresses[i],lat:r.lat,lng:r.lng,display:r.display});
-    if(i<addresses.length-1)await new Promise(function(res){setTimeout(res,GEOCODE_DELAY_MS)});
-  }
-  if(results.length===0){
-    setApStatus('No pudimos encontrar ninguna de las direcciones. Verificá que estén bien escritas (agregá "Buenos Aires" o "CABA" si es necesario).','error');
-    addPlaceBusy=false;
-    apSubmitBtn.disabled=false;
-    apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar lugar';
-    return;
+  if(developerMap){
+    const lat=devMapAddContext.lat;
+    const lng=devMapAddContext.lng;
+    if(!isInBounds(lat,lng)){
+      setApStatus('El punto seleccionado está fuera del área de cobertura (Buenos Aires y alrededores).','error');
+      addPlaceBusy=false;
+      apSubmitBtn.disabled=false;
+      apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar en el mapa';
+      return;
+    }
+    const address=addresses.join(' | ')||lat.toFixed(5)+', '+lng.toFixed(5);
+    results.push({address:address,lat:lat,lng:lng,display:address});
+  }else{
+    for(let i=0;i<addresses.length;i++){
+      setApStatus('Buscando dirección '+(i+1)+' de '+addresses.length+'...','working');
+      const r=await geocodeAddress(addresses[i]);
+      if(r)results.push({address:addresses[i],lat:r.lat,lng:r.lng,display:r.display});
+      if(i<addresses.length-1)await new Promise(function(res){setTimeout(res,GEOCODE_DELAY_MS)});
+    }
+    if(results.length===0){
+      setApStatus('No pudimos encontrar ninguna de las direcciones. Verificá que estén bien escritas (agregá "Buenos Aires" o "CABA" si es necesario).','error');
+      addPlaceBusy=false;
+      apSubmitBtn.disabled=false;
+      apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar lugar';
+      return;
+    }
   }
   const primary=results[0];
   const addressJoined=results.map(function(r){return r.address}).join(' | ');
@@ -5068,10 +5126,10 @@ async function submitAddPlace(){
     setApStatus('La ubicación calculada está fuera del área de cobertura (Buenos Aires y alrededores).','error');
     addPlaceBusy=false;
     apSubmitBtn.disabled=false;
-    apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar lugar';
+    apSubmitBtn.innerHTML=developerMap?'<i class="fas fa-check"></i> Guardar en el mapa':'<i class="fas fa-check"></i> Guardar lugar';
     return;
   }
-  const newId='custom/'+Date.now()+'/'+Math.random().toString(36).substr(2,6);
+  const newId=(developerMap?'csv-pending/':'custom/')+Date.now()+'/'+Math.random().toString(36).substr(2,6);
   const newPlace={
     id:newId,
     name:name,
@@ -5084,27 +5142,8 @@ async function submitAddPlace(){
     lat:primary.lat,
     lng:primary.lng
   };
-  customPlaces.push(newPlace);
-  saveCustomPlaces();
-  allPlaces.push({
-    id:newPlace.id,
-    category:newPlace.category,
-    rubro:newPlace.rubro,
-    name:newPlace.name,
-    address:newPlace.address,
-    rating:newPlace.rating,
-    voteCount:0,
-    lat:newPlace.lat,
-    lng:newPlace.lng,
-    isCustom:true,
-    sponsored:false,
-    descuento:null,
-    searchBlob:normalize(newPlace.name+' '+newPlace.address+' '+newPlace.rubro),
-    dist:null
-  });
-  const socioId=getSocioIdForRecord();
-  const socioNick=myNick||(authState.user&&authState.user.nick)||'Anónimo';
-  setApStatus('Guardando en Google Sheets...','working');
+  const socioId=developerMap?'':getSocioIdForRecord();
+  const socioNick=developerMap?'':(myNick||(authState.user&&authState.user.nick)||'Anónimo');
   const rowData={
     id:newId,
     nombre:name,
@@ -5116,15 +5155,67 @@ async function submitAddPlace(){
     puntuacion:rating!==null?String(rating):'',
     socioId:socioId,
     socioNick:socioNick,
+    developerDirect:developerMap,
     fecha:new Date().toISOString()
   };
+  setApStatus('Guardando en Google Sheets...','working');
   const res=await postToSheets('add_place',rowData);
-  if(res&&res.ok){
-    setApStatus('✓ Lugar guardado y registrado en Google Sheets.','ok');
-  }else if(res&&res.offline){
-    setApStatus('✓ Lugar guardado localmente (APPS_SCRIPT_URL sin configurar).','ok');
+  if(developerMap){
+    if(!(res&&res.ok)){
+      const errorMessage=res&&res.offline
+        ?'No se pudo guardar en el CSV: APPS_SCRIPT_URL no está configurada. No se agregó el lugar.'
+        :(res&&res.authRequired?'No se pudo validar la cuenta desarrollador para guardar el lugar.':'No se pudo registrar el lugar en Google Sheets. No se agregó al mapa.');
+      setApStatus(errorMessage,'error');
+      addPlaceBusy=false;
+      apSubmitBtn.disabled=false;
+      apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar en el mapa';
+      return;
+    }
+    /* Fila optimista de aspecto idéntico al CSV: sin isCustom, autor ni etiqueta USER. */
+    allPlaces.push({
+      id:newId,
+      sheetId:newId,
+      sheetRowNumber:null,
+      category:category,
+      rubro:categoryLabels[category],
+      name:name,
+      address:addressJoined,
+      rating:rating,
+      voteCount:0,
+      lat:primary.lat,
+      lng:primary.lng,
+      sponsored:false,
+      descuento:null,
+      searchBlob:normalize(name+' '+addressJoined+' '+categoryLabels[category]),
+      dist:null
+    });
+    setApStatus('✓ Lugar registrado en Google Sheets como una entrada normal del mapa.','ok');
   }else{
-    setApStatus('✓ Lugar guardado localmente. Error al enviar a Google Sheets.','ok');
+    customPlaces.push(newPlace);
+    saveCustomPlaces();
+    allPlaces.push({
+      id:newPlace.id,
+      category:newPlace.category,
+      rubro:newPlace.rubro,
+      name:newPlace.name,
+      address:newPlace.address,
+      rating:newPlace.rating,
+      voteCount:0,
+      lat:newPlace.lat,
+      lng:newPlace.lng,
+      isCustom:true,
+      sponsored:false,
+      descuento:null,
+      searchBlob:normalize(newPlace.name+' '+newPlace.address+' '+newPlace.rubro),
+      dist:null
+    });
+    if(res&&res.ok){
+      setApStatus('✓ Lugar guardado y registrado en Google Sheets.','ok');
+    }else if(res&&res.offline){
+      setApStatus('✓ Lugar guardado localmente (APPS_SCRIPT_URL sin configurar).','ok');
+    }else{
+      setApStatus('✓ Lugar guardado localmente. Error al enviar a Google Sheets.','ok');
+    }
   }
   renderPlaces();
   setTimeout(function(){
@@ -5136,6 +5227,7 @@ async function submitAddPlace(){
     if(place)focusPlaceOnMap(place);
   },1200);
 }
+
 apSubmitBtn.addEventListener('click',submitAddPlace);
 document.addEventListener('keydown',function(e){
   if(!(e.ctrlKey&&e.shiftKey&&(e.key==='D'||e.key==='d')))return;
@@ -7381,6 +7473,8 @@ function mmSetRoleRoute(role){
   if(window.MM_REMOVE_LANDING_IN_DEV!==undefined)window.MM_REMOVE_LANDING_IN_DEV=role==='dev';
   if(role==='dev'){
     try{enableDevMode()}catch(e){}
+  }else{
+    try{if(typeof renderPlaces==='function')renderPlaces()}catch(e){}
   }
 }
 function mmParseBillingDate(value){
@@ -7563,6 +7657,14 @@ function logout(){
     }catch(e){}
   }
   authState={isLoggedIn:false,user:null};
+  DEV_MODE=false;
+  addingMode=false;
+  document.body.classList.remove('dev-on','dev-qr-enabled','adding-mode');
+  try{if(typeof renderPlaces==='function')renderPlaces()}catch(e){}
+  if(devToggleBtn){devToggleBtn.classList.remove('active');devToggleBtn.setAttribute('aria-pressed','false')}
+  try{if(addPlaceModal&&addPlaceModal.classList.contains('visible'))closeAddPlaceModal()}catch(e){}
+  try{renderAllUserMotos()}catch(e){}
+  try{renderAllChatLocations()}catch(e){}
   myNick='';
   try{localStorage.removeItem(CHAT_KEY_NICK)}catch(e){}
   saveAuth();
@@ -8437,8 +8539,8 @@ function isGuestAccount(userLike){
   return id.indexOf('guest_')===0;
 }
 function canViewerSeeMapUser(userLike){
-  if(!authState.isLoggedIn||!authState.user)return false;
-  return isGuestAccount(userLike)===isGuestAccount(authState.user);
+  if(!userLike||!String(userLike.id||'').trim())return false;
+  return !!(authState&&authState.isLoggedIn&&authState.user&&isDeveloperAccount()&&DEV_MODE);
 }
 function canViewerSeeMapLocation(entry){
   if(!entry)return false;
