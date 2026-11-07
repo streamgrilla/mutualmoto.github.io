@@ -24,6 +24,18 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 #authGate.hidden{display:none}
 #authGate.fading{opacity:0;pointer-events:none}
 .gate-card{background:#fff;border-radius:20px;padding:2.5rem 2rem;max-width:460px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.5);text-align:center}
+.gate-card.gate-card-with-contribution{max-width:620px;max-height:calc(100vh - 2rem);max-height:calc(100dvh - 2rem);overflow-y:auto;overscroll-behavior:contain}
+.gate-contribution{margin-top:1rem;padding-top:1rem;border-top:1px solid #ecf0f1;text-align:left}
+.gate-contribution-heading{text-align:center;margin-bottom:.85rem}
+.gate-contribution-kicker{display:inline-flex;align-items:center;gap:.4rem;color:var(--moto);font-size:.7rem;font-weight:900;letter-spacing:.5px;text-transform:uppercase;margin-bottom:.35rem}
+.gate-contribution-heading h3{color:#2c3e50;font-size:1.02rem;line-height:1.3;margin-bottom:.45rem}
+.gate-contribution-heading p{color:#5f6b70;font-size:.82rem;line-height:1.5}
+.gate-contribution .price-box{padding:1rem}
+.gate-contribution .price-box h4{font-size:.95rem;margin-bottom:.55rem}
+.gate-contribution .price-main{font-size:1.45rem}
+.gate-contribution-thanks{margin:.7rem 0 0;color:#647078;font-size:.76rem;line-height:1.45;text-align:center}
+.gate-contribution-thanks i{color:var(--moto);margin-right:.2rem}
+#preSection-about .about-grid{grid-template-columns:1fr}
 .register-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100000;display:none;align-items:center;justify-content:center;padding:1rem}
 .register-modal.visible{display:flex}
 .register-box{background:#fff;border-radius:18px;width:min(900px,96vw);height:min(900px,92vh);box-shadow:0 30px 80px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden}
@@ -86,6 +98,14 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
   .gate-card p.gate-intro{font-size:.78rem;}
   .password-input-row{gap:.3rem;}
   .password-toggle-btn{font-size:.68rem;padding:.55rem .4rem;}
+}
+@media (max-width:900px) and (orientation:portrait) and (pointer:coarse), (max-width:600px), (max-height:620px) and (pointer:coarse) {
+  #authGate .gate-card.gate-card-with-contribution{width:100%;max-width:560px;max-height:calc(100vh - 1.3rem);max-height:calc(100dvh - 1.3rem);padding:1rem .85rem}
+  #authGate .gate-contribution{margin-top:.8rem;padding-top:.8rem}
+  #authGate .gate-contribution-heading h3{font-size:.94rem}
+  #authGate .gate-contribution-heading p{font-size:.77rem}
+  #authGate .gate-contribution .price-box{padding:.85rem}
+  #authGate .gate-contribution .price-sub,#authGate .gate-contribution .price-annual span,#authGate .gate-contribution .price-quarterly span{font-size:.76rem}
 }
 .profile-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:4500;display:none;align-items:center;justify-content:center;padding:1rem;overflow:auto}
 .profile-modal.visible{display:flex}
@@ -320,6 +340,9 @@ body.centering-lock .leaflet-control-legend{
 .popup-content .popup-rating{color:#f39c12;font-weight:700;font-size:.85rem;display:inline-block;margin-top:.2rem}
 .popup-content .popup-route{display:inline-block;margin-top:.6rem;padding:.45rem .9rem;background:#33ccff;color:#fff!important;text-decoration:none;border-radius:6px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;border:none}
 .popup-content .popup-share{display:inline-block;margin-top:.6rem;margin-left:.4rem;padding:.45rem .9rem;background:#16a085;color:#fff;border:none;border-radius:6px;font-size:.85rem;font-weight:600;cursor:pointer}
+.popup-content .popup-delete-place{display:block;margin-top:.55rem;padding:.5rem .8rem;background:#c0392b;color:#fff;border:0;border-radius:7px;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;width:100%}
+.popup-content .popup-delete-place:hover{background:#a93226}
+.popup-content .popup-delete-place:disabled{opacity:.6;cursor:wait}
 .popup-content .popup-dev-badge{font-size:10px;color:#9b59b6;font-weight:bold;display:block;margin-top:.3rem}
 .popup-content .popup-sponsor-badge{font-size:10px;color:var(--sponsor);font-weight:bold;font-style:italic;display:block;margin-top:.3rem;letter-spacing:.4px}
 .popup-content .popup-discount-badge{font-size:11px;color:#f39c12;font-weight:800;display:block;margin-top:.3rem;letter-spacing:.4px;background:#fffbe6;border:1px solid #f39c12;border-radius:6px;padding:2px 6px;text-align:center}
@@ -824,6 +847,11 @@ html.mm-dev-requested #mobileMenuOverlay{display:none!important;pointer-events:n
 .mobile-menu-btn{display:none;position:fixed;z-index:2200;top:10px;left:10px;width:42px;height:42px;border:0;border-radius:10px;background:rgba(44,62,80,.95);color:#fff;align-items:center;justify-content:center;font-size:1.15rem;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.25);touch-action:manipulation}
 .mobile-menu-overlay{display:none;position:fixed;z-index:2050;inset:0;background:rgba(0,0,0,.42);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .28s ease,visibility .28s ease;touch-action:none}
 body.mobile-menu-open{overflow:hidden}
+.return-home-btn{position:fixed;z-index:2210;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));min-height:42px;padding:.55rem .85rem;display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:1px solid rgba(255,255,255,.28);border-radius:11px;background:rgba(44,62,80,.96);color:#fff;font:inherit;font-size:.82rem;font-weight:800;letter-spacing:.1px;box-shadow:0 3px 12px rgba(0,0,0,.28);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.return-home-btn:hover{background:#d35400;border-color:#e67e22}
+.return-home-btn:active{transform:scale(.97)}
+.return-home-btn:focus-visible{outline:3px solid rgba(255,255,255,.8);outline-offset:3px}
+@media(max-width:900px) and (orientation:portrait) and (pointer:coarse){.return-home-btn{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));min-height:42px;padding:.5rem .7rem;font-size:.78rem}}
 @media(max-width:900px) and (orientation:portrait) and (pointer:coarse){
 header{padding:.6rem 3.8rem .6rem 3.8rem;min-height:60px}
 header h1{font-size:.95rem;line-height:1.15}
@@ -1462,7 +1490,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 </div>
 
 <div id="authGate" class="hidden">
-<div class="gate-card">
+<div class="gate-card gate-card-with-contribution">
 <div class="gate-logo"><i class="fas fa-motorcycle"></i></div>
 <h1>Mutual Motos</h1>
 <h2>Iniciar sesi&oacute;n</h2>
@@ -1480,6 +1508,29 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 <button type="button" class="gate-register-btn" data-open-register><i class="fas fa-user-plus"></i> Registrarse</button>
 <div class="gate-divider">o</div>
 <button class="gate-guest-btn" id="gateGuestBtn"><i class="fas fa-user-secret"></i> Continuar como invitado</button>
+<section class="gate-contribution" aria-labelledby="gateContributionTitle">
+  <div class="gate-contribution-heading">
+    <span class="gate-contribution-kicker"><i class="fas fa-heart" aria-hidden="true"></i> Una comunidad que se sostiene entre todos</span>
+    <h3 id="gateContributionTitle">Una contribución para mantener Mutual Moto en funcionamiento</h3>
+    <p>Mutual Moto necesita recursos para seguir disponible. Los aportes de los Motoamigos ayudan a sostener el mantenimiento y la operación de la plataforma, para que el mapa, el chat y sus herramientas sigan al aire y podamos continuar mejorándolos.</p>
+  </div>
+  <div class="price-box">
+    <h4><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> Modalidades de contribución</h4>
+    <div class="price-main">$20.000 <small>/ mes</small></div>
+    <div class="price-sub">Aporte mensual para colaborar con el sostenimiento de Mutual Moto y acompañar la continuidad de sus servicios.</div>
+    <div class="price-annual">
+      <strong>$200.000 / año</strong>
+      <span>Con el aporte anual tenés dos meses bonificados.</span>
+      <div class="price-gift"><i class="fas fa-satellite-dish" aria-hidden="true"></i><span>Además, <strong>recibís un combo de alarma con rastreador GPS de regalo, con su instalación incluida.</strong></span></div>
+    </div>
+    <div class="price-quarterly">
+      <span class="promo-label"><i class="fas fa-gift" aria-hidden="true"></i> Promoción especial</span>
+      <strong>5 meses de membresía · $100.000</strong>
+      <span>Con esta promoción, también recibís un <strong>combo de alarma con rastreador GPS de regalo, con su instalación incluida.</strong></span>
+    </div>
+  </div>
+  <p class="gate-contribution-thanks"><i class="fas fa-heart" aria-hidden="true"></i> Gracias por ayudar a que Mutual Moto siga al aire y continúe creciendo.</p>
+</section>
 <div class="gate-footer">Sin marcar "Recu&eacute;rdame", la pr&oacute;xima vez se volver&aacute; a mostrar esta pantalla.</div>
 </div>
 </div>
@@ -1507,9 +1558,9 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 </div>
 <div class="form-context-note user-registration-intro">
   <strong class="form-context-title">Información para Motoamigos</strong>
-  <p>Toda persona que llene el formulario de ingreso, leído las bases y condiciones, y abonado el mes o la promo anual, serán considerados 'Motoamigos', cuando se acerque el momento de abonar la mensualidad, se le avisará con un anticipo de una semana, en caso de no abonar la cuota mensual, la cuenta será desactivada, no obstante, no se modificaran los valores de los puntos ni los Moto Coins, para poder gozar de los puntos, los Moto Coins y todos los servicios exclusivos, deberá abonar el mes y adjuntar el comprobante cuando la página lo solicite.</p>
+  <p>Al completar el formulario y elegir una modalidad de contribución, pasás a formar parte de la comunidad de Motoamigos. Estos aportes ayudan a cubrir el mantenimiento y la operación de Mutual Moto para que la plataforma pueda seguir disponible. Una semana antes de la fecha de renovación recibirás un recordatorio. Si al llegar el vencimiento no se registra la renovación, el acceso a tu cuenta y a sus funciones para miembros quedará temporalmente pausado; tus puntos y Moto Coins se conservarán. Cuando el sistema lo solicite, podrás enviar el comprobante desde el buzón.</p>
   <p>Los datos personales que se ingresan aquí se encuentran respaldados por la ley 28.255 y únicamente pueden ser utilizados por el usuario que llena el formulario. Los datos de salud ingresados por el usuario serán adjuntados a un código QR que sólo se puede mostrar a otro Motoamigo en caso de una emergencia de clase 'Riesgo de vida'.</p>
-  <p>Con el pago de la primera cuota, o la promoción anual, el Motoamigo tendrá la posibilidad de obtener una chapa colgante con el QR de sus datos y una remera personalizada en agradecimiento por la inscripción al servicio.</p>
+  <p>Como agradecimiento por sumarte y colaborar con la comunidad, quienes realicen su primera contribución o elijan la modalidad anual podrán obtener una chapa colgante con el QR de sus datos y una remera personalizada. El diseño se coordina directamente con los desarrolladores.</p>
 </div>
 <iframe class="register-iframe google-form-iframe" src="https://docs.google.com/forms/d/e/1FAIpQLSfKPVPXGwORQ5tUylZ1Re47im4DdiepitvaN_OjzkqPNvhtYA/viewform?embedded=true" width="640" height="2052" frameborder="0" marginheight="0" marginwidth="0" title="Formulario de inscripción para miembros Motoamigos" loading="lazy" scrolling="auto">Cargando…</iframe>
 </div>
@@ -1541,23 +1592,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
         </div>
         <p><strong>Tu experiencia también tiene valor.</strong> Podés calificar establecimientos, compartir tus experiencias y ayudar a otros motoqueros a identificar lugares confiables. Cada nuevo socio y cada nuevo comercio hacen que la red sea más útil para todos.</p>
         <p>La comunidad puede participar ayudando a un Moto Amigo cuando tiene un incidente o cuando Mutual Moto le asigne alguna tarea/acción solidaria. Esa colaboración se reconoce mediante puntos y Moto Coins.<p>haciendo que ayudar también forme parte de la experiencia de Mutual Moto.</p>
-        <p><strong>No se trata solamente de pagar una membresía.</strong> Se trata de formar parte de una red de lugares, beneficios y personas que comparten una misma pasión.</p>
-      </div>
-      <div class="price-box">
-        <h3><i class="fas fa-id-card"></i> ¿Cuánto cuesta ser socio?</h3>
-        <div class="price-main">$20.000 <small>/ mes</small></div>
-        <div class="price-sub">Membresía mensual para formar parte de la comunidad y acceder a sus beneficios.</div>
-        <div class="price-annual">
-          <strong>$200.000 / año</strong>
-          <span>Pagando el año completo, tenés dos meses gratis.</span>
-          <div class="price-gift"><i class="fas fa-satellite-dish" aria-hidden="true"></i><span>Además, <strong>recibís un combo de alarma con rastreador GPS de regalo con su instalación incluida.</strong></span></div>
-        </div>
-        <div class="price-quarterly">
-          <span class="promo-label"><i class="fas fa-gift" aria-hidden="true"></i> Nueva promoción</span>
-          <strong>5 meses de membresía · $100.000</strong>
-          <span>Abonando los tres meses por adelantado, recibís un <strong>combo de alarma con rastreador GPS de regalo con su instalación incluida.</strong></span>
-        </div>
-        <p style="margin-top:1rem;color:#fff;line-height:1.6;font-size:.86rem">Durante el proceso de asociación, deberás rellenar un formulario donde deberás ingresar tus datos personales que únicamente serán visibles por usted. Una vez dada de alta la cuenta, el usuario deberá visitar un local "Motoamigazo" para retirar un colgante con un código QR con sus datos personales y de salud, junto con una remera de regalo de asociación, el usuario deberá comunicarse con los desarrolladores para coordinar su diseño.<p>Tu moto te lleva a cualquier lugar. Nosotros queremos ayudarte a encontrar lo que necesitás en el camino.</p>
+        <p><strong>La comunidad también ayuda a sostener Mutual Moto.</strong> Los aportes de sus miembros contribuyen a mantener la plataforma disponible y a seguir mejorando la red de lugares, beneficios y personas que compartimos.</p>
       </div>
     </div>
     <div style="text-align:center;margin-top:1.5rem"><strong style="color:var(--moto);font-size:1.05rem">Sumate a Mutual Moto y hacé crecer la comunidad con nosotros.</strong></div>
@@ -1661,13 +1696,8 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 </div>
 
 <script>
-(function(){
-  if(window.MM_REMOVE_LANDING_IN_DEV!==true)return;
-  var header=document.getElementById('siteHeader');
-  var landing=document.getElementById('preMapContent');
-  if(header&&header.parentNode)header.parentNode.removeChild(header);
-  if(landing&&landing.parentNode)landing.parentNode.removeChild(landing);
-})();
+/* En la ruta dev se oculta la portada mediante CSS, pero se conserva en el DOM
+   para permitir volver al menú de inicio sin recargar ni cerrar la sesión. */
 </script>
 
 <div id="mapPage" class="map-page hidden">
@@ -1682,6 +1712,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
   root.style.setProperty('opacity','1','important');
 })();
 </script>
+<button id="returnHomeBtn" class="return-home-btn" type="button" title="Volver al menú de inicio" aria-label="Volver al menú de inicio"><i class="fas fa-house"></i><span>Inicio</span></button>
 <button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-label="Abrir menú" aria-expanded="false"><i class="fas fa-bars"></i></button>
 <div id="mobileMenuOverlay" class="mobile-menu-overlay" aria-hidden="true"></div>
 <div class="container">
@@ -1932,15 +1963,6 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="profile-content" id="profileContent"></div>
 <button class="primary-btn danger" id="profileLogoutBtn"><i class="fas fa-right-from-bracket"></i> Cerrar sesi&oacute;n</button>
 <button class="modal-cancel-btn" id="profileCloseBtn">Cerrar</button>
-</div>
-</div>
-
-<div class="nick-modal" id="nickModal">
-<div class="nick-box">
-<h3><i class="fas fa-comments"></i> Eleg&iacute; tu apodo</h3>
-<p>Se va a mostrar en el chat junto a tus mensajes. Pod&eacute;s cambiarlo despu&eacute;s con doble clic en el bot&oacute;n "Chat" del header.</p>
-<input type="text" id="nickInput" maxlength="20" placeholder="Ej: motoquero42">
-<button class="primary-btn" id="nickSaveBtn">Entrar al chat</button>
 </div>
 </div>
 
@@ -2650,54 +2672,11 @@ try{
 function saveSiniestros(){
   try{localStorage.setItem(SINIESTROS_KEY,JSON.stringify(siniestros.slice(-SINIESTROS_MAX)))}catch(e){}
 }
-function mmCreateOperationId(){
-  try{
-    const bytes=new Uint8Array(16);
-    if(window.crypto&&typeof window.crypto.getRandomValues==='function'){
-      window.crypto.getRandomValues(bytes);
-      return Array.from(bytes).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
-    }
-  }catch(e){}
-  return 'mm'+Date.now().toString(36)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
-}
-function mmQueryOperationStatus(operationId){
-  return new Promise(function(resolve){
-    if(!APPS_SCRIPT_URL){resolve(null);return}
-    const callbackName='__mmOpStatus_'+mmCreateOperationId().replace(/[^A-Za-z0-9_$]/g,'');
-    const script=document.createElement('script');
-    let settled=false;
-    const cleanup=function(value){
-      if(settled)return;
-      settled=true;
-      try{delete window[callbackName]}catch(e){window[callbackName]=undefined}
-      try{script.remove()}catch(e){}
-      resolve(value);
-    };
-    const timeout=setTimeout(function(){cleanup(null)},3500);
-    window[callbackName]=function(payload){clearTimeout(timeout);cleanup(payload||null)};
-    const separator=APPS_SCRIPT_URL.indexOf('?')===-1?'?':'&';
-    script.async=true;
-    script.onerror=function(){clearTimeout(timeout);cleanup(null)};
-    script.src=APPS_SCRIPT_URL+separator+'action=operation_status&operationId='+encodeURIComponent(operationId)+'&callback='+encodeURIComponent(callbackName)+'&_='+Date.now();
-    document.head.appendChild(script);
-  });
-}
-async function mmWaitForOperationResult(operationId){
-  const deadline=Date.now()+15000;
-  while(Date.now()<deadline){
-    const status=await mmQueryOperationStatus(operationId);
-    if(status&&status.ready===true)return status.result||{ok:false,error:'El servidor devolvió un resultado vacío.'};
-    await new Promise(function(resolve){setTimeout(resolve,450)});
-  }
-  return {ok:false,pending:true,error:'Apps Script recibió la petición, pero no se pudo confirmar el resultado. Revisá la pestaña Siniestros antes de repetir la operación.'};
-}
 async function postToSheets(action,data){
   const record={action:action,data:data,ts:Date.now()};
-  const needsConfirmation=action==='register_siniestro'||action==='resolve_siniestro_qr'||action==='clear_user_incidents_after_qr';
-  if(needsConfirmation)record.operationId=mmCreateOperationId();
   // Los cambios de saldo se autentican con la credencial de la propia cuenta.
   // Nunca se incrusta la contraseña maestra de la API en el HTML.
-  if(['points_change','coins_change','add_place','register_siniestro','resolve_siniestro_qr','clear_user_incidents_after_qr'].indexOf(action)!==-1){
+  if(['points_change','coins_change','add_place','delete_place','register_siniestro','resolve_siniestro_qr','clear_user_incidents_after_qr'].indexOf(action)!==-1){
     var currentUser=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:null;
     var accountIdentifier=String(currentUser&&(currentUser.email||currentUser.correo||currentUser.nick||currentUser.nickname||currentUser.id)||'');
     var accountPassword=String(currentUser&&currentUser.password||'');
@@ -2724,7 +2703,7 @@ async function postToSheets(action,data){
     // escribir un saldo para no enviar una operación que el servidor rechazará.
     if(!accountPassword&&currentUser&&!currentUser.isGuest&&accountIdentifier){
       var enteredPassword='';
-      var credentialPrompt=(action==='resolve_siniestro_qr'||action==='clear_user_incidents_after_qr')?'Para retirar el incidente del mapa y de la sala grupal, validá la contraseña de tu cuenta:':((action==='add_place'||action==='register_siniestro')?'Para guardar esta actividad en Mutual Moto, validá la contraseña de tu cuenta:':'Para guardar tus puntos y Moto Coins en Google Sheets, ingresá la contraseña de tu cuenta:');
+      var credentialPrompt=action==='delete_place'?'Para eliminar una dirección del mapa, validá la contraseña de tu cuenta desarrollador:':((action==='resolve_siniestro_qr'||action==='clear_user_incidents_after_qr')?'Para retirar el incidente del mapa y de la sala grupal, validá la contraseña de tu cuenta:':((action==='add_place'||action==='register_siniestro')?'Para guardar esta actividad en Mutual Moto, validá la contraseña de tu cuenta:':'Para guardar tus puntos y Moto Coins en Google Sheets, ingresá la contraseña de tu cuenta:'));
       try{enteredPassword=String(window.prompt(credentialPrompt)||'')}catch(_){}
       if(!enteredPassword){
         try{if(typeof showAppNotification==='function')showAppNotification('No se pudo completar la operación: falta validar la contraseña de la cuenta.','fa-lock')}catch(_){}
@@ -2744,24 +2723,22 @@ async function postToSheets(action,data){
     return {ok:false,offline:true};
   }
   try{
-    await fetch(APPS_SCRIPT_URL,{
+    const response=await fetch(APPS_SCRIPT_URL,{
       method:'POST',
       mode:'no-cors',
       headers:{'Content-Type':'text/plain;charset=utf-8'},
       body:JSON.stringify(record)
     });
-    if(needsConfirmation){
-      const confirmed=await mmWaitForOperationResult(record.operationId);
-      if(!confirmed||confirmed.ok!==true)return confirmed||{ok:false,error:'No se recibió confirmación del servidor.'};
-      return confirmed;
-    }
+    /* no-cors entrega una respuesta opaca: la solicitud se envió, pero el navegador
+       no permite leer el JSON de Apps Script para confirmar el resultado del servidor. */
+    const responseUnconfirmed=!!(response&&response.type==='opaque');
     /* Releer el valor de Usuarios luego del tiempo normal de propagación de la hoja. */
     if(action==='points_change'||action==='coins_change'){
       setTimeout(function(){
         try{if(typeof window.MM_refreshStatsFromUsersSheet==='function')window.MM_refreshStatsFromUsersSheet()}catch(_){}
       },5000);
     }
-    return {ok:true};
+    return {ok:true,dispatched:true,unconfirmed:responseUnconfirmed};
   }catch(e){
     return {ok:false,error:e.message};
   }
@@ -3146,6 +3123,22 @@ map.on('dblclick',function(e){
   goToUserLocation();
 });
 document.body.addEventListener('click',function(e){
+  const btn=e.target.closest('[data-delete-map-place]');
+  if(!btn)return;
+  e.preventDefault();
+  e.stopPropagation();
+  if(!isDeveloperAccount()||!DEV_MODE){alert('Esta acción requiere una sesión desarrollador activa.');return;}
+  const placeId=btn.dataset.deleteMapPlace;
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Enviando…';
+  deleteMapPlaceFromMarker(placeId).finally(function(){
+    if(document.body.contains(btn)){
+      btn.disabled=false;
+      btn.innerHTML='<i class="fas fa-trash"></i> Eliminar dirección';
+    }
+  });
+});
+document.body.addEventListener('click',function(e){
   const btn=e.target.closest('[data-waze-nav-lat]');
   if(!btn)return;
   e.preventDefault();
@@ -3375,6 +3368,7 @@ let focusedPlaceId=null;
 let focusedIncidentId=null;
 let focusedTarget=null;
 let addPlaceBusy=false;
+let devMapAddContext=null;
 let inactivityTimeoutMs=300000;
 const userMotoMarkers=new Map();
 const ALERT_KEY='servicios_ba_active_alert_v1';
@@ -4129,6 +4123,7 @@ function rowsToPlaces(rows){
   const iPat=find(['patron','patrocinado','sponsor']);
   const iDesc=find(['descuento','discount','desc','descuentos','oferta']);
   const iCnt=find(['cantidad_votos','votos','cantidad','votantes']);
+  const iId=find(['id','id lugar','identificador']);
   if(iLat<0)return[];
   if(iLng<0)return[];
   if(iNom<0)return[];
@@ -4165,6 +4160,8 @@ function rowsToPlaces(rows){
     }
     out.push({
       id:'csv/'+i,
+      sheetId:iId>=0?String(r[iId]||'').trim():'',
+      sheetRowNumber:i+1,
       category:category,
       rubro:rubroRaw||categoryLabels[category],
       name:name,
@@ -4243,6 +4240,8 @@ function mergeCustomPlaces(){
   customPlaces.forEach(function(cp){
     allPlaces.push({
       id:cp.id,
+      sheetId:cp.id,
+      sheetRowNumber:null,
       category:cp.category,
       rubro:cp.rubro||keyToRubro[cp.category],
       name:cp.name,
@@ -4309,7 +4308,9 @@ function buildPopupHtml(place){
   if(place.sponsored)sponsorBadge='<span class="popup-sponsor-badge">MOTOAMIGAZO</span>';
   let discountBadge='';
   if(place.descuento)discountBadge='<span class="popup-discount-badge"><i class="fas fa-tag"></i> -'+Math.round(place.descuento)+'% DE DESCUENTO</span>';
-  return '<div class="popup-content"><span class="popup-title"><strong>'+escapeHtml(place.name)+'</strong></span><div class="popup-line"><i class="fas fa-map-pin" style="color:'+colors[place.category]+'"></i> '+escapeHtml(place.address||'Sin dirección')+'</div><div class="popup-rubro">'+escapeHtml(place.rubro||categoryLabels[place.category])+'</div>'+ratingHtml+'<br><button class="popup-route" data-waze-nav-lat="'+place.lat+'" data-waze-nav-lng="'+place.lng+'"><i class="fas fa-route"></i> Ir con Waze</button><button class="popup-share" data-place-id="'+escapeHtml(place.id)+'"><i class="fas fa-share-alt"></i> Compartir</button>'+buildRatingStarsHtml(place)+discountBadge+devBadge+sponsorBadge+'</div>';
+  const canDeletePlace=!!(DEV_MODE&&typeof isDeveloperAccount==='function'&&isDeveloperAccount());
+  const deleteButton=canDeletePlace?'<button type="button" class="popup-delete-place" data-delete-map-place="'+escapeHtml(place.id)+'"><i class="fas fa-trash"></i> Eliminar dirección</button>':'';
+  return '<div class="popup-content"><span class="popup-title"><strong>'+escapeHtml(place.name)+'</strong></span><div class="popup-line"><i class="fas fa-map-pin" style="color:'+colors[place.category]+'"></i> '+escapeHtml(place.address||'Sin dirección')+'</div><div class="popup-rubro">'+escapeHtml(place.rubro||categoryLabels[place.category])+'</div>'+ratingHtml+'<br><button class="popup-route" data-waze-nav-lat="'+place.lat+'" data-waze-nav-lng="'+place.lng+'"><i class="fas fa-route"></i> Ir con Waze</button><button class="popup-share" data-place-id="'+escapeHtml(place.id)+'"><i class="fas fa-share-alt"></i> Compartir</button>'+buildRatingStarsHtml(place)+discountBadge+devBadge+sponsorBadge+deleteButton+'</div>';
 }
 function computeDistances(places){
   if(!userLocation)return;
@@ -4343,7 +4344,7 @@ function getOrCreatePlaceMarker(place,zOff){
   const signature=JSON.stringify([
     place.lat,place.lng,place.name,place.category,place.rubro,place.address,
     place.rating,place.voteCount,place.descuento,place.sponsored,place.isCustom,
-    place.author,place.phone,myRatings[place.id]||0
+    place.author,place.phone,myRatings[place.id]||0,!!(DEV_MODE&&typeof isDeveloperAccount==='function'&&isDeveloperAccount())
   ]);
   let marker=placeMarkerCache.get(place.id);
   if(!marker){
@@ -4574,6 +4575,53 @@ function deleteCustomPlace(id){
   allPlaces=allPlaces.filter(function(p){return p.id!==id});
   renderPlaces();
 }
+async function deleteMapPlaceFromMarker(placeId){
+  if(!isDeveloperAccount()||!DEV_MODE){
+    alert('Eliminar direcciones del mapa es una función exclusiva del modo desarrollador.');
+    return;
+  }
+  const place=allPlaces.find(function(item){return String(item.id)===String(placeId)});
+  if(!place){alert('No se encontró la dirección seleccionada.');return;}
+  let rowNumber=Number(place.sheetRowNumber||0);
+  if(!rowNumber){
+    const rowMatch=String(place.id||'').match(/^csv\/(\d+)$/);
+    if(rowMatch)rowNumber=Number(rowMatch[1])+1;
+  }
+  const sheetId=String(place.sheetId||((String(place.id||'').indexOf('csv-pending/')===0)?place.id:'')).trim();
+  if(!rowNumber&&!sheetId){
+    alert('No se pudo identificar la fila de esta dirección en Google Sheets. Actualizá el mapa y volvé a seleccionarla.');
+    return;
+  }
+  const detail='\n\n'+place.name+(place.address?'\n'+place.address:'')+'\n'+Number(place.lat).toFixed(6)+', '+Number(place.lng).toFixed(6);
+  if(!confirm('¿Enviar una solicitud para eliminar esta dirección del mapa y del CSV?'+detail+'\n\nEsta acción es exclusiva de desarrolladores.'))return;
+  try{
+    const result=await postToSheets('delete_place',{
+      id:sheetId||String(place.id||''),
+      placeId:String(place.id||''),
+      rowNumber:rowNumber||'',
+      nombre:String(place.name||''),
+      rubro:String(place.rubro||categoryLabels[place.category]||''),
+      direccion:String(place.address||''),
+      lat:Number(place.lat).toFixed(6),
+      lng:Number(place.lng).toFixed(6),
+      source:'dev-map-marker'
+    });
+    if(!result||!result.ok){
+      alert(result&&result.offline?'No se pudo enviar la solicitud: el servidor de Google Sheets no está configurado.':'No se pudo enviar la solicitud de eliminación.');
+      return;
+    }
+    allPlaces=allPlaces.filter(function(item){return String(item.id)!==String(place.id)});
+    customPlaces=customPlaces.filter(function(item){return String(item.id)!==String(place.id)});
+    saveCustomPlaces();
+    if(focusedPlaceId===place.id){focusedPlaceId=null;focusedTarget=null;}
+    renderPlaces();
+    try{map.closePopup()}catch(_){}
+    showAppNotification('Solicitud de eliminación enviada. El Apps Script validará los permisos y retirará el registro de la hoja.','fa-trash');
+  }catch(err){
+    console.error('No se pudo solicitar la eliminación de la dirección:',err);
+    alert('No se pudo enviar la solicitud de eliminación. '+String(err&&err.message||''));
+  }
+}
 function focusPlaceOnMap(place){
   if(!place)return;
   ensureUnlocked();
@@ -4733,6 +4781,7 @@ function enableDevMode(){
     DEV_MODE=false;
     document.body.classList.remove('dev-on','dev-qr-enabled');
     document.documentElement.classList.remove('mm-dev-requested');
+    try{if(typeof renderPlaces==='function')renderPlaces()}catch(_){}
     return;
   }
   DEV_MODE=true;
@@ -4740,6 +4789,9 @@ function enableDevMode(){
   if(mqttClient)if(chatReady){try{mqttClient.subscribe(TOPIC_SUGGESTIONS,{qos:0})}catch(e){}}
   loadSuggestions();
   updateSuggestionBadge();
+  try{renderAllUserMotos()}catch(e){}
+  try{renderAllChatLocations()}catch(e){}
+  try{if(typeof renderPlaces==='function')renderPlaces()}catch(e){}
 }
 function toggleAddingMode(){
   if(!isDeveloperAccount()||!DEV_MODE){alert('Esta acción requiere iniciar sesión con una cuenta habilitada para desarrollo.');return}
@@ -4885,93 +4937,23 @@ if(devClearBtn){
 }
 if(document.getElementById('devClearIncidentsBtn'))document.getElementById('devClearIncidentsBtn').addEventListener('click',clearIncidentsDev);
 if(document.getElementById('devManageUsersBtn'))document.getElementById('devManageUsersBtn').addEventListener('click',openDevUsersAdminModal);
-function buildDevAddFormHtml(lat,lng){
-  const opts=ALL_CATEGORIES.map(function(c){
-    return '<option value="'+c+'">'+categoryLabels[c]+'</option>';
-  }).join('');
-  return '<div class="add-form"><h4><i class="fas fa-plus-circle" style="color:#9b59b6"></i> Nueva ubicación (dev)</h4>'+
-    '<label>Nombre</label><input id="af-name" type="text" placeholder="Ej: Taller López" maxlength="80">'+
-    '<label>Rubro</label><select id="af-cat">'+opts+'</select>'+
-    '<label>Dirección</label><input id="af-addr" type="text" placeholder="Ej: Av. Corrientes 1234" maxlength="120">'+
-    '<label>Puntuación</label>'+
-    '<div class="af-rating-stars" id="af-rating-stars">'+
-    '<button type="button" data-rating="1" aria-label="1 estrella">★</button>'+
-    '<button type="button" data-rating="2" aria-label="2 estrellas">★</button>'+
-    '<button type="button" data-rating="3" aria-label="3 estrellas">★</button>'+
-    '<button type="button" data-rating="4" aria-label="4 estrellas">★</button>'+
-    '<button type="button" data-rating="5" aria-label="5 estrellas">★</button>'+
-    '<span class="ap-rating-value" id="af-rating-value">Sin puntuación</span>'+
-    '</div>'+
-    '<input id="af-rating" type="hidden" value="">'+
-    '<div class="af-coords">'+lat.toFixed(5)+', '+lng.toFixed(5)+'</div>'+
-    '<div class="af-actions"><button class="af-save" id="af-save"><i class="fas fa-save"></i> Guardar</button>'+
-    '<button class="af-cancel" id="af-cancel"><i class="fas fa-times"></i> Cancelar</button></div></div>';
-}
+/* En modo desarrollador se selecciona el punto en el mapa y se abre el mismo
+   formulario de alta que utilizan los Motoamigos. El alta se registra en Sheets
+   sin socioId/socioNick y se representa como una fila normal del CSV. */
 map.on('click',function(e){
   if(!addingMode)return;
   if(mapInteractionLocked)return;
   const lat=e.latlng.lat;
   const lng=e.latlng.lng;
   if(!isInBounds(lat,lng))return;
+  if(!isDeveloperAccount()||!DEV_MODE){
+    addingMode=false;
+    document.body.classList.remove('adding-mode');
+    return;
+  }
   ensureUnlocked();
-  const formHtml=buildDevAddFormHtml(lat,lng);
-  const popup=L.popup({closeButton:true,autoClose:false,closeOnClick:false,className:'dev-popup'}).setLatLng(e.latlng).setContent(formHtml).openOn(map);
-  setTimeout(function(){const n=document.getElementById('af-name');if(n)n.focus()},100);
-  document.querySelectorAll('#af-rating-stars button').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      const value=parseInt(btn.getAttribute('data-rating'),10);
-      const input=document.getElementById('af-rating');
-      const valueEl=document.getElementById('af-rating-value');
-      if(input)input.value=String(value);
-      document.querySelectorAll('#af-rating-stars button').forEach(function(star){
-        const starValue=parseInt(star.getAttribute('data-rating'),10);
-        star.classList.toggle('active',starValue<=value);
-      });
-      if(valueEl)valueEl.textContent=value+'/5';
-    });
-  });
-  document.getElementById('af-save').addEventListener('click',function(){
-    const name=document.getElementById('af-name').value.trim();
-    const category=document.getElementById('af-cat').value;
-    let address=document.getElementById('af-addr').value.trim();
-    if(!address)address=lat.toFixed(5)+', '+lng.toFixed(5);
-    const ratingRaw=parseFloat(document.getElementById('af-rating').value);
-    let rating=null;
-    if(!isNaN(ratingRaw))rating=ratingRaw;
-    if(!name){alert('El nombre es obligatorio.');return}
-    const newPlace={
-      id:'custom/'+Date.now()+'/'+Math.random().toString(36).substr(2,6),
-      name:name,
-      category:category,
-      rubro:categoryLabels[category],
-      address:address,
-      rating:rating,
-      lat:lat,
-      lng:lng
-    };
-    customPlaces.push(newPlace);
-    saveCustomPlaces();
-    allPlaces.push({
-      id:newPlace.id,
-      category:newPlace.category,
-      rubro:newPlace.rubro,
-      name:newPlace.name,
-      address:newPlace.address,
-      rating:newPlace.rating,
-      voteCount:0,
-      lat:newPlace.lat,
-      lng:newPlace.lng,
-      isCustom:true,
-      sponsored:false,
-      descuento:null,
-      searchBlob:normalize(newPlace.name+' '+newPlace.address+' '+newPlace.rubro),
-      dist:null
-    });
-    map.closePopup(popup);
-    renderPlaces();
-    toggleAddingMode();
-  });
-  document.getElementById('af-cancel').addEventListener('click',function(){map.closePopup(popup)});
+  toggleAddingMode();
+  openAddPlaceModal({developerMap:true,lat:lat,lng:lng});
 });
 function renderAddressFields(addresses){
   apAddressList.innerHTML='';
@@ -5016,10 +4998,22 @@ function setApStatus(text,cls){
   apStatus.textContent=text||'';
   apStatus.className='ap-status'+(cls?' '+cls:'');
 }
-function openAddPlaceModal(){
+function openAddPlaceModal(options){
+  options=options||{};
+  const developerMap=options.developerMap===true;
   if(!isLoggedIn()){
     alert('Necesitás iniciar sesión para añadir lugares.');
     showGate();
+    return;
+  }
+  if(developerMap&&(!isDeveloperAccount()||!DEV_MODE)){
+    alert('Esta acción requiere una sesión desarrollador activa.');
+    return;
+  }
+  devMapAddContext=developerMap?{lat:Number(options.lat),lng:Number(options.lng)}:null;
+  if(developerMap&&(!Number.isFinite(devMapAddContext.lat)||!Number.isFinite(devMapAddContext.lng)||!isInBounds(devMapAddContext.lat,devMapAddContext.lng))){
+    devMapAddContext=null;
+    alert('No se pudo reconocer el punto seleccionado en el mapa.');
     return;
   }
   apName.value='';
@@ -5029,6 +5023,19 @@ function openAddPlaceModal(){
   apRatingValue.textContent='Sin puntuación';
   setApStatus('');
   renderAddressFields(['']);
+  const intro=addPlaceModal.querySelector('.modal-box > p');
+  const addressLabel=apAddressList.previousElementSibling;
+  if(developerMap){
+    if(intro)intro.textContent='Completá los datos del lugar. Se guardará en el punto que seleccionaste en el mapa; la dirección es opcional.';
+    if(addressLabel)addressLabel.textContent='Dirección (opcional)';
+    if(apAddAddrBtn)apAddAddrBtn.style.display='none';
+    apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar en el mapa';
+  }else{
+    if(intro)intro.textContent='Completá los datos. La página calcula las coordenadas a partir de la dirección automáticamente.';
+    if(addressLabel)addressLabel.textContent='Direcciones';
+    if(apAddAddrBtn)apAddAddrBtn.style.display='';
+    apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar lugar';
+  }
   addPlaceModal.classList.add('visible');
   setTimeout(function(){apName.focus()},120);
 }
@@ -5036,6 +5043,12 @@ function closeAddPlaceModal(){
   addPlaceModal.classList.remove('visible');
   setApStatus('');
   addPlaceBusy=false;
+  devMapAddContext=null;
+  const intro=addPlaceModal.querySelector('.modal-box > p');
+  const addressLabel=apAddressList.previousElementSibling;
+  if(intro)intro.textContent='Completá los datos. La página calcula las coordenadas a partir de la dirección automáticamente.';
+  if(addressLabel)addressLabel.textContent='Direcciones';
+  if(apAddAddrBtn)apAddAddrBtn.style.display='';
   apSubmitBtn.disabled=false;
   apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar lugar';
 }
@@ -5056,31 +5069,50 @@ if(apRatingStars)apRatingStars.querySelectorAll('button').forEach(function(btn){
 });
 async function submitAddPlace(){
   if(addPlaceBusy)return;
+  const developerMap=!!(devMapAddContext&&isDeveloperAccount()&&DEV_MODE);
+  if(devMapAddContext&&!developerMap){
+    setApStatus('La sesión desarrollador ya no está activa. Volvé a ingresar al modo dev.','error');
+    return;
+  }
   const name=(apName.value||'').trim();
   const category=apCat.value;
   const addresses=collectAddresses();
   if(!name){setApStatus('Ingresá el nombre del lugar.','error');apName.focus();return}
-  if(addresses.length===0){setApStatus('Ingresá al menos una dirección.','error');return}
+  if(!developerMap&&addresses.length===0){setApStatus('Ingresá al menos una dirección.','error');return}
   const ratingRaw=parseFloat(apRating.value);
   let rating=null;
   if(!isNaN(ratingRaw))rating=ratingRaw;
   addPlaceBusy=true;
   apSubmitBtn.disabled=true;
-  apSubmitBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Buscando coordenadas...';
-  setApStatus('Buscando coordenadas de las direcciones...','working');
+  apSubmitBtn.innerHTML=developerMap?'<i class="fas fa-spinner fa-spin"></i> Guardando en Google Sheets...':'<i class="fas fa-spinner fa-spin"></i> Buscando coordenadas...';
+  setApStatus(developerMap?'Guardando el lugar en Google Sheets...':'Buscando coordenadas de las direcciones...','working');
   const results=[];
-  for(let i=0;i<addresses.length;i++){
-    setApStatus('Buscando dirección '+(i+1)+' de '+addresses.length+'...','working');
-    const r=await geocodeAddress(addresses[i]);
-    if(r)results.push({address:addresses[i],lat:r.lat,lng:r.lng,display:r.display});
-    if(i<addresses.length-1)await new Promise(function(res){setTimeout(res,GEOCODE_DELAY_MS)});
-  }
-  if(results.length===0){
-    setApStatus('No pudimos encontrar ninguna de las direcciones. Verificá que estén bien escritas (agregá "Buenos Aires" o "CABA" si es necesario).','error');
-    addPlaceBusy=false;
-    apSubmitBtn.disabled=false;
-    apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar lugar';
-    return;
+  if(developerMap){
+    const lat=devMapAddContext.lat;
+    const lng=devMapAddContext.lng;
+    if(!isInBounds(lat,lng)){
+      setApStatus('El punto seleccionado está fuera del área de cobertura (Buenos Aires y alrededores).','error');
+      addPlaceBusy=false;
+      apSubmitBtn.disabled=false;
+      apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar en el mapa';
+      return;
+    }
+    const address=addresses.join(' | ')||lat.toFixed(5)+', '+lng.toFixed(5);
+    results.push({address:address,lat:lat,lng:lng,display:address});
+  }else{
+    for(let i=0;i<addresses.length;i++){
+      setApStatus('Buscando dirección '+(i+1)+' de '+addresses.length+'...','working');
+      const r=await geocodeAddress(addresses[i]);
+      if(r)results.push({address:addresses[i],lat:r.lat,lng:r.lng,display:r.display});
+      if(i<addresses.length-1)await new Promise(function(res){setTimeout(res,GEOCODE_DELAY_MS)});
+    }
+    if(results.length===0){
+      setApStatus('No pudimos encontrar ninguna de las direcciones. Verificá que estén bien escritas (agregá "Buenos Aires" o "CABA" si es necesario).','error');
+      addPlaceBusy=false;
+      apSubmitBtn.disabled=false;
+      apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar lugar';
+      return;
+    }
   }
   const primary=results[0];
   const addressJoined=results.map(function(r){return r.address}).join(' | ');
@@ -5089,10 +5121,10 @@ async function submitAddPlace(){
     setApStatus('La ubicación calculada está fuera del área de cobertura (Buenos Aires y alrededores).','error');
     addPlaceBusy=false;
     apSubmitBtn.disabled=false;
-    apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar lugar';
+    apSubmitBtn.innerHTML=developerMap?'<i class="fas fa-check"></i> Guardar en el mapa':'<i class="fas fa-check"></i> Guardar lugar';
     return;
   }
-  const newId='custom/'+Date.now()+'/'+Math.random().toString(36).substr(2,6);
+  const newId=(developerMap?'csv-pending/':'custom/')+Date.now()+'/'+Math.random().toString(36).substr(2,6);
   const newPlace={
     id:newId,
     name:name,
@@ -5105,27 +5137,8 @@ async function submitAddPlace(){
     lat:primary.lat,
     lng:primary.lng
   };
-  customPlaces.push(newPlace);
-  saveCustomPlaces();
-  allPlaces.push({
-    id:newPlace.id,
-    category:newPlace.category,
-    rubro:newPlace.rubro,
-    name:newPlace.name,
-    address:newPlace.address,
-    rating:newPlace.rating,
-    voteCount:0,
-    lat:newPlace.lat,
-    lng:newPlace.lng,
-    isCustom:true,
-    sponsored:false,
-    descuento:null,
-    searchBlob:normalize(newPlace.name+' '+newPlace.address+' '+newPlace.rubro),
-    dist:null
-  });
-  const socioId=getSocioIdForRecord();
-  const socioNick=myNick||(authState.user&&authState.user.nick)||'Anónimo';
-  setApStatus('Guardando en Google Sheets...','working');
+  const socioId=developerMap?'':getSocioIdForRecord();
+  const socioNick=developerMap?'':(myNick||(authState.user&&authState.user.nick)||'Anónimo');
   const rowData={
     id:newId,
     nombre:name,
@@ -5137,15 +5150,67 @@ async function submitAddPlace(){
     puntuacion:rating!==null?String(rating):'',
     socioId:socioId,
     socioNick:socioNick,
+    developerDirect:developerMap,
     fecha:new Date().toISOString()
   };
+  setApStatus('Guardando en Google Sheets...','working');
   const res=await postToSheets('add_place',rowData);
-  if(res&&res.ok){
-    setApStatus('✓ Lugar guardado y registrado en Google Sheets.','ok');
-  }else if(res&&res.offline){
-    setApStatus('✓ Lugar guardado localmente (APPS_SCRIPT_URL sin configurar).','ok');
+  if(developerMap){
+    if(!(res&&res.ok)){
+      const errorMessage=res&&res.offline
+        ?'No se pudo guardar en el CSV: APPS_SCRIPT_URL no está configurada. No se agregó el lugar.'
+        :(res&&res.authRequired?'No se pudo validar la cuenta desarrollador para guardar el lugar.':'No se pudo registrar el lugar en Google Sheets. No se agregó al mapa.');
+      setApStatus(errorMessage,'error');
+      addPlaceBusy=false;
+      apSubmitBtn.disabled=false;
+      apSubmitBtn.innerHTML='<i class="fas fa-check"></i> Guardar en el mapa';
+      return;
+    }
+    /* Fila optimista de aspecto idéntico al CSV: sin isCustom, autor ni etiqueta USER. */
+    allPlaces.push({
+      id:newId,
+      sheetId:newId,
+      sheetRowNumber:null,
+      category:category,
+      rubro:categoryLabels[category],
+      name:name,
+      address:addressJoined,
+      rating:rating,
+      voteCount:0,
+      lat:primary.lat,
+      lng:primary.lng,
+      sponsored:false,
+      descuento:null,
+      searchBlob:normalize(name+' '+addressJoined+' '+categoryLabels[category]),
+      dist:null
+    });
+    setApStatus('✓ Lugar registrado en Google Sheets como una entrada normal del mapa.','ok');
   }else{
-    setApStatus('✓ Lugar guardado localmente. Error al enviar a Google Sheets.','ok');
+    customPlaces.push(newPlace);
+    saveCustomPlaces();
+    allPlaces.push({
+      id:newPlace.id,
+      category:newPlace.category,
+      rubro:newPlace.rubro,
+      name:newPlace.name,
+      address:newPlace.address,
+      rating:newPlace.rating,
+      voteCount:0,
+      lat:newPlace.lat,
+      lng:newPlace.lng,
+      isCustom:true,
+      sponsored:false,
+      descuento:null,
+      searchBlob:normalize(newPlace.name+' '+newPlace.address+' '+newPlace.rubro),
+      dist:null
+    });
+    if(res&&res.ok){
+      setApStatus('✓ Lugar guardado y registrado en Google Sheets.','ok');
+    }else if(res&&res.offline){
+      setApStatus('✓ Lugar guardado localmente (APPS_SCRIPT_URL sin configurar).','ok');
+    }else{
+      setApStatus('✓ Lugar guardado localmente. Error al enviar a Google Sheets.','ok');
+    }
   }
   renderPlaces();
   setTimeout(function(){
@@ -5157,6 +5222,7 @@ async function submitAddPlace(){
     if(place)focusPlaceOnMap(place);
   },1200);
 }
+
 apSubmitBtn.addEventListener('click',submitAddPlace);
 document.addEventListener('keydown',function(e){
   if(!(e.ctrlKey&&e.shiftKey&&(e.key==='D'||e.key==='d')))return;
@@ -5287,6 +5353,12 @@ mobileMenuOverlay.addEventListener('touchend',function(e){
   if(!isMobileDrawer()||!e.changedTouches.length)return;
   closeMobileMenu();
 },{passive:true});
+
+var returnHomeBtn=document.getElementById('returnHomeBtn');
+if(returnHomeBtn)returnHomeBtn.addEventListener('click',function(e){
+  e.preventDefault();
+  mmReturnHomeFromButton();
+});
 
 mobileSidebar.addEventListener('click',function(e){
   if(!isMobileDrawer())return;
@@ -5683,81 +5755,107 @@ alertPasswordBtn.addEventListener('click',checkAlertPassword);
 alertPasswordInput.addEventListener('keydown',function(e){if(e.key==='Enter')checkAlertPassword()});
 async function publishResolve(alertId,resolverRole){
   resolverRole=resolverRole||'user';
+  alertId=String(alertId||'').trim();
+  if(!alertId)return false;
   return new Promise(function(resolve){
-    let idx=0;
-    const attempt=function(){
-      if(idx>=MQTT_BROKERS.length){resolve(false);return}
-      const broker=MQTT_BROKERS[idx];
+    let brokerIndex=0;
+    const tryBroker=function(){
+      if(brokerIndex>=MQTT_BROKERS.length){resolve(false);return;}
+      const broker=MQTT_BROKERS[brokerIndex++];
       let client;
       try{
-        client=mqtt.connect(broker,{clientId:'resolve_'+Math.random().toString(36).slice(2,10),clean:true,connectTimeout:7000,reconnectPeriod:0,keepalive:30});
-      }catch(e){idx++;attempt();return}
-      let resolved=false;
-      const onFail=function(){
-        if(resolved)return;
-        resolved=true;
+        client=mqtt.connect(broker,{
+          clientId:'resolve_'+Math.random().toString(36).slice(2,12),
+          clean:true,connectTimeout:7000,reconnectPeriod:0,keepalive:30
+        });
+      }catch(e){tryBroker();return;}
+      let settled=false;
+      let connected=false;
+      let pending=0;
+      let publishFailed=false;
+      let timeout=null;
+      const finish=function(ok){
+        if(settled)return;
+        settled=true;
+        if(timeout)clearTimeout(timeout);
         try{client.end(true)}catch(e){}
-        idx++;
-        attempt();
+        if(ok)resolve(true);
+        else tryBroker();
       };
       client.on('connect',function(){
-        if(resolved)return;
-        resolved=true;
+        if(settled||connected)return;
+        connected=true;
         const resolverIdentity=resolverRole==='developer'
           ?{id:'developer-qr',nick:'Desarrollador',role:'developer'}
           :resolverRole==='kiosk'
             ?{id:'kiosk-qr',nick:'Kiosco',role:'kiosk'}
             :{id:String(myUserId||'qr-scanner'),nick:String(myNick||'QR Scanner'),role:'user'};
-        const stamp=Date.now();
-        const alertMsg={kind:'alert-resolve',alertId:alertId,resolverRole:resolverRole,from:resolverIdentity,ts:stamp};
-        const incidentMsg={kind:'incident-resolve',incidentId:alertId,from:resolverIdentity,ts:stamp};
-        const publicMsg={kind:'incident-resolve',type:'public',incidentRef:alertId,from:resolverIdentity,ts:stamp};
-        const publications=[
-          {topic:TOPIC_ALERT_RESOLVE,message:alertMsg},
-          {topic:TOPIC_INCIDENTS,message:incidentMsg},
-          {topic:TOPIC_PUBLIC,message:publicMsg}
-        ];
-        let remaining=publications.length;
-        let failed=false;
-        let publishTimer=null;
-        const finish=function(){
-          if(remaining>0)return;
-          if(publishTimer)clearTimeout(publishTimer);
-          try{client.end(true)}catch(e){}
-          resolve(!failed);
+        const timestamp=Date.now();
+        const incidentMessage={
+          kind:'incident-resolve',type:'public',incidentId:alertId,incidentRef:alertId,
+          resolverRole:resolverRole,from:resolverIdentity,ts:timestamp
         };
-        publishTimer=setTimeout(function(){
-          if(remaining>0){failed=true;remaining=0;finish()}
-        },8500);
-        publications.forEach(function(item){
+        const alertMessage={
+          kind:'alert-resolve',alertId:alertId,incidentId:alertId,
+          resolverRole:resolverRole,from:resolverIdentity,ts:timestamp
+        };
+        /* Publicar también un historial retenido con la marca de resuelto. Esto
+           evita que un dispositivo que estuvo desconectado vuelva a recuperar
+           el siniestro desde el último historial grupal antiguo. */
+        const historyResolvedIncidents=Array.isArray(resolvedIncidentIds)?resolvedIncidentIds.slice():[];
+        const historyResolvedAlerts=Array.isArray(resolvedAlertIds)?resolvedAlertIds.slice():[];
+        if(historyResolvedIncidents.indexOf(alertId)<0)historyResolvedIncidents.push(alertId);
+        if(historyResolvedAlerts.indexOf(alertId)<0)historyResolvedAlerts.push(alertId);
+        const maxResolved=typeof RESOLVED_MAX==='number'?RESOLVED_MAX:500;
+        const historyMessage={
+          kind:'public-history',
+          messages:Array.isArray(publicMessages)?publicMessages.slice(-PUBLIC_HISTORY_MAX):[],
+          resolvedIncidentIds:historyResolvedIncidents.slice(-maxResolved),
+          resolvedAlertIds:historyResolvedAlerts.slice(-maxResolved),
+          incidentClearBeforeTs:Number(incidentClearBeforeTs||0),
+          ts:timestamp,from:resolverIdentity
+        };
+        const outgoing=[
+          {topic:TOPIC_INCIDENTS,message:incidentMessage,options:{qos:1}},
+          {topic:TOPIC_PUBLIC,message:incidentMessage,options:{qos:1}},
+          {topic:TOPIC_ALERT_RESOLVE,message:alertMessage,options:{qos:1}},
+          {topic:TOPIC_PUBLIC_HISTORY,message:historyMessage,options:{qos:1,retain:true}}
+        ];
+        pending=outgoing.length;
+        outgoing.forEach(function(item){
           try{
-            client.publish(item.topic,JSON.stringify(item.message),{qos:1,retain:false},function(err){
-              if(err)failed=true;
-              remaining-=1;
-              finish();
+            client.publish(item.topic,JSON.stringify(item.message),item.options||{qos:1},function(err){
+              if(settled)return;
+              if(err)publishFailed=true;
+              pending--;
+              if(pending<=0)finish(!publishFailed);
             });
-          }catch(e){failed=true;remaining-=1;finish()}
+          }catch(e){
+            publishFailed=true;
+            pending--;
+            if(pending<=0)finish(false);
+          }
         });
       });
-      client.on('error',onFail);
-      client.on('close',function(){if(!resolved)onFail()});
-      setTimeout(function(){if(!resolved)onFail()},9000);
+      client.on('error',function(){if(!connected)finish(false);else publishFailed=true;});
+      client.on('close',function(){if(!settled)finish(false)});
+      timeout=setTimeout(function(){finish(false)},12000);
     };
-    attempt();
+    tryBroker();
   });
 }
-
 function handleAlertResolveMessage(msg){
   if(!msg)return;
   if(msg.kind!=='alert-resolve')return;
-  if(!msg.alertId)return;
-  removePublicMessagesByAlertId(msg.alertId);
-  if(!activeUserAlert)return;
-  if(msg.alertId!==activeUserAlert.id)return;
-  dismissUserAlert();
-  const resolverRole=String(msg.resolverRole||(msg.from&&msg.from.role)||'');
-  const who=resolverRole==='developer'?'un desarrollador':resolverRole==='kiosk'?'un kiosco':'un compañero';
-  showAppNotification('Tu alerta fue cerrada por '+who+' y retirada de la sala general.','fa-check-circle');
+  const alertId=String(msg.alertId||msg.incidentId||'').trim();
+  if(!alertId)return;
+  const shouldNotifyOwner=!!(activeUserAlert&&String(activeUserAlert.id||'')===alertId);
+  removePublicMessagesByAlertId(alertId);
+  if(shouldNotifyOwner){
+    const resolverRole=String(msg.resolverRole||(msg.from&&msg.from.role)||'');
+    const who=resolverRole==='developer'?'un desarrollador':resolverRole==='kiosk'?'un kiosco':'un compañero';
+    showAppNotification('Tu alerta fue cerrada por '+who+' y retirada de la sala general.','fa-check-circle');
+  }
 }
 let html5QrScanner=null;
 let qrCameraActive=false;
@@ -5910,11 +6008,10 @@ function showQrResolveSuccess(role,sev){
 }
 function mmFinalizeScannedQrResolution(incidentId,resolverRole){
   incidentId=String(incidentId||'').trim();
-  if(!incidentId)return false;
+  if(!incidentId)return;
+  removePublicMessagesByAlertId(incidentId);
   markAlertResolved(incidentId);
   markIncidentResolved(incidentId);
-  removePublicMessagesByAlertId(incidentId);
-  removePublicMessagesByIncidentId(incidentId);
   siniestros=(siniestros||[]).filter(function(it){return it&&String(it.id||'')!==incidentId&&String(it.incidentRef||'')!==incidentId&&String(it.alertId||'')!==incidentId});
   saveSiniestros();
   if(typeof chatLocations!=='undefined'){
@@ -5927,26 +6024,14 @@ function mmFinalizeScannedQrResolution(incidentId,resolverRole){
   try{renderAllIncidents()}catch(_){}
   try{renderAllChatLocations()}catch(_){}
   try{if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom()}}catch(_){}
-  return true;
-}
-
-async function mmCompleteQrResolution(incidentId,resolverRole){
-  incidentId=String(incidentId||'').trim();
-  if(!incidentId)return {ok:false,error:'El QR no contiene un ID de siniestro válido.'};
-  // Primero se confirma en Apps Script. Si falla, no se borra la copia local ni se difunde el cierre.
-  const saved=await postToSheets('resolve_siniestro_qr',{siniestroId:incidentId,resolverRole:resolverRole||'user'});
-  if(!saved||saved.ok!==true){
-    const detail=saved&&saved.error?saved.error:(saved&&saved.authRequired?'Falta validar la cuenta.':'No se pudo confirmar el borrado en Google Sheets.');
-    showAppNotification('No se resolvió el siniestro: '+detail,'fa-triangle-exclamation');
-    return saved||{ok:false,error:detail};
-  }
-  // Con el borrado confirmado, difunde el cierre a mapa, sala pública y alertas.
-  const broadcasted=await publishResolve(incidentId,resolverRole||'user');
-  mmFinalizeScannedQrResolution(incidentId,resolverRole);
-  if(!broadcasted){
-    showAppNotification('El registro fue eliminado de Google Sheets, pero no se pudo sincronizar el cierre con los demás dispositivos. Volvé a conectarte al chat para sincronizarlo.','fa-triangle-exclamation');
-  }
-  return {ok:true,broadcasted:broadcasted,deleted:saved.deleted||0};
+  // Borrado permanente en la pestaña Siniestros; se ejecuta solo después del QR.
+  postToSheets('resolve_siniestro_qr',{siniestroId:incidentId,resolverRole:resolverRole||'user'}).then(function(r){
+    if(r&&r.authRequired)showAppNotification('El cierre se difundió al mapa y a la sala grupal, pero falta validar la cuenta para borrar también la fila de Google Sheets.','fa-lock');
+    else if(r&&r.ok&&r.unconfirmed)showAppNotification('Cierre difundido. Se envió el pedido para borrar el registro de Siniestros; el navegador no permite leer la confirmación de Apps Script.','fa-info-circle');
+    else if(!r||!r.ok)showAppNotification('El cierre se difundió al mapa y a la sala grupal, pero no se pudo enviar el borrado al registro de Google Sheets.','fa-exclamation-triangle');
+  }).catch(function(){
+    showAppNotification('El cierre se difundió al mapa y a la sala grupal, pero falló el envío del borrado a Google Sheets.','fa-exclamation-triangle');
+  });
 }
 
 function handleQrDecoded(raw){
@@ -5988,16 +6073,14 @@ function handleQrDecoded(raw){
         return;
       }
       stopQrCamera();
-      mmCompleteQrResolution(resolveId,resolverRole).then(function(result){
-        if(result&&result.ok){
+      publishResolve(resolveId,resolverRole).then(function(ok){
+        if(ok){
+          mmFinalizeScannedQrResolution(resolveId,resolverRole);
           closeQrScanModal();
           showQrResolveSuccess(resolverRole,sev);
         }else{
-          const detail=result&&result.error?result.error:'No se pudo confirmar la eliminación del siniestro.';
-          alert('No se pudo completar la resolución del QR.\n\n'+detail+'\n\nEl incidente se conserva en la página para que puedas intentarlo nuevamente.');
+          alert('No se pudo conectar al servidor.\n\nVerificá tu conexión e intentá de nuevo.');
         }
-      }).catch(function(err){
-        alert('No se pudo completar la resolución del QR.\n\n'+String(err&&err.message||err));
       });
       return;
     }
@@ -6005,17 +6088,15 @@ function handleQrDecoded(raw){
   const id=extractAlertId(raw);
   if(!id)return;
   stopQrCamera();
-  mmCompleteQrResolution(id,resolverRole).then(function(result){
-    if(result&&result.ok){
+  publishResolve(id,resolverRole).then(function(ok){
+    if(ok){
+      mmFinalizeScannedQrResolution(id,resolverRole);
       closeQrScanModal();
       if(resolverRole==='developer'||resolverRole==='kiosk')showQrResolveSuccess(resolverRole,'');
       else addQrScanRewards('QR de asistencia resuelto');
     }else{
-      const detail=result&&result.error?result.error:'No se pudo confirmar la eliminación del siniestro.';
-      alert('No se pudo completar la resolución del QR.\n\n'+detail+'\n\nEl incidente se conserva en la página para que puedas intentarlo nuevamente.');
+      alert('No se pudo conectar al servidor.');
     }
-  }).catch(function(err){
-    alert('No se pudo completar la resolución del QR.\n\n'+String(err&&err.message||err));
   });
 }
 function openQrScanModal(){
@@ -6199,18 +6280,13 @@ function submitIncident(){
     zona:zone,
     fecha:new Date(incident.ts).toISOString()
   }).then(function(res){
-    if(res&&res.ok){
-      log('✓ Siniestro guardado en Google Sheets (fila '+res.rowNumber+').','ok');
-    }else{
-      const detail=res&&res.error?res.error:'No se pudo confirmar la escritura en Google Sheets.';
-      log('Siniestro conservado localmente, pero no confirmado en Sheets: '+detail,'warn');
-      showAppNotification('El siniestro quedó en este dispositivo, pero no se confirmó su registro en Google Sheets. '+detail,'fa-triangle-exclamation');
-    }
+    if(res&&res.ok)log('✓ Siniestro enviado a Google Sheets','ok');
+    else log('Siniestro guardado local (APPS_SCRIPT_URL vacía)','warn');
   });
   closeIncidentModal();
   ensureUnlocked();
   map.setView([lat,lng],14,{animate:!MM_LOW_POWER_MODE});
-  showAppNotification('Siniestro difundido. Verificando su registro en Google Sheets...','fa-car-burst');
+  showAppNotification('Siniestro reportado correctamente.','fa-car-burst');
 }
 incidentBtn.addEventListener('click',openIncidentModal);
 cancelIncidentModal.addEventListener('click',closeIncidentModal);
@@ -6239,9 +6315,6 @@ const chatInput=document.getElementById('chatInput');
 const chatSendBtn=document.getElementById('chatSendBtn');
 const chatStatus=document.getElementById('chatStatus');
 const typingIndicatorEl=document.getElementById('typingIndicator');
-const nickModal=document.getElementById('nickModal');
-const nickInput=document.getElementById('nickInput');
-const nickSaveBtn=document.getElementById('nickSaveBtn');
 const loginModal=document.getElementById('loginModal');
 const loginMutualBtn=document.getElementById('loginMutualBtn');
 const loginGuestBtn=document.getElementById('loginGuestBtn');
@@ -6467,7 +6540,8 @@ function loadResolvedState(){
     if(isIncidentPublicRecord(m)&&Number(m.ts||0)<=incidentClearBeforeTs)return false;
     if(m&&m.incidentRef)if(isIncidentResolved(m.incidentRef))return false;
     if(m&&m.incidentId)if(isIncidentResolved(m.incidentId))return false;
-    if(m&&m.alertId)if(isAlertResolved(m.alertId))return false;
+    if(m&&m.alertId)if(isAlertResolved(m.alertId)||isIncidentResolved(m.alertId))return false;
+    if(m&&m.kind==='emergency'&&m.id)if(isAlertResolved(m.id)||isIncidentResolved(m.id))return false;
     return true;
   });
   siniestros=(siniestros||[]).filter(function(it){return it&&Number(it.ts||0)>incidentClearBeforeTs&&!isIncidentResolved(it.id)&&!isAlertResolved(it.id)});
@@ -6528,7 +6602,8 @@ function handlePublicHistory(payload){
     if(isIncidentPublicRecord(m)&&Number(m.ts||0)<=incidentClearBeforeTs)return false;
     if(m&&m.incidentRef)if(isIncidentResolved(m.incidentRef))return false;
     if(m&&m.incidentId)if(isIncidentResolved(m.incidentId))return false;
-    if(m&&m.alertId)if(isAlertResolved(m.alertId))return false;
+    if(m&&m.alertId)if(isAlertResolved(m.alertId)||isIncidentResolved(m.alertId))return false;
+    if(m&&m.kind==='emergency'&&m.id)if(isAlertResolved(m.id)||isIncidentResolved(m.id))return false;
     return true;
   });
   if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages=publicMessages.slice(-PUBLIC_MSGS_MAX);
@@ -7072,16 +7147,128 @@ function showGate(){
   authGate.classList.remove('hidden');
   authGate.classList.remove('fading');
 }
+
+/* La navegación es una SPA: el estado del mapa se agrega al historial para que
+   Atrás del navegador/móvil vuelva a la portada en lugar de abandonar el sitio. */
+function mmWriteViewHistory(view,replace){
+  try{
+    var current=window.history.state&&typeof window.history.state==='object'?window.history.state:{};
+    var next=Object.assign({},current,{mmMutualMotoView:view});
+    if(replace)window.history.replaceState(next,'',window.location.href);
+    else window.history.pushState(next,'',window.location.href);
+  }catch(e){}
+}
+(function mmInitializeViewHistory(){
+  try{
+    var state=window.history.state;
+    if(!state||!state.mmMutualMotoView)mmWriteViewHistory('home',true);
+  }catch(e){}
+})();
+
+function mmRenderHomeMenu(){
+  var mapPage=document.getElementById('mapPage');
+  var publicHeader=document.getElementById('siteHeader');
+  var publicHome=document.getElementById('preMapContent');
+  /* En dev se quita temporalmente el modo de presentación a pantalla completa;
+     DEV_MODE y la sesión quedan activos. */
+  try{document.documentElement.classList.remove('mm-dev-requested')}catch(e){}
+  if(mapPage){
+    mapPage.classList.add('hidden');
+    mapPage.style.removeProperty('display');
+    mapPage.style.removeProperty('visibility');
+    mapPage.style.removeProperty('opacity');
+  }
+  if(publicHeader)publicHeader.style.removeProperty('display');
+  if(publicHome)publicHome.style.removeProperty('display');
+  try{sessionStorage.removeItem('mm_wasOnMap')}catch(e){}
+  try{closeMobileMenu()}catch(e){}
+  try{
+    var state=window.history.state&&typeof window.history.state==='object'?window.history.state:{};
+    window.history.replaceState(Object.assign({},state,{mmMutualMotoView:'home'}),'',window.location.href);
+  }catch(e){}
+  try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){}
+}
+
+function mmCloseTopLayerForBack(){
+  try{if(mobileSidebar&&mobileSidebar.classList.contains('mobile-open')){closeMobileMenu();return true}}catch(e){}
+  try{if(typeof isChatOpen==='function'&&isChatOpen()){closeChat();return true}}catch(e){}
+  try{if(sheetsPanel&&sheetsPanel.classList.contains('visible')){closeSheetsPanel();return true}}catch(e){}
+  try{if(profileModal&&profileModal.classList.contains('visible')){closeProfileModal();return true}}catch(e){}
+  try{if(loginModal&&loginModal.classList.contains('visible')){hideLoginModal();return true}}catch(e){}
+  try{if(registerModal&&registerModal.classList.contains('visible')){hideRegisterModal();return true}}catch(e){}
+  try{if(associationModal&&associationModal.classList.contains('visible')){hideAssociationModal();return true}}catch(e){}
+  try{if(focusedPlaceId||focusedIncidentId){clearFocusMode();return true}}catch(e){}
+  try{
+    var modal=document.querySelector('.modal-overlay.visible');
+    if(modal){
+      var cancel=modal.querySelector('.modal-cancel-btn, [data-close-modal]');
+      if(cancel)cancel.click();else modal.classList.remove('visible');
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+var mmForceHomeFromButton=false;
+function mmReturnHomeFromButton(){
+  mmForceHomeFromButton=true;
+  try{
+    if(window.history.state&&window.history.state.mmMutualMotoView==='map'){
+      window.history.back();
+      return;
+    }
+  }catch(e){}
+  mmForceHomeFromButton=false;
+  while(mmCloseTopLayerForBack()){}
+  mmRenderHomeMenu();
+}
+
+function mmHandleAppBackNavigation(){
+  var mapPage=document.getElementById('mapPage');
+  if(!mapPage||mapPage.classList.contains('hidden'))return false;
+  if(mmForceHomeFromButton){
+    mmForceHomeFromButton=false;
+    while(mmCloseTopLayerForBack()){}
+    mmRenderHomeMenu();
+    return true;
+  }
+  /* Atrás primero cierra paneles/ventanas abiertos. El siguiente Atrás vuelve
+     al menú de inicio, tanto en móvil como en escritorio. */
+  if(mmCloseTopLayerForBack()){
+    mmWriteViewHistory('map',false);
+    return true;
+  }
+  mmRenderHomeMenu();
+  return true;
+}
+window.addEventListener('popstate',function(){mmHandleAppBackNavigation()});
+/* En WebViews basadas en Cordova se atiende también el evento nativo backbutton.
+   En navegadores normales el evento no existe y se usa popstate. */
+document.addEventListener('backbutton',function(e){
+  if(mmHandleAppBackNavigation()&&e&&typeof e.preventDefault==='function')e.preventDefault();
+},false);
+
 function showMapPage(){
   const mapPage=document.getElementById('mapPage');
   const publicHeader=document.getElementById('siteHeader');
   const publicHome=document.getElementById('preMapContent');
+  var developerView=false;
+  try{developerView=typeof isDeveloperAccount==='function'&&isDeveloperAccount()&&DEV_MODE===true}catch(e){}
+  if(developerView)document.documentElement.classList.add('mm-dev-requested');
+  else document.documentElement.classList.remove('mm-dev-requested');
+  if(!window.history.state||window.history.state.mmMutualMotoView!=='map')mmWriteViewHistory('map',false);
   if(publicHeader)publicHeader.style.display='none';
   if(publicHome)publicHome.style.display='none';
-  if(mapPage)mapPage.classList.remove('hidden');
-  try{ sessionStorage.setItem('mm_wasOnMap','1'); }catch(_){}
+  if(mapPage){
+    mapPage.classList.remove('hidden');
+    mapPage.style.removeProperty('display');
+    mapPage.style.removeProperty('visibility');
+    mapPage.style.removeProperty('opacity');
+  }
+  try{sessionStorage.setItem('mm_wasOnMap','1')}catch(_){}
   setTimeout(function(){
-    try{map.invalidateSize()}catch(_){}
+    if(!mapPage||mapPage.classList.contains('hidden'))return;
+    try{map.invalidateSize(true)}catch(_){}
     const mapWrapper=document.getElementById('map-wrapper');
     if(mapWrapper)mapWrapper.scrollIntoView({behavior:'smooth',block:'start'});
   },80);
@@ -7126,30 +7313,32 @@ function showBetaTestNoticeIfFirstLogin(user){
   alert('PRUEBA DE 10 DÍAS, TUS DATOS SERÁN BORRADOS PASADO EL LAPSO LÍMITE');
 }
 function finalizeLogin(){
-  if(authState.user&&authState.user.id){
-    myUserId=String(authState.user.id);
-    try{localStorage.setItem(CHAT_KEY_UID,myUserId)}catch(e){}
+  if(authState.user){
+    if(authState.user.id){
+      myUserId=String(authState.user.id);
+      try{localStorage.setItem(CHAT_KEY_UID,myUserId)}catch(e){}
+    }
+    if(authState.user.isGuest){
+      authState.user.nick='Invitado';
+      myNick='Invitado';
+    }else{
+      myNick=String(authState.user.nick||authState.user.nickname||authState.user.nombre||authState.user.email||'Usuario').trim()||'Usuario';
+      authState.user.nick=myNick;
+    }
   }
-  if(authState.user&&authState.user.nick){
-    myNick=authState.user.nick;
-    try{localStorage.setItem(CHAT_KEY_NICK,myNick)}catch(e){}
-  }
+  // Elimina cualquier apodo manual guardado por versiones anteriores.
+  try{localStorage.removeItem(CHAT_KEY_NICK)}catch(e){}
   saveAuth();
   updateAuthUI();
   hideLoginModal();
   hideGate();
   updateGuestControls();
   setTimeout(function(){checkMembershipExpiryAlert()},350);
-  if(authState.user&&authState.user.isGuest){
-    myNick='Invitado';
-    try{localStorage.setItem(CHAT_KEY_NICK,myNick)}catch(e){}
-    continueAfterAuth();
-  }else if(!myNick)setTimeout(askForNick,500);
-  else continueAfterAuth();
+  continueAfterAuth();
 }
 function loginAsGuest(){
   const guestId='guest_'+Date.now().toString(36)+Math.random().toString(36).substr(2,6);
-  authState={isLoggedIn:true,user:{id:guestId,nick:'',isGuest:true,rememberDevice:false,provider:'guest'}};
+  authState={isLoggedIn:true,user:{id:guestId,nick:'Invitado',isGuest:true,rememberDevice:false,provider:'guest'}};
   finalizeLogin();
 }
 function parseCsvLine(line){
@@ -7303,8 +7492,8 @@ function checkMembershipExpiryAlert(){
   const today=new Date(nowDate.getFullYear(),nowDate.getMonth(),nowDate.getDate());
   const daysLeft=Math.ceil((info.expiryDate.getTime()-today.getTime())/(24*60*60*1000));
   if(daysLeft<1||daysLeft>7)return;
-  alert('⚠️ Tu membresía de '+info.months+' '+(info.months===1?'mes':'meses')+' vence el '+formatMembershipDate(info.expiryDate)+'. '+
-    (daysLeft===1?'Falta 1 día.':'Faltan '+daysLeft+' días.')+' Renovala antes de esa fecha para evitar el bloqueo.');
+  alert('💛 Te recordamos que tu contribución para sostener Mutual Moto ('+info.months+' '+(info.months===1?'mes':'meses')+') vence el '+formatMembershipDate(info.expiryDate)+'. '+
+    (daysLeft===1?'Falta 1 día.':'Faltan '+daysLeft+' días.')+' Podés gestionar la renovación antes de esa fecha para mantener activas las funciones de tu cuenta.');
 }
 
 function getAuthIdentifier(user){
@@ -7430,6 +7619,79 @@ function mmBuildAuthUserFromRow(row,remember){
     password:mmRowPassword(row),isGuest:false,rememberDevice:!!remember,provider:'google-sheet'
   };
 }
+function mmFindRememberedUserRow(rows,savedUser){
+  var saved=savedUser||{};
+  var savedEmail=String(saved.email||saved.correo||'').trim().toLowerCase();
+  var savedId=String(saved.id||'').trim().toLowerCase();
+  var savedNick=String(saved.nick||saved.nickname||'').trim().toLowerCase();
+  function rowIdentity(row){
+    var explicitId=mmRowField(row,['id','id usuario','identificador']);
+    var nickname=mmRowField(row,['nickname','nick','usuario','nombre de usuario','username','alias']);
+    var email=mmRowField(row,['correo','correo electronico','email','e-mail','mail']);
+    var timestamp=mmRowField(row,['timestamp','marca temporal','fecha de alta']);
+    var id=String(getAuthIdentifier({id:explicitId,nickname:nickname,correo:email,timestamp:timestamp})||'').trim();
+    return {id:id.toLowerCase(),explicitId:String(explicitId||'').trim().toLowerCase(),email:String(email||'').trim().toLowerCase(),nick:String(nickname||'').trim().toLowerCase()};
+  }
+  var identities=(rows||[]).map(function(row){return {row:row,identity:rowIdentity(row)}});
+  if(savedEmail){
+    var emailMatches=identities.filter(function(item){return item.identity.email===savedEmail});
+    if(emailMatches.length){
+      if(savedId){
+        var emailAndId=emailMatches.find(function(item){return item.identity.id===savedId||item.identity.explicitId===savedId});
+        if(emailAndId)return emailAndId.row;
+      }
+      return emailMatches[0].row;
+    }
+  }
+  if(savedId){
+    var idMatch=identities.find(function(item){return item.identity.id===savedId||item.identity.explicitId===savedId});
+    if(idMatch)return idMatch.row;
+  }
+  // Compatibilidad con sesiones antiguas que no guardaban el correo.
+  if(!savedEmail&&savedNick){
+    var nickMatch=identities.find(function(item){return item.identity.nick===savedNick});
+    if(nickMatch)return nickMatch.row;
+  }
+  return null;
+}
+async function mmRestoreRememberedUserFromGoogle(savedUser){
+  if(!savedUser||savedUser.isGuest)throw new Error('No hay una cuenta registrada para restaurar.');
+  var csvUrl=AUTH_CSV_URL+(AUTH_CSV_URL.indexOf('?')>=0?'&':'?')+'_restoreRemembered='+Date.now();
+  var response=await fetch(csvUrl,{cache:'no-store'});
+  if(!response.ok)throw new Error('No se pudo consultar la pestaña Usuarios (HTTP '+response.status+').');
+  var rows=parseAuthCsv(await response.text());
+  var row=mmFindRememberedUserRow(rows,savedUser);
+  if(!row){
+    var missing=new Error('No encontramos tu cuenta en la tabla de Google Sheets. Iniciá sesión nuevamente para verificar tus datos.');
+    missing.code='MM_REMEMBERED_USER_NOT_FOUND';
+    throw missing;
+  }
+  var access=mmGetPendingLoginDecision(row);
+  if(!access.allowed){
+    var blocked=new Error(access.message||'El acceso de esta cuenta está pausado.');
+    blocked.code='MM_REMEMBERED_USER_BLOCKED';
+    throw blocked;
+  }
+  var user=mmBuildAuthUserFromRow(row,true);
+  user.rememberDevice=true;
+  user.isGuest=false;
+  user.nick=String(user.nick||user.nickname||user.nombre||user.email||'Usuario').trim()||'Usuario';
+  if(isRemovedChatUser(user.id)){
+    var removed=new Error('Esta cuenta fue retirada de Mutual Moto y ya no puede iniciar sesión.');
+    removed.code='MM_REMEMBERED_USER_REMOVED';
+    throw removed;
+  }
+  authState={isLoggedIn:true,user:user};
+  mmSetRoleRoute(user.isDeveloper?'dev':'user');
+  myUserId=String(user.id||'');
+  myNick=user.nick;
+  try{if(myUserId)localStorage.setItem(CHAT_KEY_UID,myUserId);localStorage.removeItem(CHAT_KEY_NICK)}catch(e){}
+  saveAuth();
+  updateAuthUI();
+  updateGuestControls();
+  return user;
+}
+
 function mmSetRoleRoute(role){
   role=role==='dev'||role==='kiosk'?role:'user';
   DEV_MODE=role==='dev';
@@ -7452,6 +7714,8 @@ function mmSetRoleRoute(role){
   if(window.MM_REMOVE_LANDING_IN_DEV!==undefined)window.MM_REMOVE_LANDING_IN_DEV=role==='dev';
   if(role==='dev'){
     try{enableDevMode()}catch(e){}
+  }else{
+    try{if(typeof renderPlaces==='function')renderPlaces()}catch(e){}
   }
 }
 function mmParseBillingDate(value){
@@ -7491,10 +7755,10 @@ function mmGetPendingLoginDecision(row){
   var today=new Date(todayDate.getFullYear(),todayDate.getMonth(),todayDate.getDate());
   var days=Math.ceil((due.getTime()-today.getTime())/86400000);
   if(days<=0){
-    return {allowed:false,blocked:true,managed:true,dueDate:due,daysRemaining:days,message:'Tu membresía está vencida desde el '+formatMembershipDate(due)+'. No podés ingresar hasta que se registre el pago.'};
+    return {allowed:false,blocked:true,managed:true,dueDate:due,daysRemaining:days,message:'Tu período de contribución finalizó el '+formatMembershipDate(due)+'. Para retomar el acceso, necesitás registrar la renovación. Tus puntos y Moto Coins se conservan.'};
   }
   if(days<=7){
-    return {allowed:true,warning:true,managed:true,dueDate:due,daysRemaining:days,message:'Tu membresía de '+months+' '+(months===1?'mes':'meses')+' vence el '+formatMembershipDate(due)+'. '+(days===1?'Falta 1 día.':'Faltan '+days+' días.')+' Recordá abonar para evitar el bloqueo.'};
+    return {allowed:true,warning:true,managed:true,dueDate:due,daysRemaining:days,message:'Tu contribución para sostener Mutual Moto ('+months+' '+(months===1?'mes':'meses')+') vence el '+formatMembershipDate(due)+'. '+(days===1?'Falta 1 día.':'Faltan '+days+' días.')+' Recordá gestionar la renovación para mantener disponibles las funciones de tu cuenta.'};
   }
   return {allowed:true,warning:false,managed:true,dueDate:due,daysRemaining:days,message:''};
 }
@@ -7634,17 +7898,20 @@ function logout(){
     }catch(e){}
   }
   authState={isLoggedIn:false,user:null};
+  DEV_MODE=false;
+  addingMode=false;
+  document.body.classList.remove('dev-on','dev-qr-enabled','adding-mode');
+  try{if(typeof renderPlaces==='function')renderPlaces()}catch(e){}
+  if(devToggleBtn){devToggleBtn.classList.remove('active');devToggleBtn.setAttribute('aria-pressed','false')}
+  try{if(addPlaceModal&&addPlaceModal.classList.contains('visible'))closeAddPlaceModal()}catch(e){}
+  try{renderAllUserMotos()}catch(e){}
+  try{renderAllChatLocations()}catch(e){}
   myNick='';
   try{localStorage.removeItem(CHAT_KEY_NICK)}catch(e){}
   saveAuth();
   updateAuthUI();
   if(isChatOpen())closeChat();
   showGate();
-}
-function askForNick(){
-  nickInput.value=myNick||(authState.user&&authState.user.nick)||'';
-  nickModal.classList.add('visible');
-  setTimeout(function(){nickInput.focus()},100);
 }
 function continueAfterAuth(){
   if(!chatReady)if(!mqttClient){
@@ -8508,8 +8775,8 @@ function isGuestAccount(userLike){
   return id.indexOf('guest_')===0;
 }
 function canViewerSeeMapUser(userLike){
-  if(!authState.isLoggedIn||!authState.user)return false;
-  return isGuestAccount(userLike)===isGuestAccount(authState.user);
+  if(!userLike||!String(userLike.id||'').trim())return false;
+  return !!(authState&&authState.isLoggedIn&&authState.user&&isDeveloperAccount()&&DEV_MODE);
 }
 function canViewerSeeMapLocation(entry){
   if(!entry)return false;
@@ -8723,6 +8990,8 @@ function locationFromMessage(msg){
       lng:msg.lng,
       severity:msg.severity||'leve',
       text:msg.text||'',
+      alertId:msg.alertId||msg.id||'',
+      incidentRef:msg.incidentRef||msg.incidentId||'',
       from:msg.from?{id:msg.from.id,nick:msg.from.nick,isGuest:isGuestAccount(msg.from)}:null,
       ts:msg.ts||Date.now()
     };
@@ -8737,17 +9006,20 @@ function locationFromMessage(msg){
   };
 }
 function initUserId(){
-  let id=localStorage.getItem(CHAT_KEY_UID);
+  var user=authState&&authState.isLoggedIn?authState.user:null;
+  var id=String(user&&user.id||'').trim();
   if(!id){
-    id='u_'+Date.now().toString(36)+Math.random().toString(36).substr(2,8);
-    localStorage.setItem(CHAT_KEY_UID,id);
+    id=String(localStorage.getItem(CHAT_KEY_UID)||'').trim();
+    if(!id){
+      id='u_'+Date.now().toString(36)+Math.random().toString(36).substr(2,8);
+      try{localStorage.setItem(CHAT_KEY_UID,id)}catch(e){}
+    }
+  }else{
+    try{localStorage.setItem(CHAT_KEY_UID,id)}catch(e){}
   }
   myUserId=id;
-  myNick=localStorage.getItem(CHAT_KEY_NICK)||'';
-}
-function saveNick(nick){
-  myNick=nick;
-  localStorage.setItem(CHAT_KEY_NICK,nick);
+  myNick=user?(user.isGuest?'Invitado':String(user.nick||user.nickname||user.nombre||user.email||'Usuario').trim()||'Usuario'):'Usuario';
+  try{localStorage.removeItem(CHAT_KEY_NICK)}catch(e){}
 }
 function chatStatusSet(text,cls){
   chatStatus.textContent=text;
@@ -8957,81 +9229,104 @@ function handleCoinsTransfer(msg){
   if(msg.kind==='coins-donate')handleCoinsDonation(msg);
 }
 function removePublicMessagesByIncidentId(incidentId){
-  if(!incidentId)return;
-  const rootId=String(incidentId);
+  const rootId=String(incidentId||'').trim();
+  if(!rootId)return;
   const ids=new Set([rootId]);
-  publicMessages.forEach(function(m){
-    if(!m)return;
-    if(String(m.incidentRef||'')===rootId||String(m.incidentId||'')===rootId){
-      if(m.from&&m.from.id&&m.ts)ids.add('inc_chat_'+m.from.id+'_'+m.ts);
-      if(m.incidentRef)ids.add(String(m.incidentRef));
-      if(m.incidentId)ids.add(String(m.incidentId));
+  const alertIds=new Set();
+  const derivedLocationIds=new Set();
+  const matchesIds=function(item){
+    if(!item)return false;
+    return [item.id,item.incidentRef,item.incidentId,item.alertId,item.siniestroId]
+      .some(function(value){return value!=null&&ids.has(String(value))});
+  };
+  /* Recolectar primero los distintos identificadores que pueden representar
+     el mismo reporte en MQTT, el mapa y el historial local. */
+  publicMessages.forEach(function(message){
+    if(!message)return;
+    const refs=[message.id,message.incidentRef,message.incidentId,message.alertId,message.siniestroId];
+    if(refs.some(function(value){return value!=null&&ids.has(String(value))})){
+      refs.forEach(function(value){if(value!=null&&String(value).trim())ids.add(String(value))});
+      if(message.alertId)alertIds.add(String(message.alertId));
+      if(message.kind==='emergency'&&message.id)alertIds.add(String(message.id));
+      if(message.from&&message.from.id&&message.ts){
+        derivedLocationIds.add('loc_'+message.from.id+'_'+message.ts);
+      }
     }
   });
-  incidents.forEach(function(it){
-    if(it&&String(it.incidentRef||'')===rootId&&it.id)ids.add(String(it.id));
+  incidents.forEach(function(item){
+    if(matchesIds(item)){
+      [item.id,item.incidentRef,item.incidentId,item.alertId].forEach(function(value){if(value!=null&&String(value).trim())ids.add(String(value))});
+      if(item.alertId)alertIds.add(String(item.alertId));
+      if(item.kind==='emergency'&&item.id)alertIds.add(String(item.id));
+    }
   });
+  (siniestros||[]).forEach(function(item){
+    if(matchesIds(item)){
+      [item.id,item.incidentRef,item.incidentId,item.alertId].forEach(function(value){if(value!=null&&String(value).trim())ids.add(String(value))});
+      if(item.alertId)alertIds.add(String(item.alertId));
+      if(item.kind==='emergency'&&item.id)alertIds.add(String(item.id));
+    }
+  });
+  if(typeof chatLocations!=='undefined'){
+    chatLocations.forEach(function(item){
+      if(matchesIds(item)){
+        [item.id,item.incidentRef,item.incidentId,item.alertId].forEach(function(value){if(value!=null&&String(value).trim())ids.add(String(value))});
+        if(item.alertId)alertIds.add(String(item.alertId));
+      }
+    });
+  }
   ids.forEach(function(id){markIncidentResolved(id)});
-  const before=publicMessages.length;
-  publicMessages=publicMessages.filter(function(m){
-    if(!m)return false;
-    if(m.incidentRef&&ids.has(String(m.incidentRef)))return false;
-    if(m.incidentId&&ids.has(String(m.incidentId)))return false;
-    if(m.kind==='incident'&&m.id&&ids.has(String(m.id)))return false;
+  alertIds.forEach(function(id){markAlertResolved(id)});
+  publicMessages=publicMessages.filter(function(message){
+    if(!message)return false;
+    if([message.id,message.incidentRef,message.incidentId,message.alertId,message.siniestroId]
+      .some(function(value){return value!=null&&ids.has(String(value))}))return false;
+    if(message.kind==='incident'||message.kind==='emergency'){
+      if(message.id&&ids.has(String(message.id)))return false;
+    }
     return true;
   });
-  incidents=incidents.filter(function(it){return it&&!ids.has(String(it.id||''))&&!ids.has(String(it.incidentRef||''))});
+  incidents=incidents.filter(function(item){return item&&!matchesIds(item)});
   saveIncidents();
-  siniestros=(siniestros||[]).filter(function(it){return it&&!ids.has(String(it.id||''))&&!ids.has(String(it.incidentRef||''))&&!ids.has(String(it.alertId||''))});
+  siniestros=(siniestros||[]).filter(function(item){return item&&!matchesIds(item)});
   saveSiniestros();
   if(typeof chatLocations!=='undefined'){
-    chatLocations=chatLocations.filter(function(loc){return loc&&!ids.has(String(loc.id||''))&&!ids.has(String(loc.incidentRef||''))&&!ids.has(String(loc.incidentId||''))&&!ids.has(String(loc.alertId||''))});
+    chatLocations=chatLocations.filter(function(item){
+      if(!item)return false;
+      if(matchesIds(item))return false;
+      if(item.id&&derivedLocationIds.has(String(item.id)))return false;
+      return true;
+    });
     try{saveChatLocations()}catch(_){}
   }
   if(incidentToastStack){
     incidentToastStack.querySelectorAll('.incident-toast').forEach(function(toast){
-      if(ids.has(String(toast.dataset.incidentId||'')))toast.remove();
+      if(ids.has(String(toast.dataset.incidentId||''))||alertIds.has(String(toast.dataset.alertId||'')))toast.remove();
     });
+  }
+  if(activeUserAlert&&ids.has(String(activeUserAlert.id||''))){
+    try{dismissUserAlert()}catch(_){}
   }
   if(focusedIncidentId&&ids.has(String(focusedIncidentId)))clearFocusMode();
   else renderAllIncidents();
   renderAllChatLocations();
   saveHistory();
+  saveResolvedState();
   schedulePublishPublicHistory();
   if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom()}
   updateBadges();
 }
 function removePublicMessagesByAlertId(alertId){
-  if(!alertId)return;
-  markAlertResolved(alertId);
-  const before=publicMessages.length;
-  publicMessages=publicMessages.filter(function(m){
-    if(!m)return false;
-    if(m.alertId===alertId)return false;
-    if(m.kind==='emergency'&&m.id===alertId)return false;
-    return true;
-  });
-  // Quitar también la copia persistida que alimenta el mapa y el registro local.
-  siniestros=(siniestros||[]).filter(function(it){return it&&String(it.id||'')!==String(alertId)&&String(it.alertId||'')!==String(alertId)});
-  saveSiniestros();
-  if(typeof chatLocations!=='undefined'){
-    chatLocations=chatLocations.filter(function(loc){return loc&&String(loc.id||'')!==String(alertId)&&String(loc.alertId||'')!==String(alertId)&&String(loc.incidentRef||'')!==String(alertId)&&String(loc.incidentId||'')!==String(alertId)});
-    try{saveChatLocations()}catch(_){}
+  const id=String(alertId||'').trim();
+  if(!id)return;
+  /* Una alerta puede tener también una copia como siniestro, mensaje de grupo,
+     ubicación de chat y marcador local. Se elimina todo bajo el mismo ID. */
+  removePublicMessagesByIncidentId(id);
+  markAlertResolved(id);
+  if(activeUserAlert&&String(activeUserAlert.id||'')===id){
+    try{dismissUserAlert()}catch(_){}
   }
-  if(activeUserAlert&&String(activeUserAlert.id||'')===String(alertId)){try{dismissUserAlert()}catch(_){}}
-  if(publicMessages.length===before){
-    saveHistory();
-    renderAllIncidents();
-    renderAllChatLocations();
-    schedulePublishPublicHistory();
-    return;
-  }
-  saveHistory();
-  schedulePublishPublicHistory();
-  renderAllIncidents();
-  renderAllChatLocations();
-  if(isChatOpen())if(currentContext==='public'){renderMessages();scrollMessagesBottom()}
-  updateBadges();
+  saveResolvedState();
 }
 function handleIncidentMessage(msg){
   if(!msg)return;
@@ -9690,19 +9985,6 @@ function sendChatMessage(){
 chatSendBtn.addEventListener('click',sendChatMessage);
 chatInput.addEventListener('keydown',function(e){if(e.key==='Enter')if(!e.shiftKey){e.preventDefault();sendChatMessage()}});
 chatInput.addEventListener('input',function(){if(chatInput.value.length>0)sendTypingIndicator()});
-nickSaveBtn.addEventListener('click',function(){
-  const nick=nickInput.value.trim();
-  if(nick.length<2){alert('El apodo debe tener al menos 2 caracteres.');return}
-  saveNick(nick.slice(0,20)); nickModal.classList.remove('visible');
-  const now=Date.now(); const existing=onlineUsers.get(myUserId);
-  const entry={id:myUserId,nick:myNick,status:myStatus,lastSeen:now,firstSeen:existing&&existing.firstSeen?existing.firstSeen:now,isGuest:isGuestAccount(authState.user)};
-  if(userLocation){entry.lat=userLocation.lat;entry.lng=userLocation.lng}
-  else if(existing&&typeof existing.lat==='number'){entry.lat=existing.lat;entry.lng=existing.lng}
-  onlineUsers.set(myUserId,entry);
-  if(mqttClient)if(chatReady){registerUserEntry(myUserId,myNick,myStatus,'connect');announcePresence()}
-  continueAfterAuth();
-});
-nickInput.addEventListener('keydown',function(e){if(e.key==='Enter')nickSaveBtn.click()});
 function pedirUbicacionYPrompt(callback){
   if(userLocation){callback();return}
   if(!navigator.geolocation){alert('La geolocalización no está disponible.');return}
@@ -9857,13 +10139,8 @@ function enviarEmergencia(severity){
       zona:zone,
       fecha:new Date(registro.ts).toISOString()
     }).then(function(res){
-      if(res&&res.ok){
-        log('✓ Emergencia guardada en Google Sheets (fila '+res.rowNumber+').','ok');
-      }else{
-        const detail=res&&res.error?res.error:'No se pudo confirmar la escritura en Google Sheets.';
-        log('Emergencia conservada localmente, pero no confirmada en Sheets: '+detail,'warn');
-        showAppNotification('La emergencia quedó en este dispositivo, pero no se confirmó su registro en Google Sheets. '+detail,'fa-triangle-exclamation');
-      }
+      if(res&&res.ok)log('✓ Emergencia enviada a Google Sheets','ok');
+      else log('Emergencia guardada local (APPS_SCRIPT_URL vacía)','warn');
     });
     activateUserAlert({id:alertId,kind:'emergency',severity:severity,text:sevLabels[severity]+' — '+sevTexts[severity],lat:userLocation?userLocation.lat:null,lng:userLocation?userLocation.lng:null,zone:zone,ts:Date.now()});
     let alertText='';
@@ -10209,16 +10486,14 @@ const resolveParam=urlParams.get('resolve');
   }
 
   function enterMapDirectly(){
-    var publicHeader=document.getElementById('siteHeader');
-    var publicHome=document.getElementById('preMapContent');
-    var mapPage=document.getElementById('mapPage');
-    if(publicHeader)publicHeader.style.display='none';
-    if(publicHome)publicHome.style.display='none';
-    if(mapPage)mapPage.classList.remove('hidden');
-    try{sessionStorage.setItem('mm_wasOnMap','1');}catch(_){}
+    /* La sesión recordada también crea el estado de historial necesario para Atrás. */
+    try{showMapPage()}catch(e){
+      var mapPage=document.getElementById('mapPage');
+      if(mapPage)mapPage.classList.remove('hidden');
+    }
     setTimeout(function(){
-      try{map.invalidateSize();}catch(_){}
-      try{recenterImmediate();}catch(_){}
+      try{map.invalidateSize(true)}catch(_){}
+      try{recenterImmediate()}catch(_){}
       if(typeof MM_scheduleMapResize==='function')MM_scheduleMapResize();
     },300);
   }
@@ -10255,34 +10530,53 @@ const resolveParam=urlParams.get('resolve');
       });
 
     if(DEV_MODE===true&&isDeveloperAccount()){
-      purgeAuthGate();
-      try{ window.showGate=function(){}; }catch(_){}
-      try{ showGate=function(){}; }catch(_){}
-
-      try{ enableDevMode(); }catch(_){}
-      try{ updateAuthUI&&updateAuthUI(); }catch(_){}
-      try{ updateGuestControls&&updateGuestControls(); }catch(_){}
-      document.body.classList.add('dev-on','dev-qr-enabled');
-
-      enterMapDirectly();
-      try{if(typeof continueAfterAuth==='function')continueAfterAuth();else if(typeof startChat==='function'&&!chatReady&&!mqttClient)startChat();}catch(devInitError){try{console.warn('No se pudo inicializar el chat de desarrollador:',devInitError);}catch(_){}}
-      var publicHeader=document.getElementById('siteHeader');
-      var publicHome=document.getElementById('preMapContent');
-      var mapPage=document.getElementById('mapPage');
-      if(publicHeader)publicHeader.style.display='none';
-      if(publicHome)publicHome.style.display='none';
-      if(mapPage)mapPage.classList.remove('hidden');
-
-      try{
-        var devGateObserver=new MutationObserver(function(){purgeAuthGate();});
-        devGateObserver.observe(document.body,{childList:true,subtree:true});
-      }catch(_){}
-
-      setTimeout(function(){
-        try{map.invalidateSize();}catch(_){}
-        try{recenterImmediate();}catch(_){}
-        if(typeof MM_scheduleMapResize==='function')MM_scheduleMapResize();
-      },300);
+      var developerSnapshot=Object.assign({},authState.user||{});
+      setTimeout(async function(){
+        try{
+          await mmRestoreRememberedUserFromGoogle(developerSnapshot);
+          if(!isDeveloperAccount())throw new Error('La cuenta ya no tiene permisos de desarrollador.');
+          purgeAuthGate();
+          try{window.showGate=function(){};}catch(_){}
+          try{showGate=function(){};}catch(_){}
+          try{enableDevMode();}catch(_){}
+          try{updateAuthUI&&updateAuthUI();}catch(_){}
+          try{updateGuestControls&&updateGuestControls();}catch(_){}
+          document.body.classList.add('dev-on','dev-qr-enabled');
+          enterMapDirectly();
+          try{if(typeof continueAfterAuth==='function')continueAfterAuth();else if(typeof startChat==='function'&&!chatReady&&!mqttClient)startChat();}catch(devInitError){try{console.warn('No se pudo inicializar el chat de desarrollador:',devInitError);}catch(_){}}
+          var publicHeader=document.getElementById('siteHeader');
+          var publicHome=document.getElementById('preMapContent');
+          var mapPage=document.getElementById('mapPage');
+          if(publicHeader)publicHeader.style.display='none';
+          if(publicHome)publicHome.style.display='none';
+          if(mapPage)mapPage.classList.remove('hidden');
+          try{
+            var devGateObserver=new MutationObserver(function(){purgeAuthGate();});
+            devGateObserver.observe(document.body,{childList:true,subtree:true});
+          }catch(_){}
+          setTimeout(function(){
+            try{map.invalidateSize();}catch(_){}
+            try{recenterImmediate();}catch(_){}
+            if(typeof MM_scheduleMapResize==='function')MM_scheduleMapResize();
+          },300);
+        }catch(devRestoreError){
+          console.warn('No se pudo recuperar la cuenta desarrolladora desde Google Sheets:',devRestoreError);
+          authState={isLoggedIn:false,user:null};
+          DEV_MODE=false;
+          if(devRestoreError&&devRestoreError.code){try{localStorage.removeItem(AUTH_KEY)}catch(_){}}
+          try{sessionStorage.removeItem('mm_wasOnMap')}catch(_){}
+          try{
+            document.body.classList.remove('dev-on','dev-qr-enabled');
+            document.documentElement.classList.remove('mm-dev-requested');
+            var cleanDevUrl=new URL(window.location.href);
+            cleanDevUrl.searchParams.delete('dev');
+            cleanDevUrl.searchParams.delete('kiosk');
+            history.replaceState({},'',cleanDevUrl.pathname+cleanDevUrl.search+cleanDevUrl.hash);
+          }catch(_){}
+          if(typeof showGate==='function')showGate();
+          if(gateLoginError){gateLoginError.textContent=(devRestoreError&&devRestoreError.message)||'No se pudieron recuperar los datos de desarrollador desde Google Sheets. Iniciá sesión nuevamente.';gateLoginError.style.display='block';}
+        }
+      },150);
       return;
     }
 
@@ -10292,15 +10586,32 @@ const resolveParam=urlParams.get('resolve');
     var hasRememberedSession=!!(authState&&authState.isLoggedIn&&authState.user&&!authState.user.isGuest&&authState.user.rememberDevice===true);
 
     if(hasRememberedSession){
-      try{authGate.classList.add('hidden');}catch(_){}
-      updateAuthUI&&updateAuthUI();
-      updateGuestControls&&updateGuestControls();
-      if(wasOnMap){enterMapDirectly();}
-      setTimeout(function(){
-        if(typeof checkMembershipExpiryAlert==='function')checkMembershipExpiryAlert();
-        if(!myNick){if(typeof askForNick==='function')askForNick();}
-        else if(typeof continueAfterAuth==='function')continueAfterAuth();
-      },400);
+      var rememberedSnapshot=Object.assign({},authState.user||{});
+      setTimeout(async function(){
+        try{
+          await mmRestoreRememberedUserFromGoogle(rememberedSnapshot);
+          try{authGate.classList.add('hidden')}catch(_){}
+          if(wasOnMap)enterMapDirectly();
+          if(typeof checkMembershipExpiryAlert==='function')checkMembershipExpiryAlert();
+          if(typeof continueAfterAuth==='function')continueAfterAuth();
+        }catch(restoreError){
+          console.warn('No se pudo restaurar la sesión recordada desde Google Sheets:',restoreError);
+          authState={isLoggedIn:false,user:null};
+          if(restoreError&&restoreError.code&&restoreError.code!=='MM_REMEMBERED_USER_NOT_FOUND'){
+            try{localStorage.removeItem(AUTH_KEY)}catch(_){}
+          }else if(restoreError&&restoreError.code==='MM_REMEMBERED_USER_NOT_FOUND'){
+            try{localStorage.removeItem(AUTH_KEY)}catch(_){}
+          }
+          try{sessionStorage.removeItem('mm_wasOnMap')}catch(_){}
+          if(typeof showGate==='function')showGate();
+          if(gateEmailInput&&rememberedSnapshot.email)gateEmailInput.value=String(rememberedSnapshot.email);
+          if(gateLoginError){
+            gateLoginError.textContent=(restoreError&&restoreError.message)||'No se pudieron recuperar los datos de tu cuenta desde Google Sheets. Iniciá sesión nuevamente.';
+            gateLoginError.style.display='block';
+          }
+          if(gatePasswordInput)gatePasswordInput.value='';
+        }
+      },150);
     }else{
       try{
         if(authGate){
@@ -10406,22 +10717,22 @@ const resolveParam=urlParams.get('resolve');
       var header=document.getElementById('siteHeader');
       var publicContent=document.getElementById('preMapContent');
       var mapPage=document.getElementById('mapPage');
-      if(window.MM_REMOVE_LANDING_IN_DEV===true){
-        if(header&&header.parentNode)header.parentNode.removeChild(header);
-        if(publicContent&&publicContent.parentNode)publicContent.parentNode.removeChild(publicContent);
-      }else{
-        if(header)header.style.setProperty('display','none','important');
-        if(publicContent)publicContent.style.setProperty('display','none','important');
-      }
+      /* La portada se conserva para el botón Inicio y para Atrás en móviles. */
+      if(header)header.style.setProperty('display','none','important');
+      if(publicContent)publicContent.style.setProperty('display','none','important');
+      try{if(typeof showMapPage==='function')showMapPage()}catch(e){}
       if(mapPage){
         mapPage.classList.remove('hidden');
         mapPage.style.setProperty('display','block','important');
         mapPage.style.setProperty('visibility','visible','important');
         mapPage.style.setProperty('opacity','1','important');
       }
-      try{sessionStorage.setItem('mm_wasOnMap','1');}catch(_){}
+      try{sessionStorage.setItem('mm_wasOnMap','1')}catch(_){}
       function refreshMapLayout(){
         var root=document.getElementById('mapPage');
+        /* Los refrescos diferidos de arranque no deben reabrir el mapa si el
+           desarrollador ya volvió al menú de inicio. */
+        if(root&&root.classList.contains('hidden')&&window.history.state&&window.history.state.mmMutualMotoView==='home')return;
         if(root){
           root.classList.remove('hidden');
           root.style.setProperty('display','block','important');
