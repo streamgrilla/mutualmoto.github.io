@@ -306,6 +306,9 @@ body.centering-lock .leaflet-control-legend{
 .incident-marker.accident .incident-marker-inner{--im-c:#e74c3c}
 .incident-marker.closure .incident-marker-inner{--im-c:#f39c12}
 .incident-marker.police .incident-marker-inner{--im-c:#2980b9}
+.incident-marker.severity-leve .incident-marker-inner{--im-c:#d4ac0d}
+.incident-marker.severity-grave .incident-marker-inner{--im-c:#e67e22}
+.incident-marker.severity-vida .incident-marker-inner{--im-c:#c0392b}
 .incident-popup{font-family:'Segoe UI',sans-serif;min-width:220px}
 .incident-popup .ip-title{font-size:.95rem;font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
 .incident-popup .ip-zone{display:inline-block;font-size:.68rem;font-weight:700;padding:1px 7px;border-radius:8px;background:#ecf0f1;color:#555;margin-bottom:.35rem}
@@ -315,6 +318,25 @@ body.centering-lock .leaflet-control-legend{
 .incident-popup .ip-actions button.route{background:#33ccff}
 .incident-popup .ip-actions button.solve{background:#27ae60}
 .incident-popup .ip-author{font-size:.72rem;color:#888;font-style:italic;margin-top:.5rem;display:block;border-top:1px solid #eee;padding-top:.4rem}
+.incident-severity-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin-bottom:.65rem}
+.incident-severity-options .severity-opt{min-width:0;margin:0;padding:.65rem .45rem;text-align:center}
+.incident-severity-options .severity-opt strong{justify-content:center;font-size:.86rem}
+.incident-severity-options .severity-opt span{display:block;font-size:.68rem;line-height:1.25}
+.incident-severity-options .severity-opt.leve{border-color:#f1c40f}
+.incident-severity-options .severity-opt.leve strong{color:#9a7600}
+.incident-severity-options .severity-opt.grave{border-color:#e67e22}
+.incident-severity-options .severity-opt.grave strong{color:#c45d12}
+.incident-severity-options .severity-opt.vida{border-color:#e74c3c}
+.incident-severity-options .severity-opt.vida strong{color:#c0392b}
+.incident-severity-options .severity-opt.selected{border-width:3px;background:#fff7e8;box-shadow:0 0 0 2px rgba(230,126,34,.12)}
+.inc-severity{display:inline-flex;align-items:center;white-space:nowrap;border-radius:10px;padding:2px 7px;font-size:.66rem;font-weight:800;letter-spacing:.15px;border:1px solid transparent;vertical-align:middle}
+.inc-severity.leve{background:#fff8dc;color:#856404;border-color:#f1d36b}
+.inc-severity.grave{background:#fff0e4;color:#a84408;border-color:#efb27e}
+.inc-severity.vida{background:#fdecea;color:#a5281b;border-color:#e9a39d}
+.incident-popup .ip-severity{font-size:.78rem;color:#555;margin:.25rem 0 .4rem}
+.incidents-panel .inc-item .inc-meta .inc-severity{margin-left:2px}
+.incident-toast .it-meta .inc-severity{margin-right:2px}
+.chat-msg-incident .inc-severity{margin:.25rem 0 .35rem}
 .incident-toast-stack{position:fixed;top:90px;right:20px;z-index:4500;display:flex;flex-direction:column;gap:10px;max-width:360px;width:calc(100vw - 40px);pointer-events:none}
 .incident-toast{background:#fff;border-left:5px solid #e74c3c;border-radius:10px;padding:.8rem .9rem;box-shadow:0 10px 30px rgba(0,0,0,.28);pointer-events:auto;display:flex;gap:.6rem;align-items:flex-start;position:relative}
 .incident-toast.closure{border-left-color:#f39c12}
@@ -1761,7 +1783,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 <span class="inc-count" id="incPanelCount">0</span>
 </div>
 <div class="inc-list" id="incPanelList">
-<div class="inc-empty">Sin siniestros reportados</div>
+<div class="inc-empty">Sin incidentes en vía pública reportados</div>
 </div>
 </div>
 <h2><i class="fas fa-filter"></i> Filtrar por categor&iacute;a</h2>
@@ -2077,7 +2099,7 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="modal-overlay incident-modal" id="incidentModal">
 <div class="modal-box">
 <h3><i class="fas fa-car-burst"></i> Reportar siniestro en ruta</h3>
-<p>Se va a marcar en el mapa de todos los usuarios. Detectamos autom&aacute;ticamente si es <strong>CABA</strong> o <strong>Provincia</strong>. Tu usuario e ID quedan registrados junto al siniestro.</p>
+<p>El reporte se publicará en el mapa y en la sala general. Se registrarán el Motoamigo que lo emite, su ubicación y la gravedad del incidente.</p>
 <button class="modal-option-btn incident-opt accident" data-type="accident">
 <strong><i class="fas fa-car-crash"></i> Accidente</strong>
 <span>Choque, ca&iacute;da, siniestro o veh&iacute;culo detenido en la v&iacute;a</span>
@@ -2090,6 +2112,21 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <strong><i class="fas fa-shield-halved"></i> Control policial</strong>
 <span>Ret&eacute;n, control de tr&aacute;nsito, alcohol&iacute;metro, c&aacute;mara m&oacute;vil</span>
 </button>
+<label>Gravedad del incidente</label>
+<div class="incident-severity-options" role="group" aria-label="Gravedad del incidente">
+<button type="button" class="modal-option-btn severity-opt leve" data-severity="leve">
+<strong><i class="fas fa-exclamation-circle"></i> Leve</strong>
+<span>Sin indicios de peligro inmediato.</span>
+</button>
+<button type="button" class="modal-option-btn severity-opt grave" data-severity="grave">
+<strong><i class="fas fa-exclamation-triangle"></i> Grave</strong>
+<span>Situaci&oacute;n que requiere atenci&oacute;n prioritaria.</span>
+</button>
+<button type="button" class="modal-option-btn severity-opt vida" data-severity="vida">
+<strong><i class="fas fa-ambulance"></i> Riesgo de vida</strong>
+<span>Situaci&oacute;n cr&iacute;tica. Llam&aacute; al 911 si corresponde.</span>
+</button>
+</div>
 <label>Ubicaci&oacute;n del siniestro</label>
 <div style="display:flex;gap:.4rem;margin-bottom:.6rem">
 <button type="button" class="modal-option-btn" id="incidentUseMyLocation" style="flex:1;padding:.6rem;text-align:center;margin:0">
@@ -2450,6 +2487,7 @@ const PUBLISHED_WORKBOOK_HTML_URL='https://docs.google.com/spreadsheets/d/e/2PAC
 // Debe ser el enlace CSV publicado de la pestaña Comercios y llevar su gid real.
 const COMERCIOS_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid=421306673&single=true&output=csv';
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyCH_SAEOSWf9FlZqn5bzn5gBMfW1amgFE-mcqNufDRqlB4JUqUagznht3v36CUpMje/exec';
+const MM_EXPECTED_API_BUILD='mutual-moto-siniestros-sheet-target-2026-11-12-v4';
 const NOMINATIM_URL='https://nominatim.openstreetmap.org/search';
 const GEOCODE_DELAY_MS=1200;
 const REPORT_EMAIL='cainet30de2@gmail.com';
@@ -2469,6 +2507,7 @@ const SOCIOS=[
 ];
 const REPORT_REASON_LABELS={falsa_alerta:'Falsa alerta / emergencia falsa',siniestro_fuga:'Siniestro y se dio a la fuga',autor_robo:'Autor de un robo',spam:'Spam o publicidad no deseada',acoso:'Acoso, insultos o amenazas',contenido:'Contenido inapropiado u ofensivo',suplantacion:'Suplantación de identidad',ubicacion_falsa:'Ubicación falsa o maliciosa',incidente_falso:'Siniestro falso',usuario:'Denunciar a un usuario',otro:'Otro'};
 const INCIDENT_TYPE_LABELS={accident:'Accidente',closure:'Ruta cerrada',police:'Control policial'};
+const INCIDENT_SEVERITY_LABELS={leve:'Leve',grave:'Grave',vida:'Riesgo de vida'};
 const ALERT_TTL=24*60*60*1000;
 const BASE_POINTS_PER_LEVEL=100000;
 const MAX_LEVEL=10;
@@ -2672,10 +2711,149 @@ try{
 function saveSiniestros(){
   try{localStorage.setItem(SINIESTROS_KEY,JSON.stringify(siniestros.slice(-SINIESTROS_MAX)))}catch(e){}
 }
+function mmCreateOperationId(){
+  try{
+    const bytes=new Uint8Array(16);
+    if(window.crypto&&typeof window.crypto.getRandomValues==='function'){
+      window.crypto.getRandomValues(bytes);
+      return Array.from(bytes).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+    }
+  }catch(e){}
+  return 'mm'+Date.now().toString(36)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
+}
+function mmSubmitAppsScriptForm(record,targetUrl){
+  // Envío HTML form -> iframe: evita CORS y permite que Apps Script confirme
+  // las operaciones críticas por postMessage con operationId.
+  const frameName='mm_apps_script_'+mmCreateOperationId().replace(/[^A-Za-z0-9_]/g,'');
+  const iframe=document.createElement('iframe');
+  iframe.name=frameName;
+  iframe.title='';
+  iframe.tabIndex=-1;
+  iframe.setAttribute('aria-hidden','true');
+  iframe.style.display='none';
+  const form=document.createElement('form');
+  form.method='POST';
+  form.action=targetUrl||APPS_SCRIPT_URL;
+  form.target=frameName;
+  form.acceptCharset='UTF-8';
+  form.enctype='application/x-www-form-urlencoded';
+  form.style.display='none';
+  const payload=document.createElement('input');
+  payload.type='hidden';
+  payload.name='payload';
+  payload.value=JSON.stringify(record);
+  form.appendChild(payload);
+  document.body.appendChild(iframe);
+  document.body.appendChild(form);
+
+  let settled=false;
+  let responseResolve=null;
+  let responseTimer=null;
+  const operationId=String(record&&record.operationId||'');
+  const responsePromise=operationId?new Promise(function(resolve){responseResolve=resolve}):null;
+  const finishResponse=function(value){
+    if(settled)return;
+    settled=true;
+    if(responseTimer)clearTimeout(responseTimer);
+    window.removeEventListener('message',onMessage);
+    if(responseResolve)responseResolve(value||{ok:false,error:'Apps Script devolvió una respuesta vacía.'});
+  };
+  const onMessage=function(event){
+    const message=event.data;
+    if(!message||message.type!=='MM_APPS_SCRIPT_RESULT'||String(message.operationId||'')!==operationId)return;
+    const exactFrame=!!(iframe.contentWindow&&event.source===iframe.contentWindow);
+    const origin=String(event.origin||'');
+    const trustedAppsScriptOrigin=/^https:\/\/(?:script\.google\.com|[a-z0-9.-]*script\.googleusercontent\.com)$/i.test(origin);
+    if(!exactFrame&&!trustedAppsScriptOrigin)return;
+    finishResponse(message.result||{ok:false,error:'Apps Script no incluyó el resultado de la operación.'});
+  };
+  if(operationId){
+    window.addEventListener('message',onMessage);
+    // El postMessage es el canal rápido. Si el navegador bloquea la lectura del
+    // marco de Google por su política de origen, postToSheets consulta también
+    // operation_status mediante JSONP (sin CORS ni lectura directa del iframe).
+    responseTimer=setTimeout(function(){
+      finishResponse({ok:false,pending:true,error:'No llegó la confirmación por postMessage; se consultará el estado de la operación.'});
+    },80000);
+  }
+
+  try{
+    form.submit();
+  }catch(error){
+    finishResponse({ok:false,error:error&&error.message?error.message:String(error)});
+    try{form.remove()}catch(_){}
+    try{iframe.remove()}catch(_){}
+    throw error;
+  }
+  try{form.remove()}catch(_){}
+
+  let cleaned=false;
+  const cleanup=function(){
+    if(cleaned)return;
+    cleaned=true;
+    if(responseTimer)clearTimeout(responseTimer);
+    window.removeEventListener('message',onMessage);
+    try{iframe.remove()}catch(_){}
+  };
+  if(!operationId)setTimeout(cleanup,12000);
+  return {promise:responsePromise,cleanup:cleanup};
+}
+function mmReadOperationStatusJsonp(operationId){
+  return new Promise(function(resolve){
+    if(!APPS_SCRIPT_URL||!operationId){resolve(null);return;}
+    var safeId=String(operationId).replace(/[^A-Za-z0-9_-]/g,'');
+    var callbackName='mmOperationStatus_'+safeId+'_'+Date.now().toString(36);
+    var script=document.createElement('script');
+    var settled=false;
+    var timer=null;
+    var finish=function(value){
+      if(settled)return;
+      settled=true;
+      if(timer)clearTimeout(timer);
+      try{delete window[callbackName]}catch(_){window[callbackName]=undefined}
+      try{script.remove()}catch(_){}
+      resolve(value||null);
+    };
+    window[callbackName]=function(payload){finish(payload)};
+    script.async=true;
+    script.onerror=function(){finish(null)};
+    script.src=APPS_SCRIPT_URL+(APPS_SCRIPT_URL.indexOf('?')>=0?'&':'?')+
+      'action=operation_status&operationId='+encodeURIComponent(safeId)+
+      '&callback='+encodeURIComponent(callbackName)+'&_='+Date.now();
+    timer=setTimeout(function(){finish(null)},6500);
+    (document.head||document.body).appendChild(script);
+  });
+}
+async function mmPollOperationStatus(operationId,isCancelled){
+  var deadline=Date.now()+70000;
+  while(Date.now()<deadline&&!(isCancelled&&isCancelled())){
+    var status=await mmReadOperationStatusJsonp(operationId);
+    if(status&&status.ready===true&&status.result)return status.result;
+    await new Promise(function(resolve){setTimeout(resolve,900)});
+  }
+  return {ok:false,pending:true,error:'Apps Script recibió la solicitud, pero el navegador no pudo obtener la confirmación. No se modificó el mapa ni la sala grupal. Podés escanear nuevamente el mismo QR para consultar el resultado.'};
+}
+async function mmWaitForOperationResult(submittedRequest,operationId){
+  if(!operationId)return {ok:false,error:'Falta el identificador de operación de Apps Script.'};
+  var cancelled=false;
+  var pollPromise=mmPollOperationStatus(operationId,function(){return cancelled});
+  try{
+    if(!submittedRequest||!submittedRequest.promise)return await pollPromise;
+    var messagePromise=submittedRequest.promise.then(function(result){return {source:'message',result:result}});
+    var pollWrapped=pollPromise.then(function(result){return {source:'poll',result:result}});
+    var winner=await Promise.race([messagePromise,pollWrapped]);
+    if(winner&&winner.source==='message'&&winner.result&&!winner.result.pending)return winner.result;
+    if(winner&&winner.source==='poll')return winner.result;
+    return await pollPromise;
+  }finally{cancelled=true}
+}
 async function postToSheets(action,data){
   const record={action:action,data:data,ts:Date.now()};
-  // Los cambios de saldo se autentican con la credencial de la propia cuenta.
-  // Nunca se incrusta la contraseña maestra de la API en el HTML.
+  const needsConfirmation=['register_siniestro','resolve_siniestro_qr','clear_user_incidents_after_qr','add_place','delete_place'].indexOf(action)!==-1;
+  if(needsConfirmation)record.operationId=mmCreateOperationId();
+
+  // Se autentican con la credencial individual de la cuenta; no se incluye la
+  // contraseña maestra de la API en el HTML.
   if(['points_change','coins_change','add_place','delete_place','register_siniestro','resolve_siniestro_qr','clear_user_incidents_after_qr'].indexOf(action)!==-1){
     var currentUser=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:null;
     var accountIdentifier=String(currentUser&&(currentUser.email||currentUser.correo||currentUser.nick||currentUser.nickname||currentUser.id)||'');
@@ -2698,9 +2876,6 @@ async function postToSheets(action,data){
         }
       }catch(_){}
     }
-    // Las sesiones recordadas no guardan contraseñas en almacenamiento
-    // permanente. Si venció la credencial temporal, solicitarla antes de intentar
-    // escribir un saldo para no enviar una operación que el servidor rechazará.
     if(!accountPassword&&currentUser&&!currentUser.isGuest&&accountIdentifier){
       var enteredPassword='';
       var credentialPrompt=action==='delete_place'?'Para eliminar una dirección del mapa, validá la contraseña de tu cuenta desarrollador:':((action==='resolve_siniestro_qr'||action==='clear_user_incidents_after_qr')?'Para retirar el incidente del mapa y de la sala grupal, validá la contraseña de tu cuenta:':((action==='add_place'||action==='register_siniestro')?'Para guardar esta actividad en Mutual Moto, validá la contraseña de tu cuenta:':'Para guardar tus puntos y Moto Coins en Google Sheets, ingresá la contraseña de tu cuenta:'));
@@ -2719,28 +2894,46 @@ async function postToSheets(action,data){
       return {ok:false,authRequired:true};
     }
   }
-  if(!APPS_SCRIPT_URL){
-    return {ok:false,offline:true};
-  }
+  if(!APPS_SCRIPT_URL)return {ok:false,offline:true,error:'Falta configurar APPS_SCRIPT_URL: no se envió nada a Google Sheets.'};
+
+  let submittedRequest=null;
   try{
-    const response=await fetch(APPS_SCRIPT_URL,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify(record)
-    });
-    /* no-cors entrega una respuesta opaca: la solicitud se envió, pero el navegador
-       no permite leer el JSON de Apps Script para confirmar el resultado del servidor. */
-    const responseUnconfirmed=!!(response&&response.type==='opaque');
-    /* Releer el valor de Usuarios luego del tiempo normal de propagación de la hoja. */
+    submittedRequest=mmSubmitAppsScriptForm(record);
+    if(needsConfirmation){
+      const confirmed=await mmWaitForOperationResult(submittedRequest,record.operationId);
+      if(!confirmed||confirmed.ok!==true){
+        if(action==='register_siniestro'&&confirmed){
+          var diagnosticParts=[];
+          if(confirmed.stage)diagnosticParts.push('Etapa del servidor: '+confirmed.stage+'.');
+          if(confirmed.build)diagnosticParts.push('Versión API: '+confirmed.build+'.');
+          if(confirmed.operationId)diagnosticParts.push('Operación: '+confirmed.operationId+'.');
+          if(confirmed.spreadsheetId)diagnosticParts.push('Planilla ID: '+confirmed.spreadsheetId+'.');
+          if(diagnosticParts.length){
+            confirmed.diagnostic=diagnosticParts.join(' ');
+            confirmed.error=String(confirmed.error||'No se pudo registrar el incidente.')+'\n'+confirmed.diagnostic;
+          }
+        }
+        return confirmed||{ok:false,error:'No se recibió confirmación del servidor.'};
+      }
+      if(action==='register_siniestro'&&confirmed.build!==MM_EXPECTED_API_BUILD){
+        return {
+          ok:false,
+          deploymentMismatch:true,
+          error:'La solicitud respondió desde una versión distinta de Apps Script ('+(confirmed.build||'sin versión')+'). La página esperaba '+MM_EXPECTED_API_BUILD+'. No se considera confirmado el destino de la escritura. Actualizá la implementación web y volvé a intentar con el mismo incidente.'
+        };
+      }
+      return confirmed;
+    }
     if(action==='points_change'||action==='coins_change'){
       setTimeout(function(){
         try{if(typeof window.MM_refreshStatsFromUsersSheet==='function')window.MM_refreshStatsFromUsersSheet()}catch(_){}
       },5000);
     }
-    return {ok:true,dispatched:true,unconfirmed:responseUnconfirmed};
+    return {ok:true,dispatched:true};
   }catch(e){
-    return {ok:false,error:e.message};
+    return {ok:false,error:e&&e.message?e.message:String(e)};
+  }finally{
+    if(submittedRequest&&needsConfirmation)submittedRequest.cleanup();
   }
 }
 async function geocodeAddress(address){
@@ -3350,11 +3543,16 @@ const placeMarkerCache=new Map();
 let currentSearch='';
 let userLocation=null;
 let userMarker=null;
+let userLocationRequestInFlight=false;
+let userLocationAutoCentered=false;
 let addingMode=false;
 let currentFiltered=[];
 let renderedCount=0;
 let distanceCacheKey='';
 let pendingIncidentType=null;
+let pendingIncidentSeverity=null;
+let pendingIncidentDraft=null;
+const incidentsBeingResolved=new Set();
 let seenIncidentIds=new Set();
 let incidentPickMode=false;
 let incidentPickedLatLng=null;
@@ -4731,46 +4929,48 @@ function isIncidentOwner(incident){
   try{mySocio=String(getSocioIdForRecord()||'').trim()}catch(_){}
   return !!(ownerSocio&&mySocio&&ownerSocio===mySocio);
 }
-function solveIncident(incidentId){
-  if(!incidentId)return;
-  const idx=incidents.findIndex(function(it){return it.id===incidentId});
-  if(idx<0)return;
-  const inc=incidents[idx];
+async function solveIncident(incidentId){
+  incidentId=String(incidentId||'').trim();
+  if(!incidentId||incidentsBeingResolved.has(incidentId))return;
+  const inc=incidents.find(function(it){return String(it.id||'')===incidentId});
+  if(!inc)return;
   if(!isIncidentOwner(inc)){
-    alert('Solo el usuario que reportó este siniestro puede eliminarlo.');
+    alert('Solo el Motoamigo que emitió este reporte puede eliminarlo.');
     return;
   }
+  if(!confirm('¿Eliminar este incidente? Se enviará el pedido de borrado a Google Sheets y se difundirá el cierre al mapa y a la sala general.'))return;
   const wasFocused=focusedIncidentId===incidentId;
-  incidents.splice(idx,1);
-  saveIncidents();
-  const solverNick=myNick||'Anónimo';
-  if(mqttClient)if(chatReady){
-    try{
-      mqttClient.publish(TOPIC_INCIDENTS,JSON.stringify({
-        kind:'incident-resolve',
-        incidentId:incidentId,
-        from:{id:myUserId,nick:solverNick},
-        ts:Date.now()
-      }),{qos:0});
-    }catch(e){}
-    try{
-      const chatMsg={
-        kind:'incident-resolve',
-        type:'public',
-        incidentRef:incidentId,
-        incidentKind:inc.kind,
-        zone:inc.zone||'Provincia',
-        from:{id:myUserId,nick:solverNick},
-        ts:Date.now()
-      };
-      mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(chatMsg),{qos:0});
-    }catch(e){}
+  incidentsBeingResolved.add(incidentId);
+  try{
+    renderAllIncidents();
+    /* Apps Script devuelve una confirmación firmada por operationId a este iframe. */
+    const saved=await postToSheets('resolve_siniestro_qr',{siniestroId:incidentId,resolverRole:'user',source:'incident_owner'});
+    if(!saved||saved.ok!==true){
+      const detail=saved&&saved.error?saved.error:(saved&&saved.authRequired?'Falta validar la cuenta.':'No se pudo confirmar el borrado en Google Sheets.');
+      showAppNotification('No se eliminó el incidente: '+detail,'fa-triangle-exclamation');
+      alert('No se pudo confirmar la eliminación en Google Sheets.\n\n'+detail+'\n\nEl incidente se conserva en el mapa y en la sala pública para que puedas volver a intentarlo.');
+      return;
+    }
+    const broadcasted=await publishResolve(incidentId,'user');
+    // Sheets ya confirmó el borrado: se retira también de este dispositivo aunque
+    // MQTT no esté disponible. El historial resuelto local se publicará al reconectar.
+    mmFinalizeScannedQrResolution(incidentId,'user',true);
+    if(wasFocused)clearFocusMode();
+    else renderAllIncidents();
+    updateIncidentBadges();
+    if(!broadcasted){
+      showAppNotification('El incidente se eliminó de Google Sheets y de este dispositivo. No se pudo avisar ahora a los demás; el historial resuelto se sincronizará cuando vuelva la conexión MQTT.','fa-triangle-exclamation');
+    }else{
+      showAppNotification('Incidente eliminado de Google Sheets, del mapa y de la sala general.','fa-check-circle');
+    }
+  }catch(error){
+    const detail=error&&error.message?error.message:String(error||'Error desconocido');
+    showAppNotification('No se pudo eliminar el incidente. El reporte se conserva.','fa-triangle-exclamation');
+    alert('No se pudo eliminar el incidente.\n\n'+detail+'\n\nEl reporte se conserva para que puedas intentarlo nuevamente.');
+  }finally{
+    incidentsBeingResolved.delete(incidentId);
+    try{renderAllIncidents()}catch(_){}
   }
-  removePublicMessagesByIncidentId(incidentId);
-  showAppNotification('Siniestro resuelto y retirado de la sala general.','fa-check-circle');
-  if(wasFocused)clearFocusMode();
-  else renderAllIncidents();
-  updateIncidentBadges();
 }
 function isDeveloperAccount(){
   const user=authState&&authState.user;
@@ -5272,39 +5472,84 @@ function goToUserLocation(){
     setTimeout(function(){if(!wazeReloadPending)recenterImmediate();},560);
     return;
   }
-  if(!navigator.geolocation){alert('Geolocalización no disponible.');return}
-  geoStatus.textContent='Solicitando ubicación...';
-  navigator.geolocation.getCurrentPosition(function(pos){
-    userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude};
-    distanceCacheKey='';
-    createUserMarker();
-    distanceFilter.disabled=false;
-    geoStatus.textContent='Ubicación detectada';
-    map.setView([userLocation.lat,userLocation.lng],15,{animate:!MM_LOW_POWER_MODE});
+  requestUserLocation(true).then(function(locationResult){
+    if(!locationResult){
+      alert(geoStatus.textContent||'No se pudo obtener tu ubicación. Revisá los permisos del navegador.');
+      return;
+    }
+    map.setView([locationResult.lat,locationResult.lng],15,{animate:!MM_LOW_POWER_MODE});
     setTimeout(function(){if(!wazeReloadPending)recenterImmediate();},560);
-    renderPlaces();
-    if(mqttClient&&chatReady)announcePresence();
-  },function(){
-    geoStatus.textContent='Ubicación no autorizada';
-    alert('No se pudo obtener tu ubicación.');
-  },{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
+  });
 }
-function requestUserLocation(){
-  if(!navigator.geolocation){geoStatus.textContent='Geolocalización no disponible';distanceFilter.disabled=true;return}
-  geoStatus.textContent='Solicitando ubicación...';
-  navigator.geolocation.getCurrentPosition(function(pos){
-    userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude};
-    distanceCacheKey='';
-    createUserMarker();
-    distanceFilter.disabled=false;
-    geoStatus.textContent='Ubicación detectada';
-    renderPlaces();
-    if(mqttClient&&chatReady)announcePresence();
-    setTimeout(function(){if(!wazeReloadPending)recenterImmediate();},560);
-  },function(){
-    geoStatus.textContent='Ubicación no autorizada';
+function requestUserLocation(force){
+  if(userLocation&&!force){
+    try{createUserMarker()}catch(_){}
+    return Promise.resolve(userLocation);
+  }
+  if(userLocationRequestInFlight)return Promise.resolve(userLocation);
+  if(!navigator.geolocation){
+    geoStatus.textContent='Este navegador no ofrece geolocalización';
     distanceFilter.disabled=true;
-  },{enableHighAccuracy:false,timeout:8000,maximumAge:60000});
+    return Promise.resolve(null);
+  }
+  if(window.isSecureContext===false&&location.hostname!=='localhost'){
+    geoStatus.textContent='La ubicación requiere abrir Mutual Moto mediante HTTPS';
+    distanceFilter.disabled=true;
+    return Promise.resolve(null);
+  }
+  userLocationRequestInFlight=true;
+  geoStatus.textContent='Solicitando ubicación actual…';
+  distanceFilter.disabled=true;
+
+  return new Promise(function(resolve){
+    var finished=false;
+    function finish(value){
+      if(finished)return;
+      finished=true;
+      userLocationRequestInFlight=false;
+      resolve(value||null);
+    }
+    function success(pos){
+      var lat=Number(pos&&pos.coords&&pos.coords.latitude);
+      var lng=Number(pos&&pos.coords&&pos.coords.longitude);
+      if(!Number.isFinite(lat)||!Number.isFinite(lng)){
+        geoStatus.textContent='El navegador devolvió coordenadas inválidas';
+        finish(null);
+        return;
+      }
+      userLocation={lat:lat,lng:lng};
+      distanceCacheKey='';
+      createUserMarker();
+      distanceFilter.disabled=false;
+      geoStatus.textContent=isInBounds(lat,lng)?'Ubicación actual detectada':'Ubicación detectada fuera del área habitual del mapa';
+      renderPlaces();
+      if(mqttClient&&chatReady)announcePresence();
+      // Al entrar por primera vez, centrar el mapa en la posición del usuario.
+      // No se vuelve a mover el mapa si el usuario ya eligió otro punto.
+      if(!userLocationAutoCentered&&!focusedPlaceId&&!focusedIncidentId&&isInBounds(lat,lng)){
+        userLocationAutoCentered=true;
+        try{map.setView([lat,lng],Math.max(13,map.getZoom()),{animate:!MM_LOW_POWER_MODE})}catch(_){}
+      }
+      finish(userLocation);
+    }
+    function failed(error){
+      var message='No se pudo obtener la ubicación.';
+      if(error&&error.code===1)message='Ubicación no autorizada. Permití el acceso a la ubicación para este sitio.';
+      else if(error&&error.code===2)message='El dispositivo no pudo determinar la ubicación. Activá GPS o servicios de ubicación.';
+      else if(error&&error.code===3)message='La ubicación tardó demasiado. Volvé a intentarlo.';
+      geoStatus.textContent=message;
+      distanceFilter.disabled=true;
+      try{log(message,'warn')}catch(_){}
+      finish(null);
+    }
+    navigator.geolocation.getCurrentPosition(success,function(firstError){
+      // Algunos equipos no responden a alta precisión; se reintenta una vez
+      // con el proveedor de ubicación de menor consumo del navegador.
+      navigator.geolocation.getCurrentPosition(success,failed,{
+        enableHighAccuracy:false,timeout:15000,maximumAge:30000
+      });
+    },{enableHighAccuracy:true,timeout:12000,maximumAge:10000});
+  });
 }
 let searchTimeout;
 function isMobileDrawer(){return window.matchMedia('(max-width:900px) and (orientation:portrait) and (pointer:coarse)').matches}
@@ -5400,6 +5645,12 @@ function incidentIconClass(kind){
   if(kind==='police')return 'fa-shield-halved';
   return 'fa-car-crash';
 }
+function incidentSeverityHtml(severity){
+  const key=String(severity||'');
+  const label=INCIDENT_SEVERITY_LABELS[key];
+  if(!label)return '';
+  return '<span class="inc-severity '+key+'">'+escapeHtml(label)+'</span>';
+}
 function incidentColor(kind){
   if(kind==='closure')return '#f39c12';
   if(kind==='police')return '#2980b9';
@@ -5411,10 +5662,12 @@ function buildIncidentIcon(incident){
   else if(incident.from)if(incident.from.id==='news_feed')isNews=true;
   let newsClass='';
   if(isNews)newsClass=' news';
+  const severity=String(incident.severity||incident.gravedad||'');
+  const severityClass=Object.prototype.hasOwnProperty.call(INCIDENT_SEVERITY_LABELS,severity)?' severity-'+severity:'';
   let badgeIcon='fa-triangle-exclamation';
   if(isNews)badgeIcon='fa-newspaper';
   return L.divIcon({
-    className:'incident-marker '+incident.kind+newsClass,
+    className:'incident-marker '+incident.kind+severityClass+newsClass,
     html:'<div class="incident-marker-inner"><i class="fas '+incidentIconClass(incident.kind)+'"></i><span class="inc-badge"><i class="fas '+badgeIcon+'"></i></span></div>',
     iconSize:[34,34],
     iconAnchor:[17,17]
@@ -5432,14 +5685,17 @@ function buildIncidentPopupHtml(incident){
   const t=new Date(incident.ts);
   const timeStr=t.toLocaleString('es-AR',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'});
   const col=incidentColor(incident.kind);
+  const severityHtml=incidentSeverityHtml(incident.severity||incident.gravedad);
+  let severityRow='';
+  if(severityHtml)severityRow='<div class="ip-severity">Gravedad: '+severityHtml+'</div>';
   let textHtml='';
   if(incident.text)textHtml='<div class="ip-line" style="margin-top:.35rem">'+escapeHtml(incident.text)+'</div>';
   let idHtml='';
   if(sid)idHtml=' · ID: <strong>'+escapeHtml(sid)+'</strong>';
   const isOwner=isIncidentOwner(incident);
   let solveBtn='';
-  if(isOwner)solveBtn='<button class="solve incident-solve-action" data-incident-id="'+escapeHtml(incident.id)+'"><i class="fas fa-check"></i> Solucionar</button>';
-  return '<div class="incident-popup"><div class="ip-title" style="color:'+col+'"><i class="fas '+incidentIconClass(incident.kind)+'"></i> '+typeLabel+'</div><div><span class="ip-zone">'+escapeHtml(incident.zone||'Provincia')+'</span></div>'+textHtml+'<div class="ip-line"><i class="fas fa-clock"></i> '+formatTimeAgo(incident.ts)+' · '+timeStr+'</div><div class="ip-actions"><button class="route" data-waze-nav-lat="'+incident.lat+'" data-waze-nav-lng="'+incident.lng+'"><i class="fas fa-route"></i> Ir con Waze</button>'+solveBtn+'</div><span class="ip-author"><i class="fas fa-user"></i> Reportado por '+escapeHtml(nick)+idHtml+'</span></div>';
+  if(isOwner&&!incidentsBeingResolved.has(String(incident.id)))solveBtn='<button class="solve incident-solve-action" data-incident-id="'+escapeHtml(incident.id)+'"><i class="fas fa-trash-alt"></i> Eliminar reporte</button>';
+  return '<div class="incident-popup"><div class="ip-title" style="color:'+col+'"><i class="fas '+incidentIconClass(incident.kind)+'"></i> '+typeLabel+'</div><div><span class="ip-zone">'+escapeHtml(incident.zone||'Provincia')+'</span></div>'+severityRow+textHtml+'<div class="ip-line"><i class="fas fa-clock"></i> '+formatTimeAgo(incident.ts)+' · '+timeStr+'</div><div class="ip-actions"><button class="route" data-waze-nav-lat="'+incident.lat+'" data-waze-nav-lng="'+incident.lng+'"><i class="fas fa-route"></i> Ir con Waze</button>'+solveBtn+'</div><span class="ip-author"><i class="fas fa-user"></i> Reportado por '+escapeHtml(nick)+idHtml+'</span></div>';
 }
 function renderIncidentMarker(incident){
   const marker=L.marker([incident.lat,incident.lng],{icon:buildIncidentIcon(incident),zIndexOffset:900});
@@ -5483,7 +5739,8 @@ function updateIncidentsPanel(active){
     }
     if(!sid)if(inc.socioId)sid=inc.socioId;
     const idPart=sid?' · '+escapeHtml(sid):'';
-    return '<div class="inc-item '+inc.kind+'" data-inc-id="'+escapeHtml(inc.id)+'"><div class="inc-ico"><i class="fas '+incidentIconClass(inc.kind)+'"></i></div><div class="inc-info"><div class="inc-name">'+escapeHtml(INCIDENT_TYPE_LABELS[inc.kind])+'</div><div class="inc-meta">'+escapeHtml(inc.zone)+' · '+formatTimeAgo(inc.ts)+' · '+escapeHtml(nick)+idPart+'</div></div></div>';
+    const severityHtml=incidentSeverityHtml(inc.severity||inc.gravedad);
+    return '<div class="inc-item '+inc.kind+'" data-inc-id="'+escapeHtml(inc.id)+'"><div class="inc-ico"><i class="fas '+incidentIconClass(inc.kind)+'"></i></div><div class="inc-info"><div class="inc-name">'+escapeHtml(INCIDENT_TYPE_LABELS[inc.kind]||'Siniestro')+' '+severityHtml+'</div><div class="inc-meta">'+escapeHtml(inc.zone)+' · '+formatTimeAgo(inc.ts)+' · '+escapeHtml(nick)+idPart+'</div></div></div>';
   }).join('');
   incPanelList.querySelectorAll('.inc-item').forEach(function(el){
     el.addEventListener('click',function(){
@@ -5537,10 +5794,13 @@ function registerIncomingIncident(incident,options){
   if(incident.lng==null)return;
   if(!isInBounds(incident.lat,incident.lng))return;
   if(!incident.zone)incident.zone=getZone(incident.lat,incident.lng);
+  if(!incident.severity&&incident.gravedad)incident.severity=incident.gravedad;
+  if(!incident.gravedad&&incident.severity)incident.gravedad=incident.severity;
   addIncident(incident);
   if(!isOwn)if(!(options&&options.silent)){
     showIncidentToast(incident);
-    showAppNotification((INCIDENT_TYPE_LABELS[incident.kind]||'Siniestro')+' reportado en '+incident.zone+'.','fa-car-burst');
+    const severity=INCIDENT_SEVERITY_LABELS[incident.severity||incident.gravedad]||'';
+    showAppNotification((INCIDENT_TYPE_LABELS[incident.kind]||'Siniestro')+(severity?' ('+severity.toLowerCase()+')':'')+' reportado en '+incident.zone+'.','fa-car-burst');
   }
 }
 function showIncidentToast(incident){
@@ -5563,7 +5823,8 @@ function showIncidentToast(incident){
   let toastText=incident.text;
   if(!toastText)toastText=INCIDENT_TYPE_LABELS[incident.kind]+' en '+incident.zone;
   const idPart=sid?' · '+escapeHtml(sid):'';
-  toast.innerHTML='<div class="it-icon"><i class="fas '+incidentIconClass(incident.kind)+'"></i></div><div class="it-body"><div class="it-title">'+escapeHtml(typeLabel)+' reportado</div><div class="it-text">'+escapeHtml(toastText)+'</div><div class="it-meta"><span class="it-zone">'+escapeHtml(incident.zone)+'</span><span class="it-zone">'+newsMark+escapeHtml(nick)+idPart+'</span></div></div><button class="it-close"><i class="fas fa-times"></i></button>';
+  const severityHtml=incidentSeverityHtml(incident.severity||incident.gravedad);
+  toast.innerHTML='<div class="it-icon"><i class="fas '+incidentIconClass(incident.kind)+'"></i></div><div class="it-body"><div class="it-title">'+escapeHtml(typeLabel)+' reportado</div><div class="it-text">'+escapeHtml(toastText)+'</div><div class="it-meta">'+severityHtml+'<span class="it-zone">'+escapeHtml(incident.zone)+'</span><span class="it-zone">'+newsMark+escapeHtml(nick)+idPart+'</span></div></div><button class="it-close"><i class="fas fa-times"></i></button>';
   toast.querySelector('.it-close').addEventListener('click',function(){toast.remove()});
   toast.addEventListener('click',function(e){
     if(e.target.closest('.it-close'))return;
@@ -5591,9 +5852,12 @@ function requireRegisteredUserForIncident(){
 function openIncidentModal(){
   if(!requireRegisteredUserForIncident())return;
   pendingIncidentType=null;
+  pendingIncidentSeverity=null;
+  pendingIncidentDraft=null;
   incidentPickedLatLng=null;
   incidentDescription.value='';
   document.querySelectorAll('.incident-opt').forEach(function(b){b.style.background='';b.style.borderWidth='2px'});
+  document.querySelectorAll('.severity-opt').forEach(function(b){b.classList.remove('selected');b.style.borderWidth='2px'});
   if(userLocation){
     incidentPickedLatLng={lat:userLocation.lat,lng:userLocation.lng};
     incidentLocStatus.textContent='Ubicación: '+userLocation.lat.toFixed(4)+', '+userLocation.lng.toFixed(4)+' ('+getZone(userLocation.lat,userLocation.lng)+')';
@@ -5605,6 +5869,8 @@ function openIncidentModal(){
 function closeIncidentModal(){
   incidentModal.classList.remove('visible');
   pendingIncidentType=null;
+  pendingIncidentSeverity=null;
+  pendingIncidentDraft=null;
   cancelIncidentPickMode();
 }
 function cancelIncidentPickMode(){
@@ -5630,6 +5896,7 @@ function startIncidentPickMode(){
     if(!isInBounds(lat,lng)){alert('El punto está fuera del área permitida.');return}
     if(incidentPickMarker)map.removeLayer(incidentPickMarker);
     incidentPickedLatLng={lat:lat,lng:lng};
+    pendingIncidentDraft=null;
     incidentPickMarker=L.marker([lat,lng],{icon:L.divIcon({className:'incident-marker',html:'<div class="incident-marker-inner"><i class="fas fa-map-pin"></i></div>',iconSize:[34,34],iconAnchor:[17,17]})}).addTo(map);
     cancelIncidentPickMode();
     incidentLocStatus.textContent='Ubicación elegida: '+lat.toFixed(4)+', '+lng.toFixed(4)+' ('+getZone(lat,lng)+')';
@@ -5638,6 +5905,7 @@ function startIncidentPickMode(){
   map.on('click',incidentMapClickHandler);
 }
 document.getElementById('incidentUseMyLocation').addEventListener('click',function(){
+  pendingIncidentDraft=null;
   if(!navigator.geolocation){alert('Geolocalización no disponible.');return}
   incidentLocStatus.textContent='Obteniendo tu ubicación...';
   navigator.geolocation.getCurrentPosition(function(pos){
@@ -6008,7 +6276,9 @@ function showQrResolveSuccess(role,sev){
 }
 function mmFinalizeScannedQrResolution(incidentId,resolverRole){
   incidentId=String(incidentId||'').trim();
-  if(!incidentId)return;
+  if(!incidentId)return false;
+  // Esta función solo actualiza el dispositivo actual. El borrado de Sheets
+  // debe haberse confirmado antes de invocarla desde el escáner QR.
   removePublicMessagesByAlertId(incidentId);
   markAlertResolved(incidentId);
   markIncidentResolved(incidentId);
@@ -6024,14 +6294,69 @@ function mmFinalizeScannedQrResolution(incidentId,resolverRole){
   try{renderAllIncidents()}catch(_){}
   try{renderAllChatLocations()}catch(_){}
   try{if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom()}}catch(_){}
-  // Borrado permanente en la pestaña Siniestros; se ejecuta solo después del QR.
-  postToSheets('resolve_siniestro_qr',{siniestroId:incidentId,resolverRole:resolverRole||'user'}).then(function(r){
-    if(r&&r.authRequired)showAppNotification('El cierre se difundió al mapa y a la sala grupal, pero falta validar la cuenta para borrar también la fila de Google Sheets.','fa-lock');
-    else if(r&&r.ok&&r.unconfirmed)showAppNotification('Cierre difundido. Se envió el pedido para borrar el registro de Siniestros; el navegador no permite leer la confirmación de Apps Script.','fa-info-circle');
-    else if(!r||!r.ok)showAppNotification('El cierre se difundió al mapa y a la sala grupal, pero no se pudo enviar el borrado al registro de Google Sheets.','fa-exclamation-triangle');
-  }).catch(function(){
-    showAppNotification('El cierre se difundió al mapa y a la sala grupal, pero falló el envío del borrado a Google Sheets.','fa-exclamation-triangle');
-  });
+  try{schedulePublishPublicHistory()}catch(_){}
+  updateIncidentBadges();
+  return true;
+}
+
+var mmQrResolutionInFlight= new Set();
+async function mmCompleteScannedQrResolution(incidentId,resolverRole,severity,plainQr){
+  incidentId=String(incidentId||'').trim();
+  resolverRole=resolverRole||'user';
+  if(!incidentId)return {ok:false,error:'El QR no contiene un identificador válido.'};
+  if(mmQrResolutionInFlight.has(incidentId))return {ok:false,pending:true,error:'Este QR ya se está procesando.'};
+  // Una copia local pudo haber quedado marcada como resuelta por una versión
+  // anterior aunque Sheets no se hubiera actualizado. Permitimos reescanear el
+  // mismo QR: Apps Script confirmará si la fila ya fue eliminada o sigue pendiente.
+  var wasPreviouslyResolved=isAlertResolved(incidentId)||isIncidentResolved(incidentId);
+  mmQrResolutionInFlight.add(incidentId);
+  stopQrCamera();
+  try{
+    showAppNotification('Verificando el QR y eliminando el registro en Google Sheets…','fa-spinner');
+    // Primero se confirma el borrado real en Siniestros. Si Apps Script falla,
+    // no se publica el cierre ni se quita el incidente del mapa/sala grupal.
+    var saved=await postToSheets('resolve_siniestro_qr',{
+      siniestroId:incidentId,
+      resolverRole:resolverRole,
+      source:'qr_scan'
+    });
+    if(!saved||saved.ok!==true){
+      var detail=saved&&saved.error?saved.error:(saved&&saved.authRequired?
+        'Iniciá sesión con una cuenta Motoamigo o de comercio autorizada.':
+        'Apps Script no confirmó el borrado.');
+      showAppNotification('No se retiró el incidente: '+detail,'fa-triangle-exclamation');
+      alert('No se pudo completar la resolución del QR.\n\n'+detail+'\n\nEl reporte permanece en Google Sheets, el mapa y la sala grupal. Podés volver a escanear el mismo QR cuando se restablezca la conexión.');
+      return saved||{ok:false,error:detail};
+    }
+
+    // Una vez confirmado el borrado, retirar inmediatamente la copia local.
+    // La difusión MQTT se intenta después y ya no bloquea el cierre en este equipo.
+    mmFinalizeScannedQrResolution(incidentId,resolverRole);
+    closeQrScanModal();
+    var broadcasted=await publishResolve(incidentId,resolverRole);
+    if(!broadcasted){
+      try{schedulePublishPublicHistory()}catch(_){}
+      showAppNotification('Incidente eliminado de Google Sheets, del mapa y de esta sala. No se pudo avisar ahora a los demás dispositivos; el historial resuelto se difundirá al reconectar MQTT.','fa-triangle-exclamation');
+    }else{
+      showAppNotification('Incidente eliminado de Google Sheets, del mapa y de la sala grupal.','fa-check-circle');
+    }
+    if(wasPreviouslyResolved){
+      alert('✓ El QR ya había sido procesado localmente. Se verificó nuevamente en Google Sheets y se sincronizó su eliminación.');
+    }else if(plainQr){
+      if(resolverRole==='developer'||resolverRole==='kiosk')showQrResolveSuccess(resolverRole,'');
+      else addQrScanRewards('QR de asistencia resuelto');
+    }else{
+      showQrResolveSuccess(resolverRole,severity||'');
+    }
+    return {ok:true,broadcasted:broadcasted,deleted:saved.deleted||0};
+  }catch(error){
+    var message=error&&error.message?error.message:String(error||'Error desconocido');
+    showAppNotification('No se pudo resolver el QR. El incidente se conserva.','fa-triangle-exclamation');
+    alert('No se pudo completar la resolución del QR.\n\n'+message+'\n\nEl incidente se conserva para que puedas intentarlo nuevamente.');
+    return {ok:false,error:message};
+  }finally{
+    mmQrResolutionInFlight.delete(incidentId);
+  }
 }
 
 function handleQrDecoded(raw){
@@ -6065,40 +6390,15 @@ function handleQrDecoded(raw){
     const resolveId=url.searchParams.get('resolve');
     if(resolveId){
       const sev=url.searchParams.get('sev')||'';
-      /* Desarrolladores y kioscos pueden volver a publicar el cierre aunque su copia local ya figure resuelta. */
-      if(isAlertResolved(resolveId)&&!isPrivilegedQrResolver()){
-        stopQrCamera();
-        closeQrScanModal();
-        alert('Este incidente ya fue resuelto y el QR ya no entrega recompensas.');
-        return;
-      }
-      stopQrCamera();
-      publishResolve(resolveId,resolverRole).then(function(ok){
-        if(ok){
-          mmFinalizeScannedQrResolution(resolveId,resolverRole);
-          closeQrScanModal();
-          showQrResolveSuccess(resolverRole,sev);
-        }else{
-          alert('No se pudo conectar al servidor.\n\nVerificá tu conexión e intentá de nuevo.');
-        }
-      });
+      mmCompleteScannedQrResolution(resolveId,resolverRole,sev,false);
       return;
     }
   }
   const id=extractAlertId(raw);
   if(!id)return;
-  stopQrCamera();
-  publishResolve(id,resolverRole).then(function(ok){
-    if(ok){
-      mmFinalizeScannedQrResolution(id,resolverRole);
-      closeQrScanModal();
-      if(resolverRole==='developer'||resolverRole==='kiosk')showQrResolveSuccess(resolverRole,'');
-      else addQrScanRewards('QR de asistencia resuelto');
-    }else{
-      alert('No se pudo conectar al servidor.');
-    }
-  });
+  mmCompleteScannedQrResolution(id,resolverRole,'',true);
 }
+
 function openQrScanModal(){
   const kioskMode=!!(urlParams.get('kiosk')==='1');
   if(kioskMode&&!(typeof MM_KIOSK_AUTHORIZED!=='undefined'&&MM_KIOSK_AUTHORIZED===true)){
@@ -6202,97 +6502,172 @@ function handlePurchase(placeId,placeName,coinsPrice,purchaseContext){
     setTimeout(function(){alert(msg2)},300);
   });
 }
-function submitIncident(){
+async function submitIncident(){
   if(!requireRegisteredUserForIncident()){
     closeIncidentModal();
     return;
   }
-  if(!pendingIncidentType){alert('Elegí el tipo de siniestro.');return}
+  if(!pendingIncidentType){alert('Elegí el tipo de incidente.');return}
+  if(!pendingIncidentSeverity){alert('Indicá la gravedad: leve, grave o riesgo de vida.');return}
   if(!incidentPickedLatLng){alert('Elegí una ubicación.');return}
+  if(incidentSubmitBtn.disabled)return;
+
   const lat=incidentPickedLatLng.lat;
   const lng=incidentPickedLatLng.lng;
   const zone=getZone(lat,lng);
   const socioId=getSocioIdForRecord();
   const nick=myNick||(authState.user&&authState.user.nick)||'Anónimo';
-  const incident={
-    id:'inc_'+myUserId+'_'+Date.now(),
-    kind:pendingIncidentType,
-    text:(incidentDescription.value||'').slice(0,200).trim(),
-    lat:lat,
-    lng:lng,
-    zone:zone,
-    socioId:socioId,
-    from:{id:myUserId,nick:nick,socioId:socioId},
-    ts:Date.now()
-  };
-  if(incident.text===''){
-    if(incident.kind==='closure')incident.text='Ruta cerrada en '+zone+'. Precaución al circular.';
-    else if(incident.kind==='police')incident.text='Control policial en '+zone+'.';
-    else incident.text='Accidente reportado en '+zone+'. Reducir velocidad.';
+
+  // Se conserva el mismo ID si la confirmación tarda o el Motoamigo reintenta,
+  // de modo que el servidor pueda reconocer el envío repetido sin duplicar filas.
+  if(!pendingIncidentDraft){
+    const now=Date.now();
+    let description=(incidentDescription.value||'').slice(0,200).trim();
+    const incident={
+      id:'inc_'+myUserId+'_'+now,
+      kind:pendingIncidentType,
+      severity:pendingIncidentSeverity,
+      gravedad:pendingIncidentSeverity,
+      text:description,
+      lat:lat,
+      lng:lng,
+      zone:zone,
+      socioId:socioId,
+      from:{id:myUserId,nick:nick,socioId:socioId},
+      ts:now
+    };
+    if(incident.text===''){
+      if(incident.kind==='closure')incident.text='Ruta cerrada en '+zone+'. Precaución al circular.';
+      else if(incident.kind==='police')incident.text='Control policial en '+zone+'.';
+      else incident.text='Accidente reportado en '+zone+'. Reducir velocidad.';
+    }
+    pendingIncidentDraft=incident;
   }
-  registerIncomingIncident(incident,{silent:true});
-  if(mqttClient)if(chatReady){
-    try{mqttClient.publish(TOPIC_INCIDENTS,JSON.stringify(incident),{qos:0})}catch(e){}
+
+  const incident=pendingIncidentDraft;
+  incidentSubmitBtn.disabled=true;
+  incidentSubmitBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Guardando incidente...';
+  try{
+    // Primero se escribe y verifica en Siniestros. Solo después se publica en
+    // MQTT/mapa/sala para evitar alertas que nunca llegaron a Google Sheets.
+    const saved=await postToSheets('register_siniestro',{
+      id:incident.id,
+      socioId:incident.socioId,
+      socioNick:incident.from.nick,
+      lat:Number(incident.lat).toFixed(6),
+      lng:Number(incident.lng).toFixed(6),
+      tipo:incident.kind,
+      gravedad:incident.severity,
+      severity:incident.severity,
+      descripcion:incident.text,
+      zona:incident.zone,
+      fecha:new Date(incident.ts).toISOString()
+    });
+    if(!saved||saved.ok!==true){
+      const detail=saved&&saved.error?saved.error:(saved&&saved.authRequired?'Falta validar la contraseña de tu cuenta.':'Apps Script no confirmó el registro del incidente.');
+      log('Incidente no difundido porque no se confirmó en Sheets: '+detail,'warn');
+      showAppNotification('No se publicó el incidente porque Google Sheets no confirmó su registro. '+detail,'fa-triangle-exclamation');
+      alert('No se pudo confirmar el registro en Google Sheets.\n\nEl incidente no se difundió al mapa ni a la sala general. Podés volver a intentarlo; se conservará el mismo identificador para evitar filas duplicadas.\n\n'+detail);
+      return;
+    }
+
+    if(saved.deploymentWarning){
+      showAppNotification('El registro fue confirmado, pero Apps Script respondió desde una versión anterior o sin identificar. Revisá la implementación web.','fa-triangle-exclamation');
+    }
+    // La identidad final la determina Apps Script desde la fila autenticada.
+    if(saved.socioId){
+      incident.socioId=String(saved.socioId);
+      incident.from.socioId=String(saved.socioId);
+    }
+    if(saved.socioNick){
+      incident.from.nick=String(saved.socioNick);
+    }
+
+    const registro={
+      id:incident.id,
+      socioId:incident.socioId,
+      socioNick:incident.from.nick,
+      lat:incident.lat,
+      lng:incident.lng,
+      kind:incident.kind,
+      severity:incident.severity,
+      gravedad:incident.severity,
+      text:incident.text,
+      zone:incident.zone,
+      ts:incident.ts
+    };
+    siniestros=siniestros.filter(function(it){return it&&String(it.id||'')!==String(registro.id)});
+    siniestros.push(registro);
+    saveSiniestros();
+
+    registerIncomingIncident(incident,{silent:true});
+    let mapBroadcast=false;
+    let chatBroadcast=false;
+    if(mqttClient&&chatReady){
+      try{
+        mqttClient.publish(TOPIC_INCIDENTS,JSON.stringify(incident),{qos:1});
+        mapBroadcast=true;
+      }catch(e){
+        showAppNotification('El incidente quedó guardado, pero no se pudo difundir por el canal del mapa.','fa-triangle-exclamation');
+      }
+    }
+
+    const typePrefix=incident.kind==='closure'?'⚠️ ALERTA DE CORTE: ':incident.kind==='police'?'🚓 CONTROL POLICIAL: ':'🚨 ALERTA DE ACCIDENTE: ';
+    const chatMsg={
+      kind:'incident',
+      type:'public',
+      incidentRef:incident.id,
+      incidentKind:incident.kind,
+      severity:incident.severity,
+      gravedad:incident.severity,
+      zone:incident.zone,
+      socioId:incident.socioId,
+      from:{id:myUserId,nick:incident.from.nick,socioId:incident.socioId},
+      text:typePrefix+incident.text,
+      lat:incident.lat,
+      lng:incident.lng,
+      ts:incident.ts
+    };
+    if(mqttClient&&chatReady){
+      try{
+        mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(chatMsg),{qos:1});
+        chatBroadcast=true;
+      }catch(e){}
+      publicMessages.push(chatMsg);
+      if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
+      saveHistory();
+      schedulePublishPublicHistory();
+      registerChatLocation(locationFromMessage(chatMsg));
+      renderMessages();
+    }
+
+    pendingIncidentDraft=null;
+    closeIncidentModal();
+    ensureUnlocked();
+    map.setView([incident.lat,incident.lng],14,{animate:!MM_LOW_POWER_MODE});
+    log((saved.message||('Incidente guardado en Google Sheets, fila '+saved.rowNumber+'.'))+(saved.sheetUrl?' Abrir pestaña: '+saved.sheetUrl:''),'ok');
+    const severityLabel=INCIDENT_SEVERITY_LABELS[incident.severity].toLowerCase();
+    if(mapBroadcast&&chatBroadcast){
+      showAppNotification('Incidente de gravedad '+severityLabel+' guardado y difundido.','fa-car-burst');
+    }else{
+      showAppNotification('Incidente de gravedad '+severityLabel+' guardado en Google Sheets, pero no se pudo completar su difusión a todos los dispositivos.','fa-info-circle');
+    }
+  }catch(error){
+    const detail=error&&error.message?error.message:String(error);
+    log('Error registrando incidente en Sheets: '+detail,'warn');
+    showAppNotification('No se pudo confirmar el registro del incidente. El formulario conserva los datos para reintentar.','fa-triangle-exclamation');
+    alert('No se pudo registrar el incidente.\n\n'+detail+'\n\nEl reporte no se difundió y podés volver a intentarlo.');
+  }finally{
+    incidentSubmitBtn.disabled=false;
+    incidentSubmitBtn.innerHTML='<i class="fas fa-paper-plane"></i> Reportar siniestro';
   }
-  const chatMsg={
-    kind:'incident',
-    type:'public',
-    incidentRef:incident.id,
-    incidentKind:incident.kind,
-    zone:incident.zone,
-    socioId:socioId,
-    from:{id:myUserId,nick:nick,socioId:socioId},
-    text:(incident.kind==='closure'?'⚠️ ALERTA DE CORTE: ':incident.kind==='police'?'🚓 CONTROL POLICIAL: ':'🚨 ALERTA DE ACCIDENTE: ')+incident.text,
-    lat:lat,
-    lng:lng,
-    ts:Date.now()
-  };
-  if(mqttClient)if(chatReady){
-    try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(chatMsg),{qos:0})}catch(e){}
-    publicMessages.push(chatMsg);
-    if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
-    saveHistory();
-    schedulePublishPublicHistory();
-    registerChatLocation(locationFromMessage(chatMsg));
-    renderMessages();
-  }
-  const registro={
-    id:incident.id,
-    socioId:socioId,
-    socioNick:nick,
-    lat:lat,
-    lng:lng,
-    kind:incident.kind,
-    text:incident.text,
-    zone:zone,
-    ts:incident.ts
-  };
-  siniestros.push(registro);
-  saveSiniestros();
-  postToSheets('register_siniestro',{
-    id:registro.id,
-    socioId:socioId,
-    socioNick:nick,
-    lat:lat.toFixed(6),
-    lng:lng.toFixed(6),
-    tipo:incident.kind,
-    descripcion:incident.text,
-    zona:zone,
-    fecha:new Date(incident.ts).toISOString()
-  }).then(function(res){
-    if(res&&res.ok)log('✓ Siniestro enviado a Google Sheets','ok');
-    else log('Siniestro guardado local (APPS_SCRIPT_URL vacía)','warn');
-  });
-  closeIncidentModal();
-  ensureUnlocked();
-  map.setView([lat,lng],14,{animate:!MM_LOW_POWER_MODE});
-  showAppNotification('Siniestro reportado correctamente.','fa-car-burst');
 }
 incidentBtn.addEventListener('click',openIncidentModal);
 cancelIncidentModal.addEventListener('click',closeIncidentModal);
 incidentModal.addEventListener('click',function(e){if(e.target===incidentModal)closeIncidentModal()});
 document.querySelectorAll('.incident-opt').forEach(function(btn){
   btn.addEventListener('click',function(){
+    pendingIncidentDraft=null;
     pendingIncidentType=btn.dataset.type;
     document.querySelectorAll('.incident-opt').forEach(function(b){b.style.background='';b.style.borderWidth='2px'});
     if(btn.dataset.type==='accident')btn.style.background='#fdf2f2';
@@ -6301,6 +6676,18 @@ document.querySelectorAll('.incident-opt').forEach(function(btn){
     btn.style.borderWidth='3px';
   });
 });
+document.querySelectorAll('.severity-opt').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    pendingIncidentDraft=null;
+    const severity=String(btn.dataset.severity||'');
+    if(!Object.prototype.hasOwnProperty.call(INCIDENT_SEVERITY_LABELS,severity))return;
+    pendingIncidentSeverity=severity;
+    document.querySelectorAll('.severity-opt').forEach(function(b){b.classList.remove('selected');b.style.borderWidth='2px'});
+    btn.classList.add('selected');
+    btn.style.borderWidth='3px';
+  });
+});
+incidentDescription.addEventListener('input',function(){pendingIncidentDraft=null});
 incidentSubmitBtn.addEventListener('click',submitIncident);
 
 const chatToggleBtn=document.getElementById('chatToggleBtn');
@@ -6443,11 +6830,33 @@ function emitEmergencyAlert(severity){
       grave:'Necesito asistencia urgente por una emergencia grave.',
       vida:'Necesito ayuda inmediata por una situación de riesgo de vida.'
     };
-    const from={id:myUserId,nick:nick,socioId:getSocioIdForRecord()};
-    const data={id:id,kind:'emergency',severity:severity,text:descriptions[severity],lat:lat,lng:lng,zone:zone,from:from,ts:Date.now()};
+    const socioId=getSocioIdForRecord();
+    const from={id:myUserId,nick:nick,socioId:socioId};
+    const data={id:id,kind:'emergency',severity:severity,gravedad:severity,text:descriptions[severity],lat:lat,lng:lng,zone:zone,from:from,ts:Date.now()};
+
+    // Persistir también el aviso QR en Siniestros. Antes solo se activaba el QR y
+    // se publicaba por MQTT: no había ninguna llamada a register_siniestro.
+    const registro={
+      id:id,
+      socioId:socioId,
+      socioNick:nick,
+      lat:lat,
+      lng:lng,
+      kind:'emergency',
+      severity:severity,
+      gravedad:severity,
+      text:data.text,
+      zone:zone,
+      ts:data.ts
+    };
+    siniestros=(siniestros||[]).filter(function(it){return it&&String(it.id||'')!==id});
+    siniestros.push(registro);
+    if(siniestros.length>SINIESTROS_MAX)siniestros=siniestros.slice(-SINIESTROS_MAX);
+    saveSiniestros();
+
     if(emergencyModal)emergencyModal.classList.remove('visible');
     activateUserAlert(data);
-    const msg={kind:'emergency',type:'public',id:id,alertId:id,severity:severity,zone:zone,text:data.text,lat:lat,lng:lng,from:from,ts:data.ts};
+    const msg={kind:'emergency',type:'public',id:id,alertId:id,severity:severity,gravedad:severity,zone:zone,text:data.text,lat:lat,lng:lng,from:from,ts:data.ts};
     const exists=publicMessages.some(function(m){return m&&(m.alertId===id||m.id===id)});
     if(!exists){
       publicMessages.push(msg);
@@ -6457,24 +6866,55 @@ function emitEmergencyAlert(severity){
     const loc=locationFromMessage(msg);
     if(loc)registerChatLocation(loc);
     if(mqttClient&&chatReady){
-      try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(msg),{qos:0});}catch(_){}
+      try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(msg),{qos:1});}catch(_){}
       schedulePublishPublicHistory();
-      showAppNotification('Tu alerta fue enviada a la sala general.','fa-triangle-exclamation');
+      showAppNotification('Tu alerta fue enviada a la sala general. Guardando el registro en Siniestros...','fa-triangle-exclamation');
     }else{
-      showAppNotification('Tu alerta quedó activa en este dispositivo, pero el chat no está conectado para notificar a otros usuarios.','fa-triangle-exclamation');
+      showAppNotification('Tu alerta quedó activa en este dispositivo. Guardando el registro en Siniestros...','fa-triangle-exclamation');
     }
     if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom();}
+
+    // El ID del registro coincide con el ID incluido en el QR (?resolve=...).
+    // El servidor lo guarda de manera idempotente y luego el escaneo puede borrarlo.
+    postToSheets('register_siniestro',{
+      id:id,
+      socioId:socioId,
+      socioNick:nick,
+      lat:Number(lat).toFixed(6),
+      lng:Number(lng).toFixed(6),
+      tipo:'emergency',
+      gravedad:severity,
+      severity:severity,
+      descripcion:data.text,
+      zona:zone,
+      fecha:new Date(data.ts).toISOString()
+    }).then(function(result){
+      if(result&&result.ok===true){
+        log((result.message||('Emergencia guardada en Google Sheets, pestaña '+(result.sheet||'Siniestros')+', fila '+(result.rowNumber||'?')+'.'))+(result.sheetUrl?' Abrir pestaña: '+result.sheetUrl:''),'ok');
+        if(result.deploymentWarning){
+          showAppNotification('La planilla confirmó el registro, pero la implementación de Apps Script no coincide con la versión esperada. Volvé a desplegar la última versión.','fa-triangle-exclamation');
+        }else{
+          showAppNotification('Emergencia '+severity+' registrada en Google Sheets. El QR puede retirarla al escanearse.','fa-check-circle');
+        }
+      }else{
+        const detail=result&&result.error?result.error:(result&&result.authRequired?'Falta validar la cuenta Motoamigo.':(result&&result.offline?'APPS_SCRIPT_URL no está configurada.':'Apps Script no confirmó el registro. Revisá que la implementación web esté actualizada.'));
+        log('La alerta sigue activa, pero no se confirmó su registro en Siniestros: '+detail,'warn');
+        showAppNotification('La alerta se difundió, pero no se guardó en Google Sheets: '+detail,'fa-triangle-exclamation');
+      }
+    }).catch(function(error){
+      const detail=error&&error.message?error.message:String(error);
+      log('Error guardando emergencia en Siniestros: '+detail,'warn');
+      showAppNotification('La alerta se difundió, pero falló el registro en Google Sheets. '+detail,'fa-triangle-exclamation');
+    });
   };
   if(userLocation&&Number.isFinite(userLocation.lat)&&Number.isFinite(userLocation.lng)){
     create(userLocation.lat,userLocation.lng);
     return;
   }
-  if(!navigator.geolocation){alert('Este dispositivo no ofrece geolocalización. Permití la ubicación o reportá un siniestro desde el botón naranja y marcá el punto en el mapa.');return;}
-  navigator.geolocation.getCurrentPosition(function(pos){
-    const lat=pos.coords.latitude,lng=pos.coords.longitude;
-    userLocation={lat:lat,lng:lng};
-    create(lat,lng);
-  },function(){alert('No se pudo obtener tu ubicación. Permití el acceso a la ubicación y volvé a intentarlo.');},{enableHighAccuracy:true,timeout:10000,maximumAge:15000});
+  requestUserLocation(true).then(function(currentLocation){
+    if(currentLocation){create(currentLocation.lat,currentLocation.lng);return;}
+    alert((geoStatus&&geoStatus.textContent?geoStatus.textContent:'No se pudo obtener tu ubicación.')+' Podés habilitar los permisos del navegador e intentarlo nuevamente.');
+  });
 }
 if(emergencyBtn&&!emergencyBtn.dataset.mmBound){
   emergencyBtn.dataset.mmBound='1';
@@ -7272,6 +7712,14 @@ function showMapPage(){
     const mapWrapper=document.getElementById('map-wrapper');
     if(mapWrapper)mapWrapper.scrollIntoView({behavior:'smooth',block:'start'});
   },80);
+  // La ubicación se solicita al entrar al mapa, no desde una rutina de carga
+  // antigua que ya no forma parte del inicio actual.
+  setTimeout(function(){
+    if(!mapPage||mapPage.classList.contains('hidden'))return;
+    if(authState&&authState.isLoggedIn&&authState.user&&!isGuestAccount(authState.user)){
+      requestUserLocation(true);
+    }
+  },260);
 }
 function hideGate(){
   authGate.classList.add('fading');
@@ -8776,7 +9224,11 @@ function isGuestAccount(userLike){
 }
 function canViewerSeeMapUser(userLike){
   if(!userLike||!String(userLike.id||'').trim())return false;
-  return !!(authState&&authState.isLoggedIn&&authState.user&&isDeveloperAccount()&&DEV_MODE);
+  if(!(authState&&authState.isLoggedIn&&authState.user))return false;
+  // Cada Motoamigo puede ver su propia posición. Las posiciones de terceros
+  // continúan reservadas al modo desarrollador, como en el diseño original.
+  if(String(userLike.id)===String(myUserId))return true;
+  return !!(isDeveloperAccount()&&DEV_MODE);
 }
 function canViewerSeeMapLocation(entry){
   if(!entry)return false;
@@ -8828,7 +9280,7 @@ function renderUserMotoMarker(user){
   if(!canViewerSeeMapUser(user))return;
   if(typeof user.lat!=='number')return;
   if(typeof user.lng!=='number')return;
-  if(!isInBounds(user.lat,user.lng))return;
+  if(!isInBounds(user.lat,user.lng)&&String(user.id)!==String(myUserId))return;
   let status=user.status||'conectado';
   if(user.id===myUserId)status=myStatus;
   if(status==='desconectado')return;
@@ -8864,7 +9316,8 @@ function renderAllUserMotos(){
   const visibleIds=new Set();
   onlineUsers.forEach(function(user){
     if(!user||!canViewerSeeMapUser(user))return;
-    if(typeof user.lat!=='number'||typeof user.lng!=='number'||!isInBounds(user.lat,user.lng))return;
+    if(typeof user.lat!=='number'||typeof user.lng!=='number')return;
+    if(!isInBounds(user.lat,user.lng)&&String(user.id)!==String(myUserId))return;
     let status=user.status||'conectado';
     if(user.id===myUserId)status=myStatus;
     if(status==='desconectado')return;
@@ -9360,6 +9813,8 @@ function handlePublicMessage(msg){
         id:msg.incidentRef||msg.incidentId||('inc_chat_'+msg.from.id+'_'+msg.ts),
         incidentRef:msg.incidentRef||msg.incidentId||'',
         kind:msg.incidentKind||'accident',
+        severity:msg.severity||msg.gravedad||'',
+        gravedad:msg.severity||msg.gravedad||'',
         text:msg.text||'',
         lat:msg.lat,
         lng:msg.lng,
@@ -9873,7 +10328,8 @@ function renderMsgHtml(msg,isMine,ctx){
     let navUrl='#'; if(msg.lat)if(msg.lng){navUrl=buildWazeNavUrl(msg.lat,msg.lng);}
     let incidentClass=''; if(isClosure)incidentClass=' closure'; else if(isPolice)incidentClass=' police';
     let navBtn=''; if(navUrl!=='#')navBtn='<a href="'+navUrl+'" target="_blank"><i class="fas fa-route"></i> Ir con Waze</a>';
-    body='<div class="chat-msg '+(isMine?'mine':'other')+' chat-msg-incident'+incidentClass+'" data-msg-id="'+escapeHtml(msgId)+'">'+reportBtn+author+'<div class="inc-title"><i class="fas '+incidentIconClass(msg.incidentKind)+'"></i> '+escapeHtml(INCIDENT_TYPE_LABELS[msg.incidentKind]||'Siniestro')+'</div><div><span class="inc-zone">'+escapeHtml(zone)+'</span></div><div class="inc-text">'+escapeHtml(msg.text||'')+'</div><div class="inc-actions">'+navBtn+'</div><span class="msg-time">'+timeStr+statusHtml+'</span></div>';
+    const severityHtml=incidentSeverityHtml(msg.severity||msg.gravedad);
+    body='<div class="chat-msg '+(isMine?'mine':'other')+' chat-msg-incident'+incidentClass+'" data-msg-id="'+escapeHtml(msgId)+'">'+reportBtn+author+'<div class="inc-title"><i class="fas '+incidentIconClass(msg.incidentKind)+'"></i> '+escapeHtml(INCIDENT_TYPE_LABELS[msg.incidentKind]||'Siniestro')+'</div><div><span class="inc-zone">'+escapeHtml(zone)+'</span></div>'+(severityHtml?'<div>Gravedad: '+severityHtml+'</div>':'')+'<div class="inc-text">'+escapeHtml(msg.text||'')+'</div><div class="inc-actions">'+navBtn+'</div><span class="msg-time">'+timeStr+statusHtml+'</span></div>';
   }else if(msg.kind==='incident-resolve'){
     const isClosure=msg.incidentKind==='closure'; const isPolice=msg.incidentKind==='police';
     let incidentClass=''; if(isClosure)incidentClass=' closure'; else if(isPolice)incidentClass=' police';
@@ -10066,105 +10522,7 @@ function enviarLocal(destino){
 }
 sharePlacePublic.addEventListener('click',function(){enviarLocal('public')});
 sharePlacePrivate.addEventListener('click',function(){enviarLocal('private')});
-emergencyBtn.addEventListener('click',function(){
-  if(!chatReady){alert('El chat todavía no está conectado.');return}
-  emergencyModal.classList.add('visible');
-});
-cancelEmergencyModal.addEventListener('click',function(){emergencyModal.classList.remove('visible')});
-emergencyModal.addEventListener('click',function(e){if(e.target===emergencyModal)emergencyModal.classList.remove('visible')});
-emergencyOptions.forEach(function(btn){
-  btn.addEventListener('click',function(){enviarEmergencia(btn.dataset.severity)});
-});
-function enviarEmergencia(severity){
-  emergencyModal.classList.remove('visible');
-  const doSend=function(){
-    const sevLabels={leve:'⚠️ EMERGENCIA LEVE',grave:'🚨 EMERGENCIA GRAVE',vida:'🆘 RIESGO DE VIDA'};
-    const sevTexts={leve:'Reporto una emergencia leve. Necesito asistencia.',grave:'Reporto una emergencia GRAVE. Necesito ayuda urgente.',vida:'🆘 RIESGO DE VIDA. Necesito ayuda INMEDIATA.'};
-    const alertId='emg_'+myUserId+'_'+Date.now();
-    const socioId=getSocioIdForRecord();
-    const nick=myNick||(authState.user&&authState.user.nick)||'Anónimo';
-    const msg={
-      id:alertId,
-      kind:'emergency',
-      type:'public',
-      alertId:alertId,
-      severity:severity,
-      socioId:socioId,
-      from:{id:myUserId,nick:nick,socioId:socioId},
-      text:sevLabels[severity]+' — '+sevTexts[severity],
-      lat:userLocation?userLocation.lat:null,
-      lng:userLocation?userLocation.lng:null,
-      ts:Date.now()
-    };
-    try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(msg),{qos:0})}
-    catch(e){alert('Error al enviar la emergencia.');return}
-    publicMessages.push(msg);
-    if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
-    saveHistory();
-    schedulePublishPublicHistory();
-    registerChatLocation(locationFromMessage(msg));
-    currentContext='public';
-    currentPrivatePeer=null;
-    unreadPublic=0;
-    updateBadges();
-    updateChatTitle();
-    openChat();
-    renderMessages();
-    scrollMessagesBottom();
-    let zone='Provincia';
-    if(userLocation)zone=getZone(userLocation.lat,userLocation.lng);
-    const registro={
-      id:alertId,
-      socioId:socioId,
-      socioNick:nick,
-      lat:userLocation?userLocation.lat:null,
-      lng:userLocation?userLocation.lng:null,
-      kind:'emergency',
-      severity:severity,
-      text:sevLabels[severity]+' — '+sevTexts[severity],
-      zone:zone,
-      ts:Date.now()
-    };
-    siniestros.push(registro);
-    saveSiniestros();
-    postToSheets('register_siniestro',{
-      id:registro.id,
-      socioId:socioId,
-      socioNick:nick,
-      lat:registro.lat!=null?registro.lat.toFixed(6):'',
-      lng:registro.lng!=null?registro.lng.toFixed(6):'',
-      tipo:'emergency',
-      gravedad:severity,
-      descripcion:registro.text,
-      zona:zone,
-      fecha:new Date(registro.ts).toISOString()
-    }).then(function(res){
-      if(res&&res.ok)log('✓ Emergencia enviada a Google Sheets','ok');
-      else log('Emergencia guardada local (APPS_SCRIPT_URL vacía)','warn');
-    });
-    activateUserAlert({id:alertId,kind:'emergency',severity:severity,text:sevLabels[severity]+' — '+sevTexts[severity],lat:userLocation?userLocation.lat:null,lng:userLocation?userLocation.lng:null,zone:zone,ts:Date.now()});
-    let alertText='';
-    if(severity==='vida')alertText='🆘 Emergencia enviada. Si hay riesgo de vida, llamá AHORA al 911.';
-    else if(severity==='grave')alertText='🚨 Emergencia grave enviada a la sala general.';
-    else alertText='⚠️ Emergencia leve enviada a la sala general.';
-    showAppNotification(alertText,'fa-exclamation-triangle');
-  };
-  if(!userLocation)if(navigator.geolocation){
-    geoStatus.textContent='Obteniendo ubicación para el reporte...';
-    navigator.geolocation.getCurrentPosition(function(pos){
-      userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude};
-      distanceCacheKey='';
-      createUserMarker();
-      distanceFilter.disabled=false;
-      geoStatus.textContent='Ubicación detectada';
-      renderPlaces();
-      if(mqttClient&&chatReady)announcePresence();
-      doSend();
-    },function(){doSend()},{enableHighAccuracy:true,timeout:6000,maximumAge:30000});
-    return;
-  }
-  doSend();
-}
+/* El flujo de emergencia se registra una sola vez en emitEmergencyAlert(). */
 function loadMapDataInBackground(){
   loadHistory();
   loadMotoamigosFromStorage();
