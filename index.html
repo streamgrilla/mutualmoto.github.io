@@ -4,9 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <script>
-/* Marca pronto la ruta pública del perfil QR antes de que aparezca la pantalla de acceso. */
-try{if(new URLSearchParams(window.location.search).has('mmperfil'))document.documentElement.classList.add('mm-public-profile-route')}catch(e){}
+/* Define la presentación inicial antes del primer render: invitados sin botonera
+   de cuenta y sesiones recordadas sin encabezado público. */
+try{
+  var mmInitialParams=new URLSearchParams(window.location.search);
+  if(mmInitialParams.has('mmperfil'))document.documentElement.classList.add('mm-public-profile-route');
+  var mmEarlyWidth=window.innerWidth||document.documentElement.clientWidth||0;
+  var mmEarlyCoarse=!!(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches);
+  if((mmEarlyCoarse&&mmEarlyWidth<=1100)||mmEarlyWidth<=600){
+    document.documentElement.classList.add('mm-mobile-performance');
+  }
+  var mmEarlyNav=window.navigator||{};
+  var mmEarlyConnection=mmEarlyNav.connection||mmEarlyNav.mozConnection||mmEarlyNav.webkitConnection||{};
+  var mmEarlyMemory=Number(mmEarlyNav.deviceMemory||0);
+  var mmEarlyCores=Number(mmEarlyNav.hardwareConcurrency||0);
+  if((mmEarlyWidth<=1100&&mmEarlyCoarse&&(mmEarlyMemory===0||mmEarlyMemory<=4||mmEarlyCores===0||mmEarlyCores<=6))||mmEarlyConnection.saveData===true){
+    document.documentElement.classList.add('mm-low-power');
+  }
+  var mmInitialAuth=null;
+  try{mmInitialAuth=JSON.parse(localStorage.getItem('servicios_ba_auth_v1')||'null')}catch(_){ }
+  var mmInitialRemembered=!!(mmInitialAuth&&mmInitialAuth.isLoggedIn&&mmInitialAuth.user&&!mmInitialAuth.user.isGuest&&mmInitialAuth.user.rememberDevice===true);
+  var mmInitialDeveloper=mmInitialParams.get('dev')==='1';
+  document.documentElement.classList.add(mmInitialRemembered||mmInitialDeveloper?'mm-auth-start':'mm-guest-start');
+}catch(e){
+  try{document.documentElement.classList.add('mm-guest-start')}catch(_){ }
+}
 </script>
+<style id="mm-initial-visibility">
+  /* Evita que los controles exclusivos de cuentas registradas aparezcan
+     un instante antes de que se inicialice el modo Invitado. */
+  html.mm-guest-start #floatingItems .floating-btn:not(#authHeaderBtn):not(.police-btn),
+  html.mm-guest-start #floatingToggleBtn {display:none!important;pointer-events:none!important}
+  /* Las cuentas recordadas no deben mostrar el encabezado de navegación público. */
+  html.mm-auth-start #siteHeader {display:none!important}
+</style>
 <title>Servicios en Buenos Aires y Alrededores</title>
 <link rel="preconnect" href="https://embed.waze.com" crossorigin>
 <link rel="dns-prefetch" href="https://embed.waze.com">
@@ -119,7 +150,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:#333}
 .profile-guest{padding:1.2rem;background:#f8f9fa;border:1px dashed #cfd8dc;border-radius:12px;margin-bottom:.2rem;color:#555;grid-column:1/-1}
 .profile-guest strong{display:block;color:#2c3e50;font-size:1.05rem;margin-bottom:.35rem}
 @media(max-width:600px){.profile-box{padding:1.1rem}.profile-content{grid-template-columns:1fr;gap:.2rem;padding:.8rem}.profile-row-label{margin-top:.35rem}}
-.floating-stack.guest-disabled .floating-items .floating-btn:not(#authHeaderBtn),.floating-stack.guest-disabled .floating-items a{display:none!important}.floating-stack.guest-disabled #floatingToggleBtn{opacity:1!important;filter:none!important;pointer-events:auto!important;cursor:pointer!important}
+.floating-stack.guest-disabled .floating-items .floating-btn:not(#authHeaderBtn):not(.police-btn),.floating-stack.guest-disabled .floating-items a:not(.police-btn){display:none!important}.floating-stack.guest-disabled #floatingToggleBtn{display:none!important}
 .kiosk-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0d6b58,#16a085 60%,#1abc9c);z-index:99997;display:none;align-items:center;justify-content:center;padding:1.5rem;overflow-y:auto}
 .kiosk-screen.visible{display:flex}
 .kiosk-box{background:#fff;border-radius:24px;padding:2.2rem 2rem;max-width:520px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.5);text-align:center;margin:auto}
@@ -872,6 +903,8 @@ body.mobile-menu-open{overflow:hidden}
 .return-home-btn{position:fixed;z-index:2210;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));min-height:42px;padding:.55rem .85rem;display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:1px solid rgba(255,255,255,.28);border-radius:11px;background:rgba(44,62,80,.96);color:#fff;font:inherit;font-size:.82rem;font-weight:800;letter-spacing:.1px;box-shadow:0 3px 12px rgba(0,0,0,.28);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .return-home-btn:hover{background:#d35400;border-color:#e67e22}
 .return-home-btn:active{transform:scale(.97)}
+/* El invitado ya ingresa directamente al mapa; no necesita volver a Inicio. */
+body.mm-guest-mode #returnHomeBtn{display:none!important}
 .return-home-btn:focus-visible{outline:3px solid rgba(255,255,255,.8);outline-offset:3px}
 @media(max-width:900px) and (orientation:portrait) and (pointer:coarse){.return-home-btn{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));min-height:42px;padding:.5rem .7rem;font-size:.78rem}}
 @media(max-width:900px) and (orientation:portrait) and (pointer:coarse){
@@ -1431,6 +1464,206 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 @media(max-width:480px){#mmPublicMotoProfile .mmp-shell{justify-content:flex-start}#mmPublicMotoProfile .mmp-hero{padding:22px 19px}#mmPublicMotoProfile .mmp-fields{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){#mmPublicMotoProfile .mmp-spinner{animation:none}}
 </style>
+
+<style id="mm-guest-map-home-v8">
+  :root { --mm-site-header-height: 86px; }
+  #siteHeader {
+    position: sticky;
+    top: 0;
+    z-index: 3500;
+    box-shadow: 0 3px 14px rgba(0,0,0,.16);
+  }
+  #mapPage {
+    height: calc(100vh - var(--mm-site-header-height, 86px));
+    height: calc(100dvh - var(--mm-site-header-height, 86px));
+    min-height: 440px;
+    scroll-margin-top: var(--mm-site-header-height, 86px);
+  }
+  #mapPage > .container {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+  #mapPage .return-home-btn,
+  #mapPage .mobile-menu-btn {
+    top: calc(var(--mm-site-header-height, 86px) + 10px);
+  }
+  #preMapContent .pre-map-section {
+    scroll-margin-top: calc(var(--mm-site-header-height, 86px) + 14px);
+  }
+  #siteHeader #demoMapBtn {
+    background: linear-gradient(135deg, #e67e22, #f39c12);
+    border-color: #e67e22;
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(230,126,34,.28);
+  }
+  #siteHeader #demoMapBtn:hover { filter: brightness(1.08); }
+  #siteHeader #enterMapBtn { background: var(--moto); border-color: var(--moto); }
+  @media (max-width: 900px) and (orientation: portrait) and (pointer: coarse),
+         (max-width: 600px),
+         (max-height: 620px) and (pointer: coarse) {
+    #mapPage {
+      height: calc(100vh - var(--mm-site-header-height, 170px));
+      height: calc(100dvh - var(--mm-site-header-height, 170px));
+      min-height: 420px;
+    }
+    #mapPage > .container { height: 100% !important; }
+    #mapPage #sidebar {
+      top: calc(var(--mm-site-header-height, 170px) + 60px) !important;
+      bottom: 38px !important;
+    }
+    #mapPage .return-home-btn,
+    #mapPage .mobile-menu-btn {
+      top: calc(var(--mm-site-header-height, 170px) + 10px) !important;
+    }
+    #siteHeader #enterMapBtn { grid-column: auto; }
+    #siteHeader #demoMapBtn { grid-column: auto; }
+  }
+  @media (max-width: 380px) and (orientation: portrait) and (pointer: coarse) {
+    #mapPage { min-height: 400px; }
+  }
+</style>
+<style id="mm-demo-map-no-action-buttons">
+  /* El Demo y el modo Invitado son vistas sin botonera: se oculta el contenedor
+     completo desde el primer render, incluidos los accesos públicos del flotante. */
+  html.mm-guest-start #floatingStack,
+  body.mm-guest-mode #floatingStack,
+  body.mm-demo-map #floatingStack {
+    display: none !important;
+    pointer-events: none !important;
+  }
+</style>
+
+<style id="mm-performance-and-mobile-parity-v1">
+  /* El área Waze no necesita ser casi el doble de grande que la pantalla.
+     Un margen del 25% mantiene espacio para el desplazamiento y reduce píxeles compuestos. */
+  .waze-frame{width:150%;height:150%;top:-25%;left:-25%;}
+  html.mm-mobile-performance .waze-frame{width:160%;height:160%;top:-30%;left:-30%;}
+
+  /* Las ondas infinitas y sombras animadas de muchos marcadores elevan el coste de pintura.
+     Los colores/iconos siguen diferenciando los avisos sin animación permanente. */
+  html.mm-mobile-performance .discount-marker-inner,
+  html.mm-mobile-performance .incident-marker-inner,
+  html.mm-mobile-performance .chat-marker-emergency,
+  html.mm-mobile-performance .sponsor-marker-inner,
+  html.mm-mobile-performance .incident-toast .it-icon,
+  html.mm-mobile-performance .level-panel.max-level .level-header i,
+  html.mm-mobile-performance .alert-overlay .alert-box::before,
+  html.mm-mobile-performance .alert-overlay .alert-box::after,
+  html.mm-low-power .discount-marker-inner,
+  html.mm-low-power .incident-marker-inner,
+  html.mm-low-power .chat-marker-emergency,
+  html.mm-low-power .sponsor-marker-inner,
+  html.mm-low-power .incident-toast .it-icon,
+  html.mm-low-power .level-panel.max-level .level-header i,
+  html.mm-low-power .alert-overlay .alert-box::before,
+  html.mm-low-power .alert-overlay .alert-box::after{
+    animation:none!important;
+  }
+  html.mm-low-power .leaflet-marker-icon,
+  html.mm-low-power .leaflet-marker-shadow,
+  html.mm-low-power .floating-items,
+  html.mm-low-power #sidebar,
+  html.mm-low-power .place-card,
+  html.mm-low-power .contact-item{
+    transition:none!important;
+  }
+  html.mm-mobile-performance .cluster-icon,
+  html.mm-mobile-performance .incident-marker-inner,
+  html.mm-mobile-performance .user-moto-marker-inner,
+  html.mm-mobile-performance .chat-marker-inner{
+    box-shadow:0 1px 4px rgba(0,0,0,.24);
+  }
+  html.mm-low-power .cluster-icon,
+  html.mm-low-power .incident-marker-inner,
+  html.mm-low-power .user-moto-marker-inner,
+  html.mm-low-power .chat-marker-inner{
+    box-shadow:0 1px 3px rgba(0,0,0,.2);
+  }
+
+  /* En modo apaisado, la navegación pública y el cajón del mapa conservan
+     las mismas funciones que en vertical, sin ocupar media pantalla. */
+  @media (max-width:1024px) and (orientation:landscape) and (pointer:coarse){
+    #siteHeader{
+      display:flex;
+      flex-direction:row;
+      align-items:center;
+      justify-content:space-between;
+      gap:.45rem;
+      min-height:52px;
+      padding:calc(.3rem + env(safe-area-inset-top)) max(.55rem,env(safe-area-inset-right)) .3rem max(.55rem,env(safe-area-inset-left));
+      text-align:left;
+    }
+    #siteHeader h1{width:auto;flex:0 0 auto;font-size:.9rem;line-height:1.15;white-space:nowrap;}
+    #siteHeader .header-auth-actions{
+      display:flex;
+      flex:1 1 auto;
+      min-width:0;
+      width:auto;
+      margin:0;
+      justify-content:flex-end;
+      gap:.3rem;
+      overflow-x:auto;
+      overflow-y:hidden;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+    #siteHeader .header-auth-actions::-webkit-scrollbar{display:none}
+    #siteHeader .header-auth-btn{
+      flex:0 0 auto;
+      width:auto;
+      min-width:0;
+      min-height:38px;
+      padding:.38rem .5rem;
+      border-radius:8px;
+      font-size:.68rem;
+      line-height:1.1;
+      white-space:nowrap;
+    }
+    #mapPage{
+      height:calc(100vh - var(--mm-site-header-height,52px));
+      height:calc(100dvh - var(--mm-site-header-height,52px));
+      min-height:0!important;
+    }
+    #mapPage>.container{height:100%!important;min-height:0!important;flex-direction:row;}
+    #mapPage #map-wrapper{flex:1 1 auto;width:100%;height:100%;min-height:0;}
+    #mapPage #sidebar{
+      position:fixed!important;
+      z-index:2100!important;
+      top:var(--mm-site-header-height,52px)!important;
+      right:auto!important;
+      bottom:max(8px,env(safe-area-inset-bottom))!important;
+      left:0!important;
+      width:min(68vw,360px)!important;
+      height:auto!important;
+      min-height:0!important;
+      max-height:none!important;
+      display:flex!important;
+      flex-direction:column;
+      overflow-y:auto!important;
+      overflow-x:hidden!important;
+      transform:translate3d(-105%,0,0);
+      transition:transform .22s ease-out;
+      box-shadow:8px 0 20px rgba(0,0,0,.22);
+      background:#fff;
+      will-change:transform;
+      -webkit-overflow-scrolling:touch;
+    }
+    #mapPage #sidebar.mobile-open{transform:translate3d(0,0,0);}
+    #mapPage #sidebar>*{flex:0 0 auto;width:auto!important;min-width:0!important;}
+    #mapPage .mobile-menu-btn{display:flex;top:calc(var(--mm-site-header-height,52px) + 6px);left:max(8px,env(safe-area-inset-left));}
+    #mapPage .return-home-btn{top:calc(var(--mm-site-header-height,52px) + 6px);right:max(8px,env(safe-area-inset-right));}
+    #mapPage .mobile-menu-overlay{display:block;}
+    #mapPage .mobile-menu-overlay.visible{opacity:1;visibility:visible;pointer-events:auto;}
+    html.mm-low-power #mapPage #sidebar{transition:none!important;}
+  }
+  @media (max-width:380px) and (pointer:coarse){
+    .waze-frame{width:150%;height:150%;top:-25%;left:-25%;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html .discount-marker-inner,html .incident-marker-inner,html .chat-marker-emergency,
+    html .sponsor-marker-inner,html .incident-toast .it-icon{animation:none!important;transition:none!important;}
+  }
+</style>
 </head>
 <body>
 
@@ -1528,8 +1761,6 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 <div class="gate-error" id="gateLoginError"></div>
 <button class="gate-btn login" id="gateLoginBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n</button>
 <button type="button" class="gate-register-btn" data-open-register><i class="fas fa-user-plus"></i> Registrarse</button>
-<div class="gate-divider">o</div>
-<button class="gate-guest-btn" id="gateGuestBtn"><i class="fas fa-user-secret"></i> Continuar como invitado</button>
 <section class="gate-contribution" aria-labelledby="gateContributionTitle">
   <div class="gate-contribution-heading">
     <span class="gate-contribution-kicker"><i class="fas fa-heart" aria-hidden="true"></i> Una comunidad que se sostiene entre todos</span>
@@ -1595,12 +1826,13 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
 <button type="button" class="header-auth-btn" data-pre-section="guide"><i class="fas fa-map-marked-alt"></i> Aprende sobre el mapa</button>
 <button type="button" class="header-auth-btn" data-pre-section="contacts"><i class="fas fa-address-book"></i> Contactos</button>
 <button type="button" class="header-auth-btn register" id="associationHeaderBtn"><i class="fas fa-handshake"></i> Asociarte como Motoamigazo</button>
-<button type="button" class="header-auth-btn register" id="enterMapBtn"><i class="fas fa-map"></i> Acceder al mapa</button>
+<button type="button" class="header-auth-btn register demo-map-btn" id="demoMapBtn"><i class="fas fa-map-marked-alt"></i> Demo del mapa</button>
+<button type="button" class="header-auth-btn register" id="enterMapBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</button>
 </div>
 </header>
 
 <div id="preMapContent">
-  <section class="pre-map-section active" id="preSection-about">
+  <section class="pre-map-section" id="preSection-about">
     <div class="section-kicker">Mutual Moto</div>
     <h2>Más beneficios. Más lugares. Más comunidad.</h2>
     <p class="lead">Ser motoquero es mucho más que andar en moto: es compartir rutas, experiencias, conocimientos y también los desafíos que aparecen todos los días. Mutual Moto nace para convertir esa comunidad en una red útil, activa y llena de oportunidades.</p>
@@ -1734,7 +1966,7 @@ html.mm-public-profile-route body>:not(#mmPublicMotoProfile){display:none!import
   root.style.setProperty('opacity','1','important');
 })();
 </script>
-<button id="returnHomeBtn" class="return-home-btn" type="button" title="Volver al menú de inicio" aria-label="Volver al menú de inicio"><i class="fas fa-house"></i><span>Inicio</span></button>
+<button id="returnHomeBtn" class="return-home-btn" type="button" title="Volver a las secciones" aria-label="Volver a las secciones"><i class="fas fa-house"></i><span>Inicio</span></button>
 <button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-label="Abrir menú" aria-expanded="false"><i class="fas fa-bars"></i></button>
 <div id="mobileMenuOverlay" class="mobile-menu-overlay" aria-hidden="true"></div>
 <div class="container">
@@ -1971,8 +2203,6 @@ loading="eager" frameborder="0" allowfullscreen></iframe>
 <div class="login-error" id="loginError" style="display:none;color:#c0392b;font-size:.8rem;margin:.6rem 0;text-align:left"></div>
 <button class="primary-btn moto" id="loginMutualBtn"><i class="fas fa-sign-in-alt"></i> Iniciar sesi&oacute;n</button>
 <button type="button" class="gate-register-btn" data-open-register><i class="fas fa-user-plus"></i> Registrarse</button>
-<div class="login-separator">o</div>
-<button class="primary-btn guest" id="loginGuestBtn"><i class="fas fa-user-secret"></i> Entrar como invitado</button>
 <button class="modal-cancel-btn" id="loginCancelBtn" style="margin-top:.8rem">Volver</button>
 </div>
 </div>
@@ -2487,7 +2717,7 @@ const PUBLISHED_WORKBOOK_HTML_URL='https://docs.google.com/spreadsheets/d/e/2PAC
 // Debe ser el enlace CSV publicado de la pestaña Comercios y llevar su gid real.
 const COMERCIOS_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvuoCBO42cn8NJ_eajxgfQEVXyC84qHck3I4SQK1pUTJ_HrIkbRrcBs9V6Pqd1KkTaKXX5Grdler3L/pub?gid=421306673&single=true&output=csv';
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyCH_SAEOSWf9FlZqn5bzn5gBMfW1amgFE-mcqNufDRqlB4JUqUagznht3v36CUpMje/exec';
-const MM_EXPECTED_API_BUILD='mutual-moto-siniestros-sheet-target-2026-11-12-v4';
+const MM_EXPECTED_API_BUILD='mutual-moto-registros-confirmacion-persistente-2026-11-18-v7';
 const NOMINATIM_URL='https://nominatim.openstreetmap.org/search';
 const GEOCODE_DELAY_MS=1200;
 const REPORT_EMAIL='cainet30de2@gmail.com';
@@ -2567,7 +2797,10 @@ let myCoinsPendingRequests={};
 try{const r=localStorage.getItem(MY_RATINGS_KEY);if(r)myRatings=JSON.parse(r)||{};}catch(e){myRatings={}}
 function saveMyRatings(){try{localStorage.setItem(MY_RATINGS_KEY,JSON.stringify(myRatings))}catch(e){}}
 function isMobileLayout(){
-  return window.matchMedia('(max-width:900px) and (orientation:portrait) and (pointer:coarse)').matches;
+  const width=window.innerWidth||document.documentElement.clientWidth||0;
+  const coarse=!!(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches);
+  const compact=width<=1024||(window.matchMedia&&window.matchMedia('(max-height:620px)').matches);
+  return (coarse&&compact)||width<=600;
 }
 function detectMapLowPowerMode(){
   const nav=window.navigator||{};
@@ -2577,14 +2810,29 @@ function detectMapLowPowerMode(){
   const constrainedCpu=cores>0&&cores<=4;
   const constrainedMemory=memory>0&&memory<=4;
   const dataSaver=connection.saveData===true;
-  const olderTouchDevice=isMobileLayout()&&(cores===0||cores<=6);
-  return constrainedCpu||constrainedMemory||dataSaver||olderTouchDevice;
+  const slowNetwork=/^(slow-2g|2g|3g)$/i.test(String(connection.effectiveType||''));
+  const reducedMotion=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const olderTouchDevice=isMobileLayout()&&(cores===0||cores<=6||memory===0||memory<=4||slowNetwork);
+  return constrainedCpu||constrainedMemory||dataSaver||olderTouchDevice||reducedMotion;
 }
 const MM_LOW_POWER_MODE=detectMapLowPowerMode();
-// Menos tarjetas y trabajo de cámara en equipos limitados para ahorrar memoria/CPU.
-const INITIAL_CARDS=MM_LOW_POWER_MODE?40:80;
-const CARDS_PER_PAGE=MM_LOW_POWER_MODE?40:80;
+const MM_MOBILE_PERFORMANCE_MODE=isMobileLayout();
+// Limita el DOM de tarjetas en pantallas pequeñas; el resto sigue disponible con "Mostrar más".
+const INITIAL_CARDS=MM_LOW_POWER_MODE?(MM_MOBILE_PERFORMANCE_MODE?18:36):(MM_MOBILE_PERFORMANCE_MODE?32:72);
+const CARDS_PER_PAGE=MM_LOW_POWER_MODE?(MM_MOBILE_PERFORMANCE_MODE?20:40):(MM_MOBILE_PERFORMANCE_MODE?32:72);
 if(MM_LOW_POWER_MODE)document.documentElement.classList.add('mm-low-power');
+if(MM_MOBILE_PERFORMANCE_MODE)document.documentElement.classList.add('mm-mobile-performance');
+function mmUpdateMobilePerformanceClass(){
+  const width=window.innerWidth||document.documentElement.clientWidth||0;
+  const coarse=!!(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches);
+  document.documentElement.classList.toggle('mm-mobile-performance',(coarse&&width<=1024)||width<=600);
+}
+let mmResponsivePerfFrame=0;
+window.addEventListener('resize',function(){
+  if(mmResponsivePerfFrame)return;
+  mmResponsivePerfFrame=requestAnimationFrame(function(){mmResponsivePerfFrame=0;mmUpdateMobilePerformanceClass();});
+},{passive:true});
+window.addEventListener('orientationchange',mmUpdateMobilePerformanceClass,{passive:true});
 const wazeIframeA=document.getElementById('wazeIframeA');
 const wazeIframeB=document.getElementById('wazeIframeB');
 const wazeLoading=document.getElementById('wazeLoading');
@@ -2601,7 +2849,7 @@ let wazeZoomStopTimer=null;
 let wazeRefreshTimer=null;
 let mobileGestureNeedsCenter=false;
 let mobileGestureSyncTimer=null;
-const MOBILE_GESTURE_SETTLE_MS=180;
+const MOBILE_GESTURE_SETTLE_MS=MM_LOW_POWER_MODE?300:(MM_MOBILE_PERFORMANCE_MODE?240:180);
 
 let mapInteractionLocked=false;
 let mapLockSafetyTimer=null;
@@ -2825,13 +3073,23 @@ function mmReadOperationStatusJsonp(operationId){
   });
 }
 async function mmPollOperationStatus(operationId,isCancelled){
-  var deadline=Date.now()+70000;
+  var deadline=Date.now()+90000;
+  var firstSuccessfulRead=true;
   while(Date.now()<deadline&&!(isCancelled&&isCancelled())){
     var status=await mmReadOperationStatusJsonp(operationId);
-    if(status&&status.ready===true&&status.result)return status.result;
-    await new Promise(function(resolve){setTimeout(resolve,900)});
+    if(status){
+      if(status.build&&status.build!==MM_EXPECTED_API_BUILD){
+        return {ok:false,deploymentMismatch:true,error:'La URL de Apps Script respondió desde la versión '+status.build+', pero la página necesita '+MM_EXPECTED_API_BUILD+'. Volvé a desplegar la última versión de Code.gs como aplicación web.'};
+      }
+      if(firstSuccessfulRead&&!status.build){
+        return {ok:false,deploymentMismatch:true,error:'La implementación de Apps Script no informa la versión del sistema de confirmación v7. Actualizá Code.gs y desplegá una nueva versión de la aplicación web.'};
+      }
+      firstSuccessfulRead=false;
+      if(status.ready===true&&status.result)return status.result;
+    }
+    await new Promise(function(resolve){setTimeout(resolve,1200)});
   }
-  return {ok:false,pending:true,error:'Apps Script recibió la solicitud, pero el navegador no pudo obtener la confirmación. No se modificó el mapa ni la sala grupal. Podés escanear nuevamente el mismo QR para consultar el resultado.'};
+  return {ok:false,pending:true,error:'No se pudo consultar el registro de operación en Apps Script. El mapa y la sala grupal permanecen sin cambios. Verificá que hayas desplegado la versión v7 de Code.gs en la misma URL configurada en APPS_SCRIPT_URL y reintentá con el mismo identificador.'};
 }
 async function mmWaitForOperationResult(submittedRequest,operationId){
   if(!operationId)return {ok:false,error:'Falta el identificador de operación de Apps Script.'};
@@ -2849,12 +3107,12 @@ async function mmWaitForOperationResult(submittedRequest,operationId){
 }
 async function postToSheets(action,data){
   const record={action:action,data:data,ts:Date.now()};
-  const needsConfirmation=['register_siniestro','resolve_siniestro_qr','clear_user_incidents_after_qr','add_place','delete_place'].indexOf(action)!==-1;
+  const needsConfirmation=['register_siniestro','register_denuncia_servicios_ba','resolve_siniestro_qr','clear_user_incidents_after_qr','add_place','delete_place'].indexOf(action)!==-1;
   if(needsConfirmation)record.operationId=mmCreateOperationId();
 
   // Se autentican con la credencial individual de la cuenta; no se incluye la
   // contraseña maestra de la API en el HTML.
-  if(['points_change','coins_change','add_place','delete_place','register_siniestro','resolve_siniestro_qr','clear_user_incidents_after_qr'].indexOf(action)!==-1){
+  if(['points_change','coins_change','add_place','delete_place','register_siniestro','register_denuncia_servicios_ba','resolve_siniestro_qr','clear_user_incidents_after_qr'].indexOf(action)!==-1){
     var currentUser=(typeof authState!=='undefined'&&authState&&authState.user)?authState.user:null;
     var accountIdentifier=String(currentUser&&(currentUser.email||currentUser.correo||currentUser.nick||currentUser.nickname||currentUser.id)||'');
     var accountPassword=String(currentUser&&currentUser.password||'');
@@ -2878,7 +3136,7 @@ async function postToSheets(action,data){
     }
     if(!accountPassword&&currentUser&&!currentUser.isGuest&&accountIdentifier){
       var enteredPassword='';
-      var credentialPrompt=action==='delete_place'?'Para eliminar una dirección del mapa, validá la contraseña de tu cuenta desarrollador:':((action==='resolve_siniestro_qr'||action==='clear_user_incidents_after_qr')?'Para retirar el incidente del mapa y de la sala grupal, validá la contraseña de tu cuenta:':((action==='add_place'||action==='register_siniestro')?'Para guardar esta actividad en Mutual Moto, validá la contraseña de tu cuenta:':'Para guardar tus puntos y Moto Coins en Google Sheets, ingresá la contraseña de tu cuenta:'));
+      var credentialPrompt=action==='delete_place'?'Para eliminar una dirección del mapa, validá la contraseña de tu cuenta desarrollador:':((action==='resolve_siniestro_qr'||action==='clear_user_incidents_after_qr')?'Para retirar el incidente del mapa y de la sala grupal, validá la contraseña de tu cuenta:':(action==='register_denuncia_servicios_ba'?'Para registrar la denuncia en Google Sheets, validá la contraseña de tu cuenta:':((action==='add_place'||action==='register_siniestro')?'Para guardar esta actividad en Mutual Moto, validá la contraseña de tu cuenta:':'Para guardar tus puntos y Moto Coins en Google Sheets, ingresá la contraseña de tu cuenta:')));
       try{enteredPassword=String(window.prompt(credentialPrompt)||'')}catch(_){}
       if(!enteredPassword){
         try{if(typeof showAppNotification==='function')showAppNotification('No se pudo completar la operación: falta validar la contraseña de la cuenta.','fa-lock')}catch(_){}
@@ -2902,7 +3160,7 @@ async function postToSheets(action,data){
     if(needsConfirmation){
       const confirmed=await mmWaitForOperationResult(submittedRequest,record.operationId);
       if(!confirmed||confirmed.ok!==true){
-        if(action==='register_siniestro'&&confirmed){
+        if((action==='register_siniestro'||action==='register_denuncia_servicios_ba')&&confirmed){
           var diagnosticParts=[];
           if(confirmed.stage)diagnosticParts.push('Etapa del servidor: '+confirmed.stage+'.');
           if(confirmed.build)diagnosticParts.push('Versión API: '+confirmed.build+'.');
@@ -2915,7 +3173,7 @@ async function postToSheets(action,data){
         }
         return confirmed||{ok:false,error:'No se recibió confirmación del servidor.'};
       }
-      if(action==='register_siniestro'&&confirmed.build!==MM_EXPECTED_API_BUILD){
+      if((action==='register_siniestro'||action==='register_denuncia_servicios_ba')&&confirmed.build!==MM_EXPECTED_API_BUILD){
         return {
           ok:false,
           deploymentMismatch:true,
@@ -2967,11 +3225,15 @@ const map=L.map('map',{
   zoomControl:true,
   attributionControl:false,
   doubleClickZoom:false,
-  scrollWheelZoom:true,
+  scrollWheelZoom:!isMobileLayout(),
   dragging:true,
   touchZoom:true,
   boxZoom:true,
   keyboard:true,
+  inertia:!MM_LOW_POWER_MODE,
+  inertiaDeceleration:MM_LOW_POWER_MODE?3600:3000,
+  inertiaMaxSpeed:1200,
+  wheelDebounceTime:MM_LOW_POWER_MODE?70:40,
   zoomSnap:1,
   zoomDelta:1,
   tapTolerance:15,
@@ -2983,8 +3245,8 @@ const map=L.map('map',{
 
 function configureMapZoomMode(){
   const mobile=isMobileLayout();
-  map.options.zoomSnap=mobile?0.25:1;
-  map.options.zoomDelta=mobile?0.25:1;
+  map.options.zoomSnap=mobile?(MM_LOW_POWER_MODE?1:0.5):1;
+  map.options.zoomDelta=mobile?(MM_LOW_POWER_MODE?1:0.5):1;
   map.options.tapTolerance=mobile?8:15;
   map.options.zoomAnimation=!MM_LOW_POWER_MODE;
   map.options.fadeAnimation=!MM_LOW_POWER_MODE;
@@ -3021,15 +3283,15 @@ function buildClusterIconFunction(cat){
 ALL_CATEGORIES.forEach(function(cat){
   clusterGroups[cat]=L.markerClusterGroup({
     chunkedLoading:true,
-    chunkInterval:MM_LOW_POWER_MODE?60:120,
-    chunkDelay:MM_LOW_POWER_MODE?8:20,
+    chunkInterval:MM_LOW_POWER_MODE?8:(isMobileLayout()?10:12),
+    chunkDelay:MM_LOW_POWER_MODE?12:8,
     removeOutsideVisibleBounds:true,
     animate:!MM_LOW_POWER_MODE&&!isMobileLayout(),
     animateAddingMarkers:false,
     spiderfyOnMaxZoom:true,
     showCoverageOnHover:false,
     zoomToBoundsOnClick:true,
-    maxClusterRadius:MM_LOW_POWER_MODE?72:60,
+    maxClusterRadius:MM_LOW_POWER_MODE?84:(isMobileLayout()?76:60),
     disableClusteringAtZoom:17,
     iconCreateFunction:buildClusterIconFunction(cat)
   });
@@ -3205,23 +3467,30 @@ function queueMobileWazeSyncAfterGesture(){
       return;
     }
     mobileGestureNeedsCenter=false;
-    startPreload(true);
+    /* En pantallas táctiles no bloqueamos los gestos mientras Waze actualiza
+       su iframe en segundo plano: el mapa Leaflet sigue respondiendo. */
+    startPreload(false);
   },MOBILE_GESTURE_SETTLE_MS);
 }
 function handleWazeMove(){
-  if(wazeIsZooming)return;
-  if(mapInteractionLocked)return;
+  if(document.visibilityState==='hidden'||wazeIsZooming||mapInteractionLocked)return;
   const res=applyActiveTransform();
-  if(!res)return;
-  if(wazeReloadPending)return;
-  if(isMobileLayout())return;
+  if(!res||wazeReloadPending||isMobileLayout())return;
   const wrap=document.getElementById('map-wrapper');
+  if(!wrap)return;
   const trigX=wrap.clientWidth*0.12;
   const trigY=wrap.clientHeight*0.12;
-  if(Math.abs(res.dx)>trigX)startPreload(false);
-  else if(Math.abs(res.dy)>trigY)startPreload(false);
+  if(Math.abs(res.dx)>trigX||Math.abs(res.dy)>trigY)startPreload(false);
 }
-map.on('move',handleWazeMove);
+let wazeMoveFrame=0;
+function scheduleWazeMove(){
+  if(wazeMoveFrame||document.visibilityState==='hidden')return;
+  wazeMoveFrame=requestAnimationFrame(function(){
+    wazeMoveFrame=0;
+    handleWazeMove();
+  });
+}
+map.on('move',scheduleWazeMove);
 map.on('dragstart',markMobileMapInteraction);
 map.on('dragend',queueMobileWazeSyncAfterGesture);
 map.on('moveend',function(){
@@ -3235,30 +3504,41 @@ map.on('zoomstart',function(){
   if(isMobileLayout())active.style.transition='transform 0s';
   else active.style.transition='transform .25s ease-out';
 });
+let pendingWazeZoomAnim=null;
+let wazeZoomAnimFrame=0;
 map.on('zoomanim',function(e){
-  if(!wazeBaseCenter)return;
-  if(wazeBaseZoom===null)return;
-  const active=getActiveFrame();
-  if(isMobileLayout()){
-    scheduleMobileWazeSync(active,wazeBaseCenter,wazeBaseZoom,e.center,e.zoom);
-  }else{
-    const scale=Math.pow(2,e.zoom-wazeBaseZoom);
-    const basePx=map.project(wazeBaseCenter,wazeBaseZoom);
-    const currPx=map.project(e.center,wazeBaseZoom);
-    const dx=currPx.x-basePx.x;
-    const dy=currPx.y-basePx.y;
-    active.style.transform='translate('+(-dx*scale)+'px,'+(-dy*scale)+'px) scale('+scale+')';
-  }
+  pendingWazeZoomAnim=e;
+  if(wazeZoomAnimFrame)return;
+  wazeZoomAnimFrame=requestAnimationFrame(function(){
+    wazeZoomAnimFrame=0;
+    const latest=pendingWazeZoomAnim;
+    pendingWazeZoomAnim=null;
+    if(!latest||document.visibilityState==='hidden'||!wazeBaseCenter||wazeBaseZoom===null)return;
+    const active=getActiveFrame();
+    if(isMobileLayout()){
+      scheduleMobileWazeSync(active,wazeBaseCenter,wazeBaseZoom,latest.center,latest.zoom);
+    }else{
+      const scale=Math.pow(2,latest.zoom-wazeBaseZoom);
+      const basePx=map.project(wazeBaseCenter,wazeBaseZoom);
+      const currPx=map.project(latest.center,wazeBaseZoom);
+      const dx=currPx.x-basePx.x;
+      const dy=currPx.y-basePx.y;
+      active.style.transform='translate3d('+(-dx*scale)+'px,'+(-dy*scale)+'px,0) scale('+scale+')';
+    }
+  });
 });
+let mobileWazeZoomFrame=0;
 map.on('zoom',function(){
-  if(!isMobileLayout())return;
-  if(!wazeIsZooming)return;
-  if(!wazeBaseCenter)return;
-  if(wazeBaseZoom===null)return;
-  if(wazeReloadPending)return;
-  const active=getActiveFrame();
-  const zoom=map.getZoom();
-  scheduleMobileWazeSync(active,wazeBaseCenter,wazeBaseZoom,map.getCenter(),zoom);
+  /* zoomanim ya actualiza los dispositivos que tienen animación habilitada.
+     En modo sin animación agrupamos los eventos zoom en un único cuadro. */
+  if(!isMobileLayout()||map.options.zoomAnimation)return;
+  if(!wazeIsZooming||!wazeBaseCenter||wazeBaseZoom===null||wazeReloadPending||mobileWazeZoomFrame)return;
+  mobileWazeZoomFrame=requestAnimationFrame(function(){
+    mobileWazeZoomFrame=0;
+    if(!wazeIsZooming||!wazeBaseCenter||wazeBaseZoom===null||wazeReloadPending)return;
+    const active=getActiveFrame();
+    scheduleMobileWazeSync(active,wazeBaseCenter,wazeBaseZoom,map.getCenter(),map.getZoom());
+  });
 });
 map.on('zoomend',function(){
   wazeIsZooming=false;
@@ -3481,7 +3761,6 @@ const authGate=document.getElementById('authGate');
 const registerModal=document.getElementById('registerModal');
 const registerCloseBtn=document.getElementById('registerCloseBtn');
 const gateLoginBtn=document.getElementById('gateLoginBtn');
-const gateGuestBtn=document.getElementById('gateGuestBtn');
 const incidentBtn=document.getElementById('incidentBtn');
 const incidentBadge=document.getElementById('incidentBadge');
 const incidentModal=document.getElementById('incidentModal');
@@ -3552,6 +3831,25 @@ let distanceCacheKey='';
 let pendingIncidentType=null;
 let pendingIncidentSeverity=null;
 let pendingIncidentDraft=null;
+// Conserva el mismo identificador incluso si se recarga la página o se actualiza el HTML.
+const MM_PENDING_EMERGENCY_DRAFT_KEY='mm_pending_emergency_alert_v1';
+function mmLoadPendingEmergencyAlertDraft(){
+  try{
+    var draft=JSON.parse(localStorage.getItem(MM_PENDING_EMERGENCY_DRAFT_KEY)||'null');
+    if(!draft||!draft.id||!['leve','grave','vida'].includes(String(draft.severity||'')))return null;
+    if(!Number.isFinite(Number(draft.lat))||!Number.isFinite(Number(draft.lng))||!draft.socioId)return null;
+    if(!draft.ts||Date.now()-Number(draft.ts)>24*60*60*1000){localStorage.removeItem(MM_PENDING_EMERGENCY_DRAFT_KEY);return null;}
+    return draft;
+  }catch(_){return null;}
+}
+function mmSavePendingEmergencyAlertDraft(draft){
+  try{if(draft)localStorage.setItem(MM_PENDING_EMERGENCY_DRAFT_KEY,JSON.stringify(draft));}catch(_){}
+}
+function mmClearPendingEmergencyAlertDraft(){
+  try{localStorage.removeItem(MM_PENDING_EMERGENCY_DRAFT_KEY)}catch(_){}
+}
+let pendingEmergencyAlertDraft=mmLoadPendingEmergencyAlertDraft();
+let emergencyAlertSubmitting=false;
 const incidentsBeingResolved=new Set();
 let seenIncidentIds=new Set();
 let incidentPickMode=false;
@@ -3767,7 +4065,7 @@ async function notifyBusinessCoinsReceived(info){
 }
 let pendingRequestCoinsContext=null;
 function openRequestCoinsModal(){
-  if(!isLoggedIn()){showGate();return}
+  if(!hasRegisteredUserSession()){showGate();return}
   if(!chatReady){alert('El chat todavía no está conectado. Esperá unos segundos.');return}
   document.getElementById('requestCoinsPublicHint').textContent='Pedir hasta '+MOTO_COINS_GENERAL_LIMIT+' MC por pedido (máx. '+MOTO_COINS_DAILY_LIMIT+'/día)';
   requestCoinsModal.classList.add('visible');
@@ -3896,7 +4194,7 @@ document.getElementById('coinsBtn').addEventListener('click',function(){
 let donateCoinsPeer=null;
 let donateCoinsRequestId=null;
 function openDonateCoinsModal(peer,presetAmount,requestId){
-  if(!isLoggedIn()){showGate();return}
+  if(!hasRegisteredUserSession()){showGate();return}
   if(!peer||!peer.id){alert('Usuario inválido.');return}
   if(!isMotoamigo(peer.id)){
     alert('Solo podés donar Moto Coins a tus Motoamigos.\n\nSi querés ayudar a alguien que no es tu Motoamigo, decile que inicie una colecta de Moto Coins en la sala general.');
@@ -4705,7 +5003,7 @@ loadMoreBtn.addEventListener('click',renderCardsChunk);
 function submitRating(place,value){
   if(!place)return;
   if(!value||value<1||value>5)return;
-  if(!isLoggedIn()){
+  if(!hasRegisteredUserSession()){
     showGate();
     return;
   }
@@ -5201,7 +5499,7 @@ function setApStatus(text,cls){
 function openAddPlaceModal(options){
   options=options||{};
   const developerMap=options.developerMap===true;
-  if(!isLoggedIn()){
+  if(!hasRegisteredUserSession()){
     alert('Necesitás iniciar sesión para añadir lugares.');
     showGate();
     return;
@@ -5552,7 +5850,7 @@ function requestUserLocation(force){
   });
 }
 let searchTimeout;
-function isMobileDrawer(){return window.matchMedia('(max-width:900px) and (orientation:portrait) and (pointer:coarse)').matches}
+function isMobileDrawer(){return window.matchMedia('(max-width:1024px) and (pointer:coarse)').matches||window.matchMedia('(max-width:600px)').matches}
 function openMobileMenu(){
   if(!isMobileDrawer())return;
   mobileSidebar.classList.add('mobile-open');
@@ -6446,7 +6744,7 @@ function getSocioIdForRecord(){
 }
 function handlePurchase(placeId,placeName,coinsPrice,purchaseContext){
   const context=purchaseContext&&typeof purchaseContext==='object'?purchaseContext:{};
-  if(!isLoggedIn()){
+  if(!hasRegisteredUserSession()){
     pendingPurchase={placeId:placeId,placeName:placeName,coinsPrice:coinsPrice,context:context};
     try{sessionStorage.setItem('pending_purchase',JSON.stringify(pendingPurchase))}catch(e){}
     showGate();
@@ -6502,6 +6800,34 @@ function handlePurchase(placeId,placeName,coinsPrice,purchaseContext){
     setTimeout(function(){alert(msg2)},300);
   });
 }
+function mmBuildSiniestroSheetPayload(item){
+  item=item||{};
+  var id=String(item.id||'').trim();
+  var tipo=String(item.kind||item.tipo||'').trim();
+  var gravedad=String(item.severity||item.gravedad||'').trim().toLowerCase();
+  var lat=Number(item.lat);
+  var lng=Number(item.lng);
+  var ts=Number(item.ts);
+  if(!id)throw new Error('Falta el identificador del siniestro.');
+  if(!tipo)throw new Error('Falta el tipo de incidencia.');
+  if(['leve','grave','vida'].indexOf(gravedad)<0)throw new Error('La gravedad debe ser leve, grave o vida.');
+  if(!Number.isFinite(lat)||!Number.isFinite(lng))throw new Error('La ubicación de la incidencia no es válida.');
+  if(!Number.isFinite(ts)||ts<=0)ts=Date.now();
+  return {
+    id:id,
+    socioId:String(item.socioId||''),
+    socioNick:String(item.socioNick||(item.from&&item.from.nick)||'Anónimo'),
+    lat:lat.toFixed(6),
+    lng:lng.toFixed(6),
+    tipo:tipo,
+    gravedad:gravedad,
+    severity:gravedad,
+    descripcion:String(item.text||item.descripcion||'').slice(0,500),
+    zona:String(item.zone||item.zona||''),
+    fecha:new Date(ts).toISOString()
+  };
+}
+
 async function submitIncident(){
   if(!requireRegisteredUserForIncident()){
     closeIncidentModal();
@@ -6550,19 +6876,7 @@ async function submitIncident(){
   try{
     // Primero se escribe y verifica en Siniestros. Solo después se publica en
     // MQTT/mapa/sala para evitar alertas que nunca llegaron a Google Sheets.
-    const saved=await postToSheets('register_siniestro',{
-      id:incident.id,
-      socioId:incident.socioId,
-      socioNick:incident.from.nick,
-      lat:Number(incident.lat).toFixed(6),
-      lng:Number(incident.lng).toFixed(6),
-      tipo:incident.kind,
-      gravedad:incident.severity,
-      severity:incident.severity,
-      descripcion:incident.text,
-      zona:incident.zone,
-      fecha:new Date(incident.ts).toISOString()
-    });
+    const saved=await postToSheets('register_siniestro',mmBuildSiniestroSheetPayload(incident));
     if(!saved||saved.ok!==true){
       const detail=saved&&saved.error?saved.error:(saved&&saved.authRequired?'Falta validar la contraseña de tu cuenta.':'Apps Script no confirmó el registro del incidente.');
       log('Incidente no difundido porque no se confirmó en Sheets: '+detail,'warn');
@@ -6704,7 +7018,6 @@ const chatStatus=document.getElementById('chatStatus');
 const typingIndicatorEl=document.getElementById('typingIndicator');
 const loginModal=document.getElementById('loginModal');
 const loginMutualBtn=document.getElementById('loginMutualBtn');
-const loginGuestBtn=document.getElementById('loginGuestBtn');
 const loginCancelBtn=document.getElementById('loginCancelBtn');
 const loginEmailInput=document.getElementById('loginEmailInput');
 const loginPasswordInput=document.getElementById('loginPasswordInput');
@@ -6817,104 +7130,180 @@ function openEmergencyModal(){
   if(activeUserAlert){showAlertOverlay();return;}
   if(emergencyModal)emergencyModal.classList.add('visible');
 }
-function emitEmergencyAlert(severity){
+async function emitEmergencyAlert(severity){
   if(['leve','grave','vida'].indexOf(severity)<0)return;
   if(!isLoggedIn()||!authState.user||authState.user.isGuest){showGate();return;}
   if(activeUserAlert){showAlertOverlay();return;}
-  const create=function(lat,lng){
-    const zone=getZone(lat,lng);
-    const nick=myNick||(authState.user&&authState.user.nick)||'Anónimo';
-    const id='alert_'+String(myUserId||'user')+'_'+Date.now();
-    const descriptions={
+  if(emergencyAlertSubmitting)return;
+
+  // No activar el QR ni publicar el aviso hasta que Sheets confirme la fila.
+  emergencyAlertSubmitting=true;
+  emergencyOptions.forEach(function(btn){btn.disabled=true});
+  if(cancelEmergencyModal)cancelEmergencyModal.disabled=true;
+  if(emergencyBtn)emergencyBtn.disabled=true;
+
+  try{
+    var currentLocation=(userLocation&&Number.isFinite(Number(userLocation.lat))&&Number.isFinite(Number(userLocation.lng)))
+      ?userLocation
+      :await requestUserLocation(true);
+    if(!currentLocation){
+      alert((geoStatus&&geoStatus.textContent?geoStatus.textContent:'No se pudo obtener tu ubicación.')+' Habilitá los permisos del navegador e intentá nuevamente.');
+      return;
+    }
+
+    var lat=Number(currentLocation.lat);
+    var lng=Number(currentLocation.lng);
+    var zone=getZone(lat,lng);
+    var descriptions={
       leve:'Necesito ayuda por un problema leve en la ruta.',
       grave:'Necesito asistencia urgente por una emergencia grave.',
       vida:'Necesito ayuda inmediata por una situación de riesgo de vida.'
     };
-    const socioId=getSocioIdForRecord();
-    const from={id:myUserId,nick:nick,socioId:socioId};
-    const data={id:id,kind:'emergency',severity:severity,gravedad:severity,text:descriptions[severity],lat:lat,lng:lng,zone:zone,from:from,ts:Date.now()};
 
-    // Persistir también el aviso QR en Siniestros. Antes solo se activaba el QR y
-    // se publicaba por MQTT: no había ninguna llamada a register_siniestro.
-    const registro={
-      id:id,
-      socioId:socioId,
-      socioNick:nick,
-      lat:lat,
-      lng:lng,
+    // Al reintentar la misma gravedad se conserva el ID original. Apps Script
+    // puede reconocer una solicitud repetida y no insertar dos filas.
+    var currentSocioId=String(getSocioIdForRecord()||'');
+    if(!pendingEmergencyAlertDraft||pendingEmergencyAlertDraft.severity!==severity||String(pendingEmergencyAlertDraft.socioId||'')!==currentSocioId){
+      var nick=myNick||(authState.user&&authState.user.nick)||'Anónimo';
+      pendingEmergencyAlertDraft={
+        id:'alert_'+String(myUserId||'user')+'_'+Date.now(),
+        severity:severity,
+        text:descriptions[severity],
+        lat:lat,
+        lng:lng,
+        zone:zone,
+        socioId:currentSocioId,
+        socioNick:nick,
+        ts:Date.now()
+      };
+      mmSavePendingEmergencyAlertDraft(pendingEmergencyAlertDraft);
+    }
+
+    var draft=pendingEmergencyAlertDraft;
+    var data={
+      id:draft.id,
       kind:'emergency',
-      severity:severity,
-      gravedad:severity,
+      severity:draft.severity,
+      gravedad:draft.severity,
+      text:draft.text,
+      lat:draft.lat,
+      lng:draft.lng,
+      zone:draft.zone,
+      from:{id:myUserId,nick:draft.socioNick,socioId:draft.socioId},
+      ts:draft.ts
+    };
+
+    showAppNotification('Registrando la emergencia '+INCIDENT_SEVERITY_LABELS[severity].toLowerCase()+' en Google Sheets…','fa-spinner');
+    var saved=await postToSheets('register_siniestro',mmBuildSiniestroSheetPayload({
+      id:data.id,
+      socioId:data.from.socioId,
+      socioNick:data.from.nick,
+      lat:data.lat,
+      lng:data.lng,
+      kind:data.kind,
+      severity:data.severity,
       text:data.text,
-      zone:zone,
+      zone:data.zone,
+      ts:data.ts
+    }));
+
+    if(!saved||saved.ok!==true){
+      var detail=saved&&saved.error?saved.error:(saved&&saved.authRequired
+        ?'Falta validar la contraseña de tu cuenta.'
+        :(saved&&saved.offline?'No está configurada la conexión con Apps Script.':'Apps Script no confirmó el registro.'));
+      log('Alerta de gravedad '+severity+' no activada porque Sheets no confirmó el registro: '+detail,'warn');
+      showAppNotification('La emergencia no se activó porque no se confirmó su registro en Google Sheets.','fa-triangle-exclamation');
+      alert('No se activó el QR ni se difundió la emergencia porque Google Sheets no confirmó el registro.\n\n'+detail+'\n\nEl formulario conserva el mismo identificador. Volvé a seleccionar "'+INCIDENT_SEVERITY_LABELS[severity]+'" para reintentar sin duplicar la fila.');
+      return;
+    }
+
+    // Apps Script valida la identidad y puede devolver los datos definitivos.
+    if(saved.socioId){
+      data.from.socioId=String(saved.socioId);
+    }
+    if(saved.socioNick){
+      data.from.nick=String(saved.socioNick);
+    }
+    data.socioId=data.from.socioId;
+
+    // Guardar la copia local únicamente después de confirmar Google Sheets.
+    var registro={
+      id:data.id,
+      socioId:data.socioId,
+      socioNick:data.from.nick,
+      lat:data.lat,
+      lng:data.lng,
+      kind:'emergency',
+      severity:data.severity,
+      gravedad:data.severity,
+      text:data.text,
+      zone:data.zone,
       ts:data.ts
     };
-    siniestros=(siniestros||[]).filter(function(it){return it&&String(it.id||'')!==id});
+    siniestros=(siniestros||[]).filter(function(it){return it&&String(it.id||'')!==String(registro.id)});
     siniestros.push(registro);
     if(siniestros.length>SINIESTROS_MAX)siniestros=siniestros.slice(-SINIESTROS_MAX);
     saveSiniestros();
 
+    pendingEmergencyAlertDraft=null;
+    mmClearPendingEmergencyAlertDraft();
     if(emergencyModal)emergencyModal.classList.remove('visible');
     activateUserAlert(data);
-    const msg={kind:'emergency',type:'public',id:id,alertId:id,severity:severity,gravedad:severity,zone:zone,text:data.text,lat:lat,lng:lng,from:from,ts:data.ts};
-    const exists=publicMessages.some(function(m){return m&&(m.alertId===id||m.id===id)});
+
+    var msg={
+      kind:'emergency',
+      type:'public',
+      id:data.id,
+      alertId:data.id,
+      severity:data.severity,
+      gravedad:data.severity,
+      zone:data.zone,
+      text:data.text,
+      lat:data.lat,
+      lng:data.lng,
+      from:data.from,
+      ts:data.ts
+    };
+    var exists=publicMessages.some(function(m){return m&&(m.alertId===data.id||m.id===data.id)});
     if(!exists){
       publicMessages.push(msg);
       if(publicMessages.length>PUBLIC_MSGS_MAX)publicMessages.shift();
     }
     saveHistory();
-    const loc=locationFromMessage(msg);
+    var loc=locationFromMessage(msg);
     if(loc)registerChatLocation(loc);
+
+    var broadcast=false;
     if(mqttClient&&chatReady){
-      try{mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(msg),{qos:1});}catch(_){}
+      try{
+        mqttClient.publish(TOPIC_PUBLIC,JSON.stringify(msg),{qos:1});
+        broadcast=true;
+      }catch(publishError){
+        log('La emergencia quedó guardada, pero falló su difusión MQTT: '+String(publishError&&publishError.message||publishError),'warn');
+      }
       schedulePublishPublicHistory();
-      showAppNotification('Tu alerta fue enviada a la sala general. Guardando el registro en Siniestros...','fa-triangle-exclamation');
-    }else{
-      showAppNotification('Tu alerta quedó activa en este dispositivo. Guardando el registro en Siniestros...','fa-triangle-exclamation');
     }
     if(isChatOpen()&&currentContext==='public'){renderMessages();scrollMessagesBottom();}
 
-    // El ID del registro coincide con el ID incluido en el QR (?resolve=...).
-    // El servidor lo guarda de manera idempotente y luego el escaneo puede borrarlo.
-    postToSheets('register_siniestro',{
-      id:id,
-      socioId:socioId,
-      socioNick:nick,
-      lat:Number(lat).toFixed(6),
-      lng:Number(lng).toFixed(6),
-      tipo:'emergency',
-      gravedad:severity,
-      severity:severity,
-      descripcion:data.text,
-      zona:zone,
-      fecha:new Date(data.ts).toISOString()
-    }).then(function(result){
-      if(result&&result.ok===true){
-        log((result.message||('Emergencia guardada en Google Sheets, pestaña '+(result.sheet||'Siniestros')+', fila '+(result.rowNumber||'?')+'.'))+(result.sheetUrl?' Abrir pestaña: '+result.sheetUrl:''),'ok');
-        if(result.deploymentWarning){
-          showAppNotification('La planilla confirmó el registro, pero la implementación de Apps Script no coincide con la versión esperada. Volvé a desplegar la última versión.','fa-triangle-exclamation');
-        }else{
-          showAppNotification('Emergencia '+severity+' registrada en Google Sheets. El QR puede retirarla al escanearse.','fa-check-circle');
-        }
-      }else{
-        const detail=result&&result.error?result.error:(result&&result.authRequired?'Falta validar la cuenta Motoamigo.':(result&&result.offline?'APPS_SCRIPT_URL no está configurada.':'Apps Script no confirmó el registro. Revisá que la implementación web esté actualizada.'));
-        log('La alerta sigue activa, pero no se confirmó su registro en Siniestros: '+detail,'warn');
-        showAppNotification('La alerta se difundió, pero no se guardó en Google Sheets: '+detail,'fa-triangle-exclamation');
-      }
-    }).catch(function(error){
-      const detail=error&&error.message?error.message:String(error);
-      log('Error guardando emergencia en Siniestros: '+detail,'warn');
-      showAppNotification('La alerta se difundió, pero falló el registro en Google Sheets. '+detail,'fa-triangle-exclamation');
-    });
-  };
-  if(userLocation&&Number.isFinite(userLocation.lat)&&Number.isFinite(userLocation.lng)){
-    create(userLocation.lat,userLocation.lng);
-    return;
+    log((saved.message||('Emergencia guardada en Google Sheets, pestaña '+(saved.sheet||'Siniestros')+', fila '+(saved.rowNumber||'?')+'.'))+(saved.sheetUrl?' Abrir pestaña: '+saved.sheetUrl:''),'ok');
+    if(saved.deploymentWarning){
+      showAppNotification('La emergencia quedó registrada, pero Apps Script informó una advertencia de implementación. Revisá la versión publicada.','fa-triangle-exclamation');
+    }else if(broadcast){
+      showAppNotification('Emergencia '+severity+' registrada en Google Sheets, QR activado y aviso difundido.','fa-check-circle');
+    }else{
+      showAppNotification('Emergencia '+severity+' registrada en Google Sheets y QR activado. No se pudo completar la difusión a otros dispositivos.','fa-info-circle');
+    }
+  }catch(error){
+    var detail=error&&error.message?error.message:String(error);
+    log('Error registrando emergencia en Google Sheets: '+detail,'warn');
+    showAppNotification('No se activó la emergencia porque no se pudo confirmar el registro en Google Sheets.','fa-triangle-exclamation');
+    alert('No se pudo registrar la emergencia en Google Sheets.\n\n'+detail+'\n\nEl QR y el aviso público no se activaron. Podés volver a intentarlo con la misma gravedad.');
+  }finally{
+    emergencyAlertSubmitting=false;
+    emergencyOptions.forEach(function(btn){btn.disabled=false});
+    if(cancelEmergencyModal)cancelEmergencyModal.disabled=false;
+    if(emergencyBtn)emergencyBtn.disabled=false;
   }
-  requestUserLocation(true).then(function(currentLocation){
-    if(currentLocation){create(currentLocation.lat,currentLocation.lng);return;}
-    alert((geoStatus&&geoStatus.textContent?geoStatus.textContent:'No se pudo obtener tu ubicación.')+' Podés habilitar los permisos del navegador e intentarlo nuevamente.');
-  });
 }
 if(emergencyBtn&&!emergencyBtn.dataset.mmBound){
   emergencyBtn.dataset.mmBound='1';
@@ -7534,39 +7923,108 @@ function loadAuthFromStorage(){
 }
 function isLoggedIn(){return authState.isLoggedIn}
 function updateGuestControls(){
-  const isGuest=!!(authState.isLoggedIn&&authState.user&&authState.user.isGuest);
+  const sessionResolved=!!(authState&&authState.isLoggedIn&&authState.user);
+  const isGuest=!!(sessionResolved&&authState.user.isGuest);
+  if(document.body)document.body.classList.toggle('mm-guest-mode',isGuest);
+  /* Conserva el bloqueo inicial hasta conocer la identidad. Al confirmar
+     Invitado, la clase del body ya oculta la botonera antes de quitar el bloqueo
+     preventivo del HTML; para cuentas registradas, libera la interfaz normal. */
+  if(sessionResolved&&document.documentElement){
+    document.documentElement.classList.remove('mm-guest-start','mm-auth-start');
+  }
+  /* Un invitado puede consultar el mapa y conservar el acceso a su perfil
+     (para iniciar sesión) y a la llamada pública al 911. Los controles
+     personales quedan reservados para cuentas registradas. */
   if(floatingStack){
     floatingStack.classList.toggle('guest-disabled',isGuest);
-    floatingStack.setAttribute('aria-disabled',isGuest?'true':'false');
+    floatingStack.setAttribute('aria-disabled','false');
     floatingStack.querySelectorAll('.floating-items .floating-btn, .floating-items a.floating-btn').forEach(function(el){
-      const keepActive=el.id==='authHeaderBtn';
-      if(isGuest){
-        if(keepActive){
-          el.style.display='';
-          el.removeAttribute('aria-disabled');
-          el.style.pointerEvents='auto';
-        }else{
-          el.style.display='none';
-          el.setAttribute('aria-disabled','true');
-          el.style.pointerEvents='none';
-        }
+      const isPublicAction=el.id==='authHeaderBtn'||el.classList.contains('police-btn');
+      const hideForGuest=isGuest&&!isPublicAction;
+      el.style.display=hideForGuest?'none':'';
+      if(hideForGuest){
+        el.setAttribute('aria-hidden','true');
+        el.setAttribute('aria-disabled','true');
+        el.setAttribute('tabindex','-1');
+        el.style.pointerEvents='none';
       }else{
-        el.style.display='';
+        el.removeAttribute('aria-hidden');
         el.removeAttribute('aria-disabled');
+        el.removeAttribute('tabindex');
         el.style.pointerEvents='';
       }
     });
     const toggleBtn=document.getElementById('floatingToggleBtn');
     if(toggleBtn){
-      toggleBtn.style.display='';
-      toggleBtn.style.pointerEvents='auto';
-      toggleBtn.removeAttribute('aria-disabled');
+      /* En modo Invitado no existe el desplegable: solo quedan los accesos
+         públicos permitidos que ya estén visibles en la botonera. */
+      toggleBtn.style.display=isGuest?'none':'';
+      toggleBtn.style.pointerEvents=isGuest?'none':'auto';
+      if(isGuest){
+        toggleBtn.setAttribute('aria-hidden','true');
+        toggleBtn.setAttribute('tabindex','-1');
+      }else{
+        toggleBtn.removeAttribute('aria-hidden');
+        toggleBtn.removeAttribute('tabindex');
+        toggleBtn.removeAttribute('aria-disabled');
+      }
     }
   }
   const levelPanel=document.getElementById('levelPanel');
   const coinsPanel=document.getElementById('coinsPanel');
   if(levelPanel)levelPanel.style.display=isGuest?'none':'';
   if(coinsPanel)coinsPanel.style.display=isGuest?'none':'';
+}
+function mmSyncPublicHeaderVisibility(){
+  var publicHeader=document.getElementById('siteHeader');
+  var mapPage=document.getElementById('mapPage');
+  var registeredSession=!!(authState&&authState.isLoggedIn&&authState.user&&!isGuestAccount(authState.user));
+  var developerSession=false;
+  try{developerSession=!!(typeof isDeveloperAccount==='function'&&isDeveloperAccount()&&DEV_MODE===true)}catch(e){}
+  var mapIsVisible=!!(mapPage&&!mapPage.classList.contains('hidden'));
+  var showHeader=!registeredSession||!mapIsVisible;
+
+  /* En una sesión registrada, la portada se utiliza como menú de secciones:
+     allí no se ofrecen registro ni inicio de sesión, y Demo pasa a ser
+     el acceso de regreso al mapa autenticado. */
+  var associationBtn=document.getElementById('associationHeaderBtn');
+  var loginBtn=document.getElementById('enterMapBtn');
+  var mapNavBtn=document.getElementById('demoMapBtn');
+  [associationBtn,loginBtn].forEach(function(btn){
+    if(!btn)return;
+    if(registeredSession){
+      btn.style.setProperty('display','none','important');
+      btn.setAttribute('aria-hidden','true');
+      btn.setAttribute('tabindex','-1');
+    }else{
+      btn.style.removeProperty('display');
+      btn.removeAttribute('aria-hidden');
+      btn.removeAttribute('tabindex');
+    }
+  });
+  if(mapNavBtn){
+    if(registeredSession){
+      mapNavBtn.innerHTML='<i class="fas fa-map-marked-alt"></i> Volver al mapa';
+      mapNavBtn.setAttribute('aria-label','Volver al mapa');
+      mapNavBtn.title='Volver al mapa';
+    }else{
+      mapNavBtn.innerHTML='<i class="fas fa-map-marked-alt"></i> Demo del mapa';
+      mapNavBtn.setAttribute('aria-label','Demo del mapa');
+      mapNavBtn.title='Demo del mapa';
+    }
+  }
+
+  try{
+    /* No quitar las clases de protección inicial mientras todavía no se haya
+       resuelto la sesión: así la botonera no aparece durante el arranque invitado. */
+    var sessionResolved=!!(authState&&authState.isLoggedIn&&authState.user);
+    if(sessionResolved)document.documentElement.classList.remove('mm-guest-start','mm-auth-start');
+    if(document.body)document.body.classList.toggle('mm-registered-session',registeredSession||developerSession);
+  }catch(e){}
+  if(publicHeader){
+    if(developerSession||!showHeader)publicHeader.style.setProperty('display','none','important');
+    else publicHeader.style.removeProperty('display');
+  }
 }
 function updateAuthUI(){
   if(authState.isLoggedIn)if(authState.user){
@@ -7576,20 +8034,28 @@ function updateAuthUI(){
     authHeaderBtn.innerHTML='<i class="fas fa-user-check"></i>';
     authHeaderBtn.title=authState.user.nick||label;
     updateGuestControls();
+    mmSyncPublicHeaderVisibility();
     return;
   }
   authHeaderBtn.classList.remove('logged-in');
   authHeaderBtn.innerHTML='<i class="fas fa-sign-in-alt"></i>';
   authHeaderBtn.title='Iniciar sesión';
   updateGuestControls();
+  mmSyncPublicHeaderVisibility();
 }
 function showGate(){
+  var mapPage=document.getElementById('mapPage');
+  var guest=!!(authState&&authState.isLoggedIn&&authState.user&&isGuestAccount(authState.user));
+  if(mapPage&&!mapPage.classList.contains('hidden')&&guest){
+    showLoginModal();
+    return;
+  }
   authGate.classList.remove('hidden');
   authGate.classList.remove('fading');
 }
 
-/* La navegación es una SPA: el estado del mapa se agrega al historial para que
-   Atrás del navegador/móvil vuelva a la portada en lugar de abandonar el sitio. */
+/* La navegación es una SPA: el mapa abre primero. El botón Inicio muestra
+   las secciones informativas y Atrás restaura la vista anterior. */
 function mmWriteViewHistory(view,replace){
   try{
     var current=window.history.state&&typeof window.history.state==='object'?window.history.state:{};
@@ -7601,7 +8067,7 @@ function mmWriteViewHistory(view,replace){
 (function mmInitializeViewHistory(){
   try{
     var state=window.history.state;
-    if(!state||!state.mmMutualMotoView)mmWriteViewHistory('home',true);
+    if(!state||!state.mmMutualMotoView)mmWriteViewHistory('map',true);
   }catch(e){}
 })();
 
@@ -7609,24 +8075,30 @@ function mmRenderHomeMenu(){
   var mapPage=document.getElementById('mapPage');
   var publicHeader=document.getElementById('siteHeader');
   var publicHome=document.getElementById('preMapContent');
-  /* En dev se quita temporalmente el modo de presentación a pantalla completa;
-     DEV_MODE y la sesión quedan activos. */
+  /* Al volver al mapa se restaura si la entrada del historial era el Demo. */
+  try{
+    var currentViewState=window.history.state&&typeof window.history.state==='object'?window.history.state:{};
+    document.body.classList.toggle('mm-demo-map',currentViewState.mmDemoMapView===true);
+  }catch(e){}
+  /* El inicio público ahora es el mapa en modo invitado. */
   try{document.documentElement.classList.remove('mm-dev-requested')}catch(e){}
   if(mapPage){
-    mapPage.classList.add('hidden');
+    mapPage.classList.remove('hidden');
     mapPage.style.removeProperty('display');
     mapPage.style.removeProperty('visibility');
     mapPage.style.removeProperty('opacity');
   }
-  if(publicHeader)publicHeader.style.removeProperty('display');
-  if(publicHome)publicHome.style.removeProperty('display');
-  try{sessionStorage.removeItem('mm_wasOnMap')}catch(e){}
+  mmSyncPublicHeaderVisibility();
+  /* En la vista Mapa no se muestran debajo las páginas informativas. */
+  if(publicHome)publicHome.style.setProperty('display','none');
+  try{sessionStorage.setItem('mm_wasOnMap','1')}catch(e){}
   try{closeMobileMenu()}catch(e){}
   try{
     var state=window.history.state&&typeof window.history.state==='object'?window.history.state:{};
-    window.history.replaceState(Object.assign({},state,{mmMutualMotoView:'home'}),'',window.location.href);
+    window.history.replaceState(Object.assign({},state,{mmMutualMotoView:'map'}),'',window.location.href);
   }catch(e){}
-  try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){}
+  try{window.scrollTo({top:0,behavior:MM_LOW_POWER_MODE?'auto':'smooth'})}catch(e){}
+  MM_scheduleMapResize();
 }
 
 function mmCloseTopLayerForBack(){
@@ -7651,41 +8123,79 @@ function mmCloseTopLayerForBack(){
 
 var mmForceHomeFromButton=false;
 function mmReturnHomeFromButton(){
-  mmForceHomeFromButton=true;
-  try{
-    if(window.history.state&&window.history.state.mmMutualMotoView==='map'){
-      window.history.back();
-      return;
-    }
-  }catch(e){}
   mmForceHomeFromButton=false;
   while(mmCloseTopLayerForBack()){}
-  mmRenderHomeMenu();
+  /* Inicio abre la portada informativa; el mapa se vuelve a abrir desde
+     "Volver al mapa" (sesión registrada) o "Demo del mapa" (visitantes). */
+  try{
+    var currentState=window.history.state&&typeof window.history.state==='object'?window.history.state:{};
+    var nextState=Object.assign({},currentState,{mmDemoMapView:false});
+    window.history.replaceState(nextState,'',window.location.href);
+  }catch(e){}
+  showPreSection('about');
 }
 
-function mmHandleAppBackNavigation(){
+function mmGetVisibleAppView(){
   var mapPage=document.getElementById('mapPage');
-  if(!mapPage||mapPage.classList.contains('hidden'))return false;
+  if(mapPage&&!mapPage.classList.contains('hidden'))return 'map';
+  var activeSection=document.querySelector('.pre-map-section.active');
+  if(activeSection&&activeSection.id.indexOf('preSection-')===0){
+    return 'section:'+activeSection.id.slice('preSection-'.length);
+  }
+  return null;
+}
+
+function mmRenderViewFromHistory(){
+  var state=window.history.state&&typeof window.history.state==='object'?window.history.state:{};
+  var view=String(state.mmMutualMotoView||'');
+  if(view==='map'){
+    mmRenderHomeMenu();
+    return true;
+  }
+  var match=view.match(/^section:(about|guide|contacts)$/);
+  if(match){
+    showPreSection(match[1],{fromHistory:true});
+    return true;
+  }
+  return false;
+}
+
+function mmHandleAppBackNavigation(nativeBack){
+  var kioskGate=document.getElementById('kioskAuthGate');
+  if(kioskGate&&kioskGate.classList.contains('visible'))return false;
+
   if(mmForceHomeFromButton){
     mmForceHomeFromButton=false;
     while(mmCloseTopLayerForBack()){}
     mmRenderHomeMenu();
     return true;
   }
-  /* Atrás primero cierra paneles/ventanas abiertos. El siguiente Atrás vuelve
-     al menú de inicio, tanto en móvil como en escritorio. */
-  if(mmCloseTopLayerForBack()){
-    mmWriteViewHistory('map',false);
+
+  var visibleView=mmGetVisibleAppView();
+  /* En Android/Cordova, Atrás desde una sección vuelve al mapa. */
+  if(nativeBack&&visibleView&&visibleView.indexOf('section:')===0){
+    mmRenderHomeMenu();
     return true;
   }
-  mmRenderHomeMenu();
-  return true;
+
+  /* Si hay una ventana abierta, se cierra antes de cambiar de pantalla. */
+  if(mmCloseTopLayerForBack()){
+    if(visibleView){
+      mmWriteViewHistory(visibleView,false);
+      if(visibleView==='map')mmRenderHomeMenu();
+      else showPreSection(visibleView.slice('section:'.length),{fromHistory:true});
+    }
+    return true;
+  }
+
+  /* Atrás del navegador restaura la pantalla anterior: mapa o sección. */
+  return mmRenderViewFromHistory();
 }
-window.addEventListener('popstate',function(){mmHandleAppBackNavigation()});
+window.addEventListener('popstate',function(){mmHandleAppBackNavigation(false)});
 /* En WebViews basadas en Cordova se atiende también el evento nativo backbutton.
    En navegadores normales el evento no existe y se usa popstate. */
 document.addEventListener('backbutton',function(e){
-  if(mmHandleAppBackNavigation()&&e&&typeof e.preventDefault==='function')e.preventDefault();
+  if(mmHandleAppBackNavigation(true)&&e&&typeof e.preventDefault==='function')e.preventDefault();
 },false);
 
 function showMapPage(){
@@ -7697,23 +8207,28 @@ function showMapPage(){
   if(developerView)document.documentElement.classList.add('mm-dev-requested');
   else document.documentElement.classList.remove('mm-dev-requested');
   if(!window.history.state||window.history.state.mmMutualMotoView!=='map')mmWriteViewHistory('map',false);
-  if(publicHeader)publicHeader.style.display='none';
-  if(publicHome)publicHome.style.display='none';
+  if(developerView){
+    if(publicHome)publicHome.style.display='none';
+  }else{
+    /* El mapa funciona como una pantalla independiente, no como contenido
+       apilado debajo de Sobre nosotros, Aprende sobre el mapa o Contactos. */
+    if(publicHome)publicHome.style.setProperty('display','none');
+  }
   if(mapPage){
     mapPage.classList.remove('hidden');
     mapPage.style.removeProperty('display');
     mapPage.style.removeProperty('visibility');
     mapPage.style.removeProperty('opacity');
   }
-  try{sessionStorage.setItem('mm_wasOnMap','1')}catch(_){}
+  /* Actualiza la cabecera después de hacer visible el mapa, para que en
+     sesiones registradas se oculte en el mismo cambio de pantalla. */
+  mmSyncPublicHeaderVisibility();
+  try{sessionStorage.setItem('mm_wasOnMap','1')}catch(_){ }
   setTimeout(function(){
     if(!mapPage||mapPage.classList.contains('hidden'))return;
-    try{map.invalidateSize(true)}catch(_){}
-    const mapWrapper=document.getElementById('map-wrapper');
-    if(mapWrapper)mapWrapper.scrollIntoView({behavior:'smooth',block:'start'});
+    if(typeof MM_scheduleMapResize==='function')MM_scheduleMapResize();
   },80);
-  // La ubicación se solicita al entrar al mapa, no desde una rutina de carga
-  // antigua que ya no forma parte del inicio actual.
+  // La ubicación se solicita únicamente a una cuenta real, nunca al invitado.
   setTimeout(function(){
     if(!mapPage||mapPage.classList.contains('hidden'))return;
     if(authState&&authState.isLoggedIn&&authState.user&&!isGuestAccount(authState.user)){
@@ -7760,10 +8275,33 @@ function showBetaTestNoticeIfFirstLogin(user){
   try{localStorage.setItem(key,'1')}catch(e){}
   alert('PRUEBA DE 10 DÍAS, TUS DATOS SERÁN BORRADOS PASADO EL LAPSO LÍMITE');
 }
+function mmResetChatForIdentityChange(previousUserId,nextUserId){
+  if(!previousUserId||!nextUserId||String(previousUserId)===String(nextUserId))return;
+  try{if(presenceInterval)clearInterval(presenceInterval)}catch(e){}
+  try{if(cleanupInterval)clearInterval(cleanupInterval)}catch(e){}
+  try{if(incidentCleanupInterval)clearInterval(incidentCleanupInterval)}catch(e){}
+  try{if(typingCleanupInterval)clearInterval(typingCleanupInterval)}catch(e){}
+  try{if(inactivityCheckInterval)clearInterval(inactivityCheckInterval)}catch(e){}
+  presenceInterval=null;cleanupInterval=null;incidentCleanupInterval=null;
+  typingCleanupInterval=null;inactivityCheckInterval=null;
+  try{if(mqttClient&&typeof mqttClient.end==='function')mqttClient.end(true)}catch(e){}
+  mqttClient=null;
+  chatReady=false;
+}
 function finalizeLogin(){
+  /* Una cuenta autenticada sale del modo Demo y recupera sus controles habituales. */
+  document.body.classList.remove('mm-demo-map');
+  try{
+    var loginViewState=window.history.state&&typeof window.history.state==='object'?window.history.state:{};
+    if(loginViewState.mmDemoMapView===true){
+      window.history.replaceState(Object.assign({},loginViewState,{mmDemoMapView:false}),'',window.location.href);
+    }
+  }catch(e){}
+  var previousUserId=String(myUserId||'');
   if(authState.user){
     if(authState.user.id){
       myUserId=String(authState.user.id);
+      mmResetChatForIdentityChange(previousUserId,myUserId);
       try{localStorage.setItem(CHAT_KEY_UID,myUserId)}catch(e){}
     }
     if(authState.user.isGuest){
@@ -8359,7 +8897,12 @@ function logout(){
   saveAuth();
   updateAuthUI();
   if(isChatOpen())closeChat();
-  showGate();
+  try{
+    loginAsGuest();
+    showMapPage();
+  }catch(guestLogoutError){
+    showGate();
+  }
 }
 function continueAfterAuth(){
   if(!chatReady)if(!mqttClient){
@@ -8377,24 +8920,76 @@ function continueAfterAuth(){
 }
 const associationModal=document.getElementById('associationModal');
 const associationCloseBtn=document.getElementById('associationCloseBtn');
-function showPreSection(section){
-  document.querySelectorAll('.pre-map-section').forEach(function(el){el.classList.toggle('active',el.id==='preSection-'+section)});
-  document.querySelectorAll('[data-pre-section]').forEach(function(btn){btn.classList.toggle('active',btn.getAttribute('data-pre-section')===section)});
-  const target=document.getElementById('preSection-'+section);
-  if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+function showPreSection(section,options){
+  options=options||{};
+  var allowedSections=['about','guide','contacts'];
+  if(allowedSections.indexOf(section)===-1)return;
+
+  var target=document.getElementById('preSection-'+section);
+  if(!target)return;
+
+  var mapPage=document.getElementById('mapPage');
+  var publicHeader=document.getElementById('siteHeader');
+  var publicHome=document.getElementById('preMapContent');
+
+  /* Cambia a una pantalla informativa y retira por completo el mapa de la vista. */
+  document.body.classList.remove('mm-demo-map');
+  if(mapPage){
+    mapPage.classList.add('hidden');
+    mapPage.style.removeProperty('display');
+    mapPage.style.removeProperty('visibility');
+    mapPage.style.removeProperty('opacity');
+  }
+  if(publicHome)publicHome.style.removeProperty('display');
+
+  document.querySelectorAll('.pre-map-section').forEach(function(el){
+    el.classList.toggle('active',el===target);
+  });
+  document.querySelectorAll('[data-pre-section]').forEach(function(btn){
+    btn.classList.toggle('active',btn.getAttribute('data-pre-section')===section);
+  });
+  /* La cabecera vuelve a mostrarse en las secciones. En sesión iniciada
+     contiene solo navegación y el acceso "Volver al mapa". */
+  mmSyncPublicHeaderVisibility();
+
+  if(!options.fromHistory){
+    var nextView='section:'+section;
+    var currentState=window.history.state&&typeof window.history.state==='object'?window.history.state:{};
+    if(currentState.mmMutualMotoView!==nextView)mmWriteViewHistory(nextView,false);
+  }
+
+  try{closeMobileMenu()}catch(e){}
+  if(options.scroll!==false){
+    var scrollBehavior=MM_LOW_POWER_MODE?'auto':'smooth';
+    try{window.scrollTo({top:0,behavior:scrollBehavior})}catch(e){}
+    target.scrollIntoView({behavior:scrollBehavior,block:'start'});
+  }
 }
 document.querySelectorAll('[data-pre-section]').forEach(function(btn){btn.addEventListener('click',function(){showPreSection(btn.getAttribute('data-pre-section'))})});
 let pendingEnterMap=false;
 const enterMapBtn=document.getElementById('enterMapBtn');
 if(enterMapBtn)enterMapBtn.addEventListener('click',function(){
-  pendingEnterMap=true;
-  if(!isLoggedIn()){
-    showGate();
-    setTimeout(function(){if(gateEmailInput)gateEmailInput.focus()},120);
-    return;
-  }
   pendingEnterMap=false;
+  showLoginModal();
+});
+const demoMapBtn=document.getElementById('demoMapBtn');
+if(demoMapBtn)demoMapBtn.addEventListener('click',function(){
+  var registeredSession=!!(authState&&authState.isLoggedIn&&authState.user&&!isGuestAccount(authState.user));
+  var stateBeforeMap=window.history.state&&typeof window.history.state==='object'?window.history.state:{};
+  var wasAlreadyOnMap=stateBeforeMap.mmMutualMotoView==='map';
   showMapPage();
+  /* Los invitados abren una demo sin acciones. Una cuenta registrada vuelve
+     a su mapa normal, con sus controles y sin modo Demo. */
+  document.body.classList.toggle('mm-demo-map',!registeredSession);
+  try{
+    var currentState=window.history.state&&typeof window.history.state==='object'?window.history.state:{};
+    var nextState=Object.assign({},currentState,{mmMutualMotoView:'map',mmDemoMapView:!registeredSession});
+    if(wasAlreadyOnMap&&stateBeforeMap.mmDemoMapView!==!registeredSession)window.history.pushState(nextState,'',window.location.href);
+    else window.history.replaceState(nextState,'',window.location.href);
+  }catch(e){}
+  mmSyncPublicHeaderVisibility();
+  try{window.scrollTo({top:0,behavior:MM_LOW_POWER_MODE?'auto':'smooth'})}catch(e){}
+  setTimeout(function(){if(typeof MM_scheduleMapResize==='function')MM_scheduleMapResize()},120);
 });
 function showAssociationModal(){
   const associationIframe=document.getElementById('associationIframe');
@@ -8442,7 +9037,6 @@ if(registerModal)registerModal.addEventListener('click',function(e){
   if(e.target===registerModal)hideRegisterModal();
 });
 gateLoginBtn.addEventListener('click',loginWithMutualMotos);
-gateGuestBtn.addEventListener('click',function(){loginAsGuest()});
 authHeaderBtn.addEventListener('click',function(){
   if(authState.isLoggedIn)openProfileModal();
   else showLoginModal();
@@ -8451,8 +9045,7 @@ profileCloseBtn.addEventListener('click',closeProfileModal);
 profileLogoutBtn.addEventListener('click',logout);
 profileModal.addEventListener('click',function(e){if(e.target===profileModal)closeProfileModal()});
 loginMutualBtn.addEventListener('click',loginWithMutualMotos);
-loginGuestBtn.addEventListener('click',loginAsGuest);
-loginCancelBtn.addEventListener('click',function(){hideLoginModal();showGate()});
+loginCancelBtn.addEventListener('click',function(){hideLoginModal()});
 if(loginEmailInput)loginEmailInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();if(loginPasswordInput)loginPasswordInput.focus()}});
 if(loginPasswordInput)loginPasswordInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();loginWithMutualMotos()}});
 if(gateEmailInput)gateEmailInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();if(gatePasswordInput)gatePasswordInput.focus()}});
@@ -8761,7 +9354,7 @@ function renderSuggestions(){
   }).join('');
 }
 function openSuggestionModal(){
-  if(!isLoggedIn()){showGate();return}
+  if(!hasRegisteredUserSession()){showGate();return}
   if(DEV_MODE){
     suggestionModalTitle.textContent='Buz&oacute;n de sugerencias';
     suggestionModalSub.textContent='Sugerencias recibidas de los usuarios del servicio.';
@@ -8785,7 +9378,7 @@ function openSuggestionModal(){
 function closeSuggestionModal(){suggestionModal.classList.remove('visible')}
 function sendSuggestion(){
   if(DEV_MODE)return;
-  if(!isLoggedIn()){showGate();return}
+  if(!hasRegisteredUserSession()){showGate();return}
   const title=(suggestionTitle.value||'').trim();
   const body=(suggestionText.value||'').trim();
   if(!title){showAppNotification('Ingres&aacute; un t&iacute;tulo para la sugerencia.','fa-exclamation-circle');suggestionTitle.focus();return}
@@ -9972,7 +10565,7 @@ function handleReadReceipt(msg){
   }
 }
 function sendMotoamigoRequest(peer){
-  if(!isLoggedIn()){showGate();return}
+  if(!hasRegisteredUserSession()){showGate();return}
   if(!mqttClient)return;
   if(!chatReady){alert('El chat todavía no está conectado. Esperá unos segundos.');return}
   const msg={kind:'motoamigo-request',from:{id:myUserId,nick:myNick},to:{id:peer.id},ts:Date.now()};
@@ -10119,7 +10712,7 @@ reportReason.addEventListener('change',function(){reportSubmitBtn.disabled=!repo
 reportCancelModal.addEventListener('click',function(){reportModal.classList.remove('visible');window._reportTargetUser=null});
 reportModal.addEventListener('click',function(e){if(e.target===reportModal){reportModal.classList.remove('visible');window._reportTargetUser=null}});
 async function sendReportToSheet(report){
-  if(!REPORT_SHEET_WEBHOOK)return false;
+  if(!REPORT_SHEET_WEBHOOK||!APPS_SCRIPT_URL)return false;
   try{
     const evidenceText=(report.evidence||[]).map(function(e,i){
       const p=[]; p.push('['+(i+1)+']'); p.push('Tipo: '+(e.kind||'text'));
@@ -10132,10 +10725,23 @@ async function sendReportToSheet(report){
       return p.join(' | ');
     }).join('\n');
     const reasonLabel=REPORT_REASON_LABELS[report.reason]||report.reason;
-    const payload={action:'register_denuncia_servicios_ba',fecha:new Date(report.ts).toLocaleString('es-AR'),id_reporte:String(report.ts),motivo:reasonLabel,detalles:report.details||'(sin detalles)',canal:report.channel||'',denunciante:report.reporter?(report.reporter.nick||'Anónimo')+' ('+(report.reporter.id||'')+')':'Anónimo',denunciado:report.peer?(report.peer.nick||'Anónimo')+' ('+(report.peer.id||'')+')':'N/A',cantidad_pruebas:String((report.evidence||[]).length),pruebas:evidenceText||'(sin pruebas)'};
-    await fetch(REPORT_SHEET_WEBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),keepalive:true});
-    return true;
-  }catch(err){return false}
+    const payload={
+      fecha:new Date(report.ts).toISOString(),
+      id_reporte:String(report.ts),
+      motivo:reasonLabel,
+      detalles:report.details||'(sin detalles)',
+      canal:report.channel||'',
+      denunciado:report.peer?(report.peer.nick||'Anónimo')+' ('+(report.peer.id||'')+')':'N/A',
+      cantidad_pruebas:String((report.evidence||[]).length),
+      pruebas:evidenceText||'(sin pruebas)'
+    };
+    // Usa el mismo transporte, autenticación, operationId y confirmación que Siniestros.
+    const result=await postToSheets('register_denuncia_servicios_ba',payload);
+    return !!(result&&result.ok===true);
+  }catch(err){
+    log('No se pudo confirmar la denuncia en Google Sheets: '+String(err&&err.message||err),'warn');
+    return false;
+  }
 }
 async function sendReportByEmail(report){
   try{
@@ -10581,17 +11187,21 @@ function bootstrapResolveScreen(alertId){
     }
   });
 }
+var mmMapResizeFrame=0;
 function MM_scheduleMapResize(){
-  [0,80,220,500].forEach(function(delay){
-    setTimeout(function(){
-      try{
-        var wrapper=document.getElementById('map-wrapper');
-        if(!wrapper||wrapper.clientWidth<=0||wrapper.clientHeight<=0)return;
-        map.invalidateSize({pan:false,animate:false});
-      }catch(_){}
-    },delay);
+  if(mmMapResizeFrame||document.visibilityState==='hidden')return;
+  mmMapResizeFrame=requestAnimationFrame(function(){
+    mmMapResizeFrame=0;
+    try{
+      var wrapper=document.getElementById('map-wrapper');
+      if(!wrapper||wrapper.clientWidth<=0||wrapper.clientHeight<=0)return;
+      map.invalidateSize({pan:false,animate:false,debounceMoveend:true});
+    }catch(_){}
   });
 }
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible')MM_scheduleMapResize();
+});
 (function MM_installMapSizeObserver(){
   var wrapper=document.getElementById('map-wrapper');
   if(wrapper&&'ResizeObserver' in window){
@@ -10857,6 +11467,27 @@ const resolveParam=urlParams.get('resolve');
   }
 
   var start=function(){
+    /* Reordena el mapa para que sea el primer contenido bajo el encabezado. */
+    try{
+      var publicHeader=document.getElementById('siteHeader');
+      var publicHome=document.getElementById('preMapContent');
+      var mapPage=document.getElementById('mapPage');
+      if(publicHeader&&publicHome&&mapPage&&publicHome.parentNode===mapPage.parentNode){
+        publicHome.parentNode.insertBefore(mapPage,publicHome);
+      }
+      var syncHeaderHeight=function(){
+        if(!publicHeader)return;
+        var headerHeight=Math.ceil(publicHeader.getBoundingClientRect().height||86);
+        document.documentElement.style.setProperty('--mm-site-header-height',headerHeight+'px');
+      };
+      syncHeaderHeight();
+      window.addEventListener('resize',syncHeaderHeight,{passive:true});
+      if(typeof ResizeObserver!=='undefined'&&publicHeader){
+        var headerResizeObserver=new ResizeObserver(syncHeaderHeight);
+        headerResizeObserver.observe(publicHeader);
+      }
+    }catch(mapPlacementError){try{console.warn('No se pudo preparar el inicio del mapa:',mapPlacementError)}catch(_){}}
+
     if(kioskParam==='1'){
       try{startKioskMode();}catch(err){
         try{log('No se pudo iniciar el modo kiosco: '+(err&&err.message||err),'err');}catch(_){}
@@ -10949,7 +11580,7 @@ const resolveParam=urlParams.get('resolve');
         try{
           await mmRestoreRememberedUserFromGoogle(rememberedSnapshot);
           try{authGate.classList.add('hidden')}catch(_){}
-          if(wasOnMap)enterMapDirectly();
+          enterMapDirectly();
           if(typeof checkMembershipExpiryAlert==='function')checkMembershipExpiryAlert();
           if(typeof continueAfterAuth==='function')continueAfterAuth();
         }catch(restoreError){
@@ -10961,10 +11592,13 @@ const resolveParam=urlParams.get('resolve');
             try{localStorage.removeItem(AUTH_KEY)}catch(_){}
           }
           try{sessionStorage.removeItem('mm_wasOnMap')}catch(_){}
-          if(typeof showGate==='function')showGate();
-          if(gateEmailInput&&rememberedSnapshot.email)gateEmailInput.value=String(rememberedSnapshot.email);
+          /* Si no se puede restaurar la cuenta, la aplicación sigue disponible
+             en modo invitado; el usuario puede iniciar sesión desde el encabezado. */
+          try{loginAsGuest();enterMapDirectly()}catch(guestFallbackError){
+            if(typeof showGate==='function')showGate();
+          }
           if(gateLoginError){
-            gateLoginError.textContent=(restoreError&&restoreError.message)||'No se pudieron recuperar los datos de tu cuenta desde Google Sheets. Iniciá sesión nuevamente.';
+            gateLoginError.textContent=(restoreError&&restoreError.message)||'No se pudieron recuperar los datos de tu cuenta. Podés iniciar sesión desde el encabezado.';
             gateLoginError.style.display='block';
           }
           if(gatePasswordInput)gatePasswordInput.value='';
@@ -10979,6 +11613,9 @@ const resolveParam=urlParams.get('resolve');
         }
       }catch(_){}
       authState={isLoggedIn:false,user:null};
+      try{loginAsGuest();enterMapDirectly()}catch(guestStartError){
+        try{console.warn('No se pudo iniciar el modo invitado:',guestStartError)}catch(_){}
+      }
     }
   };
 
@@ -11117,13 +11754,29 @@ const resolveParam=urlParams.get('resolve');
       gate.style.removeProperty('pointer-events');
       gate.removeAttribute('aria-hidden');
     }
-    var normalHeader=document.getElementById('siteHeader');
-    var normalHome=document.getElementById('preMapContent');
-    var normalMap=document.getElementById('mapPage');
-    if(normalHeader)normalHeader.style.removeProperty('display');
-    if(normalHome)normalHome.style.removeProperty('display');
-    if(normalMap){normalMap.classList.add('hidden');normalMap.style.removeProperty('display');}
-    try{sessionStorage.removeItem('mm_wasOnMap');}catch(_){}
+    /* El mapa es la primera pantalla pública. Las secciones informativas se
+       abren únicamente cuando el usuario las selecciona desde el encabezado. */
+    try{
+      if(typeof mmRenderHomeMenu==='function')mmRenderHomeMenu();
+      else if(typeof showMapPage==='function')showMapPage();
+      else{
+        var normalHeader=document.getElementById('siteHeader');
+        var normalHome=document.getElementById('preMapContent');
+        var normalMap=document.getElementById('mapPage');
+        if(normalHeader)normalHeader.style.removeProperty('display');
+        if(normalHome)normalHome.style.setProperty('display','none');
+        if(normalMap){
+          normalMap.classList.remove('hidden');
+          normalMap.style.removeProperty('display');
+          normalMap.style.removeProperty('visibility');
+          normalMap.style.removeProperty('opacity');
+        }
+        try{mmWriteViewHistory('map',true)}catch(_){ }
+        try{sessionStorage.setItem('mm_wasOnMap','1')}catch(_){ }
+      }
+    }catch(launchViewError){
+      try{console.warn('No se pudo mostrar el mapa inicial:',launchViewError)}catch(_){ }
+    }
   }
 
   if(document.readyState==='loading'){
